@@ -1,0 +1,12 @@
+services:
+    Invertus\SaferPay\Repository\SaferPayLogoRepository:
+
+    Invertus\SaferPay\Repository\SaferPayOrderRepository:
+
+    Invertus\SaferPay\Repository\SaferPayPaymentRepository:
+
+    Invertus\SaferPay\Repository\SaferPayRestrictionRepository:
+
+    Invertus\SaferPay\Repository\SaferPayCardAliasRepository:
+
+    Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository:

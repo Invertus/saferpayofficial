@@ -1,0 +1,221 @@
+<?php
+/**
+ *NOTICE OF LICENSE
+ *
+ *This source file is subject to the Open Software License (OSL 3.0)
+ *that is bundled with this package in the file LICENSE.txt.
+ *It is also available through the world-wide-web at this URL:
+ *http://opensource.org/licenses/osl-3.0.php
+ *If you did not receive a copy of the license and are unable to
+ *obtain it through the world-wide-web, please send an email
+ *to license@prestashop.com so we can send you a copy immediately.
+ *
+ *DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ *versions in the future. If you wish to customize PrestaShop for your
+ *needs please refer to http://www.prestashop.com for more information.
+ *
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
+ */
+
+namespace Invertus\SaferPay\DTO\Request\Initialize;
+
+use Invertus\SaferPay\DTO\Request\Address;
+use Invertus\SaferPay\DTO\Request\DeliveryAddressForm;
+use Invertus\SaferPay\DTO\Request\Payer;
+use Invertus\SaferPay\DTO\Request\Payment;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
+use Invertus\SaferPay\DTO\Request\ReturnUrls;
+use Invertus\SaferPay\DTO\Request\SaferPayNotification;
+
+class InitializeRequest
+{
+
+    /**
+     * @var RequestHeader
+     */
+    private $requestHeader;
+
+    /**
+     * @var string
+     */
+    private $terminalId;
+
+    /**
+     * @var string
+     */
+    private $paymentMethod;
+
+    /**
+     * @var Payment
+     */
+    private $payment;
+
+    /**
+     * @var Payer
+     */
+    private $payer;
+
+    /**
+     * @var array
+     */
+    private $returnUrls;
+
+    /**
+     * @var array
+     */
+    private $notification;
+
+    /**
+     * @var array
+     */
+    private $deliveryAddressForm;
+
+    /**
+     * @var string
+     */
+    private $configSet;
+
+    /**
+     * @var string
+     */
+    private $cssUrl;
+
+    /**
+     * @var Address
+     */
+    private $deliveryAddress;
+
+    /**
+     * @var Address
+     */
+    private $billingAddress;
+
+    /**
+     * @var string
+     */
+    private $alias;
+
+    public function __construct(
+        RequestHeader $requestHeader,
+        $terminalId,
+        $paymentMethod,
+        Payment $payment,
+        Payer $payer,
+        ReturnUrls $returnUrls,
+        SaferPayNotification $notification,
+        DeliveryAddressForm $deliveryAddressForm,
+        $configSet,
+        $cssUrl,
+        Address $deliveryAddress,
+        Address $billingAddress,
+        $alias
+    ) {
+        $this->requestHeader = $requestHeader;
+        $this->terminalId = $terminalId;
+        $this->paymentMethod = $paymentMethod;
+        $this->payment = $payment;
+        $this->payer = $payer;
+        $this->returnUrls = $returnUrls;
+        $this->notification = $notification;
+        $this->deliveryAddressForm = $deliveryAddressForm;
+        $this->configSet = $configSet;
+        $this->cssUrl = $cssUrl;
+        $this->deliveryAddress = $deliveryAddress;
+        $this->billingAddress = $billingAddress;
+        $this->alias = $alias;
+    }
+
+    public function getAsArray()
+    {
+        $return = [
+            'RequestHeader' => [
+                'SpecVersion' => $this->requestHeader->getSpecVersions(),
+                'CustomerId' => $this->requestHeader->getCustomerId(),
+                'RequestId' => $this->requestHeader->getRequestId(),
+                'RetryIndicator' => $this->requestHeader->getRetryIndicator(),
+                'ClientInfo' => $this->requestHeader->getClientInfo(),
+            ],
+            'TerminalId' => $this->terminalId,
+            'PaymentMethods' => [
+                $this->paymentMethod,
+            ],
+            'Payment' => [
+                'Amount' => [
+                    'Value' => $this->payment->getValue(),
+                    'CurrencyCode' => $this->payment->getCurrencyCode(),
+                ],
+                'OrderId' => $this->payment->getOrderId(),
+                'PayerNote' => $this->payment->getPayerNote(),
+                'Description' => $this->payment->getDescription(),
+            ],
+            'Payer' => [
+                'IpAddress' => $this->payer->getIpAddress(),
+                'LanguageCode' => $this->payer->getLanguageCode(),
+                'DeliveryAddress' => [
+                    'FirstName' => $this->deliveryAddress->getFirstName() ?: null,
+                    'LastName' => $this->deliveryAddress->getLastName() ?: null,
+                    'Company' => $this->deliveryAddress->getCompany() ?: null,
+                    'Gender' => $this->deliveryAddress->getGender() ?: null,
+                    'Street' => $this->deliveryAddress->getStreet() ?: null,
+                    'Street2' => $this->deliveryAddress->getStreet2() ?: null,
+                    'Zip' => $this->deliveryAddress->getZip() ?: null,
+                    'City' => $this->deliveryAddress->getCity() ?: null,
+                    'CountryCode' => $this->deliveryAddress->getCountryCode() ?: null,
+                    'Email' => $this->deliveryAddress->getEmail() ?: null,
+                    'Phone' => $this->deliveryAddress->getPhone() ?: null,
+                ],
+                'BillingAddress' => [
+                    'FirstName' => $this->billingAddress->getFirstName() ?: null,
+                    'LastName' => $this->billingAddress->getLastName() ?: null,
+                    'Company' => $this->billingAddress->getCompany() ?: null,
+                    'Gender' => $this->billingAddress->getGender() ?: null,
+                    'Street' => $this->billingAddress->getStreet() ?: null,
+                    'Street2' => $this->billingAddress->getStreet2() ?: null,
+                    'Zip' => $this->billingAddress->getZip() ?: null,
+                    'City' => $this->billingAddress->getCity() ?: null,
+                    'CountryCode' => $this->billingAddress->getCountryCode() ?: null,
+                    'Email' => $this->billingAddress->getEmail() ?: null,
+                    'Phone' => $this->billingAddress->getPhone() ?: null,
+                ],
+            ],
+            'ReturnUrls' => [
+                'Success' => $this->returnUrls->getSuccess(),
+                'Fail' => $this->returnUrls->getFail(),
+            ],
+            'Notification' => [
+                'PayerEmail' => $this->notification->getPayerEmail(),
+                'MerchantEmails' => [$this->notification->getMerchantEmail()],
+                'NotifyUrl' => $this->notification->getNotifyUrl(),
+            ],
+            'DeliveryAddressForm' => [
+                'Display' => $this->deliveryAddressForm->getDisplay(),
+                'MandatoryFields' => $this->deliveryAddressForm->getMandatoryFields(),
+            ],
+        ];
+        if ($this->configSet) {
+            $return['ConfigSet'] = $this->configSet;
+        }
+
+        if ($this->cssUrl) {
+            $return['Styling'] = [
+                'CssUrl' => $this->cssUrl,
+                'ContentSecurityEnabled' => true,
+            ];
+        }
+
+        if ($this->alias) {
+            $return['PaymentMeans'] = [
+                'Alias' => [
+                    'Id' => $this->alias,
+                ],
+            ];
+            unset($return['PaymentMethods']);
+        }
+
+        return $return;
+    }
+}

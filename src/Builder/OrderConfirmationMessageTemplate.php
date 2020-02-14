@@ -1,0 +1,125 @@
+<?php
+/**
+ *NOTICE OF LICENSE
+ *
+ *This source file is subject to the Open Software License (OSL 3.0)
+ *that is bundled with this package in the file LICENSE.txt.
+ *It is also available through the world-wide-web at this URL:
+ *http://opensource.org/licenses/osl-3.0.php
+ *If you did not receive a copy of the license and are unable to
+ *obtain it through the world-wide-web, please send an email
+ *to license@prestashop.com so we can send you a copy immediately.
+ *
+ *DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ *versions in the future. If you wish to customize PrestaShop for your
+ *needs please refer to http://www.prestashop.com for more information.
+ *
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
+ */
+
+namespace Invertus\SaferPay\Builder;
+
+use SaferPayOfficial;
+
+class OrderConfirmationMessageTemplate
+{
+    /**
+     * Module Main Class Variable Declaration.
+     *
+     * @var SaferPayOfficial
+     */
+    private $module;
+
+    /**
+     * Order Message Template Class Variable Declaration.
+     *
+     * @var string $orderMessageTemplateClass
+     */
+    private $orderMessageTemplateClass;
+
+    /**
+     * Order Message text Variable Declaration.
+     *
+     * @var string $orderMessageText
+     */
+    private $orderMessageText;
+
+    /**
+     * Smarty Variable Declaration.
+     *
+     * @var \Smarty
+     */
+    private $smarty;
+
+    /**
+     * TagScriptTemplate constructor.
+     *
+     * @param SaferPayOfficial $module
+     */
+    public function __construct(SaferPayOfficial $module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * Sets Smarty From Given Param.
+     *
+     * @param \Smarty $smarty
+     */
+    public function setSmarty(\Smarty $smarty)
+    {
+        $this->smarty = $smarty;
+    }
+
+    /**
+     * Sets Order Message Template Class.
+     *
+     * @param string $orderMessageTemplateClass
+     */
+    public function setOrderMessageTemplateClass($orderMessageTemplateClass)
+    {
+        $this->orderMessageTemplateClass = $orderMessageTemplateClass;
+    }
+
+    /**
+     * Sets Order Message Text.
+     *
+     * @param string $orderMessageText
+     */
+    public function setOrderMessageText($orderMessageText)
+    {
+        $this->orderMessageText = $orderMessageText;
+    }
+
+    /**
+     * Gets Smarty Params.
+     *
+     * @return array
+     */
+    public function getSmartyParams()
+    {
+        return [
+            'orderMessageText' => $this->orderMessageText,
+            'orderMessageClass' => $this->orderMessageTemplateClass,
+        ];
+    }
+
+    /**
+     * Gets Order Confirmation Message Template.
+     *
+     * @return string
+     *
+     * @throws \SmartyException
+     */
+    public function getHtml()
+    {
+        $this->smarty->assign($this->getSmartyParams());
+        return $this->smarty->fetch(
+            $this->module->getLocalPath() . 'views/templates/front/payment_return.tpl'
+        );
+    }
+}

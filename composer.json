@@ -1,0 +1,49 @@
+{
+    "name": "invertus/saferpay",
+    "type": "project",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "git@bitbucket.org:invertus/integration-test-suite.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Invertus\\SaferPay\\": "src/"
+        },
+        "classmap": [
+            "src/Entity"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Invertus\\SaferPay\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "vlucas/phpdotenv": "^3.6",
+        "symfony/expression-language": "^3.4",
+        "symfony/config": "^3.4",
+        "symfony/dependency-injection": "^3.4",
+        "symfony/filesystem": "^3.4",
+        "guzzlehttp/guzzle": "^5.3.3",
+        "symfony/yaml": "~3.0|~4.0"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "*",
+        "invertus/integrationtestsuite": "dev-master",
+        "phpunit/phpunit": "*",
+        "behat/behat": "*",
+        "symfony/translation": "*"
+    },
+    "scripts": {
+        "test-integration": "./vendor/bin/phpunit --configuration ./tests/Integration/phpunit.xml",
+        "test-unit": "./tests/unit-tests.sh"
+    },
+    "config": {
+        "prepend-autoloader": false
+    },
+    "author": "PrestaShop",
+    "license": "AFL-3.0"
+}

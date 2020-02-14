@@ -1,0 +1,116 @@
+services:
+    Invertus\SaferPay\Service\SaferPayCartService:
+        arguments:
+            - '@saferpay'
+
+    Invertus\SaferPay\Api\Request\InitializeService:
+        arguments:
+            - '@api.request'
+
+    Invertus\SaferPay\Api\Request\AssertService:
+        arguments:
+            - '@api.request'
+            - '@Invertus\SaferPay\Service\Response\AssertResponseObjectCreator'
+            - '@Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder'
+
+    Invertus\SaferPay\Api\Request\CaptureService:
+        arguments:
+            - '@api.request'
+
+    Invertus\SaferPay\Api\Request\CancelService:
+        arguments:
+            - '@api.request'
+
+    Invertus\SaferPay\Api\Request\RefundService:
+        arguments:
+            - '@api.request'
+
+    Invertus\SaferPay\Api\Request\AuthorizationService:
+        arguments:
+            - '@api.request'
+            - '@Invertus\SaferPay\Service\Response\AssertResponseObjectCreator'
+            - '@Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder'
+            - '@Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder'
+
+    Invertus\SaferPay\Service\SaferPayInitialize:
+        arguments:
+            - '@saferpay'
+            - '@=service("adapter.context").getContext()'
+            - '@Invertus\SaferPay\Api\Request\InitializeService'
+            - '@Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator'
+
+#Request object creator
+    Invertus\SaferPay\Service\Request\AssertRequestObjectCreator:
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
+            - '@saferpay'
+
+    Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator:
+        arguments:
+            - '@saferpay'
+
+    Invertus\SaferPay\Service\Request\CaptureRequestObjectCreator:
+        arguments:
+            - '@saferpay'
+
+    Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator:
+        arguments:
+            - '@saferpay'
+
+    Invertus\SaferPay\Service\Request\CancelRequestObjectCreator:
+        arguments:
+            - '@saferpay'
+
+    Invertus\SaferPay\Service\Request\RefundRequestObjectCreator:
+        arguments:
+            - '@saferpay'
+    #
+
+#Response object creator
+    Invertus\SaferPay\Service\Response\AssertResponseObjectCreator:
+
+    Invertus\SaferPay\Service\Response\AuthorizationResponseObjectCreator:
+
+    Invertus\SaferPay\Service\Response\InitializeResponseObjectCreator:
+
+    Invertus\SaferPay\Service\Response\ResponseObjectCreator:
+#
+    Invertus\SaferPay\Service\PaymentRestrictionValidation:
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayPaymentRepository'
+            - '@Invertus\SaferPay\Repository\SaferPayRestrictionRepository'
+
+    Invertus\SaferPay\Service\SaferPayLogoCreator:
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayLogoRepository'
+
+    Invertus\SaferPay\Service\SaferPayPaymentCreator:
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayPaymentRepository'
+
+    Invertus\SaferPay\Service\SaferPayRestrictionCreator:
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayRestrictionRepository'
+
+    Invertus\SaferPay\Service\SaferPayOrderStatusService:
+        arguments:
+            - '@Invertus\SaferPay\Api\Request\CaptureService'
+            - '@Invertus\SaferPay\Service\Request\CaptureRequestObjectCreator'
+            - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
+            - '@Invertus\SaferPay\Api\Request\CancelService'
+            - '@Invertus\SaferPay\Service\Request\CancelRequestObjectCreator'
+            - '@Invertus\SaferPay\Api\Request\RefundService'
+            - '@Invertus\SaferPay\Service\Request\RefundRequestObjectCreator'
+
+    Invertus\SaferPay\Service\SaferPayExceptionService:
+        arguments:
+            - '@saferpay'
+
+    Invertus\SaferPay\Service\SaferPay3DSecureService:
+        arguments:
+            - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'
+            - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
+
+    Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate:
+        arguments:
+            - '@saferpay'
