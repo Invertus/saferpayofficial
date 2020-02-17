@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://saferpay.com" target="_blank">
+    <a href="https://www.six-payment-services.com" target="_blank">
         <img src="./views/img/readme/01.png" />
     </a>
 </p>
@@ -24,7 +24,7 @@ Use of the Saferpay PrestaShop requires the following:
 - Availability of valid acceptance agreement for credit cards or other payment methods.
 
 <p align="center">
-    <a href="https://saferpay.com" target="_blank">
+    <a href="https://www.six-payment-services.com" target="_blank">
         <img src="./views/img/readme/02.png" />
     </a>
 </p>
