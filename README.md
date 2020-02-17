@@ -28,3 +28,7 @@ Use of the Saferpay PrestaShop requires the following:
         <img src="./views/img/readme/02.png" />
     </a>
 </p>
+
+To register for live account please follow this link: https://www.six-payment-services.com/en/site/e-commerce/solutions/paymentsolution.html 
+
+Test account information can be found here: https://www.six-payment-services.com/en/site/e-commerce-developer/testaccount.html
