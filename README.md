@@ -32,3 +32,12 @@ Use of the Saferpay PrestaShop requires the following:
 To register for live account please follow this link: https://www.six-payment-services.com/en/site/e-commerce/solutions/paymentsolution.html 
 
 Test account information can be found here: https://www.six-payment-services.com/en/site/e-commerce-developer/testaccount.html
+
+<h1>Steps to use module from Github</h1>
+There is a green button „Clone or download“. If you choose download zip, you will get "saferpayofficial-master.zip", you need to do the following steps:
+
+1)    Unzip it
+2)    Rename main folder from "saferpayofficial-master" to "saferpayofficial"
+3)    Zip it
+
+Now module is ready to be uploaded to PrestaShop. For more detailed installation instruction see userguide.
