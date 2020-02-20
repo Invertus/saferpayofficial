@@ -36,6 +36,7 @@ Test account information can be found here: https://www.six-payment-services.com
 <h1>Steps to use module from Github</h1>
 There is a green button „Clone or download“. If you choose download zip, you will get "saferpayofficial-master.zip", you need to do the following steps:
 
+&nbsp;
 1)    Unzip it
 2)    Rename main folder from "saferpayofficial-master" to "saferpayofficial"
 3)    Zip it
