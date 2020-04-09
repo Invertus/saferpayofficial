@@ -121,7 +121,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontCont
             $newOrderStatus = _SAFERPAY_PAYMENT_AUTHORIZED_;
             $order->setCurrentState($newOrderStatus);
 
-            if (!$authResponse->getLiability()->getLiabilityShift()) {
+            if ($authResponse->getLiability()->getThreeDs() && !$authResponse->getLiability()->getLiabilityShift()) {
                 /** @var SaferPay3DSecureService $secureService */
                 $secureService = $this->module->getContainer()->get(SaferPay3DSecureService::class);
                 $secureService->processNotSecuredPayment($order);
@@ -148,11 +148,13 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontCont
             }
         }
 
-        $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
-        if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE) {
-            /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getContainer()->get(SaferPayOrderStatusService::class);
-            $orderStatusService->capture($order);
+        if ($authResponse->getLiability()->getThreeDs()) {
+            $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
+            if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getContainer()->get(SaferPayOrderStatusService::class);
+                $orderStatusService->capture($order);
+            }
         }
 
         $isDirectPayment = Tools::getValue('directPayment');
