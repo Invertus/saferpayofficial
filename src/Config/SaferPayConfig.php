@@ -80,13 +80,11 @@ class SaferPayConfig
         'MAESTRO',
         'MASTERCARD',
         'MYONE',
-        'PAYPAL',
         'POSTCARD',
         'POSTFINANCE',
         'VISA',
         'VPAY',
     ];
-
 
     const WEB_SERVICE_PASSWORD_PLACEHOLDER = '&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;';
     const SAFERPAY_PAYMENT_COMPLETED = 'SAFERPAY_PAYMENT_COMPLETED';
