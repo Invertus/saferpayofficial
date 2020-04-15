@@ -75,13 +75,11 @@ class SaferPayConfig
         'BANCONTACT',
         'BONUS',
         'DINERS',
-        'INVOICE',
         'JCB',
         'MAESTRO',
         'MASTERCARD',
         'MYONE',
         'POSTCARD',
-        'POSTFINANCE',
         'VISA',
         'VPAY',
     ];
