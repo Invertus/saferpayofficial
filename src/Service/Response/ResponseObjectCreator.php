@@ -54,7 +54,9 @@ class ResponseObjectCreator
         $transactionObj->setDate($transaction->Date);
         $transactionObj->setAmount($amount);
         $transactionObj->setAcquirerName($transaction->AcquirerName);
-        $transactionObj->setAcquirerReference($transaction->AcquirerReference);
+        if (isset($transaction->AcquirerReference)) {
+            $transactionObj->setAcquirerReference($transaction->AcquirerReference);
+        }
         $transactionObj->setApprovalCode($transaction->ApprovalCode);
 
         return $transactionObj;
