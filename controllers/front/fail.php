@@ -96,7 +96,6 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
         $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
 
-        $this->restoreCart($cartId);
         $orderLink = $this->context->link->getPageLink(
             'order-confirmation',
             true,
@@ -125,23 +124,19 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
             ]);
         }
 
-        Tools::redirect($this->context->link->getPageLink('cart'));
-
-        $this->setTemplate(
-            sprintf('module:%s/views/templates/front/order_fail.tpl', $this->module->name)
+        $this->warning[] = $this->l('We couldn\'t authorize your payment. Please try again.');
+        $this->redirectWithNotifications(
+            $this->context->link->getPageLink(
+                'cart',
+                null,
+                $this->context->language->id,
+                array(
+                    'action' => 'show',
+                ),
+                false,
+                null,
+                false
+            )
         );
-    }
-
-    private function restoreCart($cartId)
-    {
-        $cart = new Cart($cartId);
-        $duplication = $cart->duplicate();
-        if ($duplication['success']) {
-            $this->context->cookie->id_cart = $duplication['cart']->id;
-            $context = $this->context;
-            $context->cart = $duplication['cart'];
-            CartRule::autoAddToCart($context);
-            $this->context->cookie->write();
-        }
     }
 }

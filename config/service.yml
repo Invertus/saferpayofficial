@@ -106,6 +106,8 @@ services:
         arguments:
             - '@saferpay'
 
+    Invertus\SaferPay\Service\CartDuplicationService:
+
     Invertus\SaferPay\Service\SaferPay3DSecureService:
         arguments:
             - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'

@@ -22,6 +22,7 @@
  */
 
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Service\CartDuplicationService;
 
 class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontController
 {
@@ -47,12 +48,16 @@ class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontCon
         $order = new Order($orderId);
         $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
         /** @var SaferPayOrderRepository $orderRepo */
+        /** @var CartDuplicationService $cartDuplicationService */
         $orderRepo = $this->module->getContainer()->get('saferpay.order.repository');
+        $cartDuplicationService = $this->module->getContainer()->get(CartDuplicationService::class);
+
         $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $saferPayOrder->canceled = 1;
         $saferPayOrder->update();
-        $this->restoreCart($order->id_cart);
+
+        $cartDuplicationService->restoreCart($cartId);
         $isBusinessLicence = Tools::getValue(SaferPayOfficial::IS_BUSINESS_LICENCE);
         $controller = $isBusinessLicence ? 'failIFrame' : 'fail';
 
@@ -69,12 +74,5 @@ class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontCon
         );
 
         Tools::redirect($failUrl);
-    }
-
-    private function restoreCart($cartId)
-    {
-        $cart = new Cart($cartId);
-        $newCart = $cart->duplicate();
-        Context::getContext()->cart = $newCart;
     }
 }
