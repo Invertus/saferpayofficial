@@ -52,6 +52,7 @@ class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontCon
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $saferPayOrder->canceled = 1;
         $saferPayOrder->update();
+        $this->restoreCart($order->id_cart);
         $isBusinessLicence = Tools::getValue(SaferPayOfficial::IS_BUSINESS_LICENCE);
         $controller = $isBusinessLicence ? 'failIFrame' : 'fail';
 
@@ -68,5 +69,12 @@ class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontCon
         );
 
         Tools::redirect($failUrl);
+    }
+
+    private function restoreCart($cartId)
+    {
+        $cart = new Cart($cartId);
+        $newCart = $cart->duplicate();
+        Context::getContext()->cart = $newCart;
     }
 }

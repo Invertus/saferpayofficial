@@ -96,6 +96,7 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
         $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
 
+        $this->restoreCart($cartId);
         $orderLink = $this->context->link->getPageLink(
             'order-confirmation',
             true,
@@ -124,8 +125,23 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
             ]);
         }
 
+        Tools::redirect($this->context->link->getPageLink('cart'));
+
         $this->setTemplate(
             sprintf('module:%s/views/templates/front/order_fail.tpl', $this->module->name)
         );
+    }
+
+    private function restoreCart($cartId)
+    {
+        $cart = new Cart($cartId);
+        $duplication = $cart->duplicate();
+        if ($duplication['success']) {
+            $this->context->cookie->id_cart = $duplication['cart']->id;
+            $context = $this->context;
+            $context->cart = $duplication['cart'];
+            CartRule::autoAddToCart($context);
+            $this->context->cookie->write();
+        }
     }
 }
