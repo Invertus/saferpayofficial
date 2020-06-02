@@ -40,13 +40,19 @@ class SaferPay3DSecureService
      * @var SaferPayOrderRepository
      */
     private $orderRepository;
+    /**
+     * @var CartDuplicationService
+     */
+    private $cartDuplicationService;
 
     public function __construct(
         SaferPayOrderStatusService $orderStatusService,
-        SaferPayOrderRepository $orderRepository
+        SaferPayOrderRepository $orderRepository,
+        CartDuplicationService $cartDuplicationService
     ) {
         $this->orderStatusService = $orderStatusService;
         $this->orderRepository = $orderRepository;
+        $this->cartDuplicationService = $cartDuplicationService;
     }
 
     /**
@@ -54,6 +60,7 @@ class SaferPay3DSecureService
      */
     public function processNotSecuredPayment(Order $order)
     {
+        $this->cartDuplicationService->restoreCart($order->id_cart);
         $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
         if ($defaultBehavior) {
             return;

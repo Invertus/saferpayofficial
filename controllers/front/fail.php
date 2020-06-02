@@ -91,24 +91,17 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
-        $cartId = Tools::getValue('cartId');
-        $moduleId = Tools::getValue('moduleId');
-        $orderId = Tools::getValue('orderId');
-        $secureKey = Tools::getValue('secureKey');
-
         $orderLink = $this->context->link->getPageLink(
-            'order-confirmation',
+            'order',
             true,
             null,
             [
-                'id_cart' => $cartId,
-                'id_module' => $moduleId,
-                'id_order' => $orderId,
-                'key' => $secureKey,
-                'cancel' => 1,
+                'step' => 2,
             ]
         );
         if (!SaferPayConfig::isVersion17()) {
+            $this->context->cookie->saferpay_payment_canceled_error =
+                json_encode($this->module->l('We couldn\'t authorize your payment. Please try again.'));
             Tools::redirect($orderLink);
         }
 

@@ -112,6 +112,7 @@ services:
         arguments:
             - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'
             - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
+            - '@Invertus\SaferPay\Service\CartDuplicationService'
 
     Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate:
         arguments:

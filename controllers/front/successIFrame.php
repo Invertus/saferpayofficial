@@ -139,6 +139,8 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontCont
                         true
                     );
                     if (!SaferPayConfig::isVersion17()) {
+                        $this->context->cookie->saferpay_payment_canceled_error =
+                            json_encode($this->module->l('We couldn\'t authorize your payment. Please try again.'));
                         Tools::redirect($failUrl);
                     }
                     $this->redirectWithNotifications($failUrl);

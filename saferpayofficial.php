@@ -333,6 +333,10 @@ class SaferPayOfficial extends PaymentModule
                 $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout_16.css");
                 $this->context->controller->addJS("{$this->getPathUri()}views/js/front/saferpay_saved_card_16.js");
             }
+            if (isset($this->context->cookie->saferpay_payment_canceled_error)) {
+                $this->context->controller->errors[] = json_decode($this->context->cookie->saferpay_payment_canceled_error);
+                unset($this->context->cookie->saferpay_payment_canceled_error);
+            }
         }
     }
 
