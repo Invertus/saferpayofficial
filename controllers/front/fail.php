@@ -105,18 +105,6 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
             Tools::redirect($orderLink);
         }
 
-        $order = new Order($this->id_order);
-        if ((bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $this->context->smarty->assign([
-                'order' => $this->order_presenter->present($order),
-            ]);
-        } else {
-            $this->context->smarty->assign([
-                'id_order' => $this->id_order,
-                'email' => $this->context->customer->email,
-            ]);
-        }
-
         $this->warning[] = $this->l('We couldn\'t authorize your payment. Please try again.');
         $this->redirectWithNotifications(
             $this->context->link->getPageLink(
