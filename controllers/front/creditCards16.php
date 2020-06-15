@@ -91,10 +91,10 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPa
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
             if ($cardAlias->delete()) {
-                $this->success[] = $this->l('Successfully removed credit card');
+                $this->success[] = $this->module->l('Successfully removed credit card');
                 return;
             }
-            $this->errors[] = $this->l('Failed to removed credit card');
+            $this->errors[] = $this->module->l('Failed to removed credit card');
         }
         parent::postProcess();
     }
@@ -104,7 +104,7 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPa
         $breadcrumb = $this->getBreadcrumbLinks();
 
         $breadcrumb['links'][] = [
-            'title' => $this->l('Your account', self::FILENAME),
+            'title' => $this->module->l('Your account', self::FILENAME),
             'url' => $this->context->link->getPageLink('my-account'),
         ];
 

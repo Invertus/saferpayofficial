@@ -59,10 +59,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         }
         if (!$authorized) {
             $this->errors[] =
-                $this->l('This payment method is not available.', 'validation');
-            if (!SaferPayConfig::isVersion17()) {
-                Tools::redirect($redirectLink);
-            }
+                $this->module->l('This payment method is not available.', 'validation');
             $this->redirectWithNotifications($redirectLink);
         }
         $customer = new Customer($cart->id_customer);
@@ -126,9 +123,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 ],
                 true
             );
-            if (!SaferPayConfig::isVersion17()) {
-                Tools::redirect($redirectLink);
-            }
             $this->redirectWithNotifications($redirectLink);
         }
         $saferPayOrderBuilder->create(

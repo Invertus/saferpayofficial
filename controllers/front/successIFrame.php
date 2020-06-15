@@ -92,6 +92,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                     $selectedCard
                 );
             } catch (SaferPayApiException $e) {
+                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
                 $failUrl = $this->context->link->getModuleLink(
                     $this->module->name,
                     'failValidation',
@@ -103,9 +104,6 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                     ],
                     true
                 );
-                if (!SaferPayConfig::isVersion17()) {
-                    Tools::redirect($failUrl);
-                }
                 $this->redirectWithNotifications($failUrl);
             }
             $saferPayOrder->transaction_id = $authResponse->getTransaction()->getId();
@@ -128,6 +126,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                 $secureService->processNotSecuredPayment($order);
                 $isOrderCanceled = $secureService->isSaferPayOrderCanceled($orderId);
                 if ($isOrderCanceled) {
+                    $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
                     $failUrl = $this->context->link->getModuleLink(
                         $this->module->name,
                         'failIFrame',
@@ -139,11 +138,6 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                         ],
                         true
                     );
-                    if (!SaferPayConfig::isVersion17()) {
-                        $this->context->cookie->saferpay_payment_canceled_error =
-                            json_encode($this->module->l('We couldn\'t authorize your payment. Please try again.'));
-                        Tools::redirect($failUrl);
-                    }
                     $this->redirectWithNotifications($failUrl);
                 }
 

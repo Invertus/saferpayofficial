@@ -105,7 +105,7 @@ services:
     Invertus\SaferPay\Service\SaferPayExceptionService:
         arguments:
             - '@saferpay'
-            
+
     Invertus\SaferPay\Service\SaferPayErrorDisplayService:
 
     Invertus\SaferPay\Service\CartDuplicationService:

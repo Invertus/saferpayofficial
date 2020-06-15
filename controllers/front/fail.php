@@ -97,13 +97,13 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             true,
             null
         );
+        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
+
         if (!SaferPayConfig::isVersion17()) {
-            $this->context->cookie->saferpay_payment_canceled_error =
-                json_encode($this->module->l('We couldn\'t authorize your payment. Please try again.'));
-            Tools::redirect($orderLink);
+            $this->redirectWithNotifications($orderLink);
         }
 
-        $this->warning[] = $this->l('We couldn\'t authorize your payment. Please try again.');
+        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
         $this->redirectWithNotifications(
             $this->context->link->getPageLink(
                 'cart',
