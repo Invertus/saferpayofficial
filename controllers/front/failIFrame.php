@@ -43,10 +43,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends ModuleFrontControl
         $orderLink = $this->context->link->getPageLink(
             'order',
             true,
-            null,
-            [
-                'step' => 2,
-            ]
+            null
         );
 
         if (SaferPayConfig::isVersion17()) {

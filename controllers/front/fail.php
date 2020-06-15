@@ -94,10 +94,7 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
         $orderLink = $this->context->link->getPageLink(
             'order',
             true,
-            null,
-            [
-                'step' => 2,
-            ]
+            null
         );
         if (!SaferPayConfig::isVersion17()) {
             $this->context->cookie->saferpay_payment_canceled_error =
