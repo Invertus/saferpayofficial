@@ -22,9 +22,10 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 
-class SaferPayOfficialCreditCardsModuleFrontController extends ModuleFrontController
+class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'creditCards';
 

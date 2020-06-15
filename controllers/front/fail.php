@@ -22,9 +22,10 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
-class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
+class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayController
 {
 
     /**

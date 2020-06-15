@@ -22,11 +22,12 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
-class SaferPayOfficialIFrameModuleFrontController extends ModuleFrontController
+class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayController
 {
     public $display_column_left = false;
 

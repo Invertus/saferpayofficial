@@ -21,10 +21,11 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\CartDuplicationService;
 
-class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontController
+class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferPayController
 {
     public function postProcess()
     {

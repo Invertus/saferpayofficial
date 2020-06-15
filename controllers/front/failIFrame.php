@@ -22,8 +22,9 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 
-class SaferPayOfficialFailIFrameModuleFrontController extends ModuleFrontController
+class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayController
 {
     protected $display_header = false;
     protected $display_footer = false;

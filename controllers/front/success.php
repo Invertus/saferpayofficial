@@ -1,4 +1,7 @@
 <?php
+
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
+
 /**
  *NOTICE OF LICENSE
  *
@@ -21,7 +24,7 @@
  *@license   SIX Payment Services
  */
 
-class SaferPayOfficialSuccessModuleFrontController extends ModuleFrontController
+class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
     public function postProcess()
     {

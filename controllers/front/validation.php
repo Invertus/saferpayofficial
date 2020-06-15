@@ -22,11 +22,12 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
-class SaferPayOfficialValidationModuleFrontController extends ModuleFrontController
+class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
     /**
      * @see FrontController::postProcess()
