@@ -83,10 +83,10 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
             if ($cardAlias->delete()) {
-                $this->success[] = $this->module->l('Successfully removed credit card');
+                $this->success[] = $this->module->l('Successfully removed credit card', self::FILENAME);
                 return;
             }
-            $this->errors[] = $this->module->l('Failed to removed credit card');
+            $this->errors[] = $this->module->l('Failed to removed credit card', self::FILENAME);
         }
         parent::postProcess();
     }

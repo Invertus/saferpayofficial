@@ -32,6 +32,8 @@ use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 
 class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'successIFrame';
+
     protected $display_header = false;
     protected $display_footer = false;
 
@@ -92,7 +94,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                     $selectedCard
                 );
             } catch (SaferPayApiException $e) {
-                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
+                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
                 $failUrl = $this->context->link->getModuleLink(
                     $this->module->name,
                     'failValidation',
@@ -126,7 +128,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                 $secureService->processNotSecuredPayment($order);
                 $isOrderCanceled = $secureService->isSaferPayOrderCanceled($orderId);
                 if ($isOrderCanceled) {
-                    $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
+                    $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
                     $failUrl = $this->context->link->getModuleLink(
                         $this->module->name,
                         'failIFrame',

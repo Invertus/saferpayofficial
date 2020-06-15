@@ -27,6 +27,8 @@ use Invertus\SaferPay\Service\CartDuplicationService;
 
 class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'failValidation';
+
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');

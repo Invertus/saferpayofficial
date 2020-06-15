@@ -27,6 +27,7 @@ use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'fail';
 
     /**
      * ID Order Variable Declaration.
@@ -97,7 +98,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             true,
             null
         );
-        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
+        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
 
         if (!SaferPayConfig::isVersion17()) {
             $this->redirectWithNotifications($orderLink);

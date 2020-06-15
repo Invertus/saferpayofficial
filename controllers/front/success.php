@@ -26,6 +26,8 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 
 class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'success';
+
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');

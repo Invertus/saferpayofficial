@@ -31,6 +31,8 @@ use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'notify';
+
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');

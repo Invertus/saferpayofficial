@@ -29,6 +29,8 @@ use Invertus\SaferPay\Service\SaferPayInitialize;
 
 class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'validation';
+
     /**
      * @see FrontController::postProcess()
      */
@@ -61,7 +63,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         }
         if (!$authorized) {
             $this->errors[] =
-                $this->module->l('This payment method is not available.', 'validation');
+                $this->module->l('This payment method is not available.', self::FILENAME);
             $this->redirectWithNotifications($redirectLink);
         }
         $customer = new Customer($cart->id_customer);

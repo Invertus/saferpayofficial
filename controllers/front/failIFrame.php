@@ -26,6 +26,8 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 
 class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'failIFrame';
+
     protected $display_header = false;
     protected $display_footer = false;
 
