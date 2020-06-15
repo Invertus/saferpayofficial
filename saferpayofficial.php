@@ -336,6 +336,7 @@ class SaferPayOfficial extends PaymentModule
             if (isset($this->context->cookie->saferpay_payment_canceled_error)) {
                 $this->context->controller->errors[] = json_decode($this->context->cookie->saferpay_payment_canceled_error);
                 unset($this->context->cookie->saferpay_payment_canceled_error);
+                unset($_SERVER['HTTP_REFERER']);
             }
         }
     }
