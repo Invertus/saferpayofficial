@@ -60,12 +60,11 @@ class SaferPay3DSecureService
      */
     public function processNotSecuredPayment(Order $order)
     {
-        $this->cartDuplicationService->restoreCart($order->id_cart);
         $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
         if ($defaultBehavior) {
             return;
         }
-
+        $this->cartDuplicationService->restoreCart($order->id_cart);
         $this->orderStatusService->cancel($order);
     }
 

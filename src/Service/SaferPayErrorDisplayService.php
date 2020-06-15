@@ -10,9 +10,11 @@ class SaferPayErrorDisplayService
     {
         $context = Context::getContext();
         if (isset($context->cookie->$id)) {
-            $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+            if (SaferPayConfig::isVersion17()) {
+                $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+                unset($_SERVER['HTTP_REFERER']);
+            }
             unset($context->cookie->$id);
-            unset($_SERVER['HTTP_REFERER']);
         }
     }
 

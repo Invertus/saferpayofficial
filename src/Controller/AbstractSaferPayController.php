@@ -6,7 +6,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 
 class AbstractSaferPayController extends \ModuleFrontControllerCore
 {
-    public function redirectWithNotifications($url)
+    public function redirectWithNotifications()
     {
         $notifications = json_encode(array(
             'error' => $this->errors,

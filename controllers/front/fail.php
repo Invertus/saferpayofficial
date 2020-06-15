@@ -103,7 +103,6 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             $this->redirectWithNotifications($orderLink);
         }
 
-        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.');
         $this->redirectWithNotifications(
             $this->context->link->getPageLink(
                 'cart',
