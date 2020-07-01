@@ -140,7 +140,7 @@ class SaferPayConfig
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
-            SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => 0,
+            SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => 1,
 
             self::TEST_MODE => 1,
         ];
