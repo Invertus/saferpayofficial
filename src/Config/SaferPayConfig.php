@@ -93,6 +93,8 @@ class SaferPayConfig
     const SAFERPAY_PAYMENT_CANCELED = 'SAFERPAY_PAYMENT_CANCELED';
     const SAFERPAY_PAYMENT_AUTHORIZATION_FAILED = 'SAFERPAY_PAYMENT_AUTHORIZATION_FAILED';
 
+    const SAFERPAY_SEND_ORDER_CONFIRMATION = 'SAFERPAY_SEND_ORDER_CONFIRMATION';
+
     const SAFERPAY_TEMPLATE_LOCATION = 'module:saferpayofficial/views/templates/';
 
     const AMOUNT_MULTIPLIER_FOR_API = 100;
@@ -138,6 +140,7 @@ class SaferPayConfig
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
+            SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => 0,
 
             self::TEST_MODE => 1,
         ];

@@ -244,6 +244,31 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ],
             ],
         ];
+
+        if (SaferPayConfig::isVersion17()) {
+            $this->fields_options[] =
+                [
+                    'title' => $this->l('Email sending'),
+                    'icon' => 'icon-settings',
+                    'fields' => [
+                        SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => [
+                            'title' => $this->l('Send order confirmation email'),
+                            'desc' => $this->l('Send order confirmation email before payment is executed'),
+                            'validation' => 'isBool',
+                            'cast' => 'intval',
+                            'type' => 'bool',
+                        ],
+                    ],
+                    'buttons' => [
+                        'save_and_connect' => [
+                            'title' => $this->l('Save'),
+                            'icon' => 'process-icon-save',
+                            'class' => 'btn btn-default pull-right',
+                            'type' => 'submit',
+                        ],
+                    ],
+                ];
+        }
     }
     public function setMedia($isNewTheme = false)
     {

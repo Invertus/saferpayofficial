@@ -42,7 +42,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.0.1';
+        $this->version = '1.0.2';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -540,5 +540,24 @@ class SaferPayOfficial extends PaymentModule
         );
 
         return $OrderConfirmationMessageTemplate->getHtml();
+    }
+
+    public function hookActionEmailSendBefore($params)
+    {
+        if (!isset($params['cart']->id)) {
+            return true;
+        }
+
+        $cart = new Cart($params['cart']->id);
+        if (Order::getByCartId($cart->id)->module !== $this->name) {
+            return true;
+        }
+
+        if ($params['template'] === 'order_conf') {
+            if (Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION)) {
+                return true;
+            }
+            return false;
+        }
     }
 }
