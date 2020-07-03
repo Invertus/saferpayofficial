@@ -22,12 +22,15 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
-class SaferPayOfficialValidationModuleFrontController extends ModuleFrontController
+class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'validation';
+
     /**
      * @see FrontController::postProcess()
      */
@@ -60,10 +63,7 @@ class SaferPayOfficialValidationModuleFrontController extends ModuleFrontControl
         }
         if (!$authorized) {
             $this->errors[] =
-                $this->l('This payment method is not available.', 'validation');
-            if (!SaferPayConfig::isVersion17()) {
-                Tools::redirect($redirectLink);
-            }
+                $this->module->l('This payment method is not available.', self::FILENAME);
             $this->redirectWithNotifications($redirectLink);
         }
         $customer = new Customer($cart->id_customer);
@@ -114,9 +114,6 @@ class SaferPayOfficialValidationModuleFrontController extends ModuleFrontControl
                 ],
                 true
             );
-            if (!SaferPayConfig::isVersion17()) {
-                Tools::redirect($redirectLink);
-            }
             $this->redirectWithNotifications($redirectLink);
         }
         /** @var Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder $saferPayOrderBuilder */

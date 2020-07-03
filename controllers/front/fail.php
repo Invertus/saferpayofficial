@@ -22,10 +22,12 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
-class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
+class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'fail';
 
     /**
      * ID Order Variable Declaration.
@@ -91,41 +93,29 @@ class SaferPayOfficialFailModuleFrontController extends ModuleFrontController
     {
         parent::initContent();
 
-        $cartId = Tools::getValue('cartId');
-        $moduleId = Tools::getValue('moduleId');
-        $orderId = Tools::getValue('orderId');
-        $secureKey = Tools::getValue('secureKey');
-
         $orderLink = $this->context->link->getPageLink(
-            'order-confirmation',
+            'order',
             true,
-            null,
-            [
-                'id_cart' => $cartId,
-                'id_module' => $moduleId,
-                'id_order' => $orderId,
-                'key' => $secureKey,
-                'cancel' => 1,
-            ]
+            null
         );
+        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+
         if (!SaferPayConfig::isVersion17()) {
-            Tools::redirect($orderLink);
+            $this->redirectWithNotifications($orderLink);
         }
 
-        $order = new Order($this->id_order);
-        if ((bool) version_compare(_PS_VERSION_, '1.7', '>=')) {
-            $this->context->smarty->assign([
-                'order' => $this->order_presenter->present($order),
-            ]);
-        } else {
-            $this->context->smarty->assign([
-                'id_order' => $this->id_order,
-                'email' => $this->context->customer->email,
-            ]);
-        }
-
-        $this->setTemplate(
-            sprintf('module:%s/views/templates/front/order_fail.tpl', $this->module->name)
+        $this->redirectWithNotifications(
+            $this->context->link->getPageLink(
+                'cart',
+                null,
+                $this->context->language->id,
+                array(
+                    'action' => 'show',
+                ),
+                false,
+                null,
+                false
+            )
         );
     }
 }

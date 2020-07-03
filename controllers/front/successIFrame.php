@@ -23,14 +23,17 @@
 
 use Invertus\SaferPay\Api\Request\AuthorizationService;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator;
 use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 
-class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontController
+class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'successIFrame';
+
     protected $display_header = false;
     protected $display_footer = false;
 
@@ -91,6 +94,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontCont
                     $selectedCard
                 );
             } catch (SaferPayApiException $e) {
+                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
                 $failUrl = $this->context->link->getModuleLink(
                     $this->module->name,
                     'failValidation',
@@ -102,9 +106,6 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontCont
                     ],
                     true
                 );
-                if (!SaferPayConfig::isVersion17()) {
-                    Tools::redirect($failUrl);
-                }
                 $this->redirectWithNotifications($failUrl);
             }
             $saferPayOrder->transaction_id = $authResponse->getTransaction()->getId();
@@ -127,6 +128,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontCont
                 $secureService->processNotSecuredPayment($order);
                 $isOrderCanceled = $secureService->isSaferPayOrderCanceled($orderId);
                 if ($isOrderCanceled) {
+                    $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
                     $failUrl = $this->context->link->getModuleLink(
                         $this->module->name,
                         'failIFrame',
@@ -138,9 +140,6 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends ModuleFrontCont
                         ],
                         true
                     );
-                    if (!SaferPayConfig::isVersion17()) {
-                        Tools::redirect($failUrl);
-                    }
                     $this->redirectWithNotifications($failUrl);
                 }
 

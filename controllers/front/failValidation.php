@@ -21,10 +21,14 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Service\CartDuplicationService;
 
-class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontController
+class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'failValidation';
+
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
@@ -47,11 +51,16 @@ class SaferPayOfficialFailValidationModuleFrontController extends ModuleFrontCon
         $order = new Order($orderId);
         $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
         /** @var SaferPayOrderRepository $orderRepo */
+        /** @var CartDuplicationService $cartDuplicationService */
         $orderRepo = $this->module->getContainer()->get('saferpay.order.repository');
+        $cartDuplicationService = $this->module->getContainer()->get(CartDuplicationService::class);
+
         $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $saferPayOrder->canceled = 1;
         $saferPayOrder->update();
+
+        $cartDuplicationService->restoreCart($cartId);
         $isBusinessLicence = Tools::getValue(SaferPayOfficial::IS_BUSINESS_LICENCE);
         $controller = $isBusinessLicence ? 'failIFrame' : 'fail';
 

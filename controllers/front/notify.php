@@ -23,13 +23,16 @@
 
 use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
 use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 
-class SaferPayOfficialNotifyModuleFrontController extends ModuleFrontController
+class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'notify';
+
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');

@@ -22,12 +22,15 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
-class SaferPayOfficialIFrameModuleFrontController extends ModuleFrontController
+class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'iframe';
+
     public $display_column_left = false;
 
     public function postProcess()
@@ -58,10 +61,7 @@ class SaferPayOfficialIFrameModuleFrontController extends ModuleFrontController
         }
         if (!$authorized) {
             $this->errors[] =
-                $this->l('This payment method is not available.', 'validation');
-            if (!SaferPayConfig::isVersion17()) {
-                Tools::redirect($redirectLink);
-            }
+                $this->module->l('This payment method is not available.', self::FILENAME);
             $this->redirectWithNotifications($redirectLink);
         }
         $customer = new Customer($cart->id_customer);
@@ -125,9 +125,6 @@ class SaferPayOfficialIFrameModuleFrontController extends ModuleFrontController
                 ],
                 true
             );
-            if (!SaferPayConfig::isVersion17()) {
-                Tools::redirect($redirectLink);
-            }
             $this->redirectWithNotifications($redirectLink);
         }
         $saferPayOrderBuilder->create(

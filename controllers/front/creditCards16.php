@@ -22,9 +22,10 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 
-class SaferPayOfficialCreditCards16ModuleFrontController extends ModuleFrontController
+class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'creditCards16';
 
@@ -90,10 +91,10 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends ModuleFrontCont
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
             if ($cardAlias->delete()) {
-                $this->success[] = $this->l('Successfully removed credit card');
+                $this->success[] = $this->module->l('Successfully removed credit card', self::FILENAME);
                 return;
             }
-            $this->errors[] = $this->l('Failed to removed credit card');
+            $this->errors[] = $this->module->l('Failed to removed credit card', self::FILENAME);
         }
         parent::postProcess();
     }
@@ -103,7 +104,7 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends ModuleFrontCont
         $breadcrumb = $this->getBreadcrumbLinks();
 
         $breadcrumb['links'][] = [
-            'title' => $this->l('Your account', self::FILENAME),
+            'title' => $this->module->l('Your account', self::FILENAME),
             'url' => $this->context->link->getPageLink('my-account'),
         ];
 

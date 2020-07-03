@@ -22,9 +22,12 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 
-class SaferPayOfficialFailIFrameModuleFrontController extends ModuleFrontController
+class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'failIFrame';
+
     protected $display_header = false;
     protected $display_footer = false;
 
@@ -40,22 +43,10 @@ class SaferPayOfficialFailIFrameModuleFrontController extends ModuleFrontControl
     {
         parent::initContent();
 
-        $cartId = Tools::getValue('cartId');
-        $moduleId = Tools::getValue('moduleId');
-        $orderId = Tools::getValue('orderId');
-        $secureKey = Tools::getValue('secureKey');
-
         $orderLink = $this->context->link->getPageLink(
-            'order-confirmation',
+            'order',
             true,
-            null,
-            [
-                'id_cart' => $cartId,
-                'id_module' => $moduleId,
-                'id_order' => $orderId,
-                'key' => $secureKey,
-                'cancel' => 1,
-            ]
+            null
         );
 
         if (SaferPayConfig::isVersion17()) {

@@ -1,4 +1,7 @@
 <?php
+
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
+
 /**
  *NOTICE OF LICENSE
  *
@@ -21,8 +24,10 @@
  *@license   SIX Payment Services
  */
 
-class SaferPayOfficialSuccessModuleFrontController extends ModuleFrontController
+class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
+    const FILENAME = 'success';
+
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
