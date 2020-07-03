@@ -25,9 +25,15 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_0_2()
+/**
+ * @param Module $params
+ * @return bool
+ */
+function upgrade_module_1_0_2($module)
 {
     Configuration::updateValue('SAFERPAY_SEND_ORDER_CONFIRMATION', 1);
+
+    $module->registerHook('actionEmailSendBefore');
 
     return true;
 }
