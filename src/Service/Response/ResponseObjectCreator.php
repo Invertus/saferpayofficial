@@ -66,22 +66,23 @@ class ResponseObjectCreator
     {
         $brandObj = new Brand($paymentMeans->Brand->PaymentMethod, $paymentMeans->Brand->Name);
 
-        $card = $paymentMeans->Card;
-        $cardObj = new Card();
-        $cardObj->setMaskedNumber($card->MaskedNumber);
-        $cardObj->setExpYear($card->ExpYear);
-        $cardObj->setExpMonth($card->ExpMonth);
-        if (isset($card->HolderName)) {
-            $cardObj->setHolderName($card->HolderName);
-        }
-        if (isset($card->CountryCode)) {
-            $cardObj->setCountryCode($card->CountryCode);
-        }
-
         $paymentMeansObj = new PaymentMeans();
+        if (property_exists($paymentMeans, 'Card')) {
+            $card = $paymentMeans->Card;
+            $cardObj = new Card();
+            $cardObj->setMaskedNumber($card->MaskedNumber);
+            $cardObj->setExpYear($card->ExpYear);
+            $cardObj->setExpMonth($card->ExpMonth);
+            if (isset($card->HolderName)) {
+                $cardObj->setHolderName($card->HolderName);
+            }
+            if (isset($card->CountryCode)) {
+                $cardObj->setCountryCode($card->CountryCode);
+            }
+            $paymentMeansObj->setCard($cardObj);
+        }
         $paymentMeansObj->setBrand($brandObj);
         $paymentMeansObj->setDisplayText($paymentMeans->DisplayText);
-        $paymentMeansObj->setCard($cardObj);
 
         return $paymentMeansObj;
     }

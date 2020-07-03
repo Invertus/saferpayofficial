@@ -43,8 +43,7 @@ class SaferPayAssertBuilder
         $assert->id_saferpay_order = $saferPayOrderId;
         $assert->amount = $assertBody->getTransaction()->getAmount()->getValue();
         $assert->status = $assertBody->getTransaction()->getStatus();
-        $assert->exp_year = $assertBody->getPaymentMeans()->getCard()->getExpYear();
-        $assert->exp_month = $assertBody->getPaymentMeans()->getCard()->getExpMonth();
+
         $assert->currency_code = $assertBody->getTransaction()->getAmount()->getCurrencyCode();
         $assert->uncertain = 0;
         $assert->brand = $assertBody->getPaymentMeans()->getBrand()->getName();
@@ -55,6 +54,10 @@ class SaferPayAssertBuilder
         $assert->acceptance = 0;
         $assert->is_test = 0;
         $assert->card_number = $assertBody->getPaymentMeans()->getDisplayText();
+        if ($assertBody->getPaymentMeans()->getCard() !== null) {
+            $assert->exp_year = $assertBody->getPaymentMeans()->getCard()->getExpYear();
+            $assert->exp_month = $assertBody->getPaymentMeans()->getCard()->getExpMonth();
+        }
         if ($assertBody->getLiability() !== null) {
             $assert->liability_shift = $assertBody->getLiability()->getLiabilityShift();
             $assert->liability_entity = $assertBody->getLiability()->getLiableEntity();
