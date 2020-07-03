@@ -87,6 +87,7 @@ class Installer extends AbstractInstaller
         $this->module->registerHook('displayCustomerAccount');
         $this->module->registerHook('displayPayment');
         $this->module->registerHook('paymentReturn');
+        $this->module->registerHook('actionEmailSendBefore');
     }
 
     private function installConfiguration()
