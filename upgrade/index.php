@@ -21,31 +21,12 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Service;
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 
-use Context;
-use Invertus\SaferPay\Config\SaferPayConfig;
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
 
-class SaferPayErrorDisplayService
-{
-    public function showCookieError($id)
-    {
-        $context = Context::getContext();
-        if (isset($context->cookie->$id)) {
-            if (SaferPayConfig::isVersion17()) {
-                $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
-                unset($_SERVER['HTTP_REFERER']);
-            }
-            unset($context->cookie->$id);
-        }
-    }
-
-    private function stripSlashesDeep($value)
-    {
-        $value = is_array($value) ?
-            array_map('stripslashes', $value) :
-            stripslashes($value);
-
-        return $value;
-    }
-}
+header("Location: ../");
+exit;
