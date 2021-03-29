@@ -25,11 +25,22 @@ namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\DTO\Request\Authorization\AuthorizationRequest;
 
-class AuthorizationRequestObjectCreator extends RequestObjectCreator
+class AuthorizationRequestObjectCreator
 {
-    public function create($token, $moduleVersion, $saveCard)
+    /**
+     * @var RequestObjectCreator
+     */
+    private $requestObjectCreator;
+
+    public function __construct(RequestObjectCreator $requestObjectCreator)
     {
-        $requestHeader = $this->createRequestHeader();
-        return new AuthorizationRequest($requestHeader, $token, $moduleVersion, $saveCard);
+        $this->requestObjectCreator = $requestObjectCreator;
+    }
+
+    public function create($token, $saveCard)
+    {
+        $requestHeader = $this->requestObjectCreator->createRequestHeader();
+
+        return new AuthorizationRequest($requestHeader, $token, $saveCard);
     }
 }

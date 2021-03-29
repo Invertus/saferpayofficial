@@ -1,0 +1,44 @@
+#main {
+    background-color: #fff;
+    padding: 36px 42px;
+    border-radius: 36px;
+    box-shadow: 14px 14px #b3b3b3;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    max-width: 700px;
+}
+
+.form-group.row {
+    background-color: #E5E5E5;
+    border-radius: 8px;
+}
+
+.col-form-label {
+    line-height: 2;
+    text-align: right;
+    padding-right: 0px;
+}
+
+input.form-control {
+    border-color: #CFCFCF;
+    height: 46px;
+    padding-right: 0px;
+}
+
+.col-sm-8 {
+    padding-right: 0px;
+}
+
+#wrapper, #center_column {
+    height: 600px;
+}
+
+@media (max-width: 576px) {
+    .col-sm-8 {
+        padding-left: 0;
+    }
+}
+
+#fields-card-number, #fields-expiration, #fields-holder-name, #fields-cvc {
+    width: 100% !important;
+}

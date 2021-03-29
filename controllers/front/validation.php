@@ -83,7 +83,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         if (!$orderId) {
             $this->module->validateOrder(
                 $cart->id,
-                _SAFERPAY_PAYMENT_AWAITING_,
+                Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
                 $total,
                 $paymentMethod,
                 null,
@@ -95,13 +95,13 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         }
 
         /** @var SaferPayInitialize $initializeService */
-        $initializeService = $this->module->getContainer()->get(SaferPayInitialize::class);
+        $initializeService = $this->module->getModuleContainer()->get(SaferPayInitialize::class);
         try {
-            $isBusinessLicence = Tools::getValue(SaferPayOfficial::IS_BUSINESS_LICENCE);
+            $isBusinessLicence = Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
             $initializeBody = $initializeService->initialize($paymentMethod, $isBusinessLicence);
         } catch (SaferPayApiException $e) {
             /** @var SaferPayExceptionService $exceptionService */
-            $exceptionService = $this->module->getContainer()->get(SaferPayExceptionService::class);
+            $exceptionService = $this->module->getModuleContainer()->get(SaferPayExceptionService::class);
             $this->errors[] = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
             $redirectLink = $this->context->link->getModuleLink(
                 $this->module->name,
@@ -117,7 +117,8 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $this->redirectWithNotifications($redirectLink);
         }
         /** @var Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getContainer()->get('saferpay.order.builder');
+        $saferPayOrderBuilder = $this->module->getModuleContainer()
+            ->get(\Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder::class);
         $saferPayOrderBuilder->create(
             $initializeBody,
             $this->context->cart,

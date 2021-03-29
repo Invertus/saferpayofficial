@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Api\Request;
 
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
+use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
@@ -60,6 +61,13 @@ class AssertService
         $this->assertBuilder = $assertBuilder;
     }
 
+    /**
+     * @param AssertRequest $assertRequest
+     * @param int $saferPayOrderId
+     *
+     * @return AssertBody
+     * @throws \Exception
+     */
     public function assert(AssertRequest $assertRequest, $saferPayOrderId)
     {
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
@@ -78,14 +86,19 @@ class AssertService
         } catch (Exception $e) {
             throw new SaferPayApiException('Assert API failed', SaferPayApiException::ASSERT);
         }
-        $responseBody = json_decode($response->getBody()->getContents());
 
+        return json_decode($response->getBody()->getContents());
+    }
+
+    /**
+     * @param object $responseBody
+     * @param int $saferPayOrderId
+     *
+     * @return AssertBody
+     */
+    public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId)
+    {
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
-
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-        $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
-        $saferPayOrder->update();
-
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
 
         return $assertBody;

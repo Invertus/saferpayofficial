@@ -44,7 +44,7 @@ class SaferPayErrorDisplayService
     {
         $value = is_array($value) ?
             array_map('stripslashes', $value) :
-            stripslashes($value);
+            \Tools::stripslashes($value);
 
         return $value;
     }

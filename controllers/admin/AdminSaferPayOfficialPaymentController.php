@@ -23,9 +23,11 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Restriction\RestrictionException;
+use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayLogoRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
+use Invertus\SaferPay\Service\SaferPayFieldCreator;
 use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayPaymentCreator;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
@@ -56,27 +58,37 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         }
 
         /** @var SaferPayPaymentCreator $paymentCreation */
-        $paymentCreation = $this->module->getContainer()->get(SaferPayPaymentCreator::class);
+        $paymentCreation = $this->module->getModuleContainer()->get(SaferPayPaymentCreator::class);
+
         /** @var SaferPayLogoCreator $logoCreation */
-        $logoCreation = $this->module->getContainer()->get(SaferPayLogoCreator::class);
+        $logoCreation = $this->module->getModuleContainer()->get(SaferPayLogoCreator::class);
+
+        /** @var SaferPayFieldCreator $fieldCreation */
+        $fieldCreation = $this->module->getModuleContainer()->get(SaferPayFieldCreator::class);
+
         /** @var SaferPayRestrictionCreator $restrictionCreator */
-        $restrictionCreator = $this->module->getContainer()->get(SaferPayRestrictionCreator::class);
+        $restrictionCreator = $this->module->getModuleContainer()->get(SaferPayRestrictionCreator::class);
+
         $success = true;
         foreach (SaferPayConfig::PAYMENT_METHODS as $paymentMethod) {
             $isActive = Tools::getValue($paymentMethod . '_enable');
             $success &= $paymentCreation->updatePayment($paymentMethod, $isActive);
+
             $isActive = Tools::getValue($paymentMethod . '_logo');
             $success &= $logoCreation->updateLogo($paymentMethod, $isActive);
+
+            $isActive = Tools::getValue($paymentMethod . '_field');
+            $success &= $fieldCreation->updateField($paymentMethod, $isActive);
 
             try {
                 $success &= $restrictionCreator->updateRestriction(
                     $paymentMethod,
-                    SaferPayRestrictionCreator::COUNTRY_RESTRICTION,
+                    SaferPayRestrictionCreator::RESTRICTION_COUNTRY,
                     Tools::getValue($paymentMethod . SaferPayRestrictionCreator::COUNTRY_SUFFIX)
                 );
                 $success &= $restrictionCreator->updateRestriction(
                     $paymentMethod,
-                    SaferPayRestrictionCreator::CURRENCY_RESTRICTION,
+                    SaferPayRestrictionCreator::RESTRICTION_CURRENCY,
                     Tools::getValue($paymentMethod . SaferPayRestrictionCreator::CURRENCY_SUFFIX)
                 );
             } catch (RestrictionException $e) {
@@ -105,12 +117,18 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     protected function renderShoppingPointOptions()
     {
         $referralOptionsForm = new HelperForm();
+
         /** @var SaferPayPaymentRepository $paymentRepository */
-        $paymentRepository = $this->module->getContainer()->get(SaferPayPaymentRepository::class);
+        $paymentRepository = $this->module->getModuleContainer()->get(SaferPayPaymentRepository::class);
+
         /** @var SaferPayLogoRepository $logoRepository */
-        $logoRepository = $this->module->getContainer()->get(SaferPayLogoRepository::class);
+        $logoRepository = $this->module->getModuleContainer()->get(SaferPayLogoRepository::class);
+
+        /** @var SaferPayLogoRepository $fieldsRepository */
+        $fieldRepository = $this->module->getModuleContainer()->get(SaferPayFieldRepository::class);
+
         /** @var SaferPayRestrictionRepository $restrictionRepository */
-        $restrictionRepository = $this->module->getContainer()->get(SaferPayRestrictionRepository::class);
+        $restrictionRepository = $this->module->getModuleContainer()->get(SaferPayRestrictionRepository::class);
 
         $this->initForm();
         $fieldsForm = [];
@@ -119,13 +137,14 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         foreach (SaferPayConfig::PAYMENT_METHODS as $paymentMethod) {
             $isActive = $paymentRepository->isActiveByName($paymentMethod);
             $isLogoActive = $logoRepository->isActiveByName($paymentMethod);
+            $isFieldActive = $fieldRepository->isActiveByName($paymentMethod);
             $selectedCountries = $restrictionRepository->getSelectedIdsByName(
                 $paymentMethod,
-                SaferPayRestrictionCreator::COUNTRY_RESTRICTION
+                SaferPayRestrictionCreator::RESTRICTION_COUNTRY
             );
             $selectedCurrencies = $restrictionRepository->getSelectedIdsByName(
                 $paymentMethod,
-                SaferPayRestrictionCreator::CURRENCY_RESTRICTION
+                SaferPayRestrictionCreator::RESTRICTION_CURRENCY
             );
 
             $this->context->smarty->assign(
@@ -137,6 +156,8 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
                     'countrySelect' => $selectedCountries,
                     'currencyOptions' => $this->getActiveCurrenciesList(),
                     'currencySelect' => $selectedCurrencies,
+                    'is_field_active' => $isFieldActive,
+                    'supported_field_payments' => SaferPayConfig::FIELD_SUPPORTED_PAYMENT_METHODS,
                 ]
             );
             $referralOptionsForm->fields_value[$paymentMethod] =

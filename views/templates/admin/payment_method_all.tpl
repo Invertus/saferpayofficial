@@ -43,6 +43,17 @@
             </label>
         </div>
     </div>
+    <div class="col-lg-2">
+        <div class="checkbox">
+            <label class="container-checkbox">
+                <input type="checkbox"
+                       id="all_field_on"
+                       value="1">
+                <span class="checkmark"></span>
+
+            </label>
+        </div>
+    </div>
     <div class="col-lg-3">
         {html_options
         name='all_countries[]'

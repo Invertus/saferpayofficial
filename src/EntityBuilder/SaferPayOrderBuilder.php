@@ -30,19 +30,15 @@ use SaferPayOrder;
 
 class SaferPayOrderBuilder
 {
+    //TODO to pass $body as InitializeBody.
     public function create($body, Cart $cart, Customer $customer, $isTransaction, $isBusinessLicence)
     {
-        if ($isBusinessLicence) {
-            $redirectUrl = $body->Redirect->RedirectUrl;
-        } else {
-            $redirectUrl = $body->RedirectUrl;
-        }
         $orderId = Order::getOrderByCartId($cart->id);
         $saferPayOrder = new SaferPayOrder();
         $saferPayOrder->token = $body->Token;
         $saferPayOrder->id_order = $orderId;
         $saferPayOrder->id_customer = $customer->id;
-        $saferPayOrder->redirect_url = $redirectUrl;
+        $saferPayOrder->redirect_url = $this->getRedirectionUrl($body);
         $saferPayOrder->is_transaction = $isTransaction;
         $saferPayOrder->add();
 
@@ -61,5 +57,23 @@ class SaferPayOrderBuilder
         $saferPayOrder->add();
 
         return $saferPayOrder;
+    }
+
+    /**
+     * @param object $initializeBody
+     *
+     * @return string
+     */
+    private function getRedirectionUrl($initializeBody)
+    {
+        if (isset($initializeBody->RedirectUrl)) {
+            return $initializeBody->RedirectUrl;
+        }
+
+        if (isset($initializeBody->Redirect->RedirectUrl)) {
+            return $initializeBody->Redirect->RedirectUrl;
+        }
+
+        return '';
     }
 }

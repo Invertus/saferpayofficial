@@ -1,0 +1,78 @@
+.input-box .col {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.input-container, .button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.form-control {
+    border: none;
+}
+
+.submit-button {
+    width: 100%;
+}
+
+.input-box .col {
+    padding-right: 5px;
+    padding-bottom: 5px;
+}
+
+.input-box .col:last-child {
+    padding-right: 0;
+    padding-bottom: 0;
+}
+
+@media (max-width: 767px) {
+    .input-box .col {
+        padding-right: 0;
+    }
+}
+
+.credit-card-image {
+    width: 384px;
+    height: 249px;
+}
+
+#credit-card {
+    background: url(../../../img/example-card/credit-card-front.png) no-repeat;
+    background-size: contain;
+}
+
+.cardnumber {
+    background: url(../../../img/example-card/credit-card-front-card-number.png) no-repeat !important;
+}
+
+.expiration {
+    background: url(../../../img/example-card/credit-card-front-expiration.png) no-repeat !important;
+}
+
+.cvc {
+    background: url(../../../img/example-card/credit-card-back-cvc.png) no-repeat !important;
+}
+
+.image-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    transition: transform 1s;
+}
+
+.rotate-to-back {
+    transform: rotateY(-180deg);
+}
+
+.rotate-element {
+    transform: rotateY(180deg);
+}
+
+#fields-card-number, #fields-expiration, #fields-cvc {
+    width: 100% !important;
+}
+
+#wrapper, #center_column {
+    height: 600px;
+}

@@ -32,13 +32,13 @@ class SaferPayRestrictionRepository
     public function getRestrictionIdsByName($paymentName, $restrictionType)
     {
         switch ($restrictionType) {
-            case SaferPayRestrictionCreator::COUNTRY_RESTRICTION:
+            case SaferPayRestrictionCreator::RESTRICTION_COUNTRY:
                 $query = new DbQuery();
                 $query->select('`id_saferpay_country` as id');
                 $query->from('saferpay_country');
                 $query->where('payment_name = "' . pSQL($paymentName) . '"');
                 break;
-            case SaferPayRestrictionCreator::CURRENCY_RESTRICTION:
+            case SaferPayRestrictionCreator::RESTRICTION_CURRENCY:
                 $query = new DbQuery();
                 $query->select('`id_saferpay_currency` as id');
                 $query->from('saferpay_currency');
@@ -54,7 +54,7 @@ class SaferPayRestrictionRepository
     public function getSelectedIdsByName($paymentName, $restrictionType)
     {
         switch ($restrictionType) {
-            case SaferPayRestrictionCreator::COUNTRY_RESTRICTION:
+            case SaferPayRestrictionCreator::RESTRICTION_COUNTRY:
                 $query = new DbQuery();
                 $query->select('`id_country`');
                 $query->from('saferpay_country');
@@ -66,7 +66,7 @@ class SaferPayRestrictionRepository
                     $result[] = $row['id_country'];
                 }
                 break;
-            case SaferPayRestrictionCreator::CURRENCY_RESTRICTION:
+            case SaferPayRestrictionCreator::RESTRICTION_CURRENCY:
                 $query = new DbQuery();
                 $query->select('`id_currency`');
                 $query->from('saferpay_currency');

@@ -27,6 +27,9 @@ use Configuration;
 use Context;
 use Db;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Service\SaferPayLogoCreator;
+use Invertus\SaferPay\Service\SaferPayPaymentCreator;
+use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Language;
 use OrderState;
 use Tab;
@@ -75,7 +78,94 @@ class Installer extends AbstractInstaller
             }
         }
 
+        if (!$this->enableDefaultPaymentSettings()) {
+            $this->errors[] = $this->module->l('Failed to enable default payment settings', __CLASS__);
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    private function enableDefaultPaymentSettings()
+    {
+        /** @var SaferPayPaymentCreator $paymentCreator */
+        $paymentCreator = $this->module->getModuleContainer()->get(SaferPayPaymentCreator::class);
+
+        /** @var SaferPayLogoCreator $logoCreator */
+        $logoCreator = $this->module->getModuleContainer()->get(SaferPayLogoCreator::class);
+
+        /** @var SaferPayRestrictionCreator $restrictionCreator */
+        $restrictionCreator = $this->module->getModuleContainer()->get(SaferPayRestrictionCreator::class);
+
+        $success = true;
+
+        foreach (SaferPayConfig::PAYMENT_METHODS as $paymentMethod) {
+            $success &= $this->enablePayment($paymentMethod, $paymentCreator);
+            $success &= $this->enableLogo($paymentMethod, $logoCreator);
+            $success &= $this->enableCurrency($paymentMethod, $restrictionCreator);
+            $success &= $this->enableCountry($paymentMethod, $restrictionCreator);
+        }
+
+        return $success;
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @param SaferPayPaymentCreator $paymentCreator
+     *
+     * @return bool
+     */
+    private function enablePayment($paymentMethod, $paymentCreator)
+    {
+        return $paymentCreator->updatePayment($paymentMethod, 1);
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @param SaferPayLogoCreator $logoCreator
+     *
+     * @return bool
+     */
+    private function enableLogo($paymentMethod, $logoCreator)
+    {
+        return $logoCreator->updateLogo($paymentMethod, 1);
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @param SaferPayRestrictionCreator $restrictionCreator
+     *
+     * @return bool
+     */
+    private function enableCurrency($paymentMethod, $restrictionCreator)
+    {
+        return $restrictionCreator->updateRestriction(
+            $paymentMethod,
+            SaferPayRestrictionCreator::RESTRICTION_CURRENCY,
+            [
+                SaferPayRestrictionCreator::RESTRICTION_ALL,
+            ]
+        );
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @param SaferPayRestrictionCreator $restrictionCreator
+     *
+     * @return bool
+     */
+    private function enableCountry($paymentMethod, $restrictionCreator)
+    {
+        return $restrictionCreator->updateRestriction(
+            $paymentMethod,
+            SaferPayRestrictionCreator::RESTRICTION_COUNTRY,
+            [
+                SaferPayRestrictionCreator::RESTRICTION_ALL,
+            ]
+        );
     }
 
     private function registerHooks()
@@ -88,6 +178,8 @@ class Installer extends AbstractInstaller
         $this->module->registerHook('displayPayment');
         $this->module->registerHook('paymentReturn');
         $this->module->registerHook('actionEmailSendBefore');
+        $this->module->registerHook('displayAdminOrderTabContent');
+        $this->module->registerHook('actionAdminControllerSetMedia');
     }
 
     private function installConfiguration()
@@ -150,7 +242,8 @@ class Installer extends AbstractInstaller
             $this->installSaferPayOrderTable() &&
             $this->installSaferPayAssertTable() &&
             $this->installSaferPayCardAlias() &&
-            $this->installSaferPayLog();
+            $this->installSaferPayLog() &&
+            $this->installSaferPayFieldTable();
     }
 
     private function installSaferPayPaymentTable()
@@ -185,6 +278,18 @@ class Installer extends AbstractInstaller
             `payment_name` VARCHAR(64) NOT NULL,
             `id_country` int(16) DEFAULT 0,
             `all_countries` tinyint(1) DEFAULT 0
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
+        );
+    }
+
+    private function installSaferPayFieldTable()
+    {
+        return Db::getInstance()->execute(
+            'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_field' . '(
+            `id_saferpay_field` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            `name` VARCHAR(64) NOT NULL,
+            `active` tinyint(1) DEFAULT 0,
+            UNIQUE (`name`)
                 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );
     }
@@ -245,7 +350,8 @@ class Installer extends AbstractInstaller
             `liability_entity` VARCHAR(64) NOT NULL,
             `card_number` VARCHAR(64) NOT NULL,
             `dcc_value` INTEGER(32) DEFAULT NULL,
-            `dcc_currency_code` VARCHAR(64) DEFAULT NULL
+            `dcc_currency_code` VARCHAR(64) DEFAULT NULL,
+            `authorized` tinyint(1) DEFAULT 0
                 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );
     }
@@ -273,8 +379,8 @@ class Installer extends AbstractInstaller
         return Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_log' . '(
             `id_saferpay_log` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            `message`  VARCHAR(512) NOT NULL,
-            `payload` VARCHAR(512) NOT NULL,
+            `message` TEXT NOT NULL,
+            `payload` TEXT NOT NULL,
             `date_add` datetime NOT NULL
                 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );

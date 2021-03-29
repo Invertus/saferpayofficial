@@ -23,9 +23,12 @@
 
 namespace Invertus\SaferPay\DTO\Request\Initialize;
 
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Address;
 use Invertus\SaferPay\DTO\Request\DeliveryAddressForm;
+use Invertus\SaferPay\DTO\Request\Order;
 use Invertus\SaferPay\DTO\Request\Payer;
+use Invertus\SaferPay\DTO\Request\PayerProfile;
 use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\ReturnUrls;
@@ -99,6 +102,21 @@ class InitializeRequest
      */
     private $alias;
 
+    /**
+     * @var Order
+     */
+    private $order;
+
+    /**
+     * @var PayerProfile
+     */
+    private $payerProfile;
+
+    /**
+     * @var string|null
+     */
+    private $fieldToken;
+
     public function __construct(
         RequestHeader $requestHeader,
         $terminalId,
@@ -112,7 +130,10 @@ class InitializeRequest
         $cssUrl,
         Address $deliveryAddress,
         Address $billingAddress,
-        $alias
+        $alias,
+        Order $order,
+        PayerProfile $payerProfile,
+        $fieldToken
     ) {
         $this->requestHeader = $requestHeader;
         $this->terminalId = $terminalId;
@@ -127,6 +148,9 @@ class InitializeRequest
         $this->deliveryAddress = $deliveryAddress;
         $this->billingAddress = $billingAddress;
         $this->alias = $alias;
+        $this->order = $order;
+        $this->payerProfile = $payerProfile;
+        $this->fieldToken = $fieldToken;
     }
 
     public function getAsArray()
@@ -148,10 +172,11 @@ class InitializeRequest
                     'Value' => $this->payment->getValue(),
                     'CurrencyCode' => $this->payment->getCurrencyCode(),
                 ],
-                'OrderId' => $this->payment->getOrderId(),
+                'OrderId' => $this->payment->getOrderReference(),
                 'PayerNote' => $this->payment->getPayerNote(),
                 'Description' => $this->payment->getDescription(),
             ],
+            'PaymentMeans' => $this->getPaymentMeansField() ?: null,
             'Payer' => [
                 'IpAddress' => $this->payer->getIpAddress(),
                 'LanguageCode' => $this->payer->getLanguageCode(),
@@ -207,15 +232,55 @@ class InitializeRequest
             ];
         }
 
+        if ($this->alias || $this->fieldToken) {
+            unset($return['PaymentMethods']);
+        }
+
+        //Wallet related, payment method must be empty, instead used "Wallets" argument in request.
+        if (in_array(\Tools::strtoupper($this->paymentMethod), SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            unset($return['PaymentMethods']);
+            $return['Wallets'] = [
+                $this->paymentMethod,
+            ];
+        }
+
+        if (\Tools::strtoupper($this->paymentMethod) == SaferPayConfig::PAYMENT_KLARNA) {
+            $return['Order'] = [
+                'Items' => $this->order->getItems(),
+            ];
+
+            $return['RiskFactors'] = [
+                'PayerProfile' => [
+                    'CreationDate' => $this->payerProfile->getCreationDate() ?: null,
+                    'PasswordLastChangeDate' => $this->payerProfile->getPasswordLastChangeDate() ?: null,
+                ],
+            ];
+        }
+
+        return $return;
+    }
+
+    /**
+     * @return array
+     */
+    private function getPaymentMeansField()
+    {
         if ($this->alias) {
-            $return['PaymentMeans'] = [
+            return [
                 'Alias' => [
                     'Id' => $this->alias,
                 ],
             ];
-            unset($return['PaymentMethods']);
         }
 
-        return $return;
+        if ($this->fieldToken) {
+            return [
+                'SaferpayFields' => [
+                    'Token' => $this->fieldToken ?: null,
+                ],
+            ];
+        }
+
+        return [];
     }
 }

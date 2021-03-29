@@ -21,7 +21,7 @@
  *}
 
 <li>
-    <a title="{l s='My credit cards' mod='saferpayofficial'}" href="{$link->getModuleLink('saferpay', 'creditCards16')|escape:'htmlall':'UTF-8'}">
+    <a title="{l s='My credit cards' mod='saferpayofficial'}" href="{$link->getModuleLink('saferpayofficial', 'creditCards16')|escape:'htmlall':'UTF-8'}">
         <i class="icon-tasks"></i>
         <span>{l s='My credit cards' mod='saferpayofficial'}</span>
     </a>

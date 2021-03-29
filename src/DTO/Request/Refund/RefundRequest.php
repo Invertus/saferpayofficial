@@ -23,8 +23,8 @@
 
 namespace Invertus\SaferPay\DTO\Request\Refund;
 
+use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
-use Invertus\SaferPay\DTO\Response\Amount;
 
 class RefundRequest
 {
@@ -35,23 +35,23 @@ class RefundRequest
     private $requestHeader;
 
     /**
-     * @var Amount
-     */
-    private $amount;
-
-    /**
-     * @var
+     * @var string
      */
     private $transactionId;
 
+    /**
+     * @var Payment
+     */
+    private $payment;
+
     public function __construct(
         RequestHeader $requestHeader,
-        Amount $amount,
+        Payment $payment,
         $transactionId
     ) {
         $this->requestHeader = $requestHeader;
-        $this->amount = $amount;
         $this->transactionId = $transactionId;
+        $this->payment = $payment;
     }
 
     public function getAsArray()
@@ -66,9 +66,10 @@ class RefundRequest
             ],
             'Refund' => [
                 'Amount' => [
-                    'Value' => $this->amount->getValue(),
-                    'CurrencyCode' => $this->amount->getCurrencyCode(),
+                    'Value' => $this->payment->getValue(),
+                    'CurrencyCode' => $this->payment->getCurrencyCode(),
                 ],
+                'OrderId' => $this->payment->getOrderReference(),
             ],
             'CaptureReference' => [
                 'CaptureId' => $this->transactionId,

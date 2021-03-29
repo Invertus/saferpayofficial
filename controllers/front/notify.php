@@ -21,18 +21,23 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
 use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'notify';
 
+    /**
+     * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
+     * # WILL NOT work for local development, to AUTHORIZE payment this must be called manually. #
+     * Example manual request: https://saferpay.demo.com/en/module/saferpayofficial/notify?success=1&cartId=12&orderId=12&secureKey=9366c61b59e918b2cd96ed0567c82e90
+     */
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
@@ -41,54 +46,64 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
-            die(400);
+            die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
-        $order = new Order($orderId);
-        $status = _SAFERPAY_PAYMENT_AUTHORIZED_;
-        $order->setCurrentState($status);
-
-        /** @var SaferPayOrderRepository $orderRepo */
-        $orderRepo = $this->module->getContainer()->get(SaferPayOrderRepository::class);
-        $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
-
-        /** @var AssertRequestObjectCreator $SaferPayObjectCreator */
-        $SaferPayObjectCreator = $this->module->getContainer()->get(AssertRequestObjectCreator::class);
-        $assertRequest = $SaferPayObjectCreator->create($orderId);
-
-        /** @var AssertService $assertService */
-        $assertService = $this->module->getContainer()->get(AssertService::class);
 
         try {
-            $assertBody = $assertService->assert($assertRequest, $saferPayOrderId);
+            /** @var SaferPayOrderRepository $orderRepo */
+            $orderRepo = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
+            $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
+
+            $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+            $order = new Order($orderId);
+            $assertResponseBody = $this->assertTransaction($cartId);
+
+            if (!$assertResponseBody->getLiability()->getLiabilityShift()) {
+                /** @var SaferPay3DSecureService $secureService */
+                $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
+                $secureService->processNotSecuredPayment($order);
+                die($this->module->l('Liability shift is false', self::FILENAME));
+            }
+
+            $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
+            if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+                !$saferPayOrder->captured
+            ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
+                $orderStatusService->capture($order);
+            }
         } catch (Exception $e) {
-            die(404);
-        }
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-        $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
-
-        if ($assertBody->getTransaction()->getStatus() === 'AUTHORIZED') {
-            $saferPayOrder->authorized = 1;
-        }
-        if ($assertBody->getTransaction()->getStatus() === 'CAPTURED') {
-            $saferPayOrder->authorized = 1;
-            $saferPayOrder->captured = 1;
-            $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
-        }
-
-        $saferPayOrder->update();
-        if (!$assertBody->getLiability()->getLiabilityShift()) {
-            /** @var SaferPay3DSecureService $secureService */
-            $secureService = $this->module->getContainer()->get(SaferPay3DSecureService::class);
-            $secureService->processNotSecuredPayment($order);
-            die();
-        }
-        $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
-        if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE && !$saferPayOrder->captured) {
-            /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getContainer()->get(SaferPayOrderStatusService::class);
-            $orderStatusService->capture($order);
+            PrestaShopLogger::addLog(
+                sprintf(
+                    '%s has caught an error: %s',
+                    __CLASS__,
+                    $e->getMessage()
+                ),
+                1,
+                null,
+                null,
+                null,
+                true
+            );
+            die($this->module->l($e->getMessage(), self::FILENAME));
         }
 
-        die();
+        die($this->module->l('Success', self::FILENAME));
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return AssertBody
+     * @throws Exception
+     */
+    private function assertTransaction($cartId)
+    {
+        /** @var SaferPayTransactionAssertion $transactionAssert */
+        $transactionAssert = $this->module->getModuleContainer()->get(SaferPayTransactionAssertion::class);
+        $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId));
+
+        return $assertionResponse;
     }
 }

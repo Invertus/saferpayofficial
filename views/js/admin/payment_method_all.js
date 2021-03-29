@@ -40,5 +40,9 @@ $(document).ready(function () {
             $("[id$='_currencies']").val(selectedValues);
             $('select').trigger("chosen:updated");
         });
+        $('#all_field_on').on('change', function () {
+            var selectedValues = $(this).is(":checked");
+            $("[id$='_field_on']").prop("checked", selectedValues);
+        });
     }
 );

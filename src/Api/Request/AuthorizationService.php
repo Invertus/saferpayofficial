@@ -27,6 +27,7 @@ use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Authorization\AuthorizationRequest;
+use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
@@ -85,6 +86,14 @@ class AuthorizationService
         return $responseBody;
     }
 
+    /**
+     * @param $responseBody
+     * @param $saferPayOrderId
+     * @param $customerId
+     * @param $selectedCardOption
+     *
+     * @return AssertBody
+     */
     public function createObjectsFromAuthorizationResponse(
         $responseBody,
         $saferPayOrderId,

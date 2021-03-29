@@ -23,19 +23,29 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
+use Carrier;
 use Cart;
+use CartRule;
 use Configuration;
 use Country;
 use Customer;
+use Gender;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Address;
 use Invertus\SaferPay\DTO\Request\DeliveryAddressForm;
+use Invertus\SaferPay\DTO\Request\Order;
+use Invertus\SaferPay\DTO\Request\OrderItem;
+use Invertus\SaferPay\DTO\Request\PayerProfile;
 use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\ReturnUrls;
 use Invertus\SaferPay\DTO\Request\SaferPayNotification;
 use Invertus\SaferPay\DTO\Response\Amount;
+use Invertus\SaferPay\Enum\GenderEnum;
+use Invertus\SaferPay\Repository\OrderRepositoryInterface;
+use Invertus\SaferPay\Utility\PriceUtility;
 use SaferPayOfficial;
+use Tax;
 
 class RequestObjectCreator
 {
@@ -44,12 +54,28 @@ class RequestObjectCreator
      */
     protected $module;
 
-    public function __construct(SaferPayOfficial $module)
-    {
+    /**
+     * @var PriceUtility
+     */
+    private $priceUtility;
+
+    /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+
+    //TODO extract logic to appropriate services.
+    public function __construct(
+        SaferPayOfficial $module,
+        PriceUtility $priceUtility,
+        OrderRepositoryInterface $orderRepository
+    ) {
         $this->module = $module;
+        $this->priceUtility = $priceUtility;
+        $this->orderRepository = $orderRepository;
     }
 
-    protected function createRequestHeader()
+    public function createRequestHeader()
     {
         $specVersion = Configuration::get(RequestHeader::SPEC_VERSION);
         $customerId = Configuration::get(RequestHeader::CUSTOMER_ID . SaferPayConfig::getConfigSuffix());
@@ -61,41 +87,62 @@ class RequestObjectCreator
         return new RequestHeader($specVersion, $customerId, $requestId, $retryIndicator, $clientInfo);
     }
 
-    protected function createPayment(Cart $cart, $totalPrice)
+    /**
+     * @param Cart $cart
+     * @param string $totalPrice
+     *
+     * @return Payment|null
+     * @throws \PrestaShopException
+     */
+    public function createPayment(Cart $cart, $totalPrice)
     {
         $currency = \Currency::getCurrency($cart->id_currency);
-        return new Payment($totalPrice, $currency['iso_code'], $cart->id);
+        /** @var \Order|null $order */
+        $order = $this->orderRepository->findOneByCartId($cart->id);
+
+        if (empty($order)) {
+            return null;
+        }
+        $payment = new Payment();
+        $payment->setValue($totalPrice);
+        $payment->setCurrencyCode($currency['iso_code']);
+        $payment->setOrderReference($order->reference);
+
+        return $payment;
     }
 
-    protected function createReturnUrls($successUrl, $failUrl)
+    public function createReturnUrls($successUrl, $failUrl)
     {
         return new ReturnUrls($successUrl, $failUrl);
     }
 
-    protected function createNotification($customerEmail, $notifyUrl)
+    public function createNotification($customerEmail, $notifyUrl)
     {
         $payerEmail = $customerEmail;
         $merchantEmail = Configuration::get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::getConfigSuffix());
         return new SaferPayNotification($payerEmail, $merchantEmail, $notifyUrl);
     }
 
-    protected function createDeliveryAddressForm()
+    public function createDeliveryAddressForm()
     {
         return new DeliveryAddressForm(DeliveryAddressForm::MANDATORY_FIELDS);
     }
 
-    protected function createAmount($value, $currencyCode)
+    public function createAmount($value, $currencyCode)
     {
         return new Amount($value, $currencyCode);
     }
 
-    protected function createAddressObject(\Address $address, Customer $customer)
+    public function createAddressObject(\Address $address, Customer $customer)
     {
         $saferpayAddress = new Address();
         $saferpayAddress->setFirstName($address->firstname);
         $saferpayAddress->setLastName($address->lastname);
         $saferpayAddress->setCompany($address->company);
-//        $saferpayAddress->setGender($address->get);
+
+        $gender = new Gender($customer->id_gender);
+
+        $saferpayAddress->setGender(GenderEnum::SAFERPAY_GENDERS[$gender->type]);
         $saferpayAddress->setStreet($address->address1);
         $saferpayAddress->setStreet2($address->address2);
         $saferpayAddress->setZip($address->postcode);
@@ -106,5 +153,97 @@ class RequestObjectCreator
         $saferpayAddress->setPhone($address->phone);
 
         return $saferpayAddress;
+    }
+
+    /**
+     * UnitPrice is sent as total product price. (That includes discount reduction)
+     * TaxRate is calculated with Price Utility because business case needs to make it to integer (Ex. 21% = 2100)
+     *
+     * @param array $product
+     *
+     * @return OrderItem
+     */
+    public function buildOrderItem(array $product)
+    {
+        $orderItem = new OrderItem();
+        $orderItem->setVariantId($product['id_product_attribute']);
+        $orderItem->setName($product['name']);
+        $orderItem->setQuantity($product['quantity']);
+        $orderItem->setType($product['is_virtual'] ? OrderItem::ITEM_DIGITAL : OrderItem::ITEM_PHYSICAL);
+        $orderItem->setUnitPrice($this->priceUtility->convertToCents($product['price_wt']));
+        $orderItem->setTaxRate($this->priceUtility->convertToCents($product['rate']));
+        $orderItem->setTaxAmount($this->priceUtility->convertToCents($product['price_wt'] - $product['price']));
+
+        return $orderItem;
+    }
+
+    public function buildOrderItemShippingFee(Cart $cart)
+    {
+        $carrier = new Carrier($cart->id_carrier);
+        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_SHIPPING, false);
+        $isFreeShipping = false;
+
+        if (!empty($cartRules)) {
+            foreach ($cartRules as $cartRule) {
+                $isFreeShipping = (bool) $cartRule['free_shipping'];
+            }
+        }
+
+        $orderItem = new OrderItem();
+        $orderItem->setQuantity(1);
+        $orderItem->setName($carrier->name);
+        $orderItem->setType(OrderItem::ITEM_SHIPPING_FEE);
+
+        if ($isFreeShipping) {
+            $orderItem->setUnitPrice(0);
+            $orderItem->setTaxAmount(0);
+        } else {
+            $orderItem->setUnitPrice($this->priceUtility->convertToCents($cart->getTotalShippingCost()));
+            $orderItem->setTaxAmount($this->priceUtility->convertToCents(
+                $cart->getTotalShippingCost(null, true) -
+                $cart->getTotalShippingCost(null, false)
+            ));
+        }
+
+        $orderItem->setTaxRate($this->priceUtility->convertToCents(
+            Tax::getCarrierTaxRate($cart->id_carrier, $cart->id_address_delivery)
+        ));
+
+        return $orderItem;
+    }
+
+    /**
+     * @param Cart $cart
+     *
+     * @return Order
+     */
+    public function buildOrder(Cart $cart)
+    {
+        $order = new Order();
+        $products = $cart->getProducts();
+
+        foreach ($products as $product) {
+            $order->addItem($this->buildOrderItem($product));
+        }
+        $order->addItem($this->buildOrderItemShippingFee($cart));
+
+        return $order;
+    }
+
+    /**
+     * PasswordLastChangedDate is taken from customer updated field
+     * (It updates if personal information or email was updated aswell)
+     *
+     * @param Customer $customer
+     *
+     * @return PayerProfile
+     */
+    public function createPayerProfile(Customer $customer)
+    {
+        $payerProfile = new PayerProfile();
+        $payerProfile->setCreationDate((new \DateTime($customer->date_add))->format(\DateTime::ISO8601));
+        $payerProfile->setPasswordLastChangeDate((new \DateTime($customer->date_upd))->format(\DateTime::ISO8601));
+
+        return $payerProfile;
     }
 }

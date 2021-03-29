@@ -23,57 +23,43 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
-use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
+use Invertus\SaferPay\Service\PaymentRestrictionValidation\PaymentRestrictionValidationInterface;
 
 class PaymentRestrictionValidation
 {
-
     /**
-     * @var SaferPayPaymentRepository
+     * @var \Traversable
      */
-    private $paymentRepository;
-    /**
-     * @var SaferPayRestrictionRepository
-     */
-    private $restrictionRepository;
+    private $paymentRestrictionValidators;
 
-    public function __construct(
-        SaferPayPaymentRepository $paymentRepository,
-        SaferPayRestrictionRepository $restrictionRepository
-    ) {
-        $this->paymentRepository = $paymentRepository;
-        $this->restrictionRepository = $restrictionRepository;
+    public function __construct(\Traversable $paymentRestrictionValidators)
+    {
+        $this->paymentRestrictionValidators = $paymentRestrictionValidators;
     }
 
-    public function isPaymentMethodValid($paymentMethod, $countryId, $currencyId)
+    /**
+     * Atleast one payment restriction validator is present at all times (BasePaymentRestrictionValidation)
+     *
+     * @param string $paymentMethod
+     *
+     * @return bool
+     */
+    public function isPaymentMethodValid($paymentMethod)
     {
-        if (!$this->paymentRepository->isActiveByName($paymentMethod)) {
-            return false;
+        $success = false;
+
+        /**
+         * @var PaymentRestrictionValidationInterface $paymentRestrictionValidator
+         */
+        foreach ($this->paymentRestrictionValidators as $paymentRestrictionValidator) {
+            if ($paymentRestrictionValidator->supports($paymentMethod)) {
+                $success = $paymentRestrictionValidator->isValid($paymentMethod);
+
+                if (!$success) {
+                    return false;
+                }
+            }
         }
-
-        $enabledCountries = $this->restrictionRepository->getSelectedIdsByName(
-            $paymentMethod,
-            SaferPayRestrictionCreator::COUNTRY_RESTRICTION
-        );
-
-        $isAllCountries = in_array('0', $enabledCountries, false);
-        $isCountryInList = in_array($countryId, $enabledCountries, false);
-
-        if (!$isCountryInList && !$isAllCountries) {
-            return false;
-        }
-
-        $enabledCurrencies = $this->restrictionRepository->getSelectedIdsByName(
-            $paymentMethod,
-            SaferPayRestrictionCreator::CURRENCY_RESTRICTION
-        );
-        $isAllCurrencies = in_array('0', $enabledCurrencies);
-        $isCurrencyInList = in_array($currencyId, $enabledCurrencies);
-        if (!$isCurrencyInList && !$isAllCurrencies) {
-            return false;
-        }
-
-        return true;
+        return $success;
     }
 }
