@@ -30,8 +30,18 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
 
-class InitializeRequestObjectCreator extends RequestObjectCreator
+class InitializeRequestObjectCreator
 {
+    /**
+     * @var RequestObjectCreator
+     */
+    private $requestObjectCreator;
+
+    public function __construct(RequestObjectCreator $requestObjectCreator)
+    {
+        $this->requestObjectCreator = $requestObjectCreator;
+    }
+
     public function create(
         Cart $cart,
         $customerEmail,
@@ -42,27 +52,32 @@ class InitializeRequestObjectCreator extends RequestObjectCreator
         $deliveryAddressId,
         $invoiceAddressId,
         $customerId,
-        $alias = null
+        $alias = null,
+        $fieldToken = null
     ) {
-        $requestHeader = $this->createRequestHeader();
+        $requestHeader = $this->requestObjectCreator->createRequestHeader();
         $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
 
         $cartDetails = $cart->getSummaryDetails();
         $totalPrice = (int) ($cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
-        $payment = $this->createPayment($cart, $totalPrice);
+        $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
-        $returnUrls = $this->createReturnUrls($successUrl, $failUrl);
-        $notification = $this->createNotification($customerEmail, $notifyUrl);
-        $deliveryAddressForm = $this->createDeliveryAddressForm();
+        $returnUrls = $this->requestObjectCreator->createReturnUrls($successUrl, $failUrl);
+        $notification = $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
+        $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
         $configSet = Configuration::get(SaferPayConfig::CONFIGURATION_NAME);
         $cssUrl = Configuration::get(SaferPayConfig::CSS_FILE);
 
         $customer = new Customer($customerId);
         $deliveryAddress = new \Address($deliveryAddressId);
-        $deliveryAddress = $this->createAddressObject($deliveryAddress, $customer);
+        $deliveryAddress = $this->requestObjectCreator->createAddressObject($deliveryAddress, $customer);
 
         $invoiceAddress = new \Address($invoiceAddressId);
-        $invoiceAddress = $this->createAddressObject($invoiceAddress, $customer);
+        $invoiceAddress = $this->requestObjectCreator->createAddressObject($invoiceAddress, $customer);
+
+        $order = $this->requestObjectCreator->buildOrder($cart);
+
+        $payerProfile = $this->requestObjectCreator->createPayerProfile($customer);
 
         return new InitializeRequest(
             $requestHeader,
@@ -77,7 +92,10 @@ class InitializeRequestObjectCreator extends RequestObjectCreator
             $cssUrl,
             $deliveryAddress,
             $invoiceAddress,
-            $alias
+            $alias,
+            $order,
+            $payerProfile,
+            $fieldToken
         );
     }
 }

@@ -23,15 +23,26 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
+use Cart;
 use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
-class RefundRequestObjectCreator extends RequestObjectCreator
+class RefundRequestObjectCreator
 {
-    public function create($transactionId, $value, $currency)
-    {
-        $requestHeader = $this->createRequestHeader();
-        $amount = $this->createAmount($value, $currency);
+    /**
+     * @var RequestObjectCreator
+     */
+    private $requestObjectCreator;
 
-        return new RefundRequest($requestHeader, $amount, $transactionId);
+    public function __construct(RequestObjectCreator $requestObjectCreator)
+    {
+        $this->requestObjectCreator = $requestObjectCreator;
+    }
+
+    public function create(Cart $cart, $transactionId, $totalRefund)
+    {
+        $requestHeader = $this->requestObjectCreator->createRequestHeader();
+        $payment = $this->requestObjectCreator->createPayment($cart, $totalRefund);
+
+        return new RefundRequest($requestHeader, $payment, $transactionId);
     }
 }

@@ -1,0 +1,38 @@
+image: php:7.3.20
+
+options:
+  max-time: 5 # minutes
+
+definitions:
+  steps:
+    - cs: &cs
+        name: Code standards
+        caches:
+          - composer
+        script:
+          - apt-get update && apt-get install -y
+          - apt-get install git zip unzip zlib1g-dev libzip-dev -y
+          - docker-php-ext-install zip
+          - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          - composer install ${COMPOSER_FLAGS}
+
+          # Code standards
+          - vendor/bin/php-cs-fixer fix --no-interaction --using-cache=no --diff --dry-run
+    - tests: &tests
+        name: Unit tests
+        caches:
+          - composer
+
+        script:
+          - apt-get update && apt-get install -y
+          - apt-get install git zip unzip zlib1g-dev libzip-dev -y
+          - docker-php-ext-install zip
+          - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+          - composer install ${COMPOSER_FLAGS}
+          - composer test-unit
+#TODO check ways to fix build because of tools classes called
+pipelines:
+  pull-requests:
+    '**':
+      - step: *cs
+#      - step: *tests

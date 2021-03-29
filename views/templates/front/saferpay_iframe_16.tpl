@@ -22,6 +22,6 @@
 
 {block name='content'}
     <div>
-        <iframe id="saferpay-iframe" src="{{$redirect}}"></iframe>
+        <iframe id="saferpay-iframe" src="{$redirect|escape:'html':'UTF-8'}"></iframe>
     </div>
 {/block}

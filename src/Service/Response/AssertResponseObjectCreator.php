@@ -27,6 +27,11 @@ use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 
 class AssertResponseObjectCreator extends ResponseObjectCreator
 {
+    /**
+     * @param $responseBody
+     *
+     * @return AssertBody
+     */
     public function createAssertObject($responseBody)
     {
         $assertBody = new AssertBody();

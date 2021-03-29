@@ -31,11 +31,13 @@ use SaferPayCurrency;
 
 class SaferPayRestrictionCreator
 {
-    const COUNTRY_RESTRICTION = 1;
-    const CURRENCY_RESTRICTION = 2;
+    const RESTRICTION_ALL = 0;
+    const RESTRICTION_COUNTRY = 1;
+    const RESTRICTION_CURRENCY = 2;
 
     const COUNTRY_SUFFIX = '_countries';
     const CURRENCY_SUFFIX = '_currencies';
+
     /**
      * @var SaferPayRestrictionRepository
      */
@@ -75,10 +77,10 @@ class SaferPayRestrictionCreator
     private function getRestriction($restrictionType, $id = null)
     {
         switch ($restrictionType) {
-            case SaferPayRestrictionCreator::COUNTRY_RESTRICTION:
+            case SaferPayRestrictionCreator::RESTRICTION_COUNTRY:
                 $restriction = new SaferPayCountry($id);
                 break;
-            case SaferPayRestrictionCreator::CURRENCY_RESTRICTION:
+            case SaferPayRestrictionCreator::RESTRICTION_CURRENCY:
                 $restriction = new SaferPayCurrency($id);
                 break;
             default:
@@ -90,39 +92,28 @@ class SaferPayRestrictionCreator
 
     private function addRestriction($restrictionType, $paymentMethod, $restriction)
     {
-        $success = true;
         switch ($restrictionType) {
-            case self::COUNTRY_RESTRICTION:
+            case self::RESTRICTION_COUNTRY:
                 $saferPayCountry = new SaferPayCountry();
                 $saferPayCountry->payment_name = $paymentMethod;
-                if ((int) $restriction === 0) {
+                if ((int) $restriction === self::RESTRICTION_ALL) {
                     $saferPayCountry->all_countries = 1;
-                    if (!$saferPayCountry->add()) {
-                        $success = false;
-                    }
+                    $success = (bool) $saferPayCountry->add();
                     break;
                 }
                 $saferPayCountry->id_country = (int) $restriction;
-                if (!$saferPayCountry->add()) {
-                    $success = false;
-                    break;
-                }
+                $success = (bool) $saferPayCountry->add();
                 break;
-            case self::CURRENCY_RESTRICTION:
+            case self::RESTRICTION_CURRENCY:
                 $saferPayCurrency = new SaferPayCurrency();
                 $saferPayCurrency->payment_name = $paymentMethod;
-                if ((int) $restriction === 0) {
+                if ((int) $restriction === self::RESTRICTION_ALL) {
                     $saferPayCurrency->all_currencies = 1;
-                    if (!$saferPayCurrency->add()) {
-                        $success = false;
-                    }
+                    $success = (bool) $saferPayCurrency->add();
                     break;
                 }
                 $saferPayCurrency->id_currency = (int) $restriction;
-                if (!$saferPayCurrency->add()) {
-                    $success = false;
-                    break;
-                }
+                $success = (bool) $saferPayCurrency->add();
                 break;
             default:
                 return false;

@@ -39,11 +39,6 @@ class AuthorizationRequest
     private $token;
 
     /**
-     * @var string
-     */
-    private $moduleVersion;
-
-    /**
      * @var bool
      */
     private $saveCard;
@@ -52,17 +47,14 @@ class AuthorizationRequest
      * AuthorizationRequest constructor.
      * @param RequestHeader $requestHeader
      * @param $token
-     * @param $moduleVersion
      */
     public function __construct(
         RequestHeader $requestHeader,
         $token,
-        $moduleVersion,
         $saveCard
     ) {
         $this->requestHeader = $requestHeader;
         $this->token = $token;
-        $this->moduleVersion = $moduleVersion;
         $this->saveCard = $saveCard;
     }
 

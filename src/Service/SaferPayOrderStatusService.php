@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Cart;
-use Currency;
 use Exception;
 use Invertus\SaferPay\Api\Request\CancelService;
 use Invertus\SaferPay\Api\Request\CaptureService;
@@ -68,7 +67,7 @@ class SaferPayOrderStatusService
     /**
      * @var RefundRequestObjectCreator
      */
-    private $requestObjectCreator;
+    private $refundRequestObjectCreator;
 
     public function __construct(
         CaptureService $captureService,
@@ -77,7 +76,7 @@ class SaferPayOrderStatusService
         CancelService $cancelService,
         CancelRequestObjectCreator $cancelRequestObjectCreator,
         RefundService $refundService,
-        RefundRequestObjectCreator $requestObjectCreator
+        RefundRequestObjectCreator $refundRequestObjectCreator
     ) {
         $this->captureService = $captureService;
         $this->captureRequestObjectCreator = $captureRequestObjectCreator;
@@ -85,9 +84,42 @@ class SaferPayOrderStatusService
         $this->cancelService = $cancelService;
         $this->cancelRequestObjectCreator = $cancelRequestObjectCreator;
         $this->refundService = $refundService;
-        $this->requestObjectCreator = $requestObjectCreator;
+        $this->refundRequestObjectCreator = $refundRequestObjectCreator;
     }
 
+    /**
+     * @param Order $order
+     *
+     * @throws \Exception
+     */
+    public function authorize(Order $order)
+    {
+        $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
+        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder->authorized = 1;
+        $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+
+        $saferPayOrder->update();
+        $order->update();
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @throws \Exception
+     */
+    public function assert(Order $order)
+    {
+        $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
+        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder->authorized = 1;
+        $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+
+        $saferPayOrder->update();
+        $order->update();
+    }
+
+    /** TODO extract capture api code to different service like Assert for readability */
     public function capture(Order $order, $refundedAmount = 0, $isRefund = false)
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
@@ -101,11 +133,13 @@ class SaferPayOrderStatusService
             $totalPrice = $refundedAmount;
         }
         $captureRequest = $this->captureRequestObjectCreator->create($cart, $transactionId, $totalPrice);
+
         try {
             $captureResponse = $this->captureService->capture($captureRequest);
         } catch (Exception $e) {
             throw new SaferPayApiException('Capture API failed', SaferPayApiException::CAPTURE);
         }
+
         $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
         $saferPayAssert = new SaferPayAssert($assertId);
         if ($isRefund) {
@@ -159,11 +193,12 @@ class SaferPayOrderStatusService
             throw new SaferPayApiException(SaferPayApiException::REFUND);
         }
 
-        $currency = new Currency($order->id_currency);
-        $refundRequest = $this->requestObjectCreator->create(
+        $cart = new Cart($order->id_cart);
+
+        $refundRequest = $this->refundRequestObjectCreator->create(
+            $cart,
             $saferPayOrder->transaction_id,
-            $refundAmount,
-            $currency->iso_code
+            $refundAmount
         );
 
         try {

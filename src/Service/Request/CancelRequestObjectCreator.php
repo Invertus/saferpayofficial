@@ -25,11 +25,21 @@ namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\DTO\Request\Cancel\CancelRequest;
 
-class CancelRequestObjectCreator extends RequestObjectCreator
+class CancelRequestObjectCreator
 {
+    /**
+     * @var RequestObjectCreator
+     */
+    private $requestObjectCreator;
+
+    public function __construct(RequestObjectCreator $requestObjectCreator)
+    {
+        $this->requestObjectCreator = $requestObjectCreator;
+    }
+
     public function create($transactionId)
     {
-        $requestHeader = $this->createRequestHeader();
+        $requestHeader = $this->requestObjectCreator->createRequestHeader();
 
         return new CancelRequest($requestHeader, $transactionId);
     }

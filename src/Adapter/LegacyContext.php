@@ -31,4 +31,29 @@ class LegacyContext
     {
         return Context::getContext();
     }
+
+    public function getCurrencyIsoCode()
+    {
+        return $this->getContext()->currency->iso_code;
+    }
+
+    public function getCountryIsoCode()
+    {
+        return $this->getContext()->country->iso_code;
+    }
+
+    public function getCountryId()
+    {
+        return $this->getContext()->country->id;
+    }
+
+    public function getCurrencyId()
+    {
+        return $this->getContext()->currency->id;
+    }
+
+    public function getMobileDetect()
+    {
+        return $this->getContext()->getMobileDetect();
+    }
 }

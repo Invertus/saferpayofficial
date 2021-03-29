@@ -29,12 +29,12 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
 {
     public function redirectWithNotifications()
     {
-        $notifications = json_encode(array(
+        $notifications = json_encode([
             'error' => $this->errors,
             'warning' => $this->warning,
             'success' => $this->success,
             'info' => $this->info,
-        ));
+        ]);
 
         if (session_status() == PHP_SESSION_ACTIVE) {
             $_SESSION['notifications'] = $notifications;

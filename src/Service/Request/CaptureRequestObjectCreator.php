@@ -26,12 +26,23 @@ namespace Invertus\SaferPay\Service\Request;
 use Cart;
 use Invertus\SaferPay\DTO\Request\Capture\CaptureRequest;
 
-class CaptureRequestObjectCreator extends RequestObjectCreator
+class CaptureRequestObjectCreator
 {
+    /**
+     * @var RequestObjectCreator
+     */
+    private $requestObjectCreator;
+
+    public function __construct(RequestObjectCreator $requestObjectCreator)
+    {
+        $this->requestObjectCreator = $requestObjectCreator;
+    }
+
     public function create(Cart $cart, $transactionId, $totalPrice)
     {
-        $requestHeader = $this->createRequestHeader();
-        $payment = $this->createPayment($cart, $totalPrice);
+        $requestHeader = $this->requestObjectCreator->createRequestHeader();
+        $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
+
         return new CaptureRequest($requestHeader, $payment, $transactionId);
     }
 }

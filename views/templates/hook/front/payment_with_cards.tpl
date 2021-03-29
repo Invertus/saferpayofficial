@@ -22,16 +22,16 @@
 
 <p class="payment_module">
     <a
-            class="saferpay_method js_credit_card saferpay_credit_card_{$method}"
+            class="saferpay_method js_credit_card saferpay_credit_card_{$method|escape:'htmlall':'UTF-8'}"
             href="#"
-            data-saferpay-method="{$method}"
+            data-saferpay-method="{$method|escape:'htmlall':'UTF-8'}"
     >
-        <img src="{$imgUrl}" alt="{$method}"/>
-        {$method}
+        <img src="{$imgUrl|escape:'htmlall':'UTF-8'}" alt="{$method|escape:'htmlall':'UTF-8'}"/>
+        {$method|escape:'htmlall':'UTF-8'}
     </a>
 </p>
-<div class="saferpay_additional_info {$method}" style="display: none">
-    <form action="{$redirect}">
+<div class="saferpay_additional_info {$method|escape:'htmlall':'UTF-8'}" style="display: none">
+    <form action="{$redirect|escape:'htmlall':'UTF-8'}">
         {$additional_info}
         <input type="hidden" class="saved_card_method" name="isBusinessLicence" value="1">
         <a type="submit" class="btn btn-default button button-medium" onclick='this.parentNode.submit()'>

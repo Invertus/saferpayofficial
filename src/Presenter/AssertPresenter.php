@@ -28,6 +28,7 @@ use SaferPayOfficial;
 
 class AssertPresenter
 {
+    const FILE_NAME = 'AssertPresenter';
 
     /**
      * @var SaferPayOfficial
@@ -41,14 +42,11 @@ class AssertPresenter
 
     public function present(SaferPayAssert $assert)
     {
-        $transactionAuth = $this->saferPay->l('No');
-        if ($assert->status === 'Status') {
-            $transactionAuth = $this->saferPay->l('Yes');
-        }
-
         return [
             'authAmount' => $assert->amount,
-            'transactionAuth' => $transactionAuth,
+            'transactionAuth' => $assert->authorized ?
+                $this->saferPay->l('Yes', self::FILE_NAME) :
+                $this->saferPay->l('No', self::FILE_NAME),
             'cardExpiryDate' =>
                 $assert->exp_year
                 . '/'

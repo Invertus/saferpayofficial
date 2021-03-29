@@ -43,6 +43,7 @@ class SaferPayAssert extends ObjectModel
     public $liability_entity;
     public $dcc_value;
     public $dcc_currency_code;
+    public $authorized;
 
     public static $definition = [
         'table' => 'saferpay_assert',
@@ -68,6 +69,7 @@ class SaferPayAssert extends ObjectModel
             'refunded_amount' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'dcc_value' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'dcc_currency_code' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'authorized' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
         ],
     ];
 }

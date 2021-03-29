@@ -57,7 +57,9 @@ class ResponseObjectCreator
         if (isset($transaction->AcquirerReference)) {
             $transactionObj->setAcquirerReference($transaction->AcquirerReference);
         }
-        $transactionObj->setApprovalCode($transaction->ApprovalCode);
+        if (isset($transaction->ApprovalCode)) {
+            $transactionObj->setApprovalCode($transaction->ApprovalCode);
+        }
 
         return $transactionObj;
     }

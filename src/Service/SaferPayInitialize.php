@@ -37,14 +37,17 @@ class SaferPayInitialize
      * @var \SaferPayOfficial
      */
     private $module;
+
     /**
      * @var Context
      */
     private $context;
+
     /**
      * @var InitializeService
      */
     private $initializeService;
+
     /**
      * @var InitializeRequestObjectCreator
      */
@@ -62,14 +65,19 @@ class SaferPayInitialize
         $this->requestObjectCreator = $requestObjectCreator;
     }
 
-    public function initialize($paymentMethod, $isBusinessLicence, $selectedCard = -1, $alias = null)
-    {
+    public function initialize(
+        $paymentMethod,
+        $isBusinessLicence,
+        $selectedCard = -1,
+        $alias = null,
+        $fieldToken = null
+    ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
-        $controller = $isBusinessLicence ? 'successIFrame' : 'success';
+
         $successUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            $controller,
+            $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
             [
                 'cartId' => $cartId,
                 'secureKey' => $this->context->cart->secure_key,
@@ -102,6 +110,7 @@ class SaferPayInitialize
             ],
             true
         );
+
         $initializeRequest = $this->requestObjectCreator->create(
             $this->context->cart,
             $customerEmail,
@@ -112,7 +121,8 @@ class SaferPayInitialize
             $this->context->cart->id_address_delivery,
             $this->context->cart->id_address_invoice,
             $this->context->cart->id_customer,
-            $alias
+            $alias,
+            $fieldToken
         );
         try {
             $initialize = $this->initializeService->initialize($initializeRequest, $isBusinessLicence);
@@ -121,5 +131,26 @@ class SaferPayInitialize
         }
 
         return $initialize;
+    }
+
+    /**
+     * @param int $isBusinessLicence
+     * @param string $fieldToken
+     *
+     * @return string
+     */
+    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
+    {
+        $successController = 'success';
+
+        if ($isBusinessLicence) {
+            $successController = 'successIFrame';
+        }
+
+        if ($fieldToken) {
+            $successController = 'successHosted';
+        }
+
+        return $successController;
     }
 }

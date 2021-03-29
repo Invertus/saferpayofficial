@@ -69,11 +69,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             Tools::redirect($redirectLink);
         }
 
-        $customer = new Customer($cart->id_customer);
-        if (!Validate::isLoadedObject($customer)) {
-            Tools::redirect($redirectLink);
-        }
-
         $currency = $this->context->currency;
         $total = (float) $cart->getOrderTotal();
 
@@ -82,7 +77,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             $paymentMethod = Tools::getValue('saved_card_method');
             $this->module->validateOrder(
                 $cart->id,
-                _SAFERPAY_PAYMENT_AWAITING_,
+                Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
                 $total,
                 $paymentMethod,
                 null,
@@ -103,14 +98,14 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
         }
         /** @var SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getContainer()->get('saferpay.order.builder');
-        $isBusinessLicence = Tools::getValue(SaferPayOfficial::IS_BUSINESS_LICENCE);
+        $saferPayOrderBuilder = $this->module->getModuleContainer()->get(SaferPayOrderBuilder::class);
+        $isBusinessLicence = Tools::getValue(\Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE);
 
         /** @var SaferPayInitialize $initializeService */
-        $initializeService = $this->module->getContainer()->get(SaferPayInitialize::class);
+        $initializeService = $this->module->getModuleContainer()->get(SaferPayInitialize::class);
         try {
             /** @var SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->module->getContainer()->get(SaferPayCardAliasRepository::class);
+            $cardAliasRep = $this->module->getModuleContainer()->get(SaferPayCardAliasRepository::class);
             $alias = $cardAliasRep->getSavedCardAliasFromId($selectedCard);
             $response = $initializeService->initialize($paymentMethod, $isBusinessLicence, $selectedCard, $alias);
         } catch (Exception $e) {

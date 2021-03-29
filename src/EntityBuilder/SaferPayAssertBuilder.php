@@ -31,10 +31,9 @@ class SaferPayAssertBuilder
     /**
      * @param AssertBody $assertBody
      * @param $saferPayOrderId
-     * @param $customerId
+     *
      * @return SaferPayAssert
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
+     * @throws \Exception
      */
     public function createAssert(AssertBody $assertBody, $saferPayOrderId)
     {
@@ -43,6 +42,7 @@ class SaferPayAssertBuilder
         $assert->id_saferpay_order = $saferPayOrderId;
         $assert->amount = $assertBody->getTransaction()->getAmount()->getValue();
         $assert->status = $assertBody->getTransaction()->getStatus();
+        $assert->authorized = 1; //If creating assert, it must be authorized.
 
         $assert->currency_code = $assertBody->getTransaction()->getAmount()->getCurrencyCode();
         $assert->uncertain = 0;

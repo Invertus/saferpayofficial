@@ -20,8 +20,8 @@
  *@license   SIX Payment Services
  *}
 
-<div id="formAddPaymentPanel" class="panel">
-    <div class="panel-heading">
+<div id="formAddPaymentPanel" class="panel card">
+    <div class="panel-heading card-header">
         <i class="icon-money"></i>
         {l s='SaferPayOfficial' mod='saferpayofficial'} <span class="badge"></span>
     </div>
@@ -31,20 +31,20 @@
         </div>
     {/if}
     <div>
-        <form id="saferpay-admin-form" method="post" action="{$action}">
+        <form id="saferpay-admin-form" class="ml-4 mt-4 mb-2" method="post" action="{$action|escape:'htmlall':'UTF-8'}">
             {if $isSaferPayComplete}
                 {if !$isSaferPayRefunded && !$isSaferPayCanceled}
-                    <div class="form-inline">
+                    <div class="mb-2 form-inline">
                         <div class="input-group money-type row">
                             <div class="input-group">
-                                <span class="input-group-addon"> {$currencySign}</span>
+                                <span class=" input-group-addon input-group-text"> {$currencySign|escape:'htmlall':'UTF-8'}</span>
                                 <input type="number"
                                        name="saferpay_refund_amount"
                                        class="form-control"
                                        step=".01"
                                        min="0"
-                                       max="{($authAmount - $refund_amount) / $amountMultiplier}"
-                                       value="{($authAmount - $refund_amount) / $amountMultiplier}">
+                                       max="{($authAmount|escape:'htmlall':'UTF-8' - $refund_amount|escape:'htmlall':'UTF-8') / $amountMultiplier|escape:'htmlall':'UTF-8'}"
+                                       value="{($authAmount|escape:'htmlall':'UTF-8' - $refund_amount|escape:'htmlall':'UTF-8') / $amountMultiplier|escape:'htmlall':'UTF-8'}">
                             </div>
                             <div class="saferpay-refund-button">
                                 <button class="btn btn-primary" type="submit"
@@ -54,84 +54,84 @@
                     </div>
                 {/if}
             {elseif !$isSaferPayCanceled}
-                <button class="btn btn-primary" type="submit"
+                <button class="btn btn-primary ml-4 mb-2" type="submit"
                         name="submitCaptureOrder">{l s='Capture' mod='saferpayofficial'}</button>
-                <button class="btn btn-primary" type="submit"
+                <button class="btn btn-primary mb-2" type="submit"
                         name="submitCancelOrder">{l s='Cancel this order' mod='saferpayofficial'}</button>
             {/if}
         </form>
         <div>
-            <h1>{l s='Transaction details:' mod='saferpayofficial'}</h1>
+            <h1 class="pl-4">{l s='Transaction details:' mod='saferpayofficial'}</h1>
         </div>
-        <div class="row">
+        <div class="row card-body">
             <div class="col-lg-4">
                 <div>
-                    <p>{l s='Authorisation Amount:' mod='saferpayofficial'} {$authAmount / $amountMultiplier}</p>
+                    <p>{l s='Authorisation Amount:' mod='saferpayofficial'} {$authAmount|escape:'htmlall':'UTF-8' / $amountMultiplier|escape:'htmlall':'UTF-8'}</p>
                 </div>
                 <div>
-                    <p>{l s='Refunded Amount:' mod='saferpayofficial'} {$refund_amount / $amountMultiplier}</p>
+                    <p>{l s='Refunded Amount:' mod='saferpayofficial'} {$refund_amount|escape:'htmlall':'UTF-8' / $amountMultiplier|escape:'htmlall':'UTF-8'}</p>
                 </div>
                 <div>
                     <p>
-                        {l s='Currency:' mod='saferpayofficial'} {$currency}
+                        {l s='Currency:' mod='saferpayofficial'} {$currency|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 {if $dcc_currency_code}
                     <div>
-                        <p>{l s='Converted amount:' mod='saferpayofficial'} {$dcc_value}</p>
+                        <p>{l s='Converted amount:' mod='saferpayofficial'} {$dcc_value|escape:'htmlall':'UTF-8'}</p>
                     </div>
                     <div>
-                        <p>{l s='Converted currency:' mod='saferpayofficial'} {$dcc_currency_code}</p>
+                        <p>{l s='Converted currency:' mod='saferpayofficial'} {$dcc_currency_code|escape:'htmlall':'UTF-8'}</p>
                     </div>
                 {/if}
             </div>
             <div class="col-lg-4">
                 <div>
                     <p>
-                        {l s='Transaction authorized:' mod='saferpayofficial'} {$transactionAuth}
+                        {l s='Transaction authorized:' mod='saferpayofficial'} {$transactionAuth|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 <div>
                     <p>
-                        {l s='Card expiry date:' mod='saferpayofficial'} {$cardExpiryDate}
+                        {l s='Card expiry date:' mod='saferpayofficial'} {$cardExpiryDate|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 <div>
                     <p>
-                        {l s='Transaction uncertain:' mod='saferpayofficial'} {$transactionUncertain}
+                        {l s='Transaction uncertain:' mod='saferpayofficial'} {$transactionUncertain|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 <div>
                     <p>
-                        {l s='Brand:' mod='saferpayofficial'} {$brand}
+                        {l s='Brand:' mod='saferpayofficial'} {$brand|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 <div>
                     <p>
-                        {l s='Payment Method:' mod='saferpayofficial'} {$paymentMethod}
+                        {l s='Payment Method:' mod='saferpayofficial'} {$paymentMethod|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
             </div>
             <div class="col-lg-4">
                 <div>
                     <p>
-                        {l s='Transaction paid:' mod='saferpayofficial'} {$transactionPaid}
+                        {l s='Transaction paid:' mod='saferpayofficial'} {$transactionPaid|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 <div>
                     <p>
-                        {l s='Payment ID:' mod='saferpayofficial'} {$paymentId}
+                        {l s='Payment ID:' mod='saferpayofficial'} {$paymentId|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 {if $liability_entity}
                     <div>
                         <p>
-                            {l s='Liability entity:' mod='saferpayofficial'} {$liability_entity}
+                            {l s='Liability entity:' mod='saferpayofficial'} {$liability_entity|escape:'htmlall':'UTF-8'}
                         </p>
                     </div>
                     <div>
                         <p>
-                            {l s='Is Payment safe:' mod='saferpayofficial'} {$liability_shift}
+                            {l s='Is Payment safe:' mod='saferpayofficial'} {$liability_shift|escape:'htmlall':'UTF-8'}
                         </p>
                     </div>
                 {else}
@@ -143,7 +143,7 @@
                 {/if}
                 <div>
                     <p>
-                        {l s='Card number:' mod='saferpayofficial'} {$cardNumber}
+                        {l s='Card number:' mod='saferpayofficial'} {$cardNumber|escape:'htmlall':'UTF-8'}
                     </p>
                 </div>
                 <div>

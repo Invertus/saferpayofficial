@@ -25,37 +25,33 @@ namespace Invertus\SaferPay\DTO\Request;
 
 class Payment
 {
+    /**
+     * @var string
+     */
     private $value;
+
+    /**
+     * @var string
+     */
     private $currencyCode;
-    private $orderId;
+
+    /**
+     * @var string
+     */
+    private $orderReference;
+
     /**
      * @var null
      */
-    private $payerNote;
+    private $payerNote = null;
+
     /**
      * @var null
      */
-    private $description;
+    private $description = 'PrestaShop payment';
 
     /**
-     * Payment constructor.
-     * @param $value
-     * @param $currencyCode
-     * @param $orderId
-     * @param null $payerNote
-     * @param string $description
-     */
-    public function __construct($value, $currencyCode, $orderId, $payerNote = null, $description = 'PrestaShop payment')
-    {
-        $this->value = (string) $value;
-        $this->currencyCode = $currencyCode;
-        $this->orderId = $orderId;
-        $this->payerNote = $payerNote;
-        $this->description = $description;
-    }
-
-    /**
-     * @return mixed
+     * @return string
      */
     public function getValue()
     {
@@ -63,7 +59,7 @@ class Payment
     }
 
     /**
-     * @param mixed $value
+     * @param string $value
      */
     public function setValue($value)
     {
@@ -71,7 +67,7 @@ class Payment
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getCurrencyCode()
     {
@@ -79,7 +75,7 @@ class Payment
     }
 
     /**
-     * @param mixed $currencyCode
+     * @param string $currencyCode
      */
     public function setCurrencyCode($currencyCode)
     {
@@ -87,19 +83,19 @@ class Payment
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getOrderId()
+    public function getOrderReference()
     {
-        return $this->orderId;
+        return $this->orderReference;
     }
 
     /**
-     * @param mixed $orderId
+     * @param string $orderReference
      */
-    public function setOrderId($orderId)
+    public function setOrderReference($orderReference)
     {
-        $this->orderId = $orderId;
+        $this->orderReference = $orderReference;
     }
 
     /**

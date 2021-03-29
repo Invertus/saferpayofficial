@@ -57,7 +57,9 @@ class CartDuplicationService
         $cartRule->update();
 
         $orderId = Order::getIdByCartId($cartId);
-        $sql = 'DELETE FROM `'._DB_PREFIX_.'order_cart_rule` WHERE id_order = ' . (int) $orderId . ' AND id_cart_rule = ' . (int) $cartRuleId;
+        $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'order_cart_rule`
+                    WHERE id_order = ' . (int) $orderId . '
+                        AND id_cart_rule = ' . (int) $cartRuleId;
         DB::getInstance()->execute($sql);
     }
 }

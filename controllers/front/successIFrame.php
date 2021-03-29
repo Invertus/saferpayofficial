@@ -69,18 +69,18 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         }
 
         /** @var AuthorizationRequestObjectCreator $authRequestCreator */
-        $authRequestCreator = $this->module->getContainer()->get(AuthorizationRequestObjectCreator::class);
+        $authRequestCreator = $this->module->getModuleContainer()->get(AuthorizationRequestObjectCreator::class);
 
         /** @var SaferPayOrderRepository $orderRepo */
-        $orderRepo = $this->module->getContainer()->get('saferpay.order.repository');
+        $orderRepo = $this->module->getModuleContainer()->get('saferpay.order.repository');
 
         $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $saveCard = (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE;
-        $authRequest = $authRequestCreator->create($saferPayOrder->token, $this->module->version, $saveCard);
+        $authRequest = $authRequestCreator->create($saferPayOrder->token, $saveCard);
 
         /** @var AuthorizationService $authorizeService */
-        $authorizeService = $this->module->getContainer()->get(AuthorizationService::class);
+        $authorizeService = $this->module->getModuleContainer()->get(AuthorizationService::class);
         $order = new Order($orderId);
         if (!$isDirectPayment) {
             try {
@@ -94,7 +94,10 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                     $selectedCard
                 );
             } catch (SaferPayApiException $e) {
-                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+                $this->warning[] = $this->module->l(
+                    'We couldn\'t authorize your payment. Please try again.',
+                    self::FILENAME
+                );
                 $failUrl = $this->context->link->getModuleLink(
                     $this->module->name,
                     'failValidation',
@@ -102,7 +105,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                         'cartId' => $cartId,
                         'secureKey' => $secureKey,
                         'orderId' => $orderId,
-                        SaferPayOfficial::IS_BUSINESS_LICENCE => true,
+                        \Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
                     ],
                     true
                 );
@@ -124,11 +127,14 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
 
             if ($authResponse->getLiability()->getThreeDs() && !$authResponse->getLiability()->getLiabilityShift()) {
                 /** @var SaferPay3DSecureService $secureService */
-                $secureService = $this->module->getContainer()->get(SaferPay3DSecureService::class);
+                $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
                 $secureService->processNotSecuredPayment($order);
                 $isOrderCanceled = $secureService->isSaferPayOrderCanceled($orderId);
                 if ($isOrderCanceled) {
-                    $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+                    $this->warning[] = $this->module->l(
+                        'We couldn\'t authorize your payment. Please try again.',
+                        self::FILENAME
+                    );
                     $failUrl = $this->context->link->getModuleLink(
                         $this->module->name,
                         'failIFrame',
@@ -151,7 +157,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
             if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
-                $orderStatusService = $this->module->getContainer()->get(SaferPayOrderStatusService::class);
+                $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
             }
         }
