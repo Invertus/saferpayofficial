@@ -28,11 +28,11 @@
 
 {block name='content'}
     <script type="text/javascript">
-        var redirectUrl = '{$redirectUrl}';
+        var redirectUrl = '{$redirectUrl|escape:'html':'UTF-8'}';
     </script>
     <div class="loader"></div>
-    <link rel="stylesheet" href="{$cssUrl}" type="text/css" media="all">
-    <script type="text/javascript" src="{$jsUrl}"></script>
+    <link rel="stylesheet" href="{$cssUrl|escape:'html':'UTF-8'}" type="text/css" media="all">
+    <script type="text/javascript" src="{$jsUrl|escape:'html':'UTF-8'}"></script>
 {/block}
 
 {block name='footer'}

@@ -30,6 +30,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::__construct();
         $this->bootstrap = true;
+
+        $this->override_folder = 'field-option-settings/';
+        $this->tpl_folder = 'field-option-settings/';
         $this->initOptions();
     }
 
@@ -48,7 +51,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $isCreditCardSaveEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
         if (!$isCreditCardSaveEnabled) {
             /** @var SaferPaySavedCreditCardRepository $cardRepo */
-            $cardRepo = $this->module->getContainer()->get(SaferPaySavedCreditCardRepository::class);
+            $cardRepo = $this->module->getModuleContainer()->get(SaferPaySavedCreditCardRepository::class);
             $cardRepo->deleteAllSavedCreditCards();
         }
     }
@@ -109,6 +112,26 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'type' => 'text',
                         'class' => 'fixed-width-xl',
                     ],
+                    SaferPayConfig::FIELDS_ACCESS_TOKEN . '_description' => [
+                        'type' => 'desc',
+                        'class' => 'col-lg-12',
+                        'template' => 'field-access-token-desc.tpl',
+                    ],
+                    SaferPayConfig::FIELDS_ACCESS_TOKEN => [
+                        'title' => $this->l('Field Access Token'),
+                        'type' => 'text',
+                        'class' => 'fixed-width-xxl',
+                    ],
+                    SaferPayConfig::FIELDS_LIBRARY . '_description' => [
+                        'type' => 'desc',
+                        'class' => 'col-lg-12',
+                        'template' => 'field-javascript-library-desc.tpl',
+                    ],
+                    SaferPayConfig::FIELDS_LIBRARY => [
+                        'title' => $this->l('Field Javascript library url'),
+                        'type' => 'text',
+                        'class' => 'fixed-width-xxl',
+                    ],
                     SaferPayConfig::BUSINESS_LICENSE => [
                         'title' => $this->l('I have Business license'),
                         'validation' => 'isBool',
@@ -155,6 +178,26 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'title' => $this->l('Merchant emails'),
                         'type' => 'text',
                         'class' => 'fixed-width-xl',
+                    ],
+                    SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX . '_description' => [
+                        'type' => 'desc',
+                        'class' => 'col-lg-12',
+                        'template' => 'field-access-token-desc.tpl',
+                    ],
+                    SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX => [
+                        'title' => $this->l('Field Access Token'),
+                        'type' => 'text',
+                        'class' => 'fixed-width-xxl',
+                    ],
+                    SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX . '_description' => [
+                        'type' => 'desc',
+                        'class' => 'col-lg-12',
+                        'template' => 'field-javascript-library-desc.tpl',
+                    ],
+                    SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => [
+                        'title' => $this->l('Field Javascript library url'),
+                        'type' => 'text',
+                        'class' => 'fixed-width-xxl',
                     ],
                     SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX => [
                         'title' => $this->l('I have Business license'),
@@ -248,7 +291,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         if (SaferPayConfig::isVersion17()) {
             $this->fields_options[] =
                 [
-                    'title' => $this->l('Email sending'),
+                    'title' => $this->module->l('Email sending'),
                     'icon' => 'icon-settings',
                     'fields' => [
                         SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => [
@@ -269,7 +312,41 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     ],
                 ];
         }
+
+        $this->fields_options[] = $this->getFieldOptionsOrderState();
     }
+
+    private function getFieldOptionsOrderState()
+    {
+        return [
+            'title' => $this->l('Order state'),
+            'fields' => [
+                SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => [
+                    'title' => $this->module->l(
+                        sprintf(
+                            'Status for %s',
+                            Tools::ucfirst(Tools::strtolower(SaferPayConfig::SAFERPAY_PAYMENT_AWAITING))
+                        )
+                    ),
+                    'required' => false,
+                    'cast' => 'intval',
+                    'type' => 'select',
+                    'list' => OrderState::getOrderStates($this->context->language->id),
+                    'identifier' => 'id_order_state',
+                    'desc' => 'Default status on SaferPay order creation',
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ],
+        ];
+    }
+
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);

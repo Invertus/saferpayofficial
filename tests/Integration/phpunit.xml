@@ -1,0 +1,17 @@
+<phpunit bootstrap="bootstrap.php"
+         stopOnFailure="true"
+>
+    <php>
+        <env name="KERNEL_CLASS" value="AppKernel" />
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
+
+        <!-- SaferPay API test credentials -->
+        <env name="SAFERPAY_API_TEST_USERNAME" value="API_248291_97804527"/>
+        <env name="SAFERPAY_API_TEST_PASSWORD" value="JsonApiPwd1_awX6uoJx"/>
+    </php>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>.</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

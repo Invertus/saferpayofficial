@@ -35,23 +35,6 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 class HttpClientFactory
 {
     /**
-     * Config Variable Declaration.
-     *
-     * @var SaferPayConfig
-     */
-    private $config;
-
-    /**
-     * HttpClientFactory constructor.
-     *
-     * @param SaferPayConfig $config
-     */
-    public function __construct(SaferPayConfig $config)
-    {
-        $this->config = $config;
-    }
-
-    /**
      * Gets Guzzle HTTP Client.
      *
      * @return Client
@@ -61,7 +44,7 @@ class HttpClientFactory
         $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
         $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
         $config = [
-            'base_url' => $this->config->getBaseUrl(),
+            'base_url' => SaferPayConfig::getBaseApiUrl(),
             'defaults' => [
                 'headers' => [
                     'Content-Type' => 'application/json',

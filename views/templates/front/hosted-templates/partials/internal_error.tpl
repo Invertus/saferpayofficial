@@ -1,5 +1,4 @@
-<?php
-/**
+{**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -19,21 +18,13 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- */
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * @param Module $params
- * @return bool
- */
-function upgrade_module_1_0_2($module)
-{
-    Configuration::updateValue('SAFERPAY_SEND_ORDER_CONFIRMATION', 1);
-
-    $module->registerHook('actionEmailSendBefore');
-
-    return true;
-}
+ *}
+<div>
+    <strong>{l s='Failed to successfully submit SaferPay Fields Form' mod='saferpayofficial'}</strong><br>
+</div>
+<div>
+    <span class="internal-error-message">{l s='Internal error occurred, unable to authorize payment' mod='saferpayofficial'}</span>
+</div>
+<div>
+    <span>{l s='Please contact our customer support about this problem' mod='saferpayofficial'}</span>
+</div>

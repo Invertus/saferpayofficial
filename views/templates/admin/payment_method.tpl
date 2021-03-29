@@ -25,8 +25,8 @@
         <div class="checkbox">
             <label class="container-checkbox">
                 <input type="checkbox"
-                       id="{$paymentMethod|cat:'_enable'}_on"
-                       name="{$paymentMethod|cat:'_enable'}"
+                       id="{$paymentMethod|cat:'_enable'|escape:'html':'UTF-8'}_on"
+                       name="{$paymentMethod|cat:'_enable'|escape:'html':'UTF-8'}"
                        value="1"
                        {if $is_active}checked="checked"{/if}>
                 <span class="checkmark"></span>
@@ -38,8 +38,8 @@
         <div class="checkbox">
             <label class="container-checkbox">
                 <input type="checkbox"
-                       id="{$paymentMethod|cat:'_logo'}_on"
-                       name="{$paymentMethod|cat:'_logo'}"
+                       id="{$paymentMethod|cat:'_logo'|escape:'html':'UTF-8'}_on"
+                       name="{$paymentMethod|cat:'_logo'|escape:'html':'UTF-8'}"
                        value="1"
                        {if $is_logo_active}checked="checked"{/if}>
                 <span class="checkmark"></span>
@@ -47,6 +47,25 @@
             </label>
         </div>
     </div>
+
+        <div class="col-lg-2">
+            <div class="checkbox">
+                {if $paymentMethod|in_array:$supported_field_payments}
+
+                <label class="container-checkbox">
+                    <input type="checkbox"
+                           id="{$paymentMethod|cat:'_field'|escape:'htmlall':'UTF-8'}_on"
+                           name="{$paymentMethod|cat:'_field'|escape:'htmlall':'UTF-8'}"
+                           value="1"
+                           {if $is_field_active}checked="checked"{/if}>
+                    <span class="checkmark"></span>
+
+                </label>
+                {/if}
+
+            </div>
+        </div>
+
     <div class="col-lg-3">
         {html_options
         name=$paymentMethod|cat:'_countries[]'

@@ -20,7 +20,7 @@
  *@license   SIX Payment Services
  *}
 
-<a class="col-lg-4 col-md-6 col-sm-6 col-xs-12" href="{$link->getModuleLink('saferpayofficial', 'creditCards')}">
+<a class="col-lg-4 col-md-6 col-sm-6 col-xs-12" href="{$link->getModuleLink('saferpayofficial', 'creditCards')|escape:'htmlall':'UTF-8'}">
     <span class="link-item">
         <i class="material-icons">list</i>
         <span>{l s='My credit cards' mod='saferpayofficial'}</span>

@@ -109,9 +109,9 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
                 'cart',
                 null,
                 $this->context->language->id,
-                array(
+                [
                     'action' => 'show',
-                ),
+                ],
                 false,
                 null,
                 false

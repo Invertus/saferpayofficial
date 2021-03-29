@@ -31,6 +31,11 @@
             {l s='Show logos' mod='saferpayofficial'}
         </label>
     </div>
+    <div class="col-lg-2">
+        <label>
+            {l s='Show custom form' mod='saferpayofficial'}
+        </label>
+    </div>
     <div class="col-lg-3">
         <label>
             {l s='Countries' mod='saferpayofficial'}

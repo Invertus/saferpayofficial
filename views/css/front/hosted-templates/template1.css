@@ -1,0 +1,17 @@
+#main {
+    background-color: #fff;
+    padding: 36px 42px;
+    border-radius: 36px;
+    box-shadow: 14px 14px 14px 14px #b3b3b3;
+    width: 450px;
+    margin-top: 30px;
+    margin-bottom: 100px;
+}
+
+#wrapper, #center_column {
+    height: 600px;
+}
+
+#fields-card-number, #fields-expiration, #fields-holder-name, #fields-cvc {
+    width: 100% !important;
+}
