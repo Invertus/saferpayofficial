@@ -6,8 +6,8 @@
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
 
         <!-- SaferPay API test credentials -->
-        <env name="SAFERPAY_API_TEST_USERNAME" value="API_248291_97804527"/>
-        <env name="SAFERPAY_API_TEST_PASSWORD" value="JsonApiPwd1_awX6uoJx"/>
+        <env name="SAFERPAY_API_TEST_USERNAME" value="api_login"/>
+        <env name="SAFERPAY_API_TEST_PASSWORD" value="api_password"/>
     </php>
     <testsuites>
         <testsuite name="Unit">

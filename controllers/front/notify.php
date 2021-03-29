@@ -36,7 +36,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
      * # WILL NOT work for local development, to AUTHORIZE payment this must be called manually. #
-     * Example manual request: https://saferpay.invertusdemo.com/en/module/saferpayofficial/notify?success=1&cartId=12&orderId=12&secureKey=9366c61b59e918b2cd96ed0567c82e90
+     * Example manual request: https://saferpay.demo.com/en/module/saferpayofficial/notify?success=1&cartId=12&orderId=12&secureKey=9366c61b59e918b2cd96ed0567c82e90
      */
     public function postProcess()
     {
