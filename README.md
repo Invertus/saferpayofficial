@@ -38,6 +38,8 @@ There is a green button „Clone or download“. If you choose download zip, you
 
 1)    Unzip it
 2)    Rename main folder from "saferpayofficial-master" to "saferpayofficial"
-3)    Zip it
+3)    Navigate to "saferpayofficial" directory
+4)    Run this command: "composer install --no-dev --optimize-autoloader"
+5)    Zip it
 
 Now module is ready to be uploaded to PrestaShop. For more detailed installation instruction see userguide.
