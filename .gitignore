@@ -1,6 +1,6 @@
 /.idea
 /config*.xml
-/vendor
+#/vendor
 composer.lock
 .php_cs.cache
 tests/.env
