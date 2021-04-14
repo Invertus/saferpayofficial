@@ -58,13 +58,14 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $order = new Order($orderId);
             $assertResponseBody = $this->assertTransaction($cartId);
 
-            if (in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)) {
-                if (!$assertResponseBody->getLiability()->getLiabilityShift()) {
-                    /** @var SaferPay3DSecureService $secureService */
-                    $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
-                    $secureService->processNotSecuredPayment($order);
-                    die($this->module->l('Liability shift is false', self::FILENAME));
-                }
+            if (
+                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
+                !$assertResponseBody->getLiability()->getLiabilityShift()
+            ) {
+                /** @var SaferPay3DSecureService $secureService */
+                $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
+                $secureService->processNotSecuredPayment($order);
+                die($this->module->l('Liability shift is false', self::FILENAME));
             }
 
             $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
