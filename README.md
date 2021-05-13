@@ -45,14 +45,16 @@ There is a green button „Clone or download“. If you choose download zip, you
 
 For more precise and detailed installation process, you can follow the screenshots below (be aware that some settings might be different on your computer, for example opening a terminal or cmd in a folder could be done in a different way on windows or linux, the screenshots below are from a Mac):
 
-<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step1">
-<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step2">
-<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step3">
-<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step4">
-<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step5">
-<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step6">
-<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step7">
 
+<p align="center">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/Step1.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/Step2.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/Step3.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/Step4.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/Step5.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/Step6.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/Step7.png">
+</p>
 
 
 Now module's ZIP file is ready to be uploaded to PrestaShop!
