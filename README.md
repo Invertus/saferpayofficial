@@ -42,4 +42,17 @@ There is a green button „Clone or download“. If you choose download zip, you
 4)    Run this command: "composer install --no-dev --optimize-autoloader"
 5)    Zip it
 
-Now module is ready to be uploaded to PrestaShop. For more detailed installation instruction see userguide.
+
+For more precise and detailed installation process, you can follow the screenshots below (be aware that some settings might be different on your computer, for example opening a terminal or cmd in a folder could be done in a different way on windows or linux, the screenshots below are from a Mac):
+
+<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step1">
+<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step2">
+<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step3">
+<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step4">
+<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step5">
+<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step6">
+<img src="https://github.com/Invertus/saferpayofficial/tree/master/views/img/Step7">
+
+
+
+Now module's ZIP file is ready to be uploaded to PrestaShop!
