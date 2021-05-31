@@ -34,3 +34,9 @@
 - BO : Added gender information to Payer.BillingAddress and Payer.DeliveryAddress
 - BO : Added shipping fee information to Order.Items
 - BO : Added order reference information to Refund request
+
+## [1.0.8] - 2021-05-31
+
+- BO : 3DS capture fix
+- BO : Updates from bitbucket
+- BO : Module install fix
