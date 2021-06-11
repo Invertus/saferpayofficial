@@ -33,6 +33,8 @@ To register for live account please follow this link: https://www.six-payment-se
 
 Test account information can be found here: https://www.six-payment-services.com/en/site/e-commerce-developer/testaccount.html
 
+Please be sure to have composer installed on your device before installing the module, you can simply do that here - https://getcomposer.org/download/
+
 <h1>Steps to use module from Github</h1>
 There is a green button „Clone or download“. If you choose download zip, you will get "saferpayofficial-master.zip", you need to do the following steps:
 
