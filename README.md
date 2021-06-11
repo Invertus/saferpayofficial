@@ -58,3 +58,16 @@ For more precise and detailed installation process, you can follow the screensho
 
 
 Now module's ZIP file is ready to be uploaded to PrestaShop!
+
+
+For Windows users the steps are the same, here are the screenshots of the process:
+
+<p align="center">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/ss1.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/ss2.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/ss3.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/ss4.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/ss5.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/ss6.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/ss7.png">
+</p>
