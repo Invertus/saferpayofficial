@@ -43,4 +43,4 @@
 
 ## [1.0.9] - 2021-07-15
 
-- BO : Fixed invoice_date not being set on order when using module as payment option.
+- BO : Fixed invoice_date not being set on order when using module as payment option with CAPTURE default payment method behaviour.
