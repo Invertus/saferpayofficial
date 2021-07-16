@@ -57,6 +57,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $saferPayOrder = new SaferPayOrder($saferPayOrderId);
             $assertResponseBody = $this->assertTransaction($cartId);
 
+            //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
