@@ -55,8 +55,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
 
             $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-            $order = new Order($orderId);
             $assertResponseBody = $this->assertTransaction($cartId);
+
+            //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
+            //NOTE must be left below assert action to get newest information.
+            $order = new Order($orderId);
 
             if (
                 in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
@@ -67,6 +70,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $secureService->processNotSecuredPayment($order);
                 die($this->module->l('Liability shift is false', self::FILENAME));
             }
+
+            //NOTE to get latest information possible and not override new information.
+            $order = new Order($orderId);
 
             $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
             if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&

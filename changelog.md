@@ -40,3 +40,7 @@
 - BO : 3DS capture fix
 - BO : Updates from bitbucket
 - BO : Module install fix
+
+## [1.0.9] - 2021-07-15
+
+- BO : Fixed invoice_date not being set on order when using module as payment option with CAPTURE default payment method behaviour.
