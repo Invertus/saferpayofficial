@@ -49,7 +49,6 @@ class SaferPayConfig
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
         self::PAYMENT_BANCONTACT,
-        self::PAYMENT_BONUS,
         self::PAYMENT_DINERS,
         self::PAYMENT_DIRECTDEBIT,
         self::PAYMENT_EPRZELEWY,
@@ -77,7 +76,6 @@ class SaferPayConfig
     const PAYMENT_ALIPAY = 'ALIPAY';
     const PAYMENT_AMEX = 'AMEX';
     const PAYMENT_BANCONTACT = 'BANCONTACT';
-    const PAYMENT_BONUS = 'BONUS';
     const PAYMENT_DINERS = 'DINERS';
     const PAYMENT_DIRECTDEBIT = 'DIRECTDEBIT';
     const PAYMENT_EPRZELEWY = 'EPRZELEWY';
@@ -113,7 +111,6 @@ class SaferPayConfig
         self::PAYMENT_BANCONTACT,
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
-        self::PAYMENT_BONUS,
         self::PAYMENT_MYONE,
     ];
 
@@ -142,7 +139,6 @@ class SaferPayConfig
     const TRANSACTION_METHODS = [
         self::PAYMENT_AMEX,
         self::PAYMENT_BANCONTACT,
-        self::PAYMENT_BONUS,
         self::PAYMENT_DINERS,
         self::PAYMENT_INVOICE,
         self::PAYMENT_JCB,
