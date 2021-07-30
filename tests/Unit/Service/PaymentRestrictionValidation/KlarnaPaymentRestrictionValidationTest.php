@@ -70,6 +70,14 @@ class KlarnaPaymentRestrictionValidationTest extends UnitTestCase
                 'context' => $this->mockContext('DE', 'LT'),
                 'expectedResult' => false,
             ],
+            [
+                'context' => $this->mockContext('IT', 'EUR'),
+                'expectedResult' => true,
+            ],
+            [
+                'context' => $this->mockContext('FR', 'USD'),
+                'expectedResult' => true,
+            ],
         ];
     }
 
