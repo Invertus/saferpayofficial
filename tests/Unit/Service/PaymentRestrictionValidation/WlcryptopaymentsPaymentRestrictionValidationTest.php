@@ -59,16 +59,16 @@ class WlcryptopaymentsPaymentRestrictionValidationTest extends UnitTestCase
                 'expectedResult' => false,
             ],
             [
-                'context' => $this->mockContext('DK', 'EUR'),
-                'expectedResult' => false,
+                'context' => $this->mockContext('CH', 'CHF'),
+                'expectedResult' => true,
             ],
             [
-                'context' => $this->mockContext('LT', 'EUR'),
-                'expectedResult' => false,
+                'context' => $this->mockContext('FI', 'CHF'),
+                'expectedResult' => true,
             ],
             [
-                'context' => $this->mockContext('DE', 'LT'),
-                'expectedResult' => false,
+                'context' => $this->mockContext('FR', 'CHF'),
+                'expectedResult' => true,
             ],
         ];
     }
@@ -77,7 +77,7 @@ class WlcryptopaymentsPaymentRestrictionValidationTest extends UnitTestCase
     {
         return [
             [
-                'context' => $this->mockContext('AT', 'AUD'),
+                'context' => $this->mockContext('AT', 'CHF'),
                 'paymentName' => SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS,
                 'expectedResult' => true,
             ],
