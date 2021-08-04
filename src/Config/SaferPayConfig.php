@@ -71,6 +71,7 @@ class SaferPayConfig
         self::PAYMENT_VPAY,
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_KLARNA,
+        self::PAYMENT_WLCRYPTOPAYMENTS,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -98,6 +99,7 @@ class SaferPayConfig
     const PAYMENT_VPAY = 'VPAY';
     const PAYMENT_KLARNA = 'KLARNA';
     const PAYMENT_APPLEPAY = 'APPLEPAY';
+    const PAYMENT_WLCRYPTOPAYMENTS = 'WLCRYPTOPAYMENTS';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -112,6 +114,10 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
+    ];
+
+    const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
+        'CHF',
     ];
 
     const KLARNA_SUPPORTED_CURRENCIES = [
@@ -272,7 +278,7 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.20',
+            RequestHeader::SPEC_VERSION => '1.22',
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
