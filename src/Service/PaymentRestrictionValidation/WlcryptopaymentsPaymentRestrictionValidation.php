@@ -51,9 +51,6 @@ class WlcryptopaymentsPaymentRestrictionValidation implements PaymentRestriction
     /**
      * @return bool
      */
-
-
-
     public function supports($paymentName)
     {
         return Tools::strtoupper($paymentName) == SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS;
@@ -71,3 +68,4 @@ class WlcryptopaymentsPaymentRestrictionValidation implements PaymentRestriction
         return in_array($this->context->getCurrencyIsoCode(), SaferPayConfig::WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES);
     }
 }
+
