@@ -24,3 +24,4 @@
 $projectDir = __DIR__ . '/../../';
 
 require_once $projectDir . 'vendor/autoload.php';
+require_once $projectDir . '../../config/config.inc.php';
