@@ -1,4 +1,7 @@
 <?php
+
+use Invertus\SaferPay\Service\LegacyTranslator;
+
 /**
  *NOTICE OF LICENSE
  *
@@ -191,8 +194,11 @@ class SaferPayOfficial extends PaymentModule
                 ->get(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
 
             $newOption = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $translator =  $this->getModuleContainer()->get(
+                \Invertus\SaferPay\Service\LegacyTranslator::class
+            );
             $newOption->setModuleName($this->name)
-                ->setCallToActionText($this->trans($paymentMethod, [], 'Modules.saferpay.Shop'))
+                ->setCallToActionText($translator->translate($paymentMethod))
                 ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod))
                 ->setLogo($imageUrl)
                 ->setInputs(
