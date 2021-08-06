@@ -1,7 +1,4 @@
 <?php
-
-use Invertus\SaferPay\Service\LegacyTranslator;
-
 /**
  *NOTICE OF LICENSE
  *
