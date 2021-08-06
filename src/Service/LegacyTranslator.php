@@ -69,7 +69,7 @@ class LegacyTranslator implements TranslatorInterface
             SaferPayConfig::PAYMENT_VPAY => $this->module->l('Vpay',  self::FILE_NAME),
             SaferPayConfig::PAYMENT_APPLEPAY => $this->module->l('Applepay',  self::FILE_NAME),
             SaferPayConfig::PAYMENT_KLARNA => $this->module->l('Klarna',  self::FILE_NAME),
-            SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS => $this->module->l('Wlcryptopayments',  self::FILE_NAME),
+            SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS => $this->module->l('Cryptocurrencies',  self::FILE_NAME),
         ];
     }
 }
