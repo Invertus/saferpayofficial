@@ -44,3 +44,8 @@
 ## [1.0.9] - 2021-07-15
 
 - BO : Fixed invoice_date not being set on order when using module as payment option with CAPTURE default payment method behaviour.
+
+## [1.0.10] - 2021-08-12
+
+- FO : Fixed issue with maintenance mode and notification controller.
+- BO : Fixed status issue with Bancontact payment.
