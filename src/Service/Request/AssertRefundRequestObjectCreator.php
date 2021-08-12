@@ -27,7 +27,7 @@ use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use SaferPayOrder;
 
-class AssertRequestObjectCreator
+class AssertRefundRequestObjectCreator
 {
     /**
      * @var RequestObjectCreator

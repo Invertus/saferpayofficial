@@ -28,6 +28,7 @@ use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
 
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
@@ -48,13 +49,17 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         if ($cart->secure_key !== $secureKey) {
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
+        /** @var SaferPayOrderRepository $secureService */
+        $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
+        $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
+        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+
+        if($saferPayOrder->authorized) {
+            $this->assertRefundTransaction($orderId);
+            die($this->module->l('Success', self::FILENAME));
+        }
 
         try {
-            /** @var SaferPayOrderRepository $orderRepo */
-            $orderRepo = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
-            $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
-
-            $saferPayOrder = new SaferPayOrder($saferPayOrderId);
             $assertResponseBody = $this->assertTransaction($cartId);
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
@@ -112,6 +117,21 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getModuleContainer()->get(SaferPayTransactionAssertion::class);
         $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId));
+
+        return $assertionResponse;
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return AssertBody
+     * @throws Exception
+     */
+    private function assertRefundTransaction($cartId)
+    {
+        /** @var SaferPayTransactionRefundAssertion $transactionAssertRefund */
+        $transactionAssertRefund = $this->module->getModuleContainer()->get(SaferPayTransactionRefundAssertion::class);
+        $assertionResponse = $transactionAssertRefund->assertRefund(Order::getOrderByCartId($cartId));
 
         return $assertionResponse;
     }

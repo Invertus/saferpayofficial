@@ -112,6 +112,9 @@ class SaferPayOrderStatusService
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        if ($saferPayOrder->authorized) {
+            return;
+        }
         $saferPayOrder->authorized = 1;
         if ($status === 'AUTHORIZED') {
             $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
