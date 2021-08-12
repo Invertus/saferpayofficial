@@ -76,7 +76,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
             if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
-                !$saferPayOrder->captured
+                $assertResponseBody->getTransaction()->getStatus() !== 'CAPTURED'
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
@@ -114,5 +114,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId));
 
         return $assertionResponse;
+    }
+
+    protected function displayMaintenancePage()
+    {
+        return true;
     }
 }

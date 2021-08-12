@@ -32,7 +32,7 @@
     {/if}
     <div>
         <form id="saferpay-admin-form" class="ml-4 mt-4 mb-2" method="post" action="{$action|escape:'htmlall':'UTF-8'}">
-            {if $isSaferPayComplete}
+            {if $transactionPaid == 'CAPTURED'}
                 {if !$isSaferPayRefunded && !$isSaferPayCanceled}
                     <div class="mb-2 form-inline">
                         <div class="input-group money-type row">
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                 {/if}
-            {elseif !$isSaferPayCanceled}
+            {elseif $transactionPaid == 'AUTHORIZED'}
                 <button class="btn btn-primary ml-4 mb-2" type="submit"
                         name="submitCaptureOrder">{l s='Capture' mod='saferpayofficial'}</button>
                 <button class="btn btn-primary mb-2" type="submit"

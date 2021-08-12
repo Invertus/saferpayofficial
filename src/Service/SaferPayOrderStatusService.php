@@ -108,12 +108,16 @@ class SaferPayOrderStatusService
      *
      * @throws \Exception
      */
-    public function assert(Order $order)
+    public function assert(Order $order, $status = 'AUTHORIZED')
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $saferPayOrder->authorized = 1;
-        $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+        if ($status === 'AUTHORIZED') {
+            $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+        } elseif ($status === 'CAPTURED') {
+            $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
+        }
 
         $saferPayOrder->update();
         $order->update();

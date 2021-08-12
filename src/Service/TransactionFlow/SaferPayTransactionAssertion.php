@@ -87,7 +87,7 @@ class SaferPayTransactionAssertion
         $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
         $saferPayOrder->update();
 
-        $this->orderStatusService->assert($order);
+        $this->orderStatusService->assert($order, $assertBody->getTransaction()->getStatus());
 
         return $assertBody;
     }
