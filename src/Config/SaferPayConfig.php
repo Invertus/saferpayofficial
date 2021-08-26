@@ -142,6 +142,7 @@ class SaferPayConfig
         'SE', //Sweden
         'IT', //Italy
         'FR', //France
+        'BE', //Belgium
     ];
 
     const TRANSACTION_METHODS = [
