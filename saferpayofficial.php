@@ -41,7 +41,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.0.10';
+        $this->version = '1.0.11';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
