@@ -27,6 +27,7 @@ use Invertus\SaferPay\Api\Request\AssertRefundService;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Order;
@@ -35,7 +36,7 @@ use SaferPayOrder;
 class SaferPayTransactionRefundAssertion
 {
     /**
-     * @var AssertRequestObjectCreator
+     * @var AssertRefundRequestObjectCreator
      */
     private $assertRefundRequestCreator;
 
@@ -55,7 +56,7 @@ class SaferPayTransactionRefundAssertion
     private $orderStatusService;
 
     public function __construct(
-        AssertRequestObjectCreator $assertionRefundService,
+        AssertRefundRequestObjectCreator $assertionRefundService,
         SaferPayOrderRepository $orderRepository,
         AssertRefundService $assertRefundService,
         SaferPayOrderStatusService $orderStatusService

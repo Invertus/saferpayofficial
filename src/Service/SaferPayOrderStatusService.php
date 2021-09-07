@@ -24,7 +24,9 @@
 namespace Invertus\SaferPay\Service;
 
 use Cart;
+use Context;
 use Exception;
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\CancelService;
 use Invertus\SaferPay\Api\Request\CaptureService;
 use Invertus\SaferPay\Api\Request\RefundService;
@@ -69,6 +71,16 @@ class SaferPayOrderStatusService
      */
     private $refundRequestObjectCreator;
 
+    /**
+     * @var LegacyContext
+     */
+    private $context;
+
+    /**
+     * @var \SaferPayOfficial
+     */
+    private $module;
+
     public function __construct(
         CaptureService $captureService,
         CaptureRequestObjectCreator $captureRequestObjectCreator,
@@ -76,7 +88,9 @@ class SaferPayOrderStatusService
         CancelService $cancelService,
         CancelRequestObjectCreator $cancelRequestObjectCreator,
         RefundService $refundService,
-        RefundRequestObjectCreator $refundRequestObjectCreator
+        RefundRequestObjectCreator $refundRequestObjectCreator,
+        LegacyContext $context,
+        \SaferPayOfficial $module
     ) {
         $this->captureService = $captureService;
         $this->captureRequestObjectCreator = $captureRequestObjectCreator;
@@ -85,6 +99,8 @@ class SaferPayOrderStatusService
         $this->cancelRequestObjectCreator = $cancelRequestObjectCreator;
         $this->refundService = $refundService;
         $this->refundRequestObjectCreator = $refundRequestObjectCreator;
+        $this->context = $context;
+        $this->module = $module;
     }
 
     /**
@@ -139,7 +155,20 @@ class SaferPayOrderStatusService
             $transactionId = $saferPayOrder->refund_id;
             $totalPrice = $refundedAmount;
         }
-        $captureRequest = $this->captureRequestObjectCreator->create($cart, $transactionId, $totalPrice);
+
+        $pendingNotification = $this->context->link->getModuleLink(
+            $this->module->name,
+            'notify',
+            [
+                'success' => 1,
+                'cartId' => $cart->id,
+                'orderId' => Order::getOrderByCartId($cart->id),
+                'secureKey' => $cart->id->secure_key,
+            ],
+            true
+        );
+
+        $captureRequest = $this->captureRequestObjectCreator->create($cart, $transactionId, $totalPrice, $pendingNotification);
 
         try {
             $captureResponse = $this->captureService->capture($captureRequest);

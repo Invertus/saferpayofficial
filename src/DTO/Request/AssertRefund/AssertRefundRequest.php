@@ -52,7 +52,7 @@ class AssertRefundRequest
             'RequestHeader' => [
                 'SpecVersion' => $this->requestHeader->getSpecVersions(),
                 'CustomerId' => $this->requestHeader->getCustomerId(),
-                'RequestId' => $this->requestHeader->getRequestId(),
+                'RequestId' => $this->requestHeader->getRequestId() ?: time(),
                 'RetryIndicator' => $this->requestHeader->getRetryIndicator(),
                 'ClientInfo' => $this->requestHeader->getClientInfo(),
             ],

@@ -30,7 +30,7 @@ use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
 
-class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
+class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'notify';
 
@@ -53,6 +53,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
         $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $assertResponseBody = $this->assertTransaction($cartId);
 
         if($saferPayOrder->authorized) {
             $this->assertRefundTransaction($orderId);
@@ -60,7 +61,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         }
 
         try {
-            $assertResponseBody = $this->assertTransaction($saferPayOrderId);
+            $assertResponseBody = $this->assertTransaction($cartId);
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.

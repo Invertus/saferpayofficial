@@ -44,14 +44,18 @@ class CaptureRequest
      */
     private $transactionId;
 
+    private $pendingNotification;
+
     public function __construct(
         RequestHeader $requestHeader,
         Payment $payment,
-        $transactionId
+        $transactionId,
+        $pendingNotification = null
     ) {
         $this->requestHeader = $requestHeader;
         $this->payment = $payment;
         $this->transactionId = $transactionId;
+        $this->pendingNotification = $pendingNotification;
     }
 
     public function getAsArray()
@@ -71,6 +75,7 @@ class CaptureRequest
             'TransactionReference' => [
                 'TransactionId' => $this->transactionId,
             ],
+            'PendingNotification' => $this->pendingNotification
         ];
 
         return $return;

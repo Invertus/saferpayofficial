@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
+use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use SaferPayOrder;
@@ -53,6 +54,6 @@ class AssertRequestObjectCreator
         $saferPayOrderId =  $this->saferPayOrderRepository->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
-        return new AssertRefundRequest($requestHeader, $saferPayOrder->token);
+        return new AssertRequest($requestHeader, $saferPayOrder->token);
     }
 }

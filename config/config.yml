@@ -33,6 +33,9 @@ services:
     Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder:
         class: Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder
 
+    Invertus\SaferPay\EntityBuilder\SaferPayAssertRefundBuilder:
+        class: Invertus\SaferPay\EntityBuilder\SaferPayAssertRefundBuilder
+
     Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder:
         class: Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder
         arguments:
