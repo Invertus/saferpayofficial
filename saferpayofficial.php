@@ -41,7 +41,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.0.10';
+        $this->version = '1.0.12';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -191,8 +191,11 @@ class SaferPayOfficial extends PaymentModule
                 ->get(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
 
             $newOption = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
+            $translator =  $this->getModuleContainer()->get(
+                \Invertus\SaferPay\Service\LegacyTranslator::class
+            );
             $newOption->setModuleName($this->name)
-                ->setCallToActionText($this->trans($paymentMethod, [], 'Modules.saferpay.Shop'))
+                ->setCallToActionText($translator->translate($paymentMethod))
                 ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod))
                 ->setLogo($imageUrl)
                 ->setInputs(

@@ -134,14 +134,18 @@ class SaferPayConfig
 
     const KLARNA_SUPPORTED_COUNTRY_CODES = [
         'AT', //Austria
+        'BE', //Belgium
         'DK', //Denmark
         'FI', //Finland
+        'FR', //France
         'DE', //Germany
+        'IT', //Italy
         'NL', //Netherlands
         'NO', //Norway
+        'ES', //Spain
         'SE', //Sweden
-        'IT', //Italy
-        'FR', //France
+        'CH', //Switzerland
+        'GB', //United Kingdom
     ];
 
     const TRANSACTION_METHODS = [

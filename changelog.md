@@ -49,3 +49,11 @@
 
 - FO : Fixed issue with maintenance mode and notification controller.
 - BO : Fixed status issue with Bancontact payment.
+
+## [1.0.11] - 2021-08-26
+
+- FO : Added Belgium for Klarna payment
+
+## [1.0.12] - 2021-08-26
+
+- FO : Added missing countries for Klarna payment
