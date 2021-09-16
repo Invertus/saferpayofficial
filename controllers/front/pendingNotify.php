@@ -21,17 +21,10 @@
  * @license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
-use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use Invertus\SaferPay\Service\Request\RequestObjectCreator;
-use Invertus\SaferPay\Service\SaferPay3DSecureService;
-use Invertus\SaferPay\Service\SaferPayOrderStatusService;
-use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
 
 class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
@@ -50,9 +43,9 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         $secureKey = Tools::getValue('secureKey');
 
         $cart = new Cart($cartId);
-//        if ($cart->secure_key !== $secureKey) {
-//            die($this->module->l('Error. Insecure cart', self::FILENAME));
-//        }
+        if ($cart->secure_key !== $secureKey) {
+            die($this->module->l('Error. Insecure cart', self::FILENAME));
+        }
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
         $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);

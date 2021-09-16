@@ -46,18 +46,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $secureKey = Tools::getValue('secureKey');
 
         $cart = new Cart($cartId);
-//        if ($cart->secure_key !== $secureKey) {
-//            die($this->module->l('Error. Insecure cart', self::FILENAME));
-//        }
+        if ($cart->secure_key !== $secureKey) {
+            die($this->module->l('Error. Insecure cart', self::FILENAME));
+        }
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
         $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
-//        if($saferPayOrder->authorized) {
-//            $this->assertRefundTransaction($orderId);
-//            die($this->module->l('Success', self::FILENAME));
-//        }
 
         try {
             $assertResponseBody = $this->assertTransaction($cartId);

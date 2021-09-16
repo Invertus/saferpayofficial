@@ -71,7 +71,7 @@
                 <div>
                     <p>{l s='Refunded Amount:' mod='saferpayofficial'} {$refund_amount|escape:'htmlall':'UTF-8' / $amountMultiplier|escape:'htmlall':'UTF-8'}</p>
                 </div>
-                {if pending_refund_amount > 0}
+                {if $pending_refund_amount > 0}
                     <div>
                         <p>{l s='Pending refund Amount:' mod='saferpayofficial'} {$pending_refund_amount|escape:'htmlall':'UTF-8' / $amountMultiplier|escape:'htmlall':'UTF-8'}</p>
                     </div>
