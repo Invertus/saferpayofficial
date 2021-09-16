@@ -24,6 +24,7 @@
 namespace Invertus\SaferPay\DTO\Request\Refund;
 
 use Invertus\SaferPay\DTO\Request\Payment;
+use Invertus\SaferPay\DTO\Request\PendingNotification;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 class RefundRequest
@@ -44,14 +45,21 @@ class RefundRequest
      */
     private $payment;
 
+    /**
+     * @var PendingNotification
+     */
+    private $pendingNotification;
+
     public function __construct(
         RequestHeader $requestHeader,
         Payment $payment,
-        $transactionId
+        $transactionId,
+        $pendingNotification = null
     ) {
         $this->requestHeader = $requestHeader;
         $this->transactionId = $transactionId;
         $this->payment = $payment;
+        $this->pendingNotification = $pendingNotification;
     }
 
     public function getAsArray()
@@ -75,6 +83,13 @@ class RefundRequest
                 'CaptureId' => $this->transactionId,
             ],
         ];
+
+        if ($this->pendingNotification) {
+            $return['PendingNotification'] = [
+                'MerchantEmails' => $this->pendingNotification->getMerchantEmails(),
+                'NotifyUrl' => $this->pendingNotification->getNotifyUrl(),
+            ];
+        }
 
         return $return;
     }

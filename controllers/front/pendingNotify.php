@@ -16,15 +16,19 @@
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- *@copyright SIX Payment Services
- *@license   SIX Payment Services
+ * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ * @copyright SIX Payment Services
+ * @license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
+use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Service\Request\RequestObjectCreator;
 use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
@@ -49,92 +53,63 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
 //        if ($cart->secure_key !== $secureKey) {
 //            die($this->module->l('Error. Insecure cart', self::FILENAME));
 //        }
-        /** @var SaferPayOrderRepository $secureService */
+        /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
         $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-        $assertResponseBody = $this->assertTransaction($cartId);
 
-        if($saferPayOrder->authorized) {
-            $this->assertRefundTransaction($orderId);
-            die($this->module->l('Success', self::FILENAME));
-        }
-
-        try {
-            $assertResponseBody = $this->assertTransaction($cartId);
-
-            //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
-            //NOTE must be left below assert action to get newest information.
-            $order = new Order($orderId);
-
-            if (
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                !$assertResponseBody->getLiability()->getLiabilityShift()
-            ) {
-                /** @var SaferPay3DSecureService $secureService */
-                $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
-                $secureService->processNotSecuredPayment($order);
-                die($this->module->l('Liability shift is false', self::FILENAME));
+        $orderRefunds = $saferPayOrderRepository->getOrderRefunds($saferPayOrderId);
+        foreach ($orderRefunds as $orderRefund) {
+            if ($orderRefund['status'] === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
+                continue;
             }
-
-            //NOTE to get latest information possible and not override new information.
-            $order = new Order($orderId);
-
-            $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
-            if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
-                $assertResponseBody->getTransaction()->getStatus() !== 'CAPTURED'
-            ) {
-                /** @var SaferPayOrderStatusService $orderStatusService */
-                $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
-                $orderStatusService->capture($order);
+            $assertRefundResponse = $this->assertRefundTransaction($orderRefund['transaction_id']);
+            if ($assertRefundResponse->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
+                $this->handleCapturedRefund($orderRefund['id_saferpay_order_refund']);
             }
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog(
-                sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
-            die($this->module->l($e->getMessage(), self::FILENAME));
         }
 
         die($this->module->l('Success', self::FILENAME));
     }
 
-    /**
-     * @param int $cartId
-     *
-     * @return AssertBody
-     * @throws Exception
-     */
-    private function assertTransaction($cartId)
-    {
-        /** @var SaferPayTransactionAssertion $transactionAssert */
-        $transactionAssert = $this->module->getModuleContainer()->get(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId));
-
-        return $assertionResponse;
-    }
 
     /**
-     * @param int $cartId
+     * @param string $transactionId
      *
-     * @return AssertBody
+     * @return AssertRefundBody
      * @throws Exception
      */
-    private function assertRefundTransaction($cartId)
+    private function assertRefundTransaction($transactionId)
     {
         /** @var SaferPayTransactionRefundAssertion $transactionAssertRefund */
         $transactionAssertRefund = $this->module->getModuleContainer()->get(SaferPayTransactionRefundAssertion::class);
-        $assertionResponse = $transactionAssertRefund->assertRefund(Order::getOrderByCartId($cartId));
 
-        return $assertionResponse;
+        return $transactionAssertRefund->assertRefund($transactionId);
+    }
+
+    private function handleCapturedRefund($orderRefundId)
+    {
+        /** @var SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
+
+        $orderRefund = new SaferPayOrderRefund($orderRefundId);
+        $orderRefund->status = SaferPayConfig::TRANSACTION_STATUS_CAPTURED;
+        $orderRefund->update();
+
+        $orderAssertId = $saferPayOrderRepository->getAssertIdBySaferPayOrderId($orderRefund->id_saferpay_order);
+        $orderAssert = new SaferPayAssert($orderAssertId);
+        $orderAssert->refunded_amount += $orderRefund->amount;
+        $orderAssert->pending_refund_amount -= $orderRefund->amount;
+        $orderAssert->update();
+
+        if ((int)$orderAssert->refunded_amount === (int)$orderAssert->amount) {
+            $saferPayOrder = new SaferPayOrder($orderRefund->id_saferpay_order);
+            $saferPayOrder->refunded = 1;
+            $saferPayOrder->save();
+
+            $order = new Order($orderRefund->id_order);
+            $order->setCurrentState(_SAFERPAY_PAYMENT_REFUND_);
+            $order->update();
+        }
     }
 
     protected function displayMaintenancePage()

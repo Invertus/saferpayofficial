@@ -52,8 +52,7 @@ class AssertRefundBody
     /**
      * @var string
      */
-    private $captured;
-
+    private $orderId;
 
     private $date;
 
@@ -61,18 +60,17 @@ class AssertRefundBody
         ResponseHeader $responseHeader = null,
         $transactionId = null,
         $status = null,
-        $date = null
+        $date = null,
+        $orderId = null
     ) {
         $this->responseHeader = $responseHeader;
         $this->transactionId = $transactionId;
         $this->status = $status;
         $this->date = $date;
+        $this->orderId = $orderId;
     }
 
-    /**
-     * @return ResponseHeader
-     */
-    public function getResponseHeader(): ?ResponseHeader
+    public function getResponseHeader()
     {
         return $this->responseHeader;
     }
@@ -81,17 +79,14 @@ class AssertRefundBody
      * @param ResponseHeader $responseHeader
      * @return AssertRefundBody
      */
-    public function setResponseHeader(?ResponseHeader $responseHeader): AssertRefundBody
+    public function setResponseHeader($responseHeader)
     {
         $this->responseHeader = $responseHeader;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getTransactionId(): string
+    public function getTransactionId()
     {
         return $this->transactionId;
     }
@@ -100,17 +95,14 @@ class AssertRefundBody
      * @param string $transactionId
      * @return AssertRefundBody
      */
-    public function setTransactionId(string $transactionId): AssertRefundBody
+    public function setTransactionId($transactionId)
     {
         $this->transactionId = $transactionId;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getStatus(): string
+    public function getStatus()
     {
         return $this->status;
     }
@@ -119,42 +111,36 @@ class AssertRefundBody
      * @param string $status
      * @return AssertRefundBody
      */
-    public function setStatus(string $status): AssertRefundBody
+    public function setStatus($status)
     {
         $this->status = $status;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getCaptured(): string
+    public function getOrderId()
     {
-        return $this->captured;
+        return $this->orderId;
     }
 
     /**
-     * @param string $captured
+     * @param string $orderId
      * @return AssertRefundBody
      */
-    public function setCaptured(string $captured): AssertRefundBody
+    public function setOrderId($orderId)
     {
-        $this->captured = $captured;
+        $this->orderId = $orderId;
 
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
     public function getDate()
     {
         return $this->date;
     }
 
     /**
-     * @param mixed $date
+     * @param mixed|null $date
      * @return AssertRefundBody
      */
     public function setDate($date)
@@ -163,5 +149,4 @@ class AssertRefundBody
 
         return $this;
     }
-
 }

@@ -68,22 +68,18 @@ class SaferPayTransactionRefundAssertion
     }
 
     /**
-     * @param int $orderId
+     * @param string $transactionId
      *
      * @return AssertRefundBody
      * @throws \Exception
      */
-    public function assertRefund($orderId)
+    public function assertRefund($transactionId)
     {
-        $saferPayOrder = $this->getSaferPayOrder($orderId);
-        $order = new Order($orderId);
-
-        $assertRequest = $this->assertRefundRequestCreator->create($orderId);
+        $assertRequest = $this->assertRefundRequestCreator->create($transactionId);
         $assertResponse = $this->assertionRefundService->assertRefund($assertRequest);
 
         $assertBody = $this->assertionRefundService->createObjectsFromAssertRefundResponse(
-            $assertResponse,
-            $saferPayOrder->id
+            $assertResponse
         );
 
         return $assertBody;

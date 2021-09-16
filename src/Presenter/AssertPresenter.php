@@ -62,6 +62,7 @@ class AssertPresenter
             'liability_entity' => $assert->liability_entity,
             'cardNumber' => $assert->card_number,
             'refund_amount' => $assert->refunded_amount,
+            'pending_refund_amount' => $assert->pending_refund_amount,
             'liability_shift' => $assert->liability_shift,
             'dcc_value' => $assert->dcc_value,
             'dcc_currency_code' => $assert->dcc_currency_code,

@@ -45,13 +45,16 @@ class AssertRefundResponseObjectCreator extends ResponseObjectCreator
             $assertRefundBody->setTransactionId($responseBody->TransactionId);
         }
 
-        if (isset($responseBody->status)) {
-            $assertRefundBody->setStatus($responseBody->status);
+        if (isset($responseBody->Status)) {
+            $assertRefundBody->setStatus($responseBody->Status);
         }
 
-        if (isset($responseBody->PaymentMeans)) {
-            $paymentMeans = $this->createPaymentMeans($responseBody->PaymentMeans);
-            $assertRefundBody->setDate($paymentMeans);
+        if (isset($responseBody->OrderId)) {
+            $assertRefundBody->setOrderId($responseBody->OrderId);
+        }
+
+        if (isset($responseBody->Date)) {
+            $assertRefundBody->setDate($responseBody->Date);
         }
 
         return $assertRefundBody;

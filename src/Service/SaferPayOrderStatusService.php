@@ -16,21 +16,23 @@
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- *@copyright SIX Payment Services
- *@license   SIX Payment Services
+ * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ * @copyright SIX Payment Services
+ * @license   SIX Payment Services
  */
 
 namespace Invertus\SaferPay\Service;
 
 use Cart;
 use Context;
+use Customer;
 use Exception;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\CancelService;
 use Invertus\SaferPay\Api\Request\CaptureService;
 use Invertus\SaferPay\Api\Request\RefundService;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\PendingNotification;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\CancelRequestObjectCreator;
@@ -150,23 +152,26 @@ class SaferPayOrderStatusService
         $cart = new Cart($order->id_cart);
         $transactionId = $saferPayOrder->transaction_id;
         $cartDetails = $cart->getSummaryDetails();
-        $totalPrice = (int) ($cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
+        $totalPrice = (int)($cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
         if ($isRefund) {
             $transactionId = $saferPayOrder->refund_id;
             $totalPrice = $refundedAmount;
         }
 
-        $pendingNotification = $this->context->link->getModuleLink(
-            $this->module->name,
-            'notify',
-            [
-                'success' => 1,
-                'cartId' => $cart->id,
-                'orderId' => Order::getOrderByCartId($cart->id),
-                'secureKey' => $cart->id->secure_key,
-            ],
-            true
-        );
+        $pendingNotification = null;
+        if ($order->payment === SaferPayConfig::PAYMENT_PAYDIREKT || $order->payment === SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS) {
+            $pendingNotification = $this->context->getLink()->getModuleLink(
+                $this->module->name,
+                'notify',
+                [
+                    'success' => 1,
+                    'cartId' => $cart->id,
+                    'orderId' => Order::getOrderByCartId($cart->id),
+                    'secureKey' => $cart->secure_key,
+                ],
+                true
+            );
+        }
 
         $captureRequest = $this->captureRequestObjectCreator->create($cart, $transactionId, $totalPrice, $pendingNotification);
 
@@ -181,7 +186,7 @@ class SaferPayOrderStatusService
         if ($isRefund) {
             $saferPayAssert->refunded_amount += $refundedAmount;
             $saferPayAssert->update();
-            if ((int) $saferPayAssert->refunded_amount === (int) $saferPayAssert->amount) {
+            if ((int)$saferPayAssert->refunded_amount === (int)$saferPayAssert->amount) {
                 $saferPayOrder->refunded = 1;
                 $saferPayOrder->update();
                 $order->setCurrentState(_SAFERPAY_PAYMENT_REFUND_);
@@ -222,7 +227,7 @@ class SaferPayOrderStatusService
         $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
         $saferPayAssert = new SaferPayAssert($assertId);
 
-        $refundAmount = (int) ($refundedAmount * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
+        $refundAmount = (int)($refundedAmount * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
 
         $isRefundValid = ($saferPayAssert->amount >= $saferPayAssert->refunded_amount + $refundAmount);
         if (!$isRefundValid) {
@@ -230,11 +235,28 @@ class SaferPayOrderStatusService
         }
 
         $cart = new Cart($order->id_cart);
-
+        $pendingNotification = null;
+        if ($saferPayAssert->payment_method === SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS ||
+            $saferPayAssert->payment_method === SaferPayConfig::PAYMENT_PAYDIREKT) {
+            $pendingNotify = $this->context->getLink()->getModuleLink(
+                $this->module->name,
+                'pendingNotify',
+                [
+                    'success' => 1,
+                    'cartId' => $cart->id,
+                    'orderId' => Order::getOrderByCartId($cart->id),
+                    'secureKey' => $cart->secure_key,
+                ],
+                true
+            );
+            $customer = new Customer($order->id_customer);
+            $pendingNotification = new PendingNotification($pendingNotify, [$customer->email]);
+        }
         $refundRequest = $this->refundRequestObjectCreator->create(
             $cart,
             $saferPayOrder->transaction_id,
-            $refundAmount
+            $refundAmount,
+            $pendingNotification
         );
 
         try {
@@ -252,12 +274,31 @@ class SaferPayOrderStatusService
         if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
             $saferPayAssert->refunded_amount += $refundAmount;
             $saferPayAssert->update();
-            if ((int) $saferPayAssert->refunded_amount === (int) $saferPayAssert->amount) {
+            if ((int)$saferPayAssert->refunded_amount === (int)$saferPayAssert->amount) {
                 $saferPayOrder->refunded = 1;
                 $saferPayOrder->update();
                 $order->setCurrentState(_SAFERPAY_PAYMENT_REFUND_);
                 $order->update();
             }
         }
+
+        if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_PENDING) {
+            $saferPayAssert->pending_refund_amount += $refundAmount;
+            $saferPayAssert->update();
+            if ((int)$saferPayAssert->pending_refund_amount + $saferPayAssert->refunded_amount >= (int)$saferPayAssert->amount) {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_REFUND_);
+                $order->update();
+            }
+        }
+
+        $saferpayOrderRefund = new \SaferPayOrderRefund();
+        $saferpayOrderRefund->id_saferpay_order = $saferPayOrderId;
+        $saferpayOrderRefund->id_order = $order->id;
+        $saferpayOrderRefund->transaction_id = $refundResponse->Transaction->Id;
+        $saferpayOrderRefund->status = $refundResponse->Transaction->Status;
+        $saferpayOrderRefund->amount = $refundResponse->Transaction->Amount->Value;
+        $saferpayOrderRefund->currency = $refundResponse->Transaction->Amount->CurrencyCode;
+
+        $saferpayOrderRefund->add();
     }
 }

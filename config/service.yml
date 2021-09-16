@@ -72,7 +72,6 @@ services:
         class: Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator
         arguments:
             - '@Invertus\SaferPay\Service\Request\RequestObjectCreator'
-            - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
 
     Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator:
         class: Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator
@@ -234,3 +233,8 @@ services:
             - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
             - '@Invertus\SaferPay\Api\Request\AssertRefundService'
             - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'
+
+    Invertus\SaferPay\Service\LegacyTranslator:
+        class: Invertus\SaferPay\Service\LegacyTranslator
+        arguments:
+            - '@saferpay'

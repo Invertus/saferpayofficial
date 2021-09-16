@@ -88,14 +88,12 @@ class AssertRefundService
 
     /**
      * @param object $responseBody
-     * @param int $saferPayOrderId
      *
      * @return AssertRefundBody
      */
-    public function createObjectsFromAssertRefundResponse($responseBody, $saferPayOrderId)
+    public function createObjectsFromAssertRefundResponse($responseBody)
     {
         $assertBody = $this->assertRefundResponseObjectCreator->createAssertRefundObject($responseBody);
-        $this->assertRefundBuilder->createAssertRefund($assertBody, $saferPayOrderId);
 
         return $assertBody;
     }

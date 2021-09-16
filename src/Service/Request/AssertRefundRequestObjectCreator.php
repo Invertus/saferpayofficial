@@ -34,25 +34,16 @@ class AssertRefundRequestObjectCreator
      */
     private $requestObjectCreator;
 
-    /**
-     * @var SaferPayOrderRepository
-     */
-    private $saferPayOrderRepository;
-
     public function __construct(
-        RequestObjectCreator $requestObjectCreator,
-        SaferPayOrderRepository $saferPayOrderRepository
+        RequestObjectCreator $requestObjectCreator
     ) {
         $this->requestObjectCreator = $requestObjectCreator;
-        $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function create($orderId)
+    public function create($transactionId)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
-        $saferPayOrderId =  $this->saferPayOrderRepository->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
-        return new AssertRefundRequest($requestHeader, $saferPayOrder->token);
+        return new AssertRefundRequest($requestHeader, $transactionId);
     }
 }

@@ -30,19 +30,22 @@ class LegacyTranslator implements TranslatorInterface
 {
     private const FILE_NAME = 'LegacyTranslator';
 
+    /**
+     * @var \SaferPayOfficial
+     */
     private $module;
 
-    public function __construct(ModuleFactory $moduleFactory)
+    public function __construct($module)
     {
-        $this->module = $moduleFactory->getModule();
+        $this->module = $module;
     }
 
-    public function translate(string $key): string
+    public function translate($key)
     {
-        return $this->getTranslations()[$key] ?? $key;
+        return isset($this->getTranslations()[$key]) ? $this->getTranslations()[$key] : $key;
     }
 
-    private function getTranslations(): array
+    private function getTranslations()
     {
         return [
             SaferPayConfig::PAYMENT_ALIPAY => $this->module->l('Alipay',  self::FILE_NAME),

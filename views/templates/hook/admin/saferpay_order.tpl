@@ -43,8 +43,8 @@
                                        class="form-control"
                                        step=".01"
                                        min="0"
-                                       max="{($authAmount|escape:'htmlall':'UTF-8' - $refund_amount|escape:'htmlall':'UTF-8') / $amountMultiplier|escape:'htmlall':'UTF-8'}"
-                                       value="{($authAmount|escape:'htmlall':'UTF-8' - $refund_amount|escape:'htmlall':'UTF-8') / $amountMultiplier|escape:'htmlall':'UTF-8'}">
+                                       max="{($authAmount|escape:'htmlall':'UTF-8' - $refund_amount|escape:'htmlall':'UTF-8' - $pending_refund_amount|escape:'htmlall':'UTF-8') / $amountMultiplier|escape:'htmlall':'UTF-8'}"
+                                       value="{($authAmount|escape:'htmlall':'UTF-8' - $refund_amount|escape:'htmlall':'UTF-8' - $pending_refund_amount|escape:'htmlall':'UTF-8') / $amountMultiplier|escape:'htmlall':'UTF-8'}">
                             </div>
                             <div class="saferpay-refund-button">
                                 <button class="btn btn-primary" type="submit"
@@ -71,6 +71,11 @@
                 <div>
                     <p>{l s='Refunded Amount:' mod='saferpayofficial'} {$refund_amount|escape:'htmlall':'UTF-8' / $amountMultiplier|escape:'htmlall':'UTF-8'}</p>
                 </div>
+                {if pending_refund_amount > 0}
+                    <div>
+                        <p>{l s='Pending refund Amount:' mod='saferpayofficial'} {$pending_refund_amount|escape:'htmlall':'UTF-8' / $amountMultiplier|escape:'htmlall':'UTF-8'}</p>
+                    </div>
+                {/if}
                 <div>
                     <p>
                         {l s='Currency:' mod='saferpayofficial'} {$currency|escape:'htmlall':'UTF-8'}

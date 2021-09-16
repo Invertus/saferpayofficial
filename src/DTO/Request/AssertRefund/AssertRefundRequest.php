@@ -36,14 +36,14 @@ class AssertRefundRequest
     /**
      * @var string
      */
-    private $token;
+    private $transactionId;
 
     public function __construct(
         RequestHeader $requestHeader,
-        $token
+        $transactionId
     ) {
         $this->requestHeader = $requestHeader;
-        $this->token = $token;
+        $this->transactionId = $transactionId;
     }
 
     public function getAsArray()
@@ -57,7 +57,7 @@ class AssertRefundRequest
                 'ClientInfo' => $this->requestHeader->getClientInfo(),
             ],
             'TransactionReference' => [
-                'TransactionId' => $this->token
+                'TransactionId' => $this->transactionId
             ]
         ];
 

@@ -38,11 +38,11 @@ class RefundRequestObjectCreator
         $this->requestObjectCreator = $requestObjectCreator;
     }
 
-    public function create(Cart $cart, $transactionId, $totalRefund)
+    public function create(Cart $cart, $transactionId, $totalRefund, $pendingNotification = null)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
         $payment = $this->requestObjectCreator->createPayment($cart, $totalRefund);
 
-        return new RefundRequest($requestHeader, $payment, $transactionId);
+        return new RefundRequest($requestHeader, $payment, $transactionId, $pendingNotification);
     }
 }

@@ -56,4 +56,9 @@ class LegacyContext
     {
         return $this->getContext()->getMobileDetect();
     }
+
+    public function getLink()
+    {
+        return $this->getContext()->link;
+    }
 }

@@ -20,7 +20,6 @@
  *@copyright SIX Payment Services
 *@license   SIX Payment Services
 */
-declare(strict_types=1);
 
 namespace Invertus\SaferPay\Factory;
 
@@ -29,7 +28,7 @@ use SaferPayOfficial;
 
 class ModuleFactory
 {
-    public function getModule() : Saferpayofficial
+    public function getModule()
     {
         /** @var SaferPayOfficial $module */
         $module = Module::getInstanceByName('saferpayofficial');
