@@ -457,7 +457,7 @@ class Installer extends AbstractInstaller
         $success &= $this->createOrderStatus(
             SaferPayConfig::SAFERPAY_PAYMENT_PENDING_REFUND,
             'Order Pending Refund by Saferpay',
-            '#dc143c'
+            '#ec730a'
         );
 
         $success &= $this->createOrderStatus(
