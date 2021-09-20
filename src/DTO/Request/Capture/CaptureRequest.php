@@ -28,7 +28,6 @@ use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 class CaptureRequest
 {
-
     /**
      * @var RequestHeader
      */
@@ -44,18 +43,14 @@ class CaptureRequest
      */
     private $transactionId;
 
-    private $pendingNotification;
-
     public function __construct(
         RequestHeader $requestHeader,
         Payment $payment,
-        $transactionId,
-        $pendingNotification = null
+        $transactionId
     ) {
         $this->requestHeader = $requestHeader;
         $this->payment = $payment;
         $this->transactionId = $transactionId;
-        $this->pendingNotification = $pendingNotification;
     }
 
     public function getAsArray()
@@ -74,8 +69,7 @@ class CaptureRequest
             ],
             'TransactionReference' => [
                 'TransactionId' => $this->transactionId,
-            ],
-            'PendingNotification' => $this->pendingNotification
+            ]
         ];
 
         return $return;

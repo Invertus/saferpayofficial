@@ -336,6 +336,7 @@ class Installer extends AbstractInstaller
             `id_saferpay_order` INTEGER(10) DEFAULT 0,
             `amount` INTEGER(10) DEFAULT 0,
             `refunded_amount` INTEGER(10) DEFAULT 0,
+            `pending_refund_amount` INTEGER(10) DEFAULT 0,
             `status` VARCHAR(64) NOT NULL,
             `exp_year` INTEGER(10) NOT NULL,
             `exp_month` INTEGER(10) NOT NULL,

@@ -158,22 +158,7 @@ class SaferPayOrderStatusService
             $totalPrice = $refundedAmount;
         }
 
-        $pendingNotification = null;
-        if ($order->payment === SaferPayConfig::PAYMENT_PAYDIREKT || $order->payment === SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS) {
-            $pendingNotification = $this->context->getLink()->getModuleLink(
-                $this->module->name,
-                'notify',
-                [
-                    'success' => 1,
-                    'cartId' => $cart->id,
-                    'orderId' => Order::getOrderByCartId($cart->id),
-                    'secureKey' => $cart->secure_key,
-                ],
-                true
-            );
-        }
-
-        $captureRequest = $this->captureRequestObjectCreator->create($cart, $transactionId, $totalPrice, $pendingNotification);
+        $captureRequest = $this->captureRequestObjectCreator->create($cart, $transactionId, $totalPrice);
 
         try {
             $captureResponse = $this->captureService->capture($captureRequest);
