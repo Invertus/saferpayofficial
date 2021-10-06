@@ -39,7 +39,7 @@ class LegacyTranslator implements TranslatorInterface
 
     public function translate($key)
     {
-        return isset($this->getTranslations()[$key]) ?: $key;
+        return isset($this->getTranslations()[$key]) ? $this->getTranslations()[$key] : $key;
     }
 
     private function getTranslations()
