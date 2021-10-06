@@ -208,3 +208,8 @@ services:
             - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
             - '@Invertus\SaferPay\Api\Request\AssertService'
             - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'
+
+    Invertus\SaferPay\Service\LegacyTranslator:
+        class: Invertus\SaferPay\Service\LegacyTranslator
+        arguments:
+            - '@saferpay'

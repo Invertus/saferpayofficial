@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\Factory\ModuleFactory;
 
 class LegacyTranslator implements TranslatorInterface
 {
@@ -32,9 +31,9 @@ class LegacyTranslator implements TranslatorInterface
 
     private $module;
 
-    public function __construct(ModuleFactory $moduleFactory)
+    public function __construct(\SaferPayOfficial $module)
     {
-        $this->module = $moduleFactory->getModule();
+        $this->module = $module;
     }
 
     public function translate($key)
