@@ -28,7 +28,7 @@ use Invertus\SaferPay\Factory\ModuleFactory;
 
 class LegacyTranslator implements TranslatorInterface
 {
-    private const FILE_NAME = 'LegacyTranslator';
+    const FILE_NAME = 'LegacyTranslator';
 
     private $module;
 
@@ -37,12 +37,12 @@ class LegacyTranslator implements TranslatorInterface
         $this->module = $moduleFactory->getModule();
     }
 
-    public function translate(string $key): string
+    public function translate($key)
     {
-        return $this->getTranslations()[$key] ?? $key;
+        return isset($this->getTranslations()[$key]) ? $this->getTranslations()[$key] : $key;
     }
 
-    private function getTranslations(): array
+    private function getTranslations()
     {
         return [
             SaferPayConfig::PAYMENT_ALIPAY => $this->module->l('Alipay',  self::FILE_NAME),
