@@ -37,6 +37,4 @@ interface TranslatorInterface
      * @return string The translated string
      */
     public function translate($key);
-
 }
-

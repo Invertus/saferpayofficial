@@ -60,8 +60,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
-            if (
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
+            if (in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
                 !$assertResponseBody->getLiability()->getLiabilityShift()
             ) {
                 /** @var SaferPay3DSecureService $secureService */
