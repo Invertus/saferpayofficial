@@ -77,7 +77,7 @@ class RefundRequest
                     'Value' => $this->payment->getValue(),
                     'CurrencyCode' => $this->payment->getCurrencyCode(),
                 ],
-                'OrderId' => $this->payment->getOrderReference(),
+                'OrderId' => $this->payment->getOrderReference(), //for delay testing: NotifyRefund_DelayedResponse60
             ],
             'CaptureReference' => [
                 'CaptureId' => $this->transactionId,

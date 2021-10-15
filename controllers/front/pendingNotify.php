@@ -29,7 +29,7 @@ use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion
 
 class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'notify';
+    const FILENAME = 'pendingNotify';
 
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
@@ -64,7 +64,6 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         die($this->module->l('Success', self::FILENAME));
     }
 
-
     /**
      * @param string $transactionId
      *
@@ -94,13 +93,21 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         $orderAssert->pending_refund_amount -= $orderRefund->amount;
         $orderAssert->update();
 
+        $order = new Order($orderRefund->id_order);
+
         if ((int)$orderAssert->refunded_amount === (int)$orderAssert->amount) {
             $saferPayOrder = new SaferPayOrder($orderRefund->id_saferpay_order);
             $saferPayOrder->refunded = 1;
             $saferPayOrder->save();
 
-            $order = new Order($orderRefund->id_order);
             $order->setCurrentState(_SAFERPAY_PAYMENT_REFUND_);
+            $order->update();
+        } elseif ($order->getCurrentState() !== _SAFERPAY_PAYMENT_PARTLY_REFUND_) {
+            $saferPayOrder = new SaferPayOrder($orderRefund->id_saferpay_order);
+            $saferPayOrder->save();
+
+            $order = new Order($orderRefund->id_order);
+            $order->setCurrentState(_SAFERPAY_PAYMENT_PARTLY_REFUND_);
             $order->update();
         }
     }

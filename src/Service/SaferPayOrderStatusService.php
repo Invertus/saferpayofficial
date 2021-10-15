@@ -270,7 +270,8 @@ class SaferPayOrderStatusService
         if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_PENDING) {
             $saferPayAssert->pending_refund_amount += $refundAmount;
             $saferPayAssert->update();
-            if ((int)$saferPayAssert->pending_refund_amount + $saferPayAssert->refunded_amount >= (int)$saferPayAssert->amount) {
+            $orderState = $order->getCurrentState();
+            if ($orderState !== _SAFERPAY_PAYMENT_PARTLY_REFUND_ && $orderState !== _SAFERPAY_PAYMENT_PENDING_REFUND_) {
                 $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_REFUND_);
                 $order->update();
             }
