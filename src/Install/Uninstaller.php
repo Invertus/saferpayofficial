@@ -84,6 +84,7 @@ class Uninstaller extends AbstractInstaller
             DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_card_alias;
             DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_log;
             DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_field;
+            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_order_refund;
             '
         );
     }

@@ -21,22 +21,17 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\DTO\Request\Capture;
+namespace Invertus\SaferPay\DTO\Request\AssertRefund;
 
-use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 
-class CaptureRequest
+class AssertRefundRequest
 {
+
     /**
      * @var RequestHeader
      */
     private $requestHeader;
-
-    /**
-     * @var Payment
-     */
-    private $payment;
 
     /**
      * @var string
@@ -45,11 +40,9 @@ class CaptureRequest
 
     public function __construct(
         RequestHeader $requestHeader,
-        Payment $payment,
         $transactionId
     ) {
         $this->requestHeader = $requestHeader;
-        $this->payment = $payment;
         $this->transactionId = $transactionId;
     }
 
@@ -59,16 +52,12 @@ class CaptureRequest
             'RequestHeader' => [
                 'SpecVersion' => $this->requestHeader->getSpecVersions(),
                 'CustomerId' => $this->requestHeader->getCustomerId(),
-                'RequestId' => $this->requestHeader->getRequestId(),
+                'RequestId' => $this->requestHeader->getRequestId() ?: time(),
                 'RetryIndicator' => $this->requestHeader->getRetryIndicator(),
                 'ClientInfo' => $this->requestHeader->getClientInfo(),
             ],
-            'Amount' => [
-                'Value' => $this->payment->getValue(),
-                'CurrencyCode' => $this->payment->getCurrencyCode(),
-            ],
             'TransactionReference' => [
-                'TransactionId' => $this->transactionId,
+                'TransactionId' => $this->transactionId
             ]
         ];
 

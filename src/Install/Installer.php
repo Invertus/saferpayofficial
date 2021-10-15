@@ -243,7 +243,9 @@ class Installer extends AbstractInstaller
             $this->installSaferPayAssertTable() &&
             $this->installSaferPayCardAlias() &&
             $this->installSaferPayLog() &&
-            $this->installSaferPayFieldTable();
+            $this->installSaferPayFieldTable() &&
+            $this->installOrderRefundTable()
+            ;
     }
 
     private function installSaferPayPaymentTable()
@@ -334,6 +336,7 @@ class Installer extends AbstractInstaller
             `id_saferpay_order` INTEGER(10) DEFAULT 0,
             `amount` INTEGER(10) DEFAULT 0,
             `refunded_amount` INTEGER(10) DEFAULT 0,
+            `pending_refund_amount` INTEGER(10) DEFAULT 0,
             `status` VARCHAR(64) NOT NULL,
             `exp_year` INTEGER(10) NOT NULL,
             `exp_month` INTEGER(10) NOT NULL,
@@ -386,7 +389,22 @@ class Installer extends AbstractInstaller
         );
     }
 
-    private function createAllOrderStatus()
+    private function installOrderRefundTable()
+    {
+        return Db::getInstance()->execute(
+            'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_order_refund' . '(
+            `id_saferpay_order_refund` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            `id_saferpay_order` INTEGER(10) DEFAULT 0,
+            `id_order` INTEGER(10) DEFAULT 0,
+            `transaction_id` VARCHAR(64) NOT NULL,
+            `amount` INTEGER(20) NOT NULL,
+            `currency` VARCHAR(64) NOT NULL,
+            `status` VARCHAR(64) NOT NULL
+                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
+        );
+    }
+
+    public function createAllOrderStatus()
     {
         $success = true;
         $success &= $this->createOrderStatus(
@@ -435,6 +453,19 @@ class Installer extends AbstractInstaller
             false,
             'refund'
         );
+
+        $success &= $this->createOrderStatus(
+            SaferPayConfig::SAFERPAY_PAYMENT_PARTLY_REFUNDED,
+            'Order Partly Refunded by Saferpay',
+            '#FFDD99'
+        );
+
+        $success &= $this->createOrderStatus(
+            SaferPayConfig::SAFERPAY_PAYMENT_PENDING_REFUND,
+            'Order Pending Refund by Saferpay',
+            '#ec730a'
+        );
+
         $success &= $this->createOrderStatus(
             SaferPayConfig::SAFERPAY_PAYMENT_CANCELED,
             'Order Canceled by Saferpay',

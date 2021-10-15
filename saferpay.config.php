@@ -39,6 +39,14 @@ if (!defined('_SAFERPAY_PAYMENT_REFUND_')) {
     /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_REFUND_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_REFUNDED));
 }
+if (!defined('_SAFERPAY_PAYMENT_PARTLY_REFUND_')) {
+    /** @var URL to module IMG files directory */
+    define('_SAFERPAY_PAYMENT_PARTLY_REFUND_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_PARTLY_REFUNDED));
+}
+if (!defined('_SAFERPAY_PAYMENT_PENDING_REFUND_')) {
+    /** @var URL to module IMG files directory */
+    define('_SAFERPAY_PAYMENT_PENDING_REFUND_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_PENDING_REFUND));
+}
 if (!defined('_SAFERPAY_PAYMENT_CANCELED_')) {
     /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_CANCELED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_CANCELED));

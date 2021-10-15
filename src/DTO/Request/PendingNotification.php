@@ -21,44 +21,55 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Adapter;
+namespace Invertus\SaferPay\DTO\Request;
 
-use Context;
-
-class LegacyContext
+class PendingNotification
 {
-    public function getContext()
+    /**
+     * @var array
+     */
+    private $merchantEmails;
+
+    /**
+     * @var string
+     */
+    private $notifyUrl;
+
+    public function __construct($notifyUrl, $merchantEmails)
     {
-        return Context::getContext();
+        $this->notifyUrl = $notifyUrl;
+        $this->merchantEmails = $merchantEmails;
     }
 
-    public function getCurrencyIsoCode()
+    public function getMerchantEmails()
     {
-        return $this->getContext()->currency->iso_code;
+        return $this->merchantEmails;
     }
 
-    public function getCountryIsoCode()
+    /**
+     * @param array $merchantEmails
+     * @return PendingNotification
+     */
+    public function setMerchantEmails($merchantEmails)
     {
-        return $this->getContext()->country->iso_code;
+        $this->merchantEmails = $merchantEmails;
+
+        return $this;
     }
 
-    public function getCountryId()
+    public function getNotifyUrl()
     {
-        return $this->getContext()->country->id;
+        return $this->notifyUrl;
     }
 
-    public function getCurrencyId()
+    /**
+     * @param string $notifyUrl
+     * @return PendingNotification
+     */
+    public function setNotifyUrl($notifyUrl)
     {
-        return $this->getContext()->currency->id;
-    }
+        $this->notifyUrl = $notifyUrl;
 
-    public function getMobileDetect()
-    {
-        return $this->getContext()->getMobileDetect();
-    }
-
-    public function getLink()
-    {
-        return $this->getContext()->link;
+        return $this;
     }
 }

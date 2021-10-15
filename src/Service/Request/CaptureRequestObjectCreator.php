@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Service\Request;
 
 use Cart;
 use Invertus\SaferPay\DTO\Request\Capture\CaptureRequest;
+use Order;
 
 class CaptureRequestObjectCreator
 {

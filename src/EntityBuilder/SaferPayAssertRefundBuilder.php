@@ -24,9 +24,10 @@
 namespace Invertus\SaferPay\EntityBuilder;
 
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
+use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use SaferPayAssert;
 
-class SaferPayAssertBuilder
+class SaferPayAssertRefundBuilder
 {
     /**
      * @param AssertBody $assertBody
@@ -35,7 +36,7 @@ class SaferPayAssertBuilder
      * @return SaferPayAssert
      * @throws \Exception
      */
-    public function createAssert(AssertBody $assertBody, $saferPayOrderId)
+    public function createAssertRefund(AssertRefundBody $assertBody, $saferPayOrderId)
     {
         $assert = new SaferPayAssert();
 
@@ -47,13 +48,12 @@ class SaferPayAssertBuilder
         $assert->currency_code = $assertBody->getTransaction()->getAmount()->getCurrencyCode();
         $assert->uncertain = 0;
         $assert->brand = $assertBody->getPaymentMeans()->getBrand()->getName();
-        $assert->payment_method = $assertBody->getPaymentMeans()->getBrand()->getPaymentMethod();
+        $assert->payment_method = $assertBody->getPaymentMeans()->getBrand()->getName();
         $assert->transaction_paid = 0;
         $assert->merchant_reference = $assertBody->getPaymentMeans()->getBrand()->getPaymentMethod();
         $assert->payment_id = $assertBody->getTransaction()->getId();
         $assert->acceptance = 0;
         $assert->is_test = 0;
-        $assert->pending_refund_amount = 0;
         $assert->card_number = $assertBody->getPaymentMeans()->getDisplayText();
         if ($assertBody->getPaymentMeans()->getCard() !== null) {
             $assert->exp_year = $assertBody->getPaymentMeans()->getCard()->getExpYear();

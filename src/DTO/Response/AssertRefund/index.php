@@ -16,25 +16,17 @@
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- * @copyright SIX Payment Services
- * @license   SIX Payment Services
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Service;
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 
-/**
- * TranslatorInterface.
- *
- */
-interface TranslatorInterface
-{
-    /**
-     * Translates the given message.
-     *
-     * @param string  The array key
-     *
-     * @return string The translated string
-     */
-    public function translate($key);
-}
+header("Cache-Control: no-store, no-cache, must-revalidate");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+header("Location: ../");
+exit;

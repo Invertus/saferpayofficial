@@ -142,7 +142,10 @@ class RequestObjectCreator
 
         $gender = new Gender($customer->id_gender);
 
-        $saferpayAddress->setGender(GenderEnum::SAFERPAY_GENDERS[$gender->type]);
+        $genderArray = GenderEnum::SAFERPAY_GENDERS;
+        $saferpayAddress->setGender(
+            isset($genderArray[$gender->type]) ? $genderArray[$gender->type]: $genderArray[GenderEnum::GENDER_NEUTRAL]
+        );
         $saferpayAddress->setStreet($address->address1);
         $saferpayAddress->setStreet2($address->address2);
         $saferpayAddress->setZip($address->postcode);

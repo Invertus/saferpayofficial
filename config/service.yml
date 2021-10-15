@@ -16,6 +16,13 @@ services:
             - '@Invertus\SaferPay\Service\Response\AssertResponseObjectCreator'
             - '@Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder'
 
+    Invertus\SaferPay\Api\Request\AssertRefundService:
+        class: Invertus\SaferPay\Api\Request\AssertRefundService
+        arguments:
+            - '@api.request'
+            - '@Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator'
+            - '@Invertus\SaferPay\EntityBuilder\SaferPayAssertRefundBuilder'
+
     Invertus\SaferPay\Api\Request\CaptureService:
         class: Invertus\SaferPay\Api\Request\CaptureService
         arguments:
@@ -61,6 +68,11 @@ services:
             - '@Invertus\SaferPay\Service\Request\RequestObjectCreator'
             - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
 
+    Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator:
+        class: Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator
+        arguments:
+            - '@Invertus\SaferPay\Service\Request\RequestObjectCreator'
+
     Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator:
         class: Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator
         arguments:
@@ -90,6 +102,9 @@ services:
     #Response object creator
     Invertus\SaferPay\Service\Response\AssertResponseObjectCreator:
         class: Invertus\SaferPay\Service\Response\AssertResponseObjectCreator
+
+    Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator:
+        class: Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator
 
     Invertus\SaferPay\Service\Response\AuthorizationResponseObjectCreator:
         class: Invertus\SaferPay\Service\Response\AuthorizationResponseObjectCreator
@@ -135,6 +150,8 @@ services:
             - '@Invertus\SaferPay\Service\Request\CancelRequestObjectCreator'
             - '@Invertus\SaferPay\Api\Request\RefundService'
             - '@Invertus\SaferPay\Service\Request\RefundRequestObjectCreator'
+            - '@=service("adapter.context")'
+            - '@saferpay'
 
     Invertus\SaferPay\Service\SaferPayExceptionService:
         class: Invertus\SaferPay\Service\SaferPayExceptionService
@@ -207,6 +224,14 @@ services:
             - '@Invertus\SaferPay\Service\Request\AssertRequestObjectCreator'
             - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
             - '@Invertus\SaferPay\Api\Request\AssertService'
+            - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'
+
+    Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion:
+        class: Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion
+        arguments:
+            - '@Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator'
+            - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
+            - '@Invertus\SaferPay\Api\Request\AssertRefundService'
             - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'
 
     Invertus\SaferPay\Service\LegacyTranslator:

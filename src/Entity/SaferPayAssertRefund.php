@@ -21,7 +21,7 @@
  *@license   SIX Payment Services
  */
 
-class SaferPayAssert extends ObjectModel
+class SaferPayAssertRefund extends ObjectModel
 {
     public $id_saferpay_order;
     public $amount;
@@ -39,7 +39,6 @@ class SaferPayAssert extends ObjectModel
     public $is_test;
     public $card_number;
     public $refunded_amount;
-    public $pending_refund_amount;
     public $liability_shift;
     public $liability_entity;
     public $dcc_value;
@@ -68,7 +67,6 @@ class SaferPayAssert extends ObjectModel
             'liability_entity' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'card_number' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'refunded_amount' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'pending_refund_amount' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'dcc_value' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'dcc_currency_code' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'authorized' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],

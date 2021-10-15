@@ -28,6 +28,7 @@ use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
 
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
@@ -48,21 +49,18 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         if ($cart->secure_key !== $secureKey) {
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
+        /** @var SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
+        $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
 
         try {
-            /** @var SaferPayOrderRepository $orderRepo */
-            $orderRepo = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
-            $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
-
-            $saferPayOrder = new SaferPayOrder($saferPayOrderId);
             $assertResponseBody = $this->assertTransaction($cartId);
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
-            if (
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
+            if (in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
                 !$assertResponseBody->getLiability()->getLiabilityShift()
             ) {
                 /** @var SaferPay3DSecureService $secureService */

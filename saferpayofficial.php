@@ -617,12 +617,13 @@ class SaferPayOfficial extends PaymentModule
 
         $this->context->smarty->assign($assertData);
 
+        $currency = new Currency($order->id_currency);
         $adminOrderPagePresenter = new \Invertus\SaferPay\Presenter\AdminOrderPagePresenter();
         $orderPageData = $adminOrderPagePresenter->present(
             $saferPayOrder,
             $action,
             \Invertus\SaferPay\Config\SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API,
-            $this->context->currency->sign
+            $currency->sign
         );
 
         $this->context->smarty->assign($orderPageData);

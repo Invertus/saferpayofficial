@@ -47,4 +47,19 @@ class SaferPayOrderRepository
 
         return Db::getInstance()->getValue($query);
     }
+
+    /***
+     * @param $saferPayOrderId
+     * @return array
+     * @throws \PrestaShopDatabaseException
+     */
+    public function getOrderRefunds($saferPayOrderId)
+    {
+        $query = new DbQuery();
+        $query->select('*');
+        $query->from('saferpay_order_refund');
+        $query->where('id_saferPay_order = "' . (int) $saferPayOrderId . '"');
+
+        return Db::getInstance()->executeS($query);
+    }
 }

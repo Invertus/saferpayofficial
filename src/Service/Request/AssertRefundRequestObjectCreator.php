@@ -23,37 +23,27 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
-use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use SaferPayOrder;
 
-class AssertRequestObjectCreator
+class AssertRefundRequestObjectCreator
 {
     /**
      * @var RequestObjectCreator
      */
     private $requestObjectCreator;
 
-    /**
-     * @var SaferPayOrderRepository
-     */
-    private $saferPayOrderRepository;
-
     public function __construct(
-        RequestObjectCreator $requestObjectCreator,
-        SaferPayOrderRepository $saferPayOrderRepository
+        RequestObjectCreator $requestObjectCreator
     ) {
         $this->requestObjectCreator = $requestObjectCreator;
-        $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function create($orderId)
+    public function create($transactionId)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
-        $saferPayOrderId =  $this->saferPayOrderRepository->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
-        return new AssertRequest($requestHeader, $saferPayOrder->token);
+        return new AssertRefundRequest($requestHeader, $transactionId);
     }
 }
