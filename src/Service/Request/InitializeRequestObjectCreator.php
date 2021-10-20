@@ -59,7 +59,8 @@ class InitializeRequestObjectCreator
         $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
 
         $cartDetails = $cart->getSummaryDetails();
-        $totalPrice = (int) ($cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
+        $totalPrice = $cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
+        $totalPrice = (int)(round($totalPrice));
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
         $returnUrls = $this->requestObjectCreator->createReturnUrls($successUrl, $failUrl);
