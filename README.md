@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://www.six-payment-services.com" target="_blank">
-        <img src="./views/img/readme/01.png" />
+        <img src="./views/img/readme/img.png" />
     </a>
 </p>
 
