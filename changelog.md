@@ -57,3 +57,7 @@
 ## [1.0.12] - 2021-08-26
 
 - FO : Added missing countries for Klarna payment
+
+## [1.0.13] - 2021-10-29
+
+- FO : Updated payment images
