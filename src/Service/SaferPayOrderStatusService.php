@@ -152,7 +152,8 @@ class SaferPayOrderStatusService
         $cart = new Cart($order->id_cart);
         $transactionId = $saferPayOrder->transaction_id;
         $cartDetails = $cart->getSummaryDetails();
-        $totalPrice = (int)($cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
+        $totalPrice = $cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
+        $totalPrice = (int)(round($totalPrice));
         if ($isRefund) {
             $transactionId = $saferPayOrder->refund_id;
             $totalPrice = $refundedAmount;
@@ -212,7 +213,8 @@ class SaferPayOrderStatusService
         $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
         $saferPayAssert = new SaferPayAssert($assertId);
 
-        $refundAmount = (int)($refundedAmount * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
+        $refundAmount = $refundedAmount * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
+        $refundAmount = (int)(round($refundAmount));
 
         $isRefundValid = ($saferPayAssert->amount >= $saferPayAssert->refunded_amount + $refundAmount);
         if (!$isRefundValid) {
