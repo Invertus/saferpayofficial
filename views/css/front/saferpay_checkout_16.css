@@ -5,3 +5,7 @@
 .saved_credit_cards {
     padding-bottom: 10px;
 }
+
+.payment-option img {
+    height: 24px;
+}

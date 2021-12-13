@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -19,10 +20,30 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
 
-.payment-option img {
-    height: 24px;
+namespace Invertus\SaferPay\DTO\Request\ObtainPaymentMethods;
+
+use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
+
+class ObtainPaymentMethodsRequest
+{
+    private $requestHeader;
+    private $terminalId;
+
+    public function __construct
+    (
+        RequestHeader $requestHeader,
+        string $terminalId
+    ) {
+        $this->requestHeader = $requestHeader;
+        $this->terminalId = $terminalId;
+    }
+
+    public function generateRequestUrl(): string
+    {
+        $customerId = $this->requestHeader->getCustomerId();
+
+        return "/api/rest/customers/{$customerId}/terminals/{$this->terminalId}/payment-methods";
+    }
 }

@@ -143,7 +143,10 @@ class SaferPayOfficial extends PaymentModule
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
             return;
         }
-
+        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+        $saferPayObtainPaymentMethods = $this->getModuleContainer()
+            ->get(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
+        $paymentMethodsFromSaferPay = $saferPayObtainPaymentMethods->obtainPaymentMethods();
         $paymentOptions = [];
 
         /** @var \Invertus\SaferPay\Repository\SaferPayPaymentRepository $paymentRepository */
@@ -154,17 +157,14 @@ class SaferPayOfficial extends PaymentModule
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
-        foreach (\Invertus\SaferPay\Config\SaferPayConfig::PAYMENT_METHODS as $paymentMethod) {
-            if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
+        foreach ($paymentMethodsFromSaferPay as $paymentMethod) {
+            if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
                 continue;
             }
-            $imageUrl = '';
-            if ($paymentRepository->isLogoEnabledByName($paymentMethod)) {
-                $imageUrl = "{$this->getPathUri()}views/img/{$paymentMethod}.png";
-            }
+            $imageUrl = $paymentMethod['logoUrl'];
 
             $isCreditCard = in_array(
-                $paymentMethod,
+                $paymentMethod['paymentMethod'],
                 \Invertus\SaferPay\Config\SaferPayConfig::TRANSACTION_METHODS
             );
             $isBusinessLicenseEnabled =
@@ -195,18 +195,18 @@ class SaferPayOfficial extends PaymentModule
                 \Invertus\SaferPay\Service\LegacyTranslator::class
             );
             $newOption->setModuleName($this->name)
-                ->setCallToActionText($translator->translate($paymentMethod))
-                ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod))
+                ->setCallToActionText($translator->translate($paymentMethod['paymentMethod']))
+                ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']))
                 ->setLogo($imageUrl)
                 ->setInputs(
                     [
                         'saved_card_method' => [
                             'name' => 'saved_card_method',
                             'type' => 'hidden',
-                            'value' => $paymentMethod,
+                            'value' => $paymentMethod['paymentMethod'],
                         ],
                         'selectedCreditCard' => [
-                            'name' => "selectedCreditCard_{$paymentMethod}",
+                            'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
                             'type' => 'hidden',
                             'value' => $selectedCard,
                         ],
@@ -216,14 +216,14 @@ class SaferPayOfficial extends PaymentModule
             if ($isCreditCardSavingEnabled && $isCreditCard && $isBusinessLicenseEnabled) {
                 $savedCards = $cardAliasRep->getSavedValidCardsByUserIdAndPaymentMethod(
                     $this->context->customer->id,
-                    $paymentMethod,
+                    $paymentMethod['paymentMethod'],
                     $currentDate
                 );
 
                 $this->smarty->assign(
                     [
                         'savedCards' => $savedCards,
-                        'paymentMethod' => $paymentMethod,
+                        'paymentMethod' => $paymentMethod['paymentMethod'],
                     ]
                 );
 
@@ -232,7 +232,7 @@ class SaferPayOfficial extends PaymentModule
                     $newOption->setInputs(
                         [
                             'selectedCreditCard' => [
-                                'name' => "selectedCreditCard_{$paymentMethod}",
+                                'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
                                 'type' => 'hidden',
                                 'value' => $savedCards[0]['id_saferpay_card_alias'],
                             ],

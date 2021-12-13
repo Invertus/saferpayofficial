@@ -39,7 +39,7 @@ class HttpClientFactory
      *
      * @return Client
      */
-    public function getClient()
+    public function getClient($headers = [])
     {
         $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
         $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
@@ -49,6 +49,8 @@ class HttpClientFactory
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
+                    'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
+                    'Saferpay-RequestId' => 'false',
                 ],
                 'auth' => [
                     $username,
