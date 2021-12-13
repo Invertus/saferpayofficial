@@ -98,7 +98,6 @@ services:
         arguments:
             - '@Invertus\SaferPay\Service\Request\RequestObjectCreator'
 
-
     Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator:
         class: Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator
         arguments:
