@@ -39,7 +39,7 @@ class HttpClientFactory
      *
      * @return Client
      */
-    public function getClient($headers = [])
+    public function getClient()
     {
         $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
         $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
