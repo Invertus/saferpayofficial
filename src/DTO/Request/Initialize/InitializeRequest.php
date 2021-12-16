@@ -155,6 +155,10 @@ class InitializeRequest
 
     public function getAsArray()
     {
+        if (key_exists($this->paymentMethod, SaferPayConfig::PAYMENT_METHODS_KEYS)) {
+            $this->paymentMethod = SaferPayConfig::PAYMENT_METHODS_KEYS[$this->paymentMethod];
+        }
+
         $return = [
             'RequestHeader' => [
                 'SpecVersion' => $this->requestHeader->getSpecVersions(),

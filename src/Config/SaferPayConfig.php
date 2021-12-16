@@ -78,7 +78,7 @@ class SaferPayConfig
     const PAYMENT_ALIPAY = 'ALIPAY';
     const PAYMENT_AMEX = 'AMEX';
     const PAYMENT_BANCONTACT = 'BANCONTACT';
-    const PAYMENT_DINERS = 'DINERS';
+    const PAYMENT_DINERS = 'Diners Club';
     const PAYMENT_DIRECTDEBIT = 'DIRECTDEBIT';
     const PAYMENT_EPRZELEWY = 'EPRZELEWY';
     const PAYMENT_EPS = 'EPS';
@@ -87,8 +87,8 @@ class SaferPayConfig
     const PAYMENT_INVOICE = 'INVOICE';
     const PAYMENT_JCB = 'JCB';
     const PAYMENT_MAESTRO = 'MAESTRO';
-    const PAYMENT_MASTERCARD = 'MASTERCARD';
-    const PAYMENT_MYONE = 'MYONE';
+    const PAYMENT_MASTERCARD = 'MasterCard';
+    const PAYMENT_MYONE = 'myOne';
     const PAYMENT_PAYPAL = 'PAYPAL';
     const PAYMENT_PAYDIREKT = 'PAYDIREKT';
     const PAYMENT_POSTCARD = 'POSTCARD';
@@ -101,9 +101,18 @@ class SaferPayConfig
     const PAYMENT_KLARNA = 'KLARNA';
     const PAYMENT_APPLEPAY = 'APPLEPAY';
     const PAYMENT_WLCRYPTOPAYMENTS = 'WLCRYPTOPAYMENTS';
+    const PAYMENT_GOOGLEPAY = 'GOOGLEPAY';
+    const PAYMENT_MASTERPASS = 'MASTERPASS';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
+        self::PAYMENT_GOOGLEPAY,
+        self::PAYMENT_MASTERPASS,
+    ];
+
+    const PAYMENT_METHODS_KEYS = [
+        'AmericanExpress' => self::PAYMENT_AMEX,
+        'PostEFinance' => self::PAYMENT_POSTFINANCE,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [

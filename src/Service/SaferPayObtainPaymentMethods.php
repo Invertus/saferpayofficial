@@ -71,4 +71,18 @@ class SaferPayObtainPaymentMethods
 
         return $paymentMethods;
     }
+
+    public function obtainPaymentMethodsNamesAsArray(): array
+    {
+        $paymentMethodsObject = $this->obtainPaymentMethods();
+        $paymentMethodsArray = [];
+
+        if (!empty($paymentMethodsObject)) {
+            foreach ($paymentMethodsObject as $paymentMethod) {
+                $paymentMethodsArray[] = str_replace(' ', '', $paymentMethod['paymentMethod']);
+            }
+        }
+
+        return $paymentMethodsArray;
+    }
 }
