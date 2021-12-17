@@ -78,7 +78,7 @@ class SaferPayConfig
     const PAYMENT_ALIPAY = 'ALIPAY';
     const PAYMENT_AMEX = 'AMEX';
     const PAYMENT_BANCONTACT = 'BANCONTACT';
-    const PAYMENT_DINERS = 'Diners Club';
+    const PAYMENT_DINERS = 'DINERS';
     const PAYMENT_DIRECTDEBIT = 'DIRECTDEBIT';
     const PAYMENT_EPRZELEWY = 'EPRZELEWY';
     const PAYMENT_EPS = 'EPS';
@@ -87,8 +87,8 @@ class SaferPayConfig
     const PAYMENT_INVOICE = 'INVOICE';
     const PAYMENT_JCB = 'JCB';
     const PAYMENT_MAESTRO = 'MAESTRO';
-    const PAYMENT_MASTERCARD = 'MasterCard';
-    const PAYMENT_MYONE = 'myOne';
+    const PAYMENT_MASTERCARD = 'MASTERCARD';
+    const PAYMENT_MYONE = 'MYONE';
     const PAYMENT_PAYPAL = 'PAYPAL';
     const PAYMENT_PAYDIREKT = 'PAYDIREKT';
     const PAYMENT_POSTCARD = 'POSTCARD';
