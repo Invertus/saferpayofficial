@@ -149,7 +149,7 @@ class SaferPayOfficial extends PaymentModule
         /** @var \Invertus\SaferPay\Repository\SaferPayPaymentRepository $paymentRepository */
         $paymentRepository = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
-        $paymentMethodsFromSaferPay = $saferPayObtainPaymentMethods->obtainPaymentMethods();
+        $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethods();
         $paymentOptions = [];
 
         /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
@@ -157,7 +157,7 @@ class SaferPayOfficial extends PaymentModule
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
-        foreach ($paymentMethodsFromSaferPay as $paymentMethod) {
+        foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
             if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {

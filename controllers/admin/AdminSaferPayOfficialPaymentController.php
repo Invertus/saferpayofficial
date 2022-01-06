@@ -70,13 +70,10 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         /** @var SaferPayRestrictionCreator $restrictionCreator */
         $restrictionCreator = $this->module->getModuleContainer()->get(SaferPayRestrictionCreator::class);
 
-        $paymentMethodsFromSaferPay = $this->getPaymentMethods();
-        if (is_null($paymentMethodsFromSaferPay)) {
-            return;
-        }
+        $paymentMethods = $this->getPaymentMethods();
 
         $success = true;
-        foreach ($paymentMethodsFromSaferPay as $paymentMethod) {
+        foreach ($paymentMethods as $paymentMethod) {
             $isActive = Tools::getValue($paymentMethod . '_enable');
             $success &= $paymentCreation->updatePayment($paymentMethod, $isActive);
 
@@ -136,16 +133,13 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         /** @var SaferPayRestrictionRepository $restrictionRepository */
         $restrictionRepository = $this->module->getModuleContainer()->get(SaferPayRestrictionRepository::class);
 
-        $paymentMethodsFromSaferPay = $this->getPaymentMethods();
-        if (is_null($paymentMethodsFromSaferPay)) {
-            return;
-        }
+        $paymentMethods = $this->getPaymentMethods();
 
         $this->initForm();
         $fieldsForm = [];
         $fieldsForm[0]['form'] = $this->fields_form;
 
-        foreach ($paymentMethodsFromSaferPay as $paymentMethod) {
+        foreach ($paymentMethods as $paymentMethod) {
             $isActive = $paymentRepository->isActiveByName($paymentMethod);
             $isLogoActive = $logoRepository->isActiveByName($paymentMethod);
             $isFieldActive = $fieldRepository->isActiveByName($paymentMethod);
@@ -230,7 +224,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         try {
             /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
             $saferPayObtainPaymentMethods = $this->module->getModuleContainer()->get(SaferPayObtainPaymentMethods::class);
-            $paymentMethodsFromSaferPay = $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
+            $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
         } catch (\Exception $exception) {
             /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
             $exceptionService = $this->module->getModuleContainer()
@@ -247,7 +241,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             return;
         }
 
-        foreach ($paymentMethodsFromSaferPay as $paymentMethod) {
+        foreach ($paymentMethods as $paymentMethod) {
             $fields[] = [
                 'type' => 'free',
                 'label' => $this->l($paymentMethod),
@@ -268,7 +262,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         ];
     }
 
-    private function getPaymentMethods(): ?array
+    private function getPaymentMethods(): array
     {
         try {
             /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
@@ -288,7 +282,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
             $this->errors[] = $this->l('To see available payment methods, you must connect to your SaferPay account.');
 
-            return null;
+            return [];
         }
     }
 }
