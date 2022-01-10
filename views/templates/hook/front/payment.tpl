@@ -22,7 +22,9 @@
 
 <p class="payment_module">
 	<a href="{$redirect|escape:'htmlall':'UTF-8'}" title="{$method|escape:'htmlall':'UTF-8'}" class="saferpay_method">
-		<img src="{$imgUrl|escape:'htmlall':'UTF-8'}" alt="{$method|escape:'htmlall':'UTF-8'}" />
+		{if isset($imgUrl) && !empty($imgUrl)}
+			<img src="{$imgUrl|escape:'htmlall':'UTF-8'}" alt="{$method|escape:'htmlall':'UTF-8'}" />
+		{/if}
 		{$method|escape:'htmlall':'UTF-8'}
 	</a>
 </p>

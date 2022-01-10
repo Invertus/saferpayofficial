@@ -86,7 +86,7 @@ class ApiRequest
         } catch (\Exception $exception) {
             $logs = new SaferPayLog();
             $logs->message = $exception->getResponse()->getBody()->getContents();
-            $logs->payload = $params['body'];
+            $logs->payload = json_encode($params);
             $logs->add();
             throw $exception;
         }

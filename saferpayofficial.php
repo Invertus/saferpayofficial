@@ -143,25 +143,29 @@ class SaferPayOfficial extends PaymentModule
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
             return;
         }
-        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
-        $saferPayObtainPaymentMethods = $this->getModuleContainer()
+        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $obtainPaymentMethods */
+        $obtainPaymentMethods = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
-        $paymentMethodsFromSaferPay = $saferPayObtainPaymentMethods->obtainPaymentMethods();
-        $paymentOptions = [];
-
         /** @var \Invertus\SaferPay\Repository\SaferPayPaymentRepository $paymentRepository */
         $paymentRepository = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
+        $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
+        $paymentOptions = [];
+
         /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
         $paymentRestrictionValidation = $this->getModuleContainer()->get(
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
-        foreach ($paymentMethodsFromSaferPay as $paymentMethod) {
+        foreach ($paymentMethods as $paymentMethod) {
+            $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
+
             if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
                 continue;
             }
-            $imageUrl = $paymentMethod['logoUrl'];
+
+            $imageUrl = ($paymentRepository->isLogoEnabledByName($paymentMethod['paymentMethod']))
+                ? $paymentMethod['logoUrl'] : '';
 
             $isCreditCard = in_array(
                 $paymentMethod['paymentMethod'],
@@ -387,19 +391,27 @@ class SaferPayOfficial extends PaymentModule
         /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
         $paymentRepository = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
+
+        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $obtainPaymentMethods */
+        $obtainPaymentMethods = $this->getModuleContainer()
+            ->get(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
+        $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
+        $paymentOptions = [];
+
         $paymentRestrictionValidation = $this->getModuleContainer()->get(
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
-        foreach (\Invertus\SaferPay\Config\SaferPayConfig::PAYMENT_METHODS as $paymentMethod) {
-            if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod)) {
+        foreach ($paymentMethods as $paymentMethod) {
+            $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
+
+            if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
                 continue;
             }
-            $imageUrl = '';
-            if ($paymentRepository->isLogoEnabledByName($paymentMethod)) {
-                $imageUrl = "{$this->getPathUri()}views/img/{$paymentMethod}.png";
-            }
-            $isCreditCard = in_array($paymentMethod, \Invertus\SaferPay\Config\SaferPayConfig::TRANSACTION_METHODS);
+
+            $imageUrl = ($paymentRepository->isLogoEnabledByName($paymentMethod['paymentMethod']))
+                ? $paymentMethod['logoUrl'] : '';
+            $isCreditCard = in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::TRANSACTION_METHODS);
             $isBusinessLicenseEnabled =
                 Configuration::get(
                     \Invertus\SaferPay\Config\SaferPayConfig::BUSINESS_LICENSE
@@ -425,7 +437,7 @@ class SaferPayOfficial extends PaymentModule
                 $this->smarty->assign(
                     [
                         'savedCards' => $savedCards,
-                        'paymentMethod' => $paymentMethod,
+                        'paymentMethod' => $paymentMethod['paymentMethod'],
                     ]
                 );
 
@@ -444,9 +456,9 @@ class SaferPayOfficial extends PaymentModule
                 ->get(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
             $this->smarty->assign(
                 [
-                    'redirect' => $paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod),
+                    'redirect' => $paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']),
                     'imgUrl' => $imageUrl,
-                    'method' => $paymentMethod,
+                    'method' => $paymentMethod['paymentMethod'],
                 ]
             );
 

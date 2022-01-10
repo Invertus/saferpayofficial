@@ -101,9 +101,36 @@ class SaferPayConfig
     const PAYMENT_KLARNA = 'KLARNA';
     const PAYMENT_APPLEPAY = 'APPLEPAY';
     const PAYMENT_WLCRYPTOPAYMENTS = 'WLCRYPTOPAYMENTS';
+    const PAYMENT_GOOGLEPAY = 'GOOGLEPAY';
+    const PAYMENT_MASTERPASS = 'MASTERPASS';
+    const PAYMENT_BONUS = 'BONUS';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
+        self::PAYMENT_GOOGLEPAY,
+        self::PAYMENT_MASTERPASS,
+    ];
+
+    const PAYMENT_METHODS_KEYS = [
+        'AmericanExpress' => self::PAYMENT_AMEX,
+        'PostEFinance' => self::PAYMENT_POSTFINANCE,
+        'DinersClub' => self::PAYMENT_DINERS,
+        'Alipay' => self::PAYMENT_ALIPAY,
+        'Applepay' => self::PAYMENT_APPLEPAY,
+        'Bancontact' => self::PAYMENT_BANCONTACT,
+        'KlarnaPayments' => self::PAYMENT_KLARNA,
+        'MaestroInternational' => self::PAYMENT_MAESTRO,
+        'Mastercard' => self::PAYMENT_MASTERCARD,
+        'Masterpass' =>self::PAYMENT_MASTERPASS,
+        'myOne' => self::PAYMENT_MYONE,
+        'paydirekt' => self::PAYMENT_PAYDIREKT,
+        'PayPal' => self::PAYMENT_PAYPAL,
+        'Twint' => self::PAYMENT_TWINT,
+        'UnionPay' => self::PAYMENT_UNIONPAY,
+        'Visa' => self::PAYMENT_VISA,
+        'WLCryptoPayments' => self::PAYMENT_WLCRYPTOPAYMENTS,
+        'Postcard' => self::PAYMENT_POSTCARD,
+        'BonusCard' => self::PAYMENT_BONUS,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -286,7 +313,7 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.22',
+            RequestHeader::SPEC_VERSION => '1.23',
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
