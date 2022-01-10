@@ -252,6 +252,17 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'desc' => $this->l('Allow customers to save credit card for faster purchase'),
                         'form_group_class' => 'thumbs_chose',
                     ],
+                    SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT => [
+                        'type' => 'radio',
+                        'title' => $this->l('Restrict RefundAmount To Captured Amount'),
+                        'validation' => 'isInt',
+                        'choices' => [
+                            1 => $this->l('Enable'),
+                            0 => $this->l('Disable'),
+                        ],
+                        'desc' => $this->l('If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.'),
+                        'form_group_class' => 'thumbs_chose',
+                    ],
                 ],
                 'buttons' => [
                     'save_and_connect' => [

@@ -42,6 +42,7 @@ class SaferPayConfig
     const PAYMENT_BEHAVIOR = 'SAFERPAY_PAYMENT_BEHAVIOR';
     const PAYMENT_BEHAVIOR_WITHOUT_3D = 'SAFERPAY_PAYMENT_BEHAVIOR_WITHOUT_3D';
     const CREDIT_CARD_SAVE = 'SAFERPAY_CREDIT_CARD_SAVE';
+    const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
@@ -314,6 +315,7 @@ class SaferPayConfig
     {
         return [
             RequestHeader::SPEC_VERSION => '1.23',
+            RequestHeader::SPEC_REFUND_VERSION => '1.25',
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
@@ -333,6 +335,7 @@ class SaferPayConfig
         return [
             RequestHeader::SPEC_VERSION,
             RequestHeader::RETRY_INDICATOR,
+            RequestHeader::SPEC_REFUND_VERSION,
             self::TEST_MODE,
             self::USERNAME,
             self::PASSWORD,
