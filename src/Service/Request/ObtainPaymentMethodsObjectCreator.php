@@ -26,6 +26,7 @@ namespace Invertus\SaferPay\Service\Request;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Configuration;
 use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 class ObtainPaymentMethodsObjectCreator
 {
@@ -42,6 +43,6 @@ class ObtainPaymentMethodsObjectCreator
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
         $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
 
-        return new ObtainPaymentMethodsRequest($requestHeader, $terminalId);
+        return new ObtainPaymentMethodsRequest($requestHeader, (string) $terminalId);
     }
 }
