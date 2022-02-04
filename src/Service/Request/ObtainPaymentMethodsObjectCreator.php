@@ -43,6 +43,6 @@ class ObtainPaymentMethodsObjectCreator
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
         $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
 
-        return new ObtainPaymentMethodsRequest($requestHeader, (string) $terminalId);
+        return new ObtainPaymentMethodsRequest($requestHeader, $terminalId);
     }
 }
