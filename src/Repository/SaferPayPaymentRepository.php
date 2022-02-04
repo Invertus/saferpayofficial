@@ -57,4 +57,26 @@ class SaferPayPaymentRepository
 
         return Db::getInstance()->getValue($query);
     }
+
+    public function getActivePaymentMethods()
+    {
+        $query = new DbQuery();
+        $query->select('*');
+        $query->from('saferpay_payment');
+        $query->where('active = "1"');
+
+        return Db::getInstance()->executeS($query);
+    }
+
+    public function truncateTable()
+    {
+        $query = 'TRUNCATE TABLE '. _DB_PREFIX_ .'saferpay_payment;';
+
+        return Db::getInstance()->execute($query);
+    }
+
+    public function insertPayment($data)
+    {
+        Db::getInstance()->insert('saferpay_payment', $data);
+    }
 }

@@ -32,6 +32,7 @@ use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayPaymentCreator;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
+use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
 
 class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 {
@@ -69,6 +70,11 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
         /** @var SaferPayRestrictionCreator $restrictionCreator */
         $restrictionCreator = $this->module->getModuleContainer()->get(SaferPayRestrictionCreator::class);
+
+        // Refresh payments.
+        /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+        $refreshPaymentsService = $this->module->getModuleContainer()->get(SaferPayRefreshPaymentsService::class);
+        $refreshPaymentsService->refreshPayments();
 
         $paymentMethods = $this->getPaymentMethods();
         if (is_null($paymentMethods)) {
