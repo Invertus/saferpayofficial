@@ -31,8 +31,7 @@ class ObtainPaymentMethodsRequest
     private $requestHeader;
     private $terminalId;
 
-    public function __construct
-    (
+    public function __construct(
         RequestHeader $requestHeader,
         $terminalId
     ) {

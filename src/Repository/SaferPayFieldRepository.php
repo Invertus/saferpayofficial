@@ -59,5 +59,4 @@ class SaferPayFieldRepository
     {
         Db::getInstance()->insert('saferpay_field', $data);
     }
-
 }

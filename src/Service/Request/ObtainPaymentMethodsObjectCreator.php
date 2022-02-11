@@ -34,7 +34,7 @@ class ObtainPaymentMethodsObjectCreator
 
     public function __construct(
         RequestObjectCreator $requestObjectCreator
-    ){
+    ) {
         $this->requestObjectCreator = $requestObjectCreator;
     }
 
