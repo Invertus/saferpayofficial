@@ -256,3 +256,11 @@ services:
 #            - '@=service("adapter.context").getContext()'
             - '@Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService'
             - '@Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator'
+
+    Invertus\SaferPay\Service\SaferPayRefreshPaymentsService:
+        class: Invertus\SaferPay\Service\SaferPayRefreshPaymentsService
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayPaymentRepository'
+            - '@Invertus\SaferPay\Service\SaferPayObtainPaymentMethods'
+            - '@Invertus\SaferPay\Repository\SaferPayRestrictionRepository'
+            - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'

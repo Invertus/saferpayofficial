@@ -31,16 +31,15 @@ class ObtainPaymentMethodsRequest
     private $requestHeader;
     private $terminalId;
 
-    public function __construct
-    (
+    public function __construct(
         RequestHeader $requestHeader,
-        string $terminalId
+        $terminalId
     ) {
         $this->requestHeader = $requestHeader;
         $this->terminalId = $terminalId;
     }
 
-    public function generateRequestUrl(): string
+    public function generateRequestUrl()
     {
         $customerId = $this->requestHeader->getCustomerId();
 

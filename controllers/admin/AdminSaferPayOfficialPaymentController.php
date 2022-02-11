@@ -32,6 +32,7 @@ use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayPaymentCreator;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
+use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
 
 class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 {
@@ -54,6 +55,11 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
      */
     public function postProcess()
     {
+        // Refresh payments.
+        /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+        $refreshPaymentsService = $this->module->getModuleContainer()->get(SaferPayRefreshPaymentsService::class);
+        $refreshPaymentsService->refreshPayments();
+
         if (!Tools::isSubmit('submitAddconfiguration')) {
             return parent::postProcess();
         }
@@ -71,6 +77,9 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $restrictionCreator = $this->module->getModuleContainer()->get(SaferPayRestrictionCreator::class);
 
         $paymentMethods = $this->getPaymentMethods();
+        if (is_null($paymentMethods)) {
+            return;
+        }
 
         $success = true;
         foreach ($paymentMethods as $paymentMethod) {
@@ -134,6 +143,9 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $restrictionRepository = $this->module->getModuleContainer()->get(SaferPayRestrictionRepository::class);
 
         $paymentMethods = $this->getPaymentMethods();
+        if (is_null($paymentMethods)) {
+            return;
+        }
 
         $this->initForm();
         $fieldsForm = [];
@@ -262,7 +274,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         ];
     }
 
-    private function getPaymentMethods(): array
+    private function getPaymentMethods()
     {
         try {
             /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
@@ -282,7 +294,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
             $this->errors[] = $this->l('To see available payment methods, you must connect to your SaferPay account.');
 
-            return [];
+            return null;
         }
     }
 }

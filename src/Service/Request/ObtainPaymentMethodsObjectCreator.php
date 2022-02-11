@@ -26,6 +26,7 @@ namespace Invertus\SaferPay\Service\Request;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Configuration;
 use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 class ObtainPaymentMethodsObjectCreator
 {
@@ -33,7 +34,7 @@ class ObtainPaymentMethodsObjectCreator
 
     public function __construct(
         RequestObjectCreator $requestObjectCreator
-    ){
+    ) {
         $this->requestObjectCreator = $requestObjectCreator;
     }
 

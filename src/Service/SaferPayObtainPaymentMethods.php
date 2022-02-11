@@ -72,7 +72,7 @@ class SaferPayObtainPaymentMethods
         return $paymentMethods;
     }
 
-    public function obtainPaymentMethodsNamesAsArray(): array
+    public function obtainPaymentMethodsNamesAsArray()
     {
         $paymentMethodsObject = $this->obtainPaymentMethods();
         $paymentMethodsArray = [];

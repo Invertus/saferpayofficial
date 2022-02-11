@@ -47,4 +47,16 @@ class SaferPayFieldRepository
 
         return Db::getInstance()->getValue($query);
     }
+
+    public function truncateTable()
+    {
+        $query = 'TRUNCATE TABLE '. _DB_PREFIX_ .'saferpay_field;';
+
+        return Db::getInstance()->execute($query);
+    }
+
+    public function insertField($data)
+    {
+        Db::getInstance()->insert('saferpay_field', $data);
+    }
 }
