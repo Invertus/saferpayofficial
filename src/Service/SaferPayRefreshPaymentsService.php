@@ -58,6 +58,9 @@ class SaferPayRefreshPaymentsService
             return;
         }
 
+        // Get payments from API.
+        $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethodsNamesAsArray();
+
         $paymentsInfo = [];
         foreach ($activePayments as $payment) {
             $paymentsInfo[$payment['name']]['name'] = $payment['name'];
@@ -68,9 +71,6 @@ class SaferPayRefreshPaymentsService
         // Truncate tables.
         $this->paymentRepository->truncateTable();
         $this->fieldRepository->truncateTable();
-
-        // Get payments from API.
-        $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethodsNamesAsArray();
 
         foreach ($paymentsFromAPI as $payment) {
             $paymentActive = (isset($paymentsInfo[$payment]['active'])) ? (int)$paymentsInfo[$payment]['active'] : 0;

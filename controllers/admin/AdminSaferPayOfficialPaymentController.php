@@ -55,6 +55,11 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
      */
     public function postProcess()
     {
+        // Refresh payments.
+        /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+        $refreshPaymentsService = $this->module->getModuleContainer()->get(SaferPayRefreshPaymentsService::class);
+        $refreshPaymentsService->refreshPayments();
+
         if (!Tools::isSubmit('submitAddconfiguration')) {
             return parent::postProcess();
         }
@@ -70,11 +75,6 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
         /** @var SaferPayRestrictionCreator $restrictionCreator */
         $restrictionCreator = $this->module->getModuleContainer()->get(SaferPayRestrictionCreator::class);
-
-        // Refresh payments.
-        /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
-        $refreshPaymentsService = $this->module->getModuleContainer()->get(SaferPayRefreshPaymentsService::class);
-        $refreshPaymentsService->refreshPayments();
 
         $paymentMethods = $this->getPaymentMethods();
         if (is_null($paymentMethods)) {
