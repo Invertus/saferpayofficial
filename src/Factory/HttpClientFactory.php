@@ -49,6 +49,8 @@ class HttpClientFactory
                 'headers' => [
                     'Content-Type' => 'application/json',
                     'Accept' => 'application/json',
+                    'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
+                    'Saferpay-RequestId' => 'false',
                 ],
                 'auth' => [
                     $username,

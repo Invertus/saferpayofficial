@@ -66,4 +66,29 @@ class ApiRequest
             throw $exception;
         }
     }
+
+    /**
+     * API Request Post Method.
+     *
+     * @param string $url
+     * @param array $params
+     * @return array |null
+     * @throws \Exception
+     */
+    public function get($url, $params = [])
+    {
+        $response = null;
+
+        try {
+            $response = $this->clientFactory->getClient()->get($url, $params);
+
+            return $response ?: [];
+        } catch (\Exception $exception) {
+            $logs = new SaferPayLog();
+            $logs->message = $exception->getResponse()->getBody()->getContents();
+            $logs->payload = json_encode($params);
+            $logs->add();
+            throw $exception;
+        }
+    }
 }

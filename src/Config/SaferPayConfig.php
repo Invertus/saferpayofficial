@@ -42,9 +42,11 @@ class SaferPayConfig
     const PAYMENT_BEHAVIOR = 'SAFERPAY_PAYMENT_BEHAVIOR';
     const PAYMENT_BEHAVIOR_WITHOUT_3D = 'SAFERPAY_PAYMENT_BEHAVIOR_WITHOUT_3D';
     const CREDIT_CARD_SAVE = 'SAFERPAY_CREDIT_CARD_SAVE';
+    const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
+    const API_VERSION = 1.25;
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
@@ -100,9 +102,36 @@ class SaferPayConfig
     const PAYMENT_KLARNA = 'KLARNA';
     const PAYMENT_APPLEPAY = 'APPLEPAY';
     const PAYMENT_WLCRYPTOPAYMENTS = 'WLCRYPTOPAYMENTS';
+    const PAYMENT_GOOGLEPAY = 'GOOGLEPAY';
+    const PAYMENT_MASTERPASS = 'MASTERPASS';
+    const PAYMENT_BONUS = 'BONUS';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
+        self::PAYMENT_GOOGLEPAY,
+        self::PAYMENT_MASTERPASS,
+    ];
+
+    const PAYMENT_METHODS_KEYS = [
+        'AmericanExpress' => self::PAYMENT_AMEX,
+        'PostEFinance' => self::PAYMENT_POSTFINANCE,
+        'DinersClub' => self::PAYMENT_DINERS,
+        'Alipay' => self::PAYMENT_ALIPAY,
+        'Applepay' => self::PAYMENT_APPLEPAY,
+        'Bancontact' => self::PAYMENT_BANCONTACT,
+        'KlarnaPayments' => self::PAYMENT_KLARNA,
+        'MaestroInternational' => self::PAYMENT_MAESTRO,
+        'Mastercard' => self::PAYMENT_MASTERCARD,
+        'Masterpass' =>self::PAYMENT_MASTERPASS,
+        'myOne' => self::PAYMENT_MYONE,
+        'paydirekt' => self::PAYMENT_PAYDIREKT,
+        'PayPal' => self::PAYMENT_PAYPAL,
+        'Twint' => self::PAYMENT_TWINT,
+        'UnionPay' => self::PAYMENT_UNIONPAY,
+        'Visa' => self::PAYMENT_VISA,
+        'WLCryptoPayments' => self::PAYMENT_WLCRYPTOPAYMENTS,
+        'Postcard' => self::PAYMENT_POSTCARD,
+        'BonusCard' => self::PAYMENT_BONUS,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -285,7 +314,8 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.22',
+            RequestHeader::SPEC_VERSION => '1.23',
+            RequestHeader::SPEC_REFUND_VERSION => '1.25',
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
@@ -305,6 +335,7 @@ class SaferPayConfig
         return [
             RequestHeader::SPEC_VERSION,
             RequestHeader::RETRY_INDICATOR,
+            RequestHeader::SPEC_REFUND_VERSION,
             self::TEST_MODE,
             self::USERNAME,
             self::PASSWORD,

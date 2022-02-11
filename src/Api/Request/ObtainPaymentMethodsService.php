@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -19,10 +20,26 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
 
-.payment-option img {
-    height: 24px;
+namespace Invertus\SaferPay\Api\Request;
+
+use Invertus\SaferPay\Api\ApiRequest;
+use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
+
+class ObtainPaymentMethodsService
+{
+    private $apiRequest;
+
+    public function __construct(
+        ApiRequest $apiRequest
+    ) {
+        $this->apiRequest = $apiRequest;
+    }
+
+    public function getPaymentMethods(ObtainPaymentMethodsRequest $obtainPaymentMethodsRequestDTO)
+    {
+        $response = $this->apiRequest->get($obtainPaymentMethodsRequestDTO->generateRequestUrl());
+
+        return json_decode($response->getBody()->getContents());
+    }
 }

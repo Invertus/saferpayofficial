@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -19,10 +20,29 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
 
-.payment-option img {
-    height: 24px;
+namespace Invertus\SaferPay\Service\Request;
+
+use Invertus\SaferPay\Config\SaferPayConfig;
+use Configuration;
+use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
+
+class ObtainPaymentMethodsObjectCreator
+{
+    private $requestObjectCreator;
+
+    public function __construct(
+        RequestObjectCreator $requestObjectCreator
+    ) {
+        $this->requestObjectCreator = $requestObjectCreator;
+    }
+
+    public function create()
+    {
+        $requestHeader = $this->requestObjectCreator->createRequestHeader();
+        $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
+
+        return new ObtainPaymentMethodsRequest($requestHeader, $terminalId);
+    }
 }

@@ -61,3 +61,7 @@
 ## [1.0.13] - 2021-10-29
 
 - FO : Updated payment images
+
+## [1.0.14] - 2022-02-11
+
+- FO : Updated payment methods loading functionality

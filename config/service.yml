@@ -97,6 +97,11 @@ services:
         class: Invertus\SaferPay\Service\Request\RefundRequestObjectCreator
         arguments:
             - '@Invertus\SaferPay\Service\Request\RequestObjectCreator'
+
+    Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator:
+        class: Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator
+        arguments:
+            - '@Invertus\SaferPay\Service\Request\RequestObjectCreator'
     #
 
     #Response object creator
@@ -238,3 +243,24 @@ services:
         class: Invertus\SaferPay\Service\LegacyTranslator
         arguments:
             - '@saferpay'
+
+    Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService:
+        class: Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService
+        arguments:
+            - '@api.request'
+
+    Invertus\SaferPay\Service\SaferPayObtainPaymentMethods:
+        class: Invertus\SaferPay\Service\SaferPayObtainPaymentMethods
+        arguments:
+#            - '@saferpay'
+#            - '@=service("adapter.context").getContext()'
+            - '@Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService'
+            - '@Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator'
+
+    Invertus\SaferPay\Service\SaferPayRefreshPaymentsService:
+        class: Invertus\SaferPay\Service\SaferPayRefreshPaymentsService
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayPaymentRepository'
+            - '@Invertus\SaferPay\Service\SaferPayObtainPaymentMethods'
+            - '@Invertus\SaferPay\Repository\SaferPayRestrictionRepository'
+            - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'
