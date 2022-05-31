@@ -33,6 +33,7 @@ use Invertus\SaferPay\Service\SaferPayPaymentCreator;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
 use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 
 class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 {
@@ -58,7 +59,11 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         // Refresh payments.
         /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
         $refreshPaymentsService = $this->module->getModuleContainer()->get(SaferPayRefreshPaymentsService::class);
-        $refreshPaymentsService->refreshPayments();
+        try {
+            $refreshPaymentsService->refreshPayments();
+        } catch (SaferPayApiException $exception) {
+            $this->errors[] = $this->l($exception->getMessage());
+        }
 
         if (!Tools::isSubmit('submitAddconfiguration')) {
             return parent::postProcess();
@@ -237,7 +242,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
             $saferPayObtainPaymentMethods = $this->module->getModuleContainer()->get(SaferPayObtainPaymentMethods::class);
             $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
-        } catch (\Exception $exception) {
+        } catch (SaferPayApiException $exception) {
             /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
             $exceptionService = $this->module->getModuleContainer()
                 ->get(\Invertus\SaferPay\Service\SaferPayExceptionService::class);
@@ -281,7 +286,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             $saferPayObtainPaymentMethods = $this->module->getModuleContainer()->get(SaferPayObtainPaymentMethods::class);
 
             return $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
-        } catch (\Exception $exception) {
+        } catch (SaferPayApiException $exception) {
             /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
             $exceptionService = $this->module->getModuleContainer()
                 ->get(\Invertus\SaferPay\Service\SaferPayExceptionService::class);

@@ -41,7 +41,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.0.14';
+        $this->version = '1.0.15';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -149,7 +149,13 @@ class SaferPayOfficial extends PaymentModule
         /** @var \Invertus\SaferPay\Repository\SaferPayPaymentRepository $paymentRepository */
         $paymentRepository = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
-        $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
+
+        try {
+            $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
+        } catch (\Invertus\SaferPay\Exception\Api\SaferPayApiException $exception) {
+            return [];
+        }
+
         $paymentOptions = [];
 
         /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
@@ -395,7 +401,12 @@ class SaferPayOfficial extends PaymentModule
         /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $obtainPaymentMethods */
         $obtainPaymentMethods = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
-        $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
+        try {
+            $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
+        } catch (\Invertus\SaferPay\Exception\Api\SaferPayApiException $exception) {
+            return '';
+        }
+
         $paymentOptions = [];
 
         $paymentRestrictionValidation = $this->getModuleContainer()->get(

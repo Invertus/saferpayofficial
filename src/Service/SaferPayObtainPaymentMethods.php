@@ -23,7 +23,9 @@
 
 namespace Invertus\SaferPay\Service;
 
+use Exception;
 use Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator;
 
 class SaferPayObtainPaymentMethods
