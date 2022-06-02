@@ -24,6 +24,8 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Exception;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
@@ -59,7 +61,11 @@ class SaferPayRefreshPaymentsService
         }
 
         // Get payments from API.
-        $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethodsNamesAsArray();
+        try {
+            $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethodsNamesAsArray();
+        } catch (Exception $exception) {
+            throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
+        }
 
         $paymentsInfo = [];
         foreach ($activePayments as $payment) {

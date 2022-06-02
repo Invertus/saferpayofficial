@@ -65,3 +65,7 @@
 ## [1.0.14] - 2022-02-11
 
 - FO : Updated payment methods loading functionality
+
+## [1.0.15] - 2022-05-31
+
+- BO : "Invalid credentials" exception catcher added. 
