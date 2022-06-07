@@ -69,3 +69,7 @@
 ## [1.0.15] - 2022-05-31
 
 - BO : "Invalid credentials" exception catcher added. 
+
+## [1.0.16] - 2022-06-07
+
+- BO : Changed mastercard config name from MASTERCARD to MasterCard. 

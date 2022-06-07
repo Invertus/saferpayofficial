@@ -88,7 +88,7 @@ class SaferPayConfig
     const PAYMENT_INVOICE = 'INVOICE';
     const PAYMENT_JCB = 'JCB';
     const PAYMENT_MAESTRO = 'MAESTRO';
-    const PAYMENT_MASTERCARD = 'MASTERCARD';
+    const PAYMENT_MASTERCARD = 'MasterCard';
     const PAYMENT_MYONE = 'MYONE';
     const PAYMENT_PAYPAL = 'PAYPAL';
     const PAYMENT_PAYDIREKT = 'PAYDIREKT';
