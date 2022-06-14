@@ -73,3 +73,7 @@
 ## [1.0.16] - 2022-06-07
 
 - BO : Changed mastercard config name from MASTERCARD to MasterCard. 
+
+## [1.0.17] - 2022-06-14
+
+- FO : Fixed issue where API missing response would throw 500 error in checkout page.
