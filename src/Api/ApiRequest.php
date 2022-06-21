@@ -60,7 +60,7 @@ class ApiRequest
             return $response ?: [];
         } catch (\Exception $exception) {
             $logs = new SaferPayLog();
-            $logs->message = $exception->getResponse()->getBody()->getContents();
+            $logs->message = $exception->getResponse() ? $exception->getResponse()->getBody()->getContents() : 'missing response';
             $logs->payload = $params['body'];
             $logs->add();
             throw $exception;
