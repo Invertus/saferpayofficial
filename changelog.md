@@ -77,3 +77,7 @@
 ## [1.0.17] - 2022-06-14
 
 - FO : Fixed issue where API missing response would throw 500 error in checkout page.
+
+## [1.0.18] - 2022-06-21
+
+- BO: Added new switch to control when new order mail is sent to merchant.
