@@ -81,3 +81,4 @@
 ## [1.0.18] - 2022-06-21
 
 - BO: Added new switch to control when new order mail is sent to merchant.
+- BO : Fixed issue where on older PS version capture order would send wrong price.
