@@ -151,8 +151,7 @@ class SaferPayOrderStatusService
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $cart = new Cart($order->id_cart);
         $transactionId = $saferPayOrder->transaction_id;
-        $cartDetails = $cart->getSummaryDetails();
-        $totalPrice = $cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
+        $totalPrice = $order->total_paid_tax_incl * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
         $totalPrice = (int)(round($totalPrice));
         if ($isRefund) {
             $transactionId = $saferPayOrder->refund_id;
