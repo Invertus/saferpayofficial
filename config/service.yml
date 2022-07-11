@@ -264,3 +264,6 @@ services:
             - '@Invertus\SaferPay\Service\SaferPayObtainPaymentMethods'
             - '@Invertus\SaferPay\Repository\SaferPayRestrictionRepository'
             - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'
+
+    Invertus\SaferPay\Service\SaferPayMailService:
+        class: Invertus\SaferPay\Service\SaferPayMailService

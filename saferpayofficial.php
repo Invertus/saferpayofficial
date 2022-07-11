@@ -490,9 +490,8 @@ class SaferPayOfficial extends PaymentModule
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
             return;
         }
-        /**
-         * @var \Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate $OrderConfirmationMessageTemplate
-         */
+
+        /** @var \Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate $OrderConfirmationMessageTemplate */
         $OrderConfirmationMessageTemplate = $this->getModuleContainer()->get(
             \Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate::class
         );
@@ -539,6 +538,48 @@ class SaferPayOfficial extends PaymentModule
                 return true;
             }
             return false;
+        }
+
+        if ($params['template'] === 'new_order') {
+            if (!Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    public function hookActionOrderStatusUpdate($params = [])
+    {
+        if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
+            return;
+        }
+
+        if ($params['newOrderStatus'] instanceof OrderState) {
+            $orderStatus = $params['newOrderStatus'];
+        } else {
+            $orderStatus = new OrderState((int) $params['newOrderStatus']);
+        }
+        $order = new Order($params['id_order']);
+
+        if (!Validate::isLoadedObject($orderStatus)) {
+            return;
+        }
+
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+
+        if (!Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
+            return;
+        }
+
+        $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+        if ($orderStatus->id === $saferPayAuthorizedStatus) {
+            /** @var \Invertus\SaferPay\Service\SaferPayMailService $mailService */
+            $mailService = $this->getModuleContainer()->get(
+                \Invertus\SaferPay\Service\SaferPayMailService::class
+            );
+            $mailService->sendNewOrderMail($order, $orderStatus->id);
         }
     }
 
