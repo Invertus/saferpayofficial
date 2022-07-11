@@ -36,6 +36,9 @@
             {if $field['template'] == 'field-hosted-field-template-desc.tpl'}
                 {include file="../../../partials/field-hosted-field-template-desc.tpl"}
             {/if}
+            {if $field['template'] == 'field-new-order-mail-desc.tpl'}
+                {include file="../../../partials/field-new-order-mail-desc.tpl"}
+            {/if}
         </div>
     {/if}
 

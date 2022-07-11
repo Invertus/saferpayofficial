@@ -313,11 +313,16 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                             'type' => 'bool',
                         ],
                         SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL => [
-                            'title' => $this->l('Send new order mail on authorization.'),
-                            'desc' => $this->l('Send new order email after payment was authorized (Using Mail alert module)'),
+                            'title' => $this->l('Send new order mail on authorization'),
+                            'desc' => $this->l('Receive a notification when an order is authorized by Saferpay (Using the Mail alert module)'),
                             'validation' => 'isBool',
                             'cast' => 'intval',
                             'type' => 'bool',
+                        ],
+                        SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL . '_description' => [
+                            'type' => 'desc',
+                            'class' => 'col-lg-12',
+                            'template' => 'field-new-order-mail-desc.tpl',
                         ],
                     ],
                     'buttons' => [
