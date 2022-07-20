@@ -16,5 +16,5 @@ services:
       - ./:/e2e
     #platform: linux/x86_64
 networks:
-  prestashop_mollie_net_1784:
-    name: 'prestashop_mollie_net_1784'
+  prestashop_saferpayofficial_net_1784:
+    name: 'prestashop_saferpayofficial_net_1784'
