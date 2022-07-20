@@ -19,7 +19,9 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `ps_access`
 --
-
+DROP TABLE IF EXISTS `ps_access`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ps_access` (
   `id_profile` int(10) UNSIGNED NOT NULL,
   `id_authorization_role` int(10) UNSIGNED NOT NULL
