@@ -44,9 +44,9 @@ services:
       - "8002:80"
     volumes:
       - ./:/var/www/html/modules/saferpayofficial:cached
-      - ./tests/seed/settings1784/defines.inc.php:/var/www/html/config/defines.inc.php
-      - ./tests/seed/settings1784/parameters.php:/var/www/html/app/config/parameters.php
-      - ./.docker/.htaccess1784:/var/www/html/.htaccess
+      - ./tests/seed/settings1764/defines.inc.php:/var/www/html/config/defines.inc.php
+      - ./tests/seed/settings1764/parameters.php:/var/www/html/app/config/parameters.php
+      - ./.docker/.htaccess1764:/var/www/html/.htaccess
     networks:
       - prestashop_saferpayofficial_net_1764
     healthcheck:
