@@ -114,7 +114,7 @@ test-e2e-headless-1770:
 
 ############ PS1786 ############################
 
-# All the commands required to build prestashop-1764 version locally
+# All the commands required to build prestashop-1786 version locally
 bps1786: build-ps-1786
 build-ps-1786:
 	# configuring your prestashop
@@ -140,7 +140,7 @@ e2e-1786-prepare:
 	# waits for mysql to load
 	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1786
 	# preloads initial data
-	make bps1770
+	make bps1786
 	/bin/bash .docker/wait-for-container.sh prestashop-1786
 
 # Run e2e tests in headless way.
