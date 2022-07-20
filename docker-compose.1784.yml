@@ -11,7 +11,7 @@ services:
 
   mysql:
     #platform: linux/amd64
-    container_name: mollie-mysql-1784
+    container_name: saferpayofficial-mysql-1784
     image: mysql:5.7
     ports:
       - "9002:3306"
@@ -48,7 +48,7 @@ services:
       - ./tests/seed/settings1784/parameters.php:/var/www/html/app/config/parameters.php
       - ./.docker/.htaccess1784:/var/www/html/.htaccess
     networks:
-      - prestashop_mollie_net_1784
+      - prestashop_saferpayofficial_net_1784
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
       interval: 10s
