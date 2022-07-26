@@ -646,7 +646,9 @@ INSERT INTO `ps_access` (`id_profile`, `id_authorization_role`) VALUES
 --
 -- Table structure for table `ps_accessory`
 --
-
+DROP TABLE IF EXISTS `ps_accessory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ps_accessory` (
   `id_product_1` int(10) UNSIGNED NOT NULL,
   `id_product_2` int(10) UNSIGNED NOT NULL
@@ -657,7 +659,9 @@ CREATE TABLE `ps_accessory` (
 --
 -- Table structure for table `ps_address`
 --
-
+DROP TABLE IF EXISTS `ps_address`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ps_address` (
   `id_address` int(10) UNSIGNED NOT NULL,
   `id_country` int(10) UNSIGNED NOT NULL,
@@ -698,7 +702,9 @@ INSERT INTO `ps_address` (`id_address`, `id_country`, `id_state`, `id_customer`,
 --
 -- Table structure for table `ps_address_format`
 --
-
+DROP TABLE IF EXISTS `ps_address_format`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ps_address_format` (
   `id_country` int(10) UNSIGNED NOT NULL,
   `format` varchar(255) NOT NULL DEFAULT ''
