@@ -53,9 +53,11 @@ describe('PS1786 Saferpay Tests Suite', () => {
   })
 it('01 Connecting the Test API information to module', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/')
-      //Enabling Multistore context for PS1784
-      cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.get('[name="activateModule"]').check()
+      cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+      cy.get('.pstaggerAddTagInput').type('saferpay')
+      cy.get('#module-search-button').click()
+      cy.get('.btn-group > .btn-primary-reverse').click()
+      cy.pause()
       cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
       cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
       cy.get('#module_form_submit_btn').click()
