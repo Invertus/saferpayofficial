@@ -51,16 +51,19 @@ describe('PS1786 Saferpay Tests Suite', () => {
       cy.viewport(1920,1080)
       login('SaferpayBOFOLoggingIn')
   })
-it('01 Connecting the Test API information to module', () => {
+it.only('01 Connecting the Test API information to module', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
       cy.get('#module-search-button').click()
+      //clicking the Congifure
       cy.get('.btn-group > .btn-primary-reverse').click()
-      cy.pause()
-      cy.get('#MOLLIE_ACCOUNT_SWITCH_on').click()
-      cy.get('#MOLLIE_API_KEY_TEST').type((Cypress.env('MOLLIE_TEST_API_KEY')),{delay: 0, log: false})
-      cy.get('#module_form_submit_btn').click()
+      cy.get('[name="SAFERPAY_USERNAME_TEST"]').type((Cypress.env('SAFERPAY_USERNAME_TEST')),{delay: 0, log: false})
+      cy.get('[name="SAFERPAY_PASSWORD_TEST"]').type((Cypress.env('SAFERPAY_PASSWORD_TEST')),{delay: 0, log: false})
+      cy.get('[name="SAFERPAY_CUSTOMER_ID_TEST"]').type((Cypress.env('SAFERPAY_CUSTOMER_ID_TEST')),{delay: 0, log: false})
+      cy.get('[name="SAFERPAY_TERMINAL_ID_TEST"]').type((Cypress.env('SAFERPAY_TERMINAL_ID_TEST')),{delay: 0, log: false})
+      cy.get('[name="SAFERPAY_MERCHANT_EMAILS"]').type((Cypress.env('SAFERPAY_MERCHANT_EMAILS')),{delay: 0, log: false})
+
 })
 it('02 Enabling Saferpay carriers successfully', () => {
       cy.visit('/admin1/')
