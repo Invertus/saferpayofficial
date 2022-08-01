@@ -51,13 +51,12 @@ describe('PS1786 Saferpay Tests Suite', () => {
       cy.viewport(1920,1080)
       login('SaferpayBOFOLoggingIn')
   })
-it.only('01 Connecting the Test API information to module', () => {
+it('01 Connecting the Test API information to module', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
       cy.get('#module-search-button').click()
-      //clicking the Congifure
-      cy.get('.btn-group > .btn-primary-reverse').click()
+      cy.get('.btn-group > .btn-primary-reverse').click()  //clicking the Congifure
       cy.get('[name="SAFERPAY_USERNAME_TEST"]').type((Cypress.env('SAFERPAY_USERNAME_TEST')),{delay: 0, log: false})
       cy.get('[name="SAFERPAY_PASSWORD_TEST"]').type((Cypress.env('SAFERPAY_PASSWORD_TEST')),{delay: 0, log: false})
       cy.get('[name="SAFERPAY_CUSTOMER_ID_TEST"]').type((Cypress.env('SAFERPAY_CUSTOMER_ID_TEST')),{delay: 0, log: false})
@@ -67,17 +66,28 @@ it.only('01 Connecting the Test API information to module', () => {
       cy.get('#configuration_fieldset_1 > .panel-footer > .btn').click()
       cy.get(':nth-child(4) > .alert').should('exist')
 })
-it('02 Enabling Saferpay carriers successfully', () => {
-      cy.visit('/admin1/')
+it('02 Enabling Saferpay carriers and countries successfully', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
-      cy.get('[class="js-multiple-choice-table-select-column"]').eq(6).click()
+      cy.get('[class="js-multiple-choice-table-select-column"]').eq(7).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it('03 Enabling All payments in Module BO', () => {
-      cy.visit('/admin1/')
-      cy.get('#subtab-AdminMollieModule > .link').click()
-      cy.ConfOrdersAPI1784()
-      cy.get('[type="submit"]').first().click()
+it.only('03 Enabling All payments in Module BO', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/admin1/')
+      cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+      cy.get('.pstaggerAddTagInput').type('saferpay')
+      cy.get('#module-search-button').click()
+      cy.get('.btn-group > .btn-primary-reverse').click()  //clicking the Congifure
+      cy.get('#subtab-AdminSaferPayOfficialPayment').click()
+      //todo update selectors
+      cy.get('.saferpay-group.all-payments > .col-lg-8 > .form-group > :nth-child(1) > .checkbox > .container-checkbox > .checkmark').click()
+      cy.get('.saferpay-group.all-payments > .col-lg-8 > .form-group > :nth-child(2) > .checkbox > .container-checkbox > .checkmark').click()
+      cy.get('.saferpay-group.all-payments > .col-lg-8 > .form-group > :nth-child(3) > .checkbox > .container-checkbox > .checkmark').click()
+      cy.get('#all_countries_chosen > .chosen-choices > .search-field > .default').click()
+      cy.get('.highlighted').click()
+      cy.get('#all_currencies_chosen > .chosen-choices > .search-field > .default').click()
+      cy.get('.highlighted').click()
+      cy.get('#configuration_form_submit_btn').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
 it('04 Bancontact Checkouting [Orders API]', () => {
