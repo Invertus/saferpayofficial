@@ -72,7 +72,7 @@ it('02 Enabling Saferpay carriers and countries successfully', () => {
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(7).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it.only('03 Enabling All payments in Module BO', () => {
+it('03 Enabling All payments in Module BO', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
@@ -90,33 +90,26 @@ it.only('03 Enabling All payments in Module BO', () => {
       cy.get('#configuration_form_submit_btn').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it('04 Bancontact Checkouting [Orders API]', () => {
-      cy.visit('/SHOP2/de/index.php?controller=history')
+it.only('04 Bancontact Checkouting [Orders API]', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.contains('LT').click()
+      cy.get('#id-address-delivery-address-2').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
       //Payment method choosing
-      cy.contains('Bancontact').click({force:true})
+      cy.contains('Twint').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
-      cy.setCookie(
-        'SESSIONID',
-        "cypress-dummy-value",
-        {
-            domain: '.www.mollie.com',
-            sameSite: 'None',
-            secure: true,
-            httpOnly: true
-        }
-      );    // reload current page to activate cookie
-      cy.reload();
-      cy.get('[value="paid"]').click()
-      cy.get('[class="button form__button"]').click()
-      cy.get('[id="mollie-ok"]').should('be.visible')
+      cy.origin('https://test.saferpay.com', () => {
+      cy.get('[title="VISA"]').click({force:true})
+      cy.get('[name="SubmitToNext"]').click({force:true})
+      cy.get('[class="btn btn-next"]').eq(0).click({force:true})
+      cy.wait(6000)
+      cy.frameLoaded()
+      })
 })
 it('05 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
