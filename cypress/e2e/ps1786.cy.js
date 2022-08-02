@@ -1,4 +1,6 @@
 /// <reference types="Cypress" />
+///<reference types="cypress-iframe" />
+import 'cypress-iframe'
 function prepareCookie()
       {
             const name = 'PrestaShop-';
@@ -104,12 +106,12 @@ it.only('04 TWINT Checkouting', () => {
       prepareCookie();
       cy.get('.ps-shown-by-js > .btn').click()
       cy.origin('https://test.saferpay.com', () => {
-      cy.get('[title="VISA"]').click({force:true})
-      cy.get('[name="SubmitToNext"]').click({force:true})
-      cy.get('[class="btn btn-next"]').eq(0).click({force:true})
-      cy.wait(6000)
-      cy.frameLoaded('.aut-iframe')
+      cy.get('[title="UnionPay"]').click({force:true})
+      cy.get('[input-id="CardNumber"]').type('9100100052000005')
+      cy.get('[class="btn btn-next"]').click()
+      cy.get('[id="UnionPayButton"]').click()
       })
+      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
 })
 it('05 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
       cy.visit('/admin1/index.php?controller=AdminOrders')
