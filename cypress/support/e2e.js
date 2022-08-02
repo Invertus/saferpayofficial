@@ -15,14 +15,7 @@
 
 // Import commands.js using ES2015 syntax:
 import './commands'
-require('cypress-iframe')
-Cypress.Commands.add('iframe', { prevSubject: 'element' }, $iframe => {
-    return new Cypress.Promise(resolve => {
-        $iframe.on('load', () => {
-            resolve($iframe.contents().find('body'));
-        });
-    });
-});
+import 'cypress-iframe'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
