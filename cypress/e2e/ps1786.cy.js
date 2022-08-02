@@ -387,37 +387,37 @@ it('21 BONUSCARD BO Order Refunding', () => {
       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('22 PAYPAL Checkouting', () => {
-      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
-      cy.get('a').click()
-      cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
-      //Billing country LT, DE etc.
-      cy.get('.clearfix > .btn').click()
-      cy.get('#js-delivery > .continue').click()
-      //Payment method choosing
-      cy.contains('PayPal').click({force:true})
-      cy.get('.condition-label > .js-terms').click({force:true})
-      cy.get('.ps-shown-by-js > .btn').click()
-      //todo fix the paypal cross-origin 
-      prepareCookie();
-      cy.origin('https://test.saferpay.com/Simulators/PayPalRestApi/**', () => {
-      cy.visit('https://test.saferpay.com/Simulators/PayPalRestApi/')
-      cy.get('[id="pay"]').click()
-      })
-      //cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
-      })
-it('23 PAYPAL BO Order Refunding', () => {
-      cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
-      cy.get(':nth-child(1) > .column-payment').click()
-      cy.contains('Payment completed by Saferpay').should('be.visible')
-      //Refunding action
-      cy.get('[name="saferpay_refund_amount"]').should('be.visible')
-      cy.get('[class="saferpay-refund-button"]').click()
-      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
-      cy.contains('Order Refunded by Saferpay').should('be.visible')
-})
-it.only('24 POSTEFINANCE Checkouting', () => {
+// it('22 PAYPAL Checkouting', () => {
+//       cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+//       cy.get('a').click()
+//       cy.contains('Reorder').click()
+//       cy.get('#id-address-delivery-address-2').click()
+//       //Billing country LT, DE etc.
+//       cy.get('.clearfix > .btn').click()
+//       cy.get('#js-delivery > .continue').click()
+//       //Payment method choosing
+//       cy.contains('PayPal').click({force:true})
+//       cy.get('.condition-label > .js-terms').click({force:true})
+//       cy.get('.ps-shown-by-js > .btn').click()
+//       //todo fix the paypal cross-origin 
+//       prepareCookie();
+//       cy.origin('https://test.saferpay.com/Simulators/PayPalRestApi/**', () => {
+//       cy.visit('https://test.saferpay.com/Simulators/PayPalRestApi/')
+//       cy.get('[id="pay"]').click()
+//       })
+//       //cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+//       })
+// it('23 PAYPAL BO Order Refunding', () => {
+//       cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
+//       cy.get(':nth-child(1) > .column-payment').click()
+//       cy.contains('Payment completed by Saferpay').should('be.visible')
+//       //Refunding action
+//       cy.get('[name="saferpay_refund_amount"]').should('be.visible')
+//       cy.get('[class="saferpay-refund-button"]').click()
+//       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+//       cy.contains('Order Refunded by Saferpay').should('be.visible')
+// })
+it('24 POSTEFINANCE Checkouting', () => {
       cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -438,10 +438,182 @@ it.only('24 POSTEFINANCE Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it.only('25 POSTEFINANCE BO Order Refunding', () => {
+it('25 POSTEFINANCE BO Order Refunding', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.contains('Payment completed by Saferpay').should('be.visible')
+      //Refunding action
+      cy.get('[name="saferpay_refund_amount"]').should('be.visible')
+      cy.get('[class="saferpay-refund-button"]').click()
+      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+      cy.contains('Order Refunded by Saferpay').should('be.visible')
+})
+it('26 POSTCARD Checkouting', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.get('#id-address-delivery-address-2').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Postcard').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.origin('https://test.saferpay.com', () => {
+      cy.get('[title="UnionPay"]').click({force:true})
+      cy.get('[input-id="CardNumber"]').type('9100100052000005')
+      cy.get('[class="btn btn-next"]').click()
+      cy.get('[id="UnionPayButton"]').click()
+      })
+      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      })
+it('27 POSTCARD BO Order Refunding', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.contains('Payment completed by Saferpay').should('be.visible')
+      //Refunding action
+      cy.get('[name="saferpay_refund_amount"]').should('be.visible')
+      cy.get('[class="saferpay-refund-button"]').click()
+      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+      cy.contains('Order Refunded by Saferpay').should('be.visible')
+})
+it('28 BANCONTACT Checkouting', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.get('#id-address-delivery-address-2').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Bancontact').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.origin('https://test.saferpay.com', () => {
+      cy.get('#CardNumber').type('91108000500000005')
+      cy.get('#Expiry').type('1223')
+      cy.get('#HolderName').type('TEST TEST')
+      cy.get('[name="SubmitToNext"]').click()
+      cy.get('[id="Submit"]').click()
+      })
+      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      })
+it('29 BANCONTACT BO Order Refunding', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.contains('Payment completed by Saferpay').should('be.visible')
+      //Refunding action
+      cy.get('[name="saferpay_refund_amount"]').should('be.visible')
+      cy.get('[class="saferpay-refund-button"]').click()
+      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+      cy.contains('Order Refunded by Saferpay').should('be.visible')
+})
+it('30 UNIONPAY Checkouting', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.get('#id-address-delivery-address-2').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('UnionPay').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.origin('https://test.saferpay.com', () => {
+      cy.get('[title="UnionPay"]').click({force:true})
+      cy.get('[input-id="CardNumber"]').type('9100100052000005')
+      cy.get('[class="btn btn-next"]').click()
+      cy.get('[id="UnionPayButton"]').click()
+      })
+      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      })
+it('31 UNIONPAY BO Order Refunding', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.contains('Payment completed by Saferpay').should('be.visible')
+      //Refunding action
+      cy.get('[name="saferpay_refund_amount"]').should('be.visible')
+      cy.get('[class="saferpay-refund-button"]').click()
+      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+      cy.contains('Order Refunded by Saferpay').should('be.visible')
+})
+it('32 KLARNA Checkouting', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.get('#id-address-delivery-address-2').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('Klarna').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      prepareCookie();
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.origin('https://test.saferpay.com', () => {
+      cy.get('[name="SubmitToNext"]').click()
+      })
+      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      })
+it('33 KLARNA BO Order Refunding', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.contains('Payment completed by Saferpay').should('be.visible')
+      //Capturing action
+      cy.get('[name="submitCaptureOrder"]').should('be.visible').click()
+      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+      cy.contains('Order Refunded by Saferpay').should('be.visible')
+      //Refunding action
+      cy.get('[name="saferpay_refund_amount"]').should('be.visible')
+      cy.get('[class="saferpay-refund-button"]').click()
+      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+      cy.contains('Order Refunded by Saferpay').should('be.visible')
+})
+it.only('34 GOOGLEPAY Checkouting', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+      cy.get('a').click()
+      cy.contains('Reorder').click()
+      cy.get('#id-address-delivery-address-2').click()
+      //Billing country LT, DE etc.
+      cy.get('.clearfix > .btn').click()
+      cy.get('#js-delivery > .continue').click()
+      //Payment method choosing
+      cy.contains('GOOGLEPAY').click({force:true})
+      cy.get('.condition-label > .js-terms').click({force:true})
+      cy.get('.ps-shown-by-js > .btn').click()
+      cy.origin('https://test.saferpay.com', () => {
+      cy.wait(1000)
+      cy.get('[class="img img-selection-item"]').click({force:true})
+      cy.wait(1000)
+      const getIframeBody = () => {
+            // get the iframe > document > body
+            // and retry until the body element is not empty
+            return cy
+            .get('[id="popup-contentIframe"]')
+            .its('[id="payWithout3DS"]')
+            // wraps "body" DOM element to allow
+            // chaining more Cypress commands, like ".find(...)"
+            // https://on.cypress.io/wrap
+            .then(cy.wrap)
+          }
+      getIframeBody().find('[id="payWithout3DS"]')
+      //cy.get('[id="popup-contentIframe"]').find('[alt="Pay as Webbrowser"]')
+      })
+      //cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      })
+it('35 GOOGLEPAY BO Order Refunding', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
+      cy.get(':nth-child(1) > .column-payment').click()
+      cy.contains('Payment completed by Saferpay').should('be.visible')
+      //Capturing action
+      cy.get('[name="submitCaptureOrder"]').should('be.visible').click()
+      cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
+      cy.contains('Order Refunded by Saferpay').should('be.visible')
       //Refunding action
       cy.get('[name="saferpay_refund_amount"]').should('be.visible')
       cy.get('[class="saferpay-refund-button"]').click()
