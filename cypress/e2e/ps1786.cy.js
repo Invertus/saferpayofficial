@@ -595,16 +595,15 @@ it.only('34 GOOGLEPAY Checkouting', () => {
             // and retry until the body element is not empty
             return cy
             .get('[id="popup-contentIframe"]')
-            .its('[id="payWithout3DS"]')
+            .its('0.contentDocument.body')
             // wraps "body" DOM element to allow
             // chaining more Cypress commands, like ".find(...)"
             // https://on.cypress.io/wrap
             .then(cy.wrap)
           }
-      getIframeBody().find('[id="payWithout3DS"]')
-      //cy.get('[id="popup-contentIframe"]').find('[alt="Pay as Webbrowser"]')
+      getIframeBody().find('[id="payWithout3DS"]').click()
       })
-      //cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
 it('35 GOOGLEPAY BO Order Refunding', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
