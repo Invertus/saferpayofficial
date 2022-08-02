@@ -90,8 +90,8 @@ it('03 Enabling All payments in Module BO', () => {
       cy.get('#configuration_form_submit_btn').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it.only('04 Bancontact Checkouting [Orders API]', () => {
-      cy.visit('https://sp1786.eu.ngrok.io/index.php?controller=history')
+it.only('04 TWINT Checkouting', () => {
+      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-2').click()
@@ -108,7 +108,7 @@ it.only('04 Bancontact Checkouting [Orders API]', () => {
       cy.get('[name="SubmitToNext"]').click({force:true})
       cy.get('[class="btn btn-next"]').eq(0).click({force:true})
       cy.wait(6000)
-      cy.frameLoaded()
+      cy.frameLoaded('.aut-iframe')
       })
 })
 it('05 Bancontact Order BO Shiping, Refunding [Orders API]', () => {
