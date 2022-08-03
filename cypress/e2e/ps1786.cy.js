@@ -602,6 +602,24 @@ it.only('34 GOOGLEPAY Checkouting', () => {
             .then(cy.wrap)
           }
       getIframeBody().find('[id="payWithout3DS"]').click()
+      // const getIframeBodyProceed = () => {
+      //       // get the iframe > document > body
+      //       // and retry until the body element is not empty
+      //       return cy
+      //       .get('[name="ThreeDSv2Authentication"]')
+      //       .its('0.contentDocument.body')
+      //       // wraps "body" DOM element to allow
+      //       // chaining more Cypress commands, like ".find(...)"
+      //       // https://on.cypress.io/wrap
+      //       .then(cy.wrap)
+      //     }
+      // cy.wait(20000)
+      // getIframeBodyProceed().find('[class="col-12 col-sm-6"]').click()
+      cy.wait(20000)
+      cy.get('[name="ThreeDSv2Authentication"]').should($ThreeDSv2Authentication => {
+            expect($ThreeDSv2Authentication.get(0)).to.have.property('0.contentDocument.body');
+        });
+      cy.get('[name="ThreeDSv2Authentication"]').its('0.contentDocument.body').then(cy.wrap).find('[id="submit"]')
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
