@@ -574,7 +574,7 @@ it('33 KLARNA BO Order Refunding', () => {
       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('34 GOOGLEPAY Checkouting', () => {
+it.only('34 GOOGLEPAY Checkouting', () => {
       cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -606,7 +606,7 @@ it('34 GOOGLEPAY Checkouting', () => {
       //       // get the iframe > document > body
       //       // and retry until the body element is not empty
       //       return cy
-      //       .get('[name="ThreeDSv2Authentication"]')
+      //       .get('[class="resp-iframe"]')
       //       .its('0.contentDocument.body')
       //       // wraps "body" DOM element to allow
       //       // chaining more Cypress commands, like ".find(...)"
@@ -614,12 +614,10 @@ it('34 GOOGLEPAY Checkouting', () => {
       //       .then(cy.wrap)
       //     }
       // cy.wait(20000)
-      // getIframeBodyProceed().find('[class="col-12 col-sm-6"]').click()
-      cy.wait(20000)
-      cy.get('[name="ThreeDSv2Authentication"]').should($ThreeDSv2Authentication => {
-            expect($ThreeDSv2Authentication.get(0)).to.have.property('0.contentDocument.body');
-        });
-      cy.get('[name="ThreeDSv2Authentication"]').its('0.contentDocument.body').then(cy.wrap).find('[id="submit"]')
+      // getIframeBodyProceed().find('[type="submit"]').click()
+      cy.get('[class="resp-iframe"]').switchToFrame(() => {
+            cy.get('[type="submit"]').click()
+          })
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
