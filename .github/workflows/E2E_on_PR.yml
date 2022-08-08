@@ -17,6 +17,13 @@ jobs:
             yml: 'docker-compose.1786.yml'
             url: 'https://sp1786.eu.ngrok.io'
             test_spec: '**/cypress/e2e/ps1786.cy.js'
+          - prestashop: 'PS1784'
+            make: 'make e2eh1784'
+            demoshop: 'demoshop1784'
+            port: '8002'
+            yml: 'docker-compose.1784.yml'
+            url: 'https://sp1784.eu.ngrok.io'
+            test_spec: '**/cypress/e2e/ps1784.cy.js'
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
     steps:
