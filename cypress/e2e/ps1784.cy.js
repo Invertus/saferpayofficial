@@ -52,7 +52,7 @@ describe('PS1784 Saferpay Tests Suite', () => {
       cy.viewport(1920,1080)
       login('SaferpayBOFOLoggingIn')
   })
-it.only('01 Connecting the Test API information to module', () => {
+it('01 Connecting the Test API information to module', () => {
       cy.visit('https://sp1784.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
@@ -67,13 +67,13 @@ it.only('01 Connecting the Test API information to module', () => {
       cy.get('#configuration_fieldset_1 > .panel-footer > .btn').click()
       cy.get(':nth-child(4) > .alert').should('exist')
 })
-it.only('02 Enabling Saferpay carriers and countries successfully', () => {
+it('02 Enabling Saferpay carriers and countries successfully', () => {
       cy.visit('https://sp1784.eu.ngrok.io/admin1/')
       cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({force:true})
       cy.get('[class="js-multiple-choice-table-select-column"]').eq(7).click()
       cy.get('[class="btn btn-primary"]').eq(3).click()
 })
-it.only('03 Enabling All payments in Module BO', () => {
+it('03 Enabling All payments in Module BO', () => {
       cy.visit('https://sp1784.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
@@ -95,7 +95,7 @@ it('04 TWINT Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click() 
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -126,7 +126,7 @@ it('06 LASTSCHRIFT Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -157,7 +157,7 @@ it('08 VISA Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -188,7 +188,7 @@ it('10 MASTERCARD Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -219,7 +219,7 @@ it('12 AMERICAN EXPRESS Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -255,7 +255,7 @@ it('14 DINERS CLUB Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -292,7 +292,7 @@ it('16 JCB Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -329,7 +329,7 @@ it('18 MYONE Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -360,7 +360,7 @@ it('20 BONUSCARD Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -391,7 +391,7 @@ it('21 BONUSCARD BO Order Refunding', () => {
 //       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
 //       cy.get('a').click()
 //       cy.contains('Reorder').click()
-//       cy.get('#id-address-delivery-address-2').click()
+//       cy.get('#id-address-delivery-address-8').click()
 //       //Billing country LT, DE etc.
 //       cy.get('.clearfix > .btn').click()
 //       cy.get('#js-delivery > .continue').click()
@@ -421,7 +421,7 @@ it('24 POSTEFINANCE Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -452,7 +452,7 @@ it('26 POSTCARD Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -483,7 +483,7 @@ it('28 BANCONTACT Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -515,7 +515,7 @@ it('30 UNIONPAY Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -546,7 +546,7 @@ it('32 KLARNA Checkouting', () => {
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -578,7 +578,7 @@ it('34 GOOGLEPAY Checkouting', () => { //TODO to finish
       cy.visit('https://sp1784.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-2').click()
+      cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
