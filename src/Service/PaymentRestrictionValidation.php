@@ -28,11 +28,11 @@ use Invertus\SaferPay\Service\PaymentRestrictionValidation\PaymentRestrictionVal
 class PaymentRestrictionValidation
 {
     /**
-     * @var \Traversable
+     * @var array $paymentRestrictionValidators
      */
     private $paymentRestrictionValidators;
 
-    public function __construct(\Traversable $paymentRestrictionValidators)
+    public function __construct(array $paymentRestrictionValidators)
     {
         $this->paymentRestrictionValidators = $paymentRestrictionValidators;
     }
