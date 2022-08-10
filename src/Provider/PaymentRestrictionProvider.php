@@ -27,7 +27,7 @@ use Invertus\SaferPay\Service\PaymentRestrictionValidation\ApplePayPaymentRestri
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\BasePaymentRestrictionValidation;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\KlarnaPaymentRestrictionValidation;
 
-class PaymentRestrictionProvider
+class PaymentRestrictionProvider implements PaymentRestrictionProviderInterface
 {
     /**
      * @var ApplePayPaymentRestrictionValidation
@@ -56,15 +56,12 @@ class PaymentRestrictionProvider
         $this->klarnaPaymentRestrictionValidation = $klarnaPaymentRestrictionValidation;
     }
 
-    /**
-     * @return  array<object>
-     */
     public function getPaymentValidators(): array
     {
-        $paymentRestrictions = [];
-        $paymentRestrictions[] = $this->applePayPaymentRestrictionValidation;
-        $paymentRestrictions[] = $this->basePaymentRestrictionValidation;
-        $paymentRestrictions[] = $this->klarnaPaymentRestrictionValidation;
-        return $paymentRestrictions;
+        return [
+            $this->applePayPaymentRestrictionValidation,
+            $this->basePaymentRestrictionValidation,
+            $this->klarnaPaymentRestrictionValidation
+        ];
     }
 }
