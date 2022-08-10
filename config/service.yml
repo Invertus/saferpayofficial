@@ -123,7 +123,7 @@ services:
     Invertus\SaferPay\Service\PaymentRestrictionValidation:
         class: Invertus\SaferPay\Service\PaymentRestrictionValidation
         arguments:
-            - [ '@Invertus\SaferPay\Service\PaymentRestrictionValidation\ApplePayPaymentRestrictionValidation', '@Invertus\SaferPay\Service\PaymentRestrictionValidation\BasePaymentRestrictionValidation', '@Invertus\SaferPay\Service\PaymentRestrictionValidation\KlarnaPaymentRestrictionValidation', '@Invertus\SaferPay\Service\PaymentRestrictionValidation\BasePaymentRestrictionValidation' ]
+            - '@Invertus\SaferPay\Provider\PaymentRestrictionProvider'
 
     Invertus\SaferPay\Service\SaferPayLogoCreator:
         class: Invertus\SaferPay\Service\SaferPayLogoCreator
@@ -213,6 +213,13 @@ services:
             - '@=service("adapter.context").getContext()'
             - '@=service("saferpay").name'
             - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'
+
+    Invertus\SaferPay\Provider\PaymentRestrictionProvider:
+        class: Invertus\SaferPay\Provider\PaymentRestrictionProvider
+        arguments:
+            - '@Invertus\SaferPay\Service\PaymentRestrictionValidation\ApplePayPaymentRestrictionValidation'
+            - '@Invertus\SaferPay\Service\PaymentRestrictionValidation\BasePaymentRestrictionValidation'
+            - '@Invertus\SaferPay\Service\PaymentRestrictionValidation\KlarnaPaymentRestrictionValidation'
 
     Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization:
         class: Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization
