@@ -52,7 +52,7 @@ describe('PS1764 Saferpay Tests Suite', () => {
       cy.viewport(1920,1080)
       login('SaferpayBOFOLoggingIn')
   })
-it('01 Connecting the Test API information to module', () => {
+it.only('01 Connecting the Test API information to module', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
