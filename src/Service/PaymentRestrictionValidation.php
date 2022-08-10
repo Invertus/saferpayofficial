@@ -23,18 +23,19 @@
 
 namespace Invertus\SaferPay\Service;
 
+use Invertus\SaferPay\Provider\PaymentRestrictionProvider;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\PaymentRestrictionValidationInterface;
 
 class PaymentRestrictionValidation
 {
     /**
-     * @var \Traversable
+     * @var PaymentRestrictionProvider
      */
-    private $paymentRestrictionValidators;
+    private $paymentRestrictionProvider;
 
-    public function __construct(\Traversable $paymentRestrictionValidators)
+    public function __construct(PaymentRestrictionProvider $paymentRestrictionProvider)
     {
-        $this->paymentRestrictionValidators = $paymentRestrictionValidators;
+        $this->paymentRestrictionProvider = $paymentRestrictionProvider;
     }
 
     /**
@@ -47,11 +48,11 @@ class PaymentRestrictionValidation
     public function isPaymentMethodValid($paymentMethod)
     {
         $success = false;
-
+        $paymentValidators = $this->paymentRestrictionProvider->getPaymentValidators();
         /**
          * @var PaymentRestrictionValidationInterface $paymentRestrictionValidator
          */
-        foreach ($this->paymentRestrictionValidators as $paymentRestrictionValidator) {
+        foreach ($paymentValidators as $paymentRestrictionValidator) {
             if ($paymentRestrictionValidator->supports($paymentMethod)) {
                 $success = $paymentRestrictionValidator->isValid($paymentMethod);
 
