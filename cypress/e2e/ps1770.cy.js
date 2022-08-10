@@ -151,7 +151,7 @@ it('07 LASTSCHRIFT BO Order Refunding', () => {
       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it.only('08 VISA Checkouting', () => {
+it('08 VISA Checkouting', () => {
       cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-7').click()
@@ -171,7 +171,7 @@ it.only('08 VISA Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it.only('09 VISA BO Order Refunding', () => {
+it('09 VISA BO Order Refunding', () => {
       cy.visit('https://sp1770.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.contains('Payment completed by Saferpay').should('be.visible')
