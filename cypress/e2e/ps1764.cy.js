@@ -250,7 +250,7 @@ it('13 AMERICAN EXPRESS BO Order Refunding and Capturing', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it.only('14 DINERS CLUB Checkouting', () => {
+it('14 DINERS CLUB Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -272,7 +272,7 @@ it.only('14 DINERS CLUB Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it.only('15 DINERS CLUB BO Order Refunding and Capturing', () => {
+it('15 DINERS CLUB BO Order Refunding and Capturing', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get('.btn-continue').click()
       cy.get('[class="btn-group pull-right"]').eq(0).click()
@@ -312,11 +312,10 @@ it('17 JCB BO Order Refunding and Capturing', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get('.btn-continue').click()
       cy.get('[class="btn-group pull-right"]').eq(0).click()
-      cy.contains('Payment completed by Saferpay').should('be.visible')
+      cy.contains('Payment authorized by Saferpay').should('be.visible')
       //Capturing action
       cy.get('[name="submitCaptureOrder"]').should('be.visible').click()
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
-      cy.contains('Order Refunded by Saferpay').should('be.visible')
       //Refunding action
       cy.get('[name="saferpay_refund_amount"]').should('be.visible')
       cy.get('[class="saferpay-refund-button"]').click()
@@ -556,15 +555,14 @@ it('32 KLARNA Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it('33 KLARNA BO Order Refunding', () => {
+it('33 KLARNA BO Order Capturing and Refunding', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get('.btn-continue').click()
       cy.get('[class="btn-group pull-right"]').eq(0).click()
-      cy.contains('Payment completed by Saferpay').should('be.visible')
+      cy.contains('Payment authorized by Saferpay').should('be.visible')
       //Capturing action
       cy.get('[name="submitCaptureOrder"]').should('be.visible').click()
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
-      cy.contains('Order Refunded by Saferpay').should('be.visible')
       //Refunding action
       cy.get('[name="saferpay_refund_amount"]').should('be.visible')
       cy.get('[class="saferpay-refund-button"]').click()
