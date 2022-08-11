@@ -122,7 +122,7 @@ it('05 TWINT BO Order Refunding', () => {
       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it.only('06 LASTSCHRIFT Checkouting', () => {
+it('06 LASTSCHRIFT Checkouting', () => {
       cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -143,7 +143,7 @@ it.only('06 LASTSCHRIFT Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it.only('07 LASTSCHRIFT BO Order Refunding', () => {
+it('07 LASTSCHRIFT BO Order Refunding', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.contains('Payment completed by Saferpay').should('be.visible')
