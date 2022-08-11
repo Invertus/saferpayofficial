@@ -569,10 +569,16 @@ it('33 KLARNA BO Order Capturing and Refunding', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('34 GOOGLEPAY Checkouting', () => { //TODO to finish
-      cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
+it('34 GOOGLEPAY Checkouting', () => {//TODO to finish
+      Cypress.on('uncaught:exception', (err, runnable) => {
+            // returning false here prevents Cypress from
+            // failing the test
+            return false
+        })
+      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+      cy.get('a').click()
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-8').click()
+      cy.get('#id-address-delivery-address-2').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
@@ -580,7 +586,7 @@ it('34 GOOGLEPAY Checkouting', () => { //TODO to finish
       cy.contains('GOOGLEPAY').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click()
-      cy.origin('https://test.saferpay.com', () => {
+      cy.get('.paymentgroup > ul > li > .btn').click()
       cy.wait(1000)
       cy.get('[class="img img-selection-item"]').click({force:true})
       cy.wait(1000)
@@ -607,13 +613,17 @@ it('34 GOOGLEPAY Checkouting', () => { //TODO to finish
       //       // https://on.cypress.io/wrap
       //       .then(cy.wrap)
       //     }
-      // cy.wait(20000)
-      // getIframeBodyProceed().find('[type="submit"]').click()
-      cy.get('[class="resp-iframe"]').switchToFrame(() => {
-            cy.get('[type="submit"]').click()
-          })
-      })
-      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      cy.wait(20000)
+      cy.iframe('[class="resp-iframe"]').find('[id="submit"]')
+      // cy.get('[class="resp-iframe"]').then($element => {
+      //       const $body = $element.contents().find('body')
+      //       let stripe = cy.wrap($body)
+      //       stripe.find('[class="resp-iframe"]').click(150,150)
+      //     })
+      //       cy.origin('https://test.saferpay.com', () => {
+      // cy.visit('https://test.saferpay.com/Simulators/ThreeDSv2/Acs/ChallengeProcess')
+      // })
+      //getIframeBodyProceed().find('body').click()
       })
 it('35 GOOGLEPAY BO Order Refunding', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
