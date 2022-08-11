@@ -595,19 +595,18 @@ it.only('34 GOOGLEPAY Checkouting', () => {//TODO to finish
       cy.wait(1000)
       cy.get('[class="img img-selection-item"]').click({force:true})
       cy.wait(1000)
-      cy.getWithinIframe('a selector')
-      // const getIframeBody = () => {
-      //       // get the iframe > document > body
-      //       // and retry until the body element is not empty
-      //       return cy
-      //       .get('[id="popup-contentIframe"]')
-      //       .its('0.contentDocument.body')
-      //       // wraps "body" DOM element to allow
-      //       // chaining more Cypress commands, like ".find(...)"
-      //       // https://on.cypress.io/wrap
-      //       .then(cy.wrap)
-      //     }
-      // getIframeBody().find('[id="payWithout3DS"]').click()
+      const getIframeBody = () => {
+            // get the iframe > document > body
+            // and retry until the body element is not empty
+            return cy
+            .get('[id="popup-contentIframe"]')
+            .its('0.contentDocument.body')
+            // wraps "body" DOM element to allow
+            // chaining more Cypress commands, like ".find(...)"
+            // https://on.cypress.io/wrap
+            .then(cy.wrap)
+          }
+      getIframeBody().find('[id="payWithout3DS"]').click()
       // const getIframeBodyProceed = () => {
       //       // get the iframe > document > body
       //       // and retry until the body element is not empty
@@ -619,7 +618,15 @@ it.only('34 GOOGLEPAY Checkouting', () => {//TODO to finish
       //       // https://on.cypress.io/wrap
       //       .then(cy.wrap)
       //     }
-      // cy.wait(20000)
+      cy.wait(20000)
+      cy.get('[class="resp-iframe"]').then($element => {
+
+            const $body = $element.contents().find('body')
+          
+            let stripe = cy.wrap($body)
+            stripe.find('[id="submit"]').eq(0).click()
+          })
+          
       //getIframeBodyProceed().find('body').click()
       })
 it('35 GOOGLEPAY BO Order Refunding', () => {
