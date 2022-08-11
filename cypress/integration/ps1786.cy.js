@@ -387,7 +387,7 @@ it('21 BONUSCARD BO Order Refunding', () => {
       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('22 PAYPAL Checkouting', () => {
+it.only('22 PAYPAL Checkouting', () => {
       cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -404,7 +404,6 @@ it('22 PAYPAL Checkouting', () => {
             // update attr to open in same tab
             $el.attr('target', '_self')
          })
-      .click()
       //todo fix the paypal cross-origin 
       //prepareCookie();
       // cy.origin('https://test.saferpay.com/Simulators/PayPalRestApi/**', () => {
@@ -580,7 +579,7 @@ it('33 KLARNA BO Order Refunding', () => {
       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it.only('34 GOOGLEPAY Checkouting', () => {//TODO to finish
+it('34 GOOGLEPAY Checkouting', () => {//TODO to finish
       Cypress.on('uncaught:exception', (err, runnable) => {
             // returning false here prevents Cypress from
             // failing the test
@@ -625,11 +624,11 @@ it.only('34 GOOGLEPAY Checkouting', () => {//TODO to finish
       //       .then(cy.wrap)
       //     }
       cy.wait(20000)
-      cy.get('iframe[class="resp-iframe"]').then($element => {
-            const $body = $element.contents().find('body')
-            cy.wrap($body).find('[name="submitButton"]').eq(0).click();
-        })
-      //cy.iframe('[class="resp-iframe"]').find('[id="submit"]')
+      // cy.get('iframe[class="resp-iframe"]').then($element => {
+      //       const $body = $element.contents().find('body')
+      //       cy.wrap($body).find('resp-iframe[class="btn btn-block btn-primary"]').eq(0).click();
+      //   })
+      cy.iframe('[class="resp-iframe"]').find('resp-iframe[id="submit"]')
       // cy.get('[class="resp-iframe"]').then($element => {
       //       const $body = $element.contents().find('body')
       //       let stripe = cy.wrap($body)

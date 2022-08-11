@@ -1,5 +1,6 @@
 {
     "experimentalSessionAndOrigin": true,
-    "chromeWebSecurity": false
+    "chromeWebSecurity": false,
+    "modifyObstructiveCode": false
 }
   
