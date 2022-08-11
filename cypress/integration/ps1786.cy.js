@@ -52,7 +52,7 @@ describe('PS1786 Saferpay Tests Suite', () => {
       cy.viewport(1920,1080)
       login('SaferpayBOFOLoggingIn')
   })
-it.only('01 Connecting the Test API information to module', () => {
+it('01 Connecting the Test API information to module', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
@@ -574,7 +574,12 @@ it('33 KLARNA BO Order Refunding', () => {
       cy.get('[class="alert alert-success d-print-none"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('34 GOOGLEPAY Checkouting', () => { //TODO to finish
+it.only('34 GOOGLEPAY Checkouting', () => {//TODO to finish
+      Cypress.on('uncaught:exception', (err, runnable) => {
+            // returning false here prevents Cypress from
+            // failing the test
+            return false
+        })
       cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -586,22 +591,23 @@ it('34 GOOGLEPAY Checkouting', () => { //TODO to finish
       cy.contains('GOOGLEPAY').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       cy.get('.ps-shown-by-js > .btn').click()
-      cy.origin('https://test.saferpay.com', () => {
+      cy.get('.paymentgroup > ul > li > .btn').click()
       cy.wait(1000)
       cy.get('[class="img img-selection-item"]').click({force:true})
       cy.wait(1000)
-      const getIframeBody = () => {
-            // get the iframe > document > body
-            // and retry until the body element is not empty
-            return cy
-            .get('[id="popup-contentIframe"]')
-            .its('0.contentDocument.body')
-            // wraps "body" DOM element to allow
-            // chaining more Cypress commands, like ".find(...)"
-            // https://on.cypress.io/wrap
-            .then(cy.wrap)
-          }
-      getIframeBody().find('[id="payWithout3DS"]').click()
+      cy.getWithinIframe('a selector')
+      // const getIframeBody = () => {
+      //       // get the iframe > document > body
+      //       // and retry until the body element is not empty
+      //       return cy
+      //       .get('[id="popup-contentIframe"]')
+      //       .its('0.contentDocument.body')
+      //       // wraps "body" DOM element to allow
+      //       // chaining more Cypress commands, like ".find(...)"
+      //       // https://on.cypress.io/wrap
+      //       .then(cy.wrap)
+      //     }
+      // getIframeBody().find('[id="payWithout3DS"]').click()
       // const getIframeBodyProceed = () => {
       //       // get the iframe > document > body
       //       // and retry until the body element is not empty
@@ -614,12 +620,7 @@ it('34 GOOGLEPAY Checkouting', () => { //TODO to finish
       //       .then(cy.wrap)
       //     }
       // cy.wait(20000)
-      // getIframeBodyProceed().find('[type="submit"]').click()
-      cy.get('[class="resp-iframe"]').switchToFrame(() => {
-            cy.get('[type="submit"]').click()
-          })
-      })
-      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      //getIframeBodyProceed().find('body').click()
       })
 it('35 GOOGLEPAY BO Order Refunding', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
