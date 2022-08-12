@@ -14,7 +14,9 @@
         "build_name": "saferpay_build",
         "exclude": [],
         "parallels": "1",
-        "npm_dependencies": {},
+        "npm_dependencies": {
+            "cypress-iframe": "1.0.1"
+        },
         "package_config_options": {},
         "headless": true
     },
