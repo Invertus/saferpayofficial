@@ -24,13 +24,13 @@ jobs:
       - name: 'Checkout the repository'
         uses: actions/checkout@v2
         
-      - name: 'Running Cypress + Browserstack for Crossbrowser Testing'
+      - name: 'npm install -g browserstack-cypress-cli'
         run: npm install -g browserstack-cypress-cli
         
-#       - name: 'Running Cypress + Browserstack for Crossbrowser Testing'
-#         run: browserstack-cypress init
+      - name: 'browserstack-cypress init'
+        run: browserstack-cypress init
         
-      - name: 'Running Cypress + Browserstack for Crossbrowser Testing'
+      - name: 'browserstack-cypress run --sync --cypress-config-file ./cypress.json'
         run: browserstack-cypress run --sync --cypress-config-file ./cypress.json
 
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
