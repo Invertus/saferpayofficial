@@ -105,7 +105,10 @@ jobs:
           local-identifier: random
           
       - name: 'Running Cypress + Browserstack for Crossbrowser Testing'
-        run: browserstack-cypress run
+        run: |
+          npm install -g browserstack-cypress-cli
+          browserstack-cypress init
+          browserstack-cypress run
 
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
         uses: browserstack/github-actions/setup-local@master
