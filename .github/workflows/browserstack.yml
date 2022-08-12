@@ -1,4 +1,4 @@
-name: Cypress test suite run SAFERPAY
+name: Browserstack Testing
 on:
   pull_request:
     types: [opened, reopened]
