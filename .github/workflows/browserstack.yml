@@ -31,7 +31,7 @@ jobs:
         run: browserstack-cypress init
         
       - name: 'Running Cypress + Browserstack for Crossbrowser Testing'
-        run: browserstack-cypress run
+        run: rowserstack-cypress run --sync --cypress-config-file ./cypress.json
 
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
         uses: browserstack/github-actions/setup-local@master
