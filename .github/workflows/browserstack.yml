@@ -27,11 +27,8 @@ jobs:
       - name: 'npm install -g browserstack-cypress-cli'
         run: npm install -g browserstack-cypress-cli
         
-#       - name: 'browserstack-cypress init'
-#         run: browserstack-cypress init
-        
-#       - name: 'browserstack-cypress run --sync --cypress-config-file ./cypress.json'
-#         run: browserstack-cypress run --sync --cypress-config-file ./cypress.json
+      - name: 'NPM update'
+        run: npm ci
 
       - name: 'browserstack-cypress run --sync'
         run: browserstack-cypress run --sync
