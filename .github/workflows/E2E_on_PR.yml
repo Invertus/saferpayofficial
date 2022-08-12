@@ -104,6 +104,9 @@ jobs:
           local-testing: start
           local-identifier: random
           
+      - name: 'Checkout the repository'
+        uses: actions/checkout@v2
+        
       - name: 'Running Cypress + Browserstack for Crossbrowser Testing'
         run: |
           npm install -g browserstack-cypress-cli
