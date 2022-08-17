@@ -69,7 +69,7 @@ e2e-1764-prepare:
 	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1764
 	# preloads initial data
 	make bps1764
-	/bin/bash .docker/wait-for-container.sh prestashop-1764
+
 
 # Run e2e tests in headless way.
 e2eh1764: test-e2e-headless-1764
