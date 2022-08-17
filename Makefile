@@ -33,7 +33,6 @@ e2e-1784-prepare:
 	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1784
 	# preloads initial data
 	make bps1784
-	/bin/bash .docker/wait-for-container.sh prestashop-1784
 
 # Run e2e tests in headless way.
 e2eh1784: test-e2e-headless-1784
@@ -70,7 +69,6 @@ e2e-1764-prepare:
 	# preloads initial data
 	make bps1764
 
-
 # Run e2e tests in headless way.
 e2eh1764: test-e2e-headless-1764
 test-e2e-headless-1764:
@@ -105,7 +103,6 @@ e2e-1770-prepare:
 	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1770
 	# preloads initial data
 	make bps1770
-	/bin/bash .docker/wait-for-container.sh prestashop-1770
 
 # Run e2e tests in headless way.
 e2eh1770: test-e2e-headless-1770
@@ -141,7 +138,6 @@ e2e-1786-prepare:
 	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1786
 	# preloads initial data
 	make bps1786
-	/bin/bash .docker/wait-for-container.sh prestashop-1786
 
 # Run e2e tests in headless way.
 e2eh1786: test-e2e-headless-1786
