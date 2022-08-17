@@ -5,3 +5,4 @@ composer.lock
 .php_cs.cache
 tests/.env
 /var
+/node_modules
