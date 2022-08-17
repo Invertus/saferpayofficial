@@ -55,7 +55,7 @@ jobs:
         run: composer i
 
       - name: install package
-        run: npm ci --force & npx browserslist@latest --update-db --legacy-peer-deps
+        run: npm ci --force
 
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
         run: |
