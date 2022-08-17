@@ -60,23 +60,7 @@ jobs:
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing
         run: |
           ${{ matrix.make }} 
-  
-      - name: Running ${{ matrix.prestashop }} Cypress tests
-        uses: cypress-io/github-action@v4.2.0
-        with: 
-          spec: ${{ matrix.test_spec }}
-        env:
-          CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.SAFERPAY_USERNAME_TEST }}
-          CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.SAFERPAY_PASSWORD_TEST }}
-          CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.SAFERPAY_CUSTOMER_ID_TEST }}
-          CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.SAFERPAY_TERMINAL_ID_TEST }}
-          CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
-          CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
           
-      # - run: |
-      #     docker-compose -f ${{ matrix.yml }} up --force-recreate --exit-code-from cypress
-      #--parallel --record --key
-      
       - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
         uses: browserstack/github-actions/setup-env@master
         with:
@@ -105,7 +89,23 @@ jobs:
         uses: browserstack/github-actions/setup-local@master
         with:
           local-testing: stop
-
+  
+      - name: Running ${{ matrix.prestashop }} Cypress tests
+        uses: cypress-io/github-action@v4.2.0
+        with: 
+          spec: ${{ matrix.test_spec }}
+        env:
+          CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.SAFERPAY_USERNAME_TEST }}
+          CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.SAFERPAY_PASSWORD_TEST }}
+          CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.SAFERPAY_CUSTOMER_ID_TEST }}
+          CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.SAFERPAY_TERMINAL_ID_TEST }}
+          CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+          CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+          
+      # - run: |
+      #     docker-compose -f ${{ matrix.yml }} up --force-recreate --exit-code-from cypress
+      #--parallel --record --key
+      
       - name: Archive videos and screenshots
         if: ${{ always() }}
         uses: actions/upload-artifact@v3.1.0
