@@ -1,6 +1,7 @@
 {
     "experimentalSessionAndOrigin": true,
     "chromeWebSecurity": false,
-    "modifyObstructiveCode": false
+    "modifyObstructiveCode": false,
+    "retries": 1
 }
   
