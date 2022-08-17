@@ -17,7 +17,6 @@
 import './commands'
 import 'cypress-iframe'
 require('cypress-iframe');
-import "cy-iframe";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
