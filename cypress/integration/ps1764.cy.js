@@ -384,7 +384,7 @@ it('21 BONUSCARD BO Order Refunding', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-// it('22 PAYPAL Checkouting', () => {
+// it('22 PAYPAL Checkouting', () => { // should be checked how to how to overcome the security in simulator
 //       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
 //       cy.contains('Reorder').click()
 //       cy.get('#id-address-delivery-address-8').click()
