@@ -1,4 +1,4 @@
-name: Cypress test suite run SAFERPAY
+name: Cypress test suite run SAFERPAY + Browserstack Crossbrowser Tests
 on:
   pull_request:
     types: [opened, reopened]
@@ -76,6 +76,35 @@ jobs:
       # - run: |
       #     docker-compose -f ${{ matrix.yml }} up --force-recreate --exit-code-from cypress
       #--parallel --record --key
+      
+      - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
+        uses: browserstack/github-actions/setup-env@master
+        with:
+          username:  ${{ secrets.BROWSERSTACK_USERNAME }}
+          access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+
+      - name: 'BrowserStack Local Tunnel Setup'  # Invokes the setup-local action
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: start
+          local-identifier: random
+          
+      - name: 'Checkout the repository'
+        uses: actions/checkout@v2
+        
+      - name: 'npm install -g browserstack-cypress-cli'
+        run: npm install -g browserstack-cypress-cli
+        
+      - name: 'NPM update'
+        run: npm update --force
+
+      - name: 'Starting Browserstack Testing'
+        run: browserstack-cypress run --sync
+
+      - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: stop
 
       - name: Archive videos and screenshots
         if: ${{ always() }}
