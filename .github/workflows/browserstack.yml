@@ -28,7 +28,7 @@ jobs:
         run: npm install -g browserstack-cypress-cli
         
       - name: 'NPM update'
-        run: npm ci
+        run: npm update
 
       - name: 'browserstack-cypress run --sync'
         run: browserstack-cypress run --sync
