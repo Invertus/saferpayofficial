@@ -58,9 +58,6 @@ jobs:
         with:
           local-testing: start
           local-identifier: random
-          
-      - name: 'Checkout the repository'
-        uses: actions/checkout@v2.4.2
         
       - name: 'Installing Browserstack Cypress CLI'
         run: npm install -g browserstack-cypress-cli
