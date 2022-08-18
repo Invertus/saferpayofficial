@@ -25,8 +25,6 @@ jobs:
         shell: bash
       - run: ./ngrok http -region=eu -subdomain=sp1786 8002 > ngrok.log &
         shell: bash
-      - name: install composer
-        run: composer i
 
       - name: Install package
         run: npm ci & npx browserslist@latest --update-db
@@ -37,6 +35,9 @@ jobs:
           make e2eh1770
           make e2eh1784
           make e2eh1786
+          
+      - name: Install composer
+        run: composer i
 
       - name: 'BrowserStack Testing Env Setup'  # Invokes the setup-env action
         uses: browserstack/github-actions/setup-env@master
@@ -53,13 +54,13 @@ jobs:
       - name: 'Checkout the repository'
         uses: actions/checkout@v2.4.2
         
-      - name: 'npm install -g browserstack-cypress-cli'
+      - name: 'Installing Browserstack Cypress CLI'
         run: npm install -g browserstack-cypress-cli
         
       - name: 'NPM update'
         run: npm update --force
 
-      - name: 'browserstack-cypress run --sync'
+      - name: 'Running Browserstack'
         run: browserstack-cypress run --sync
 
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
