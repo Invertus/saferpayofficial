@@ -4,13 +4,13 @@ on:
     types: [opened, reopened]
     branches: [master, v*.*.*]
 jobs:
-  Creating-images:
+  Creating-images-and-testing:
     runs-on: ubuntu-latest
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.0.0
+        uses: actions/checkout@v2.4.2
       - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         shell: bash
       - run: unzip -qq -o ngrok-stable-linux-amd64.zip
@@ -28,7 +28,7 @@ jobs:
       - name: install composer
         run: composer i
 
-      - name: install package
+      - name: Install package
         run: npm ci & npx browserslist@latest --update-db
 
       - name: Building all PS versions, checking Installing / Uninstalling 
@@ -37,13 +37,8 @@ jobs:
           make e2eh1770
           make e2eh1784
           make e2eh1786
-          
-  Browserstack:
-    name: 'BrowserStack Test on Ubuntu'
-    runs-on: ubuntu-latest  # Can be self-hosted runner also
-    steps:
 
-      - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
+      - name: 'BrowserStack Testing Env Setup'  # Invokes the setup-env action
         uses: browserstack/github-actions/setup-env@master
         with:
           username:  ${{ secrets.BROWSERSTACK_USERNAME }}
@@ -56,7 +51,7 @@ jobs:
           local-identifier: random
           
       - name: 'Checkout the repository'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.2
         
       - name: 'npm install -g browserstack-cypress-cli'
         run: npm install -g browserstack-cypress-cli
