@@ -65,8 +65,15 @@ jobs:
       - name: 'NPM update'
         run: npm update --force
 
-      - name: 'Running Browserstack'
-        run: browserstack-cypress run --sync
+      - name: 'Exporting required variables and running Browserstack'
+        run: |
+          export CYPRESS_${{ secrets.SAFERPAY_USERNAME_TEST }}
+          export CYPRESS_${{ secrets.SAFERPAY_PASSWORD_TEST }}
+          export CYPRESS_${{ secrets.CUSTOMER_ID_TEST }}
+          export CYPRESS_${{ secrets.TERMINAL_ID_TEST }}
+          export CYPRESS_${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+          export CYPRESS_${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+          browserstack-cypress run --sync
 
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
         uses: browserstack/github-actions/setup-local@master
