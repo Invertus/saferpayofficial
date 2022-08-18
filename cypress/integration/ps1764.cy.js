@@ -55,6 +55,7 @@ describe('PS1764 Saferpay Tests Suite', () => {
 it.only('01 Connecting the Test API information to module', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+      cy.get('#subtab-AdminModulesSf > .link').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
       cy.get('#module-search-button').click()
       cy.get('.btn-group > .btn-primary-reverse').click()  //clicking the Congifure
@@ -76,6 +77,7 @@ it.only('02 Enabling Saferpay carriers and countries successfully', () => {
 it.only('03 Enabling All payments in Module BO', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/')
       cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
+      cy.get('#subtab-AdminModulesSf > .link').click()
       cy.get('.pstaggerAddTagInput').type('saferpay')
       cy.get('#module-search-button').click()
       cy.get('.btn-group > .btn-primary-reverse').click()  //clicking the Congifure
