@@ -19,12 +19,20 @@ jobs:
         shell: bash
       - run: ./ngrok http -region=eu -subdomain=sp1764 8002 > ngrok.log &
         shell: bash
+      - name: Install composer
+        run: composer i
       - run: ./ngrok http -region=eu -subdomain=sp1770 8002 > ngrok.log &
         shell: bash
+      - name: Install composer
+        run: composer i
       - run: ./ngrok http -region=eu -subdomain=sp1784 8002 > ngrok.log &
         shell: bash
+      - name: Install composer
+        run: composer i
       - run: ./ngrok http -region=eu -subdomain=sp1786 8002 > ngrok.log &
         shell: bash
+      - name: Install composer
+        run: composer i
 
       - name: Install package
         run: npm ci & npx browserslist@latest --update-db
