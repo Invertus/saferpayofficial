@@ -17,18 +17,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http -region=eu -subdomain=sp1764 8002 > ngrok.log &
-        shell: bash
-      - name: Install composer
-        run: composer i
-      - run: ./ngrok http -region=eu -subdomain=sp1770 8002 > ngrok.log &
-        shell: bash
-      - name: Install composer
-        run: composer i
-      - run: ./ngrok http -region=eu -subdomain=sp1784 8002 > ngrok.log &
-        shell: bash
-      - name: Install composer
-        run: composer i
+        
       - run: ./ngrok http -region=eu -subdomain=sp1786 8002 > ngrok.log &
         shell: bash
       - name: Install composer
@@ -37,11 +26,8 @@ jobs:
       - name: Install package
         run: npm ci & npx browserslist@latest --update-db
 
-      - name: Building all PS versions, checking Installing / Uninstalling 
+      - name: Building PS1786, checking Installing / Uninstalling 
         run: |
-          make e2eh1764
-          make e2eh1770
-          make e2eh1784
           make e2eh1786
           
       - name: Install composer
