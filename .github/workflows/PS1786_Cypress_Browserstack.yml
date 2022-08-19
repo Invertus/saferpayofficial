@@ -19,10 +19,10 @@ jobs:
         shell: bash
       - run: ./ngrok http -region=eu -subdomain=sp1786 8002 > ngrok.log &
         shell: bash
-      - name: install composer
+      - name: Installing composer
         run: composer i
 
-      - name: Installing packages
+      - name: Installing NPM, NPX packages
         run: npm ci & npx browserslist@latest --update-db
 
       - name: PS1786 installing / Module Install and Uninstall testing...
