@@ -79,7 +79,7 @@ jobs:
           export CYPRESS_SAFERPAY_TERMINAL_ID_TEST=${{ secrets.SAFERPAY_TERMINAL_ID_TEST }}
           export CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST=${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
           export CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST=${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
-          browserstack-cypress run --sync -s '**/cypress/integration/02_ps1786.cy.js'
+          browserstack-cypress run --sync -s '**/cypress/integration/02_ps1784.cy.js'
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
         uses: browserstack/github-actions/setup-local@master
         with:
