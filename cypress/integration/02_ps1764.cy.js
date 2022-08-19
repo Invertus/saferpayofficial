@@ -72,7 +72,7 @@ it('04 TWINT Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-itly('05 TWINT BO Order Refunding', () => {
+it('05 TWINT BO Order Refunding', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get('.btn-continue').click()
       cy.get('[class="btn-group pull-right"]').eq(0).click()
