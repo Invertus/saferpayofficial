@@ -33,8 +33,8 @@ jobs:
         uses: cypress-io/github-action@v4.2.0
         with: 
           spec: |
-            cypress/integration/ps1786.Module.Configure.cy.js
-            cypress/integration/ps1786.cy.js
+            cypress/integration/01_ps1786.Module.Configure.cy.js
+            cypress/integration/02_ps1786.cy.js
         env:
           CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.SAFERPAY_USERNAME_TEST }}
           CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.SAFERPAY_PASSWORD_TEST }}
