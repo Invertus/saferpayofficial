@@ -4,7 +4,7 @@ on:
     types: [opened, reopened]
     branches: [master, v*.*.*]
 jobs:
-  Cypress-E2E-1786:
+  Cypress-E2E-Browserstack-1786:
     runs-on: ubuntu-latest
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
@@ -55,7 +55,7 @@ jobs:
           export CYPRESS_SAFERPAY_TERMINAL_ID_TEST=${{ secrets.SAFERPAY_TERMINAL_ID_TEST }}
           export CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST=${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
           export CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST=${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
-          browserstack-cypress run --sync -s '/cypress/integration/ps1786.cy.js'
+          browserstack-cypress run --sync -s '**/cypress/integration/ps1786.cy.js'
 
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
         uses: browserstack/github-actions/setup-local@master
