@@ -12,7 +12,7 @@
         "cypress_config_file": "cypress.json",
         "project_name": "saferpay",
         "build_name": "saferpay_build",
-        "exclude": ["cypress/integration/ps1784.cy.js","cypress/integration/ps1770.cy.js","cypress/integration/ps1764.cy.js"],
+        "exclude": [],
         "parallels": "1",
         "npm_dependencies": {
             "cypress-iframe": "1.0.1"
