@@ -9,7 +9,7 @@ jobs:
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
     steps:
-      - name: Checkouting...
+      - name: Checkouting
         uses: actions/checkout@v2.4.2
       - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         shell: bash
@@ -22,32 +22,56 @@ jobs:
       - name: install composer
         run: composer i
 
-      - name: Installing packages...
+      - name: Installing packages
         run: npm ci & npx browserslist@latest --update-db
 
       - name: PS1786 installing / Module Install and Uninstall testing...
         run: |
           make e2eh1786 
-          
-      - name: 'BrowserStack Env Setup...'  # Invokes the setup-env action
+  
+      - name: Testing with E2E Cypress on PS1786
+        uses: cypress-io/github-action@v4.2.0
+        with: 
+          spec: |
+            cypress/integration/ps1786.Module.Configure.cy.js
+            cypress/integration/ps1786.cy.js
+        env:
+          CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.SAFERPAY_USERNAME_TEST }}
+          CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.SAFERPAY_PASSWORD_TEST }}
+          CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.SAFERPAY_CUSTOMER_ID_TEST }}
+          CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.SAFERPAY_TERMINAL_ID_TEST }}
+          CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+          CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+      
+      - name: Archive videos and screenshots of Cypress testing
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: videos_screenshots
+          retention-days: 2
+          path: |
+            cypress/videos
+            cypress/screenshots
+            
+      - name: 'BrowserStack Env Setup'  # Invokes the setup-env action
         uses: browserstack/github-actions/setup-env@master
         with:
           username:  ${{ secrets.BROWSERSTACK_USERNAME }}
           access-key: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
-      - name: 'BrowserStack Local Tunnel Setup...'  # Invokes the setup-local action
+      - name: 'BrowserStack Local Tunnel Setup'  # Invokes the setup-local action
         uses: browserstack/github-actions/setup-local@master
         with:
           local-testing: start
           local-identifier: random
         
-      - name: 'Initializing Browserstack...'
+      - name: 'Initializing Browserstack'
         run: npm install -g browserstack-cypress-cli
         
       - name: 'NPM updating'
         run: npm update --force
 
-      - name: 'Starting Browserstack Testing...'
+      - name: 'Starting Browserstack Testing'
         run: |
           export CYPRESS_SAFERPAY_USERNAME_TEST=${{ secrets.SAFERPAY_USERNAME_TEST }}
           export CYPRESS_SAFERPAY_PASSWORD_TEST=${{ secrets.SAFERPAY_PASSWORD_TEST }}
@@ -61,25 +85,3 @@ jobs:
         uses: browserstack/github-actions/setup-local@master
         with:
           local-testing: stop
-  
-      - name: Testing with E2E Cypress on PS1786...
-        uses: cypress-io/github-action@v4.2.0
-        with: 
-          spec: '**/cypress/integration/ps1786.cy.js'
-        env:
-          CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.SAFERPAY_USERNAME_TEST }}
-          CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.SAFERPAY_PASSWORD_TEST }}
-          CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.SAFERPAY_CUSTOMER_ID_TEST }}
-          CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.SAFERPAY_TERMINAL_ID_TEST }}
-          CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
-          CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
-      
-      - name: Archive videos and screenshots...
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          name: videos_screenshots
-          retention-days: 2
-          path: |
-            cypress/videos
-            cypress/screenshots
