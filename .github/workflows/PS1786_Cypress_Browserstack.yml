@@ -48,7 +48,14 @@ jobs:
         run: npm update --force
 
       - name: 'Starting Browserstack Testing...'
-        run: browserstack-cypress run --sync -s '/cypress/integration/ps1786.cy.js'
+        run: |
+          export CYPRESS_SAFERPAY_USERNAME_TEST=${{ secrets.SAFERPAY_USERNAME_TEST }}
+          export CYPRESS_SAFERPAY_PASSWORD_TEST=${{ secrets.SAFERPAY_PASSWORD_TEST }}
+          export CYPRESS_SAFERPAY_CUSTOMER_ID_TEST=${{ secrets.SAFERPAY_CUSTOMER_ID_TEST }}
+          export CYPRESS_SAFERPAY_TERMINAL_ID_TEST=${{ secrets.SAFERPAY_TERMINAL_ID_TEST }}
+          export CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST=${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+          export CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST=${{ secrets.SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+          browserstack-cypress run --sync -s '/cypress/integration/ps1786.cy.js'
 
       - name: 'BrowserStackLocal Stop'  # Terminating the BrowserStackLocal tunnel connection
         uses: browserstack/github-actions/setup-local@master
