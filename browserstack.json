@@ -2,7 +2,7 @@
     "browsers": [
         {
             "browser": "chrome",
-            "os": "Windows 10",
+            "os": "Windows 11",
             "versions": [
                 "latest"
             ]
