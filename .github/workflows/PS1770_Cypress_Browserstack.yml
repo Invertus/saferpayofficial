@@ -25,7 +25,7 @@ jobs:
       - name: Installing NPM, NPX packages
         run: npm ci & npx browserslist@latest --update-db
 
-      - name: PS1786 installing / Module Install and Uninstall testing...
+      - name: PS1770 installing / Module Install and Uninstall testing...
         run: |
           make e2eh1770 
   
