@@ -27,7 +27,7 @@ jobs:
 
       - name: PS1786 installing / Module Install and Uninstall testing...
         run: |
-          make e2eh1786 
+          make e2eh1770 
   
       - name: Testing with E2E Cypress on PS1770
         uses: cypress-io/github-action@v4.2.0
