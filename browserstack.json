@@ -6,6 +6,13 @@
             "versions": [
                 "latest"
             ]
+        },
+        {
+            "browser": "edge",
+            "os": "Windows 11",
+            "versions": [
+                "latest"
+            ]
         } 
     ],
     "run_settings": {
