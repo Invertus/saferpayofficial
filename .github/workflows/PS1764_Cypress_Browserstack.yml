@@ -25,9 +25,9 @@ jobs:
       - name: Installing NPM, NPX packages
         run: npm ci & npx browserslist@latest --update-db
 
-      - name: PS1786 installing / Module Install and Uninstall testing...
+      - name: PS1764 installing / Module Install and Uninstall testing...
         run: |
-          make e2eh1786 
+          make e2eh1764 
   
       - name: Testing with E2E Cypress on PS1786
         uses: cypress-io/github-action@v4.2.0
