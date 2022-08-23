@@ -22,6 +22,7 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
 class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontController
 {
@@ -33,6 +34,7 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
         $this->context->smarty->assign([
             'credit_card_front_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-front.png",
             'credit_card_back_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-back.png",
+            'tos_cms' => $this->getDefaultTermsAndConditions()
         ]);
 
         if (SaferPayConfig::isVersion17()) {
@@ -102,5 +104,26 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
                 ".css"
             );
         }
+    }
+
+    protected function getDefaultTermsAndConditions()
+    {
+        $cms = new CMS((int) Configuration::get('PS_CONDITIONS_CMS_ID'), $this->context->language->id);
+
+        if (!Validate::isLoadedObject($cms)) {
+            return false;
+        }
+
+        $link = $this->context->link->getCMSLink($cms, $cms->link_rewrite, (bool) Configuration::get('PS_SSL_ENABLED'));
+
+        $termsAndConditions = new TermsAndConditions();
+        $termsAndConditions
+            ->setText(
+                '[' . $cms->meta_title . ']',
+                $link
+            )
+            ->setIdentifier('terms-and-conditions-footer');
+
+        return $termsAndConditions->format();
     }
 }
