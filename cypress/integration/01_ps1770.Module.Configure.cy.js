@@ -93,7 +93,7 @@ it('03 Enabling All payments in Module BO', () => {
       cy.get('#configuration_form_submit_btn').click()
       cy.get('[class="alert alert-success"]').should('be.visible')
 })
-it.only('04 Fields and Logs tabs are shown OK', () => {
+it('04 Fields and Logs tabs are shown OK', () => {
     cy.visit('https://sp1770.eu.ngrok.io/admin1/')
     cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
     cy.get('#subtab-AdminModulesSf > .link').click()
