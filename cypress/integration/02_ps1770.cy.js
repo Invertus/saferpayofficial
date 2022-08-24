@@ -48,7 +48,7 @@ describe('PS1770 Saferpay Tests Suite', () => {
       cy.viewport(1920,1080)
       login('SaferpayBOFOLoggingIn')
   })
-it.only('05 TWINT Checkouting', () => {
+it('05 TWINT Checkouting', () => {
       cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-7').click() 
@@ -68,7 +68,7 @@ it.only('05 TWINT Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it.only('06 TWINT BO Order Refunding', () => {
+it('06 TWINT BO Order Refunding', () => {
       cy.visit('https://sp1770.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.contains('Payment completed by Saferpay').should('be.visible')
@@ -488,7 +488,7 @@ it('32 UNIONPAY BO Order Refunding', () => {
 it('33 KLARNA Checkouting', () => {
       cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
-      cy.get('#id-address-delivery-address-7').click()
+      cy.contains('DE').click()
       //Billing country LT, DE etc.
       cy.get('.clearfix > .btn').click()
       cy.get('#js-delivery > .continue').click()
