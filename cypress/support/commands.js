@@ -67,7 +67,7 @@ Cypress.Commands.add('PSFOlogin', (email, password) => {
     cy.get('#login-form [type="submit"]').eq(0).click({force:true})
 })
 Cypress.Commands.add('PSBOlogin', (email, password) => {
-    cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
-    cy.get('#passwd').type('demodemo',{delay: 0, log: false})
+    cy.get('#email').type((Cypress.env('SAFERPAY_EMAIL')),{delay: 0, log: false})
+    cy.get('#passwd').type((Cypress.env('SAFERPAY_PASSWORD')),{delay: 0, log: false})
     cy.get('#submit_login').click().wait(1000).as('Connection successsful')
 })
