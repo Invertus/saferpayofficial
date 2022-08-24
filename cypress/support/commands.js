@@ -53,3 +53,21 @@ Cypress.Commands.add(
     'getWithinIframe',
     (targetElement) => cy.get('iframe').iframeLoaded().its('document').getInDocument(targetElement)
 );
+
+Cypress.Commands.add('getIframe', (iframe) => {
+    return cy.get(iframe)
+        .its('0.contentDocument.body')
+        .should('be.visible')
+        .then(cy.wrap);
+})
+
+Cypress.Commands.add('PSFOlogin', (email, password) => {
+    cy.get('#login-form [name="email"]').eq(0).type((Cypress.env('SAFERPAY_EMAIL')),{delay: 0, log: false})
+    cy.get('#login-form [name="password"]').eq(0).type((Cypress.env('SAFERPAY_PASSWORD')),{delay: 0, log: false})
+    cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+})
+Cypress.Commands.add('PSBOlogin', (email, password) => {
+    cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
+    cy.get('#passwd').type('demodemo',{delay: 0, log: false})
+    cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+})
