@@ -36,6 +36,8 @@ jobs:
             cypress/integration/01_ps1770.Module.Configure.cy.js
             cypress/integration/02_ps1770.cy.js
         env:
+          CYPRESS_SAFERPAY_EMAIL: ${{ secrets.SAFERPAY_EMAIL }}
+          CYPRESS_SAFERPAY_PASSWORD: ${{ secrets.SAFERPAY_PASSWORD }}
           CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.SAFERPAY_USERNAME_TEST }}
           CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.SAFERPAY_PASSWORD_TEST }}
           CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.SAFERPAY_CUSTOMER_ID_TEST }}
@@ -73,6 +75,8 @@ jobs:
 
       - name: 'Starting Browserstack Testing'
         run: |
+          export CYPRESS_SAFERPAY_EMAIL=${{ secrets.SAFERPAY_EMAIL }}
+          export CYPRESS_SAFERPAY_PASSWORD=${{ secrets.SAFERPAY_PASSWORD }}
           export CYPRESS_SAFERPAY_USERNAME_TEST=${{ secrets.SAFERPAY_USERNAME_TEST }}
           export CYPRESS_SAFERPAY_PASSWORD_TEST=${{ secrets.SAFERPAY_PASSWORD_TEST }}
           export CYPRESS_SAFERPAY_CUSTOMER_ID_TEST=${{ secrets.SAFERPAY_CUSTOMER_ID_TEST }}
