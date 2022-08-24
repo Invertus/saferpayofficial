@@ -90,7 +90,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                 $authResponse = $authorizeService->createObjectsFromAuthorizationResponse(
                     $response,
                     $saferPayOrderId,
-                    $this->context->customer->id,
+                    $order->id_customer,
                     $selectedCard
                 );
             } catch (SaferPayApiException $e) {
