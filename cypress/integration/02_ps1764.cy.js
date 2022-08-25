@@ -241,7 +241,7 @@ it('16 DINERS CLUB BO Order Refunding and Capturing', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it.only('17 JCB Checkouting', () => {
+it('17 JCB Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -252,18 +252,15 @@ it.only('17 JCB Checkouting', () => {
       cy.contains('Jcb').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.origin('https://test.saferpay.com', () => {
-      cy.get('#CardNumber').type('9050100052000005')
-      cy.get('#Expiry').type('1223')
-      cy.get('#HolderName').type('TEST TEST')
-      cy.get('#VerificationCode').type('123')
-      cy.get('[class="btn btn-next"]').click()
-      cy.get('[class="btn btn-primary"]').click()
+      cy.get('.ps-shown-by-js > .btn').click().wait(1000)
+      cy.iframe('#fields-card-number').find('[autocomplete="cc-number"]').type('9060100052000003')
+      cy.iframe('#fields-expiration').find('[autocomplete="cc-exp"]').type('1299')
+      cy.iframe('#fields-cvc').find('[autocomplete="off"]').type('123')
+      cy.get('#submit').click().wait(5000)
+      //todo to finish test configuration
+      //cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
-      })
-it.only('18 JCB BO Order Refunding and Capturing', () => {
+it('18 JCB BO Order Refunding and Capturing', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get('.btn-continue').click()
       cy.get('[class="btn-group pull-right"]').eq(0).click()
@@ -277,7 +274,7 @@ it.only('18 JCB BO Order Refunding and Capturing', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('19 MYONE Checkouting', () => {
+it.only('19 MYONE Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -297,7 +294,7 @@ it('19 MYONE Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it('20 MYONE BO Order Refunding', () => {
+it.only('20 MYONE BO Order Refunding', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get('.btn-continue').click()
       cy.get('[class="btn-group pull-right"]').eq(0).click()
