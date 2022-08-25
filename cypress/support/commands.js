@@ -71,3 +71,16 @@ Cypress.Commands.add('PSBOlogin', (email, password) => {
     cy.get('#passwd').type((Cypress.env('SAFERPAY_PASSWORD')),{delay: 0, log: false})
     cy.get('#submit_login').click().wait(1000).as('Connection successsful')
 })
+Cypress.Commands.add('iframe', { prevSubject: 'element' }, ($iframe, selector) => {
+    Cypress.log({
+      name: 'iframe',
+      consoleProps() {
+        return {
+          iframe: $iframe,
+        };
+      },
+    });
+    return new Cypress.Promise(resolve => {
+      resolve($iframe.contents().find(selector));
+    });
+  });
