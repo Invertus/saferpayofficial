@@ -110,7 +110,7 @@ it('08 LASTSCHRIFT BO Order Refunding', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it.only('09 VISA Checkouting', () => {
+it('09 VISA Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -140,7 +140,7 @@ it('10 VISA BO Order Refunding', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible').as('@order status')
 })
-it('11 MASTERCARD Checkouting', () => {
+it.only('11 MASTERCARD Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -151,14 +151,13 @@ it('11 MASTERCARD Checkouting', () => {
       cy.contains('Mastercard').click({force:true})
       cy.get('.condition-label > .js-terms').click({force:true})
       prepareCookie();
-      cy.get('.ps-shown-by-js > .btn').click()
-      cy.origin('https://test.saferpay.com', () => {
-      cy.get('[title="UnionPay"]').click({force:true})
-      cy.get('[input-id="CardNumber"]').type('9100100052000005')
-      cy.get('[class="btn btn-next"]').click()
-      cy.get('[id="UnionPayButton"]').click()
-      })
-      cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
+      cy.get('.ps-shown-by-js > .btn').click().wait(1000)
+      cy.iframe('#fields-card-number').find('[autocomplete="cc-number"]').type('9010003150000001')
+      cy.iframe('#fields-expiration').find('[autocomplete="cc-exp"]').type('1299')
+      cy.iframe('#fields-cvc').find('[autocomplete="off"]').type('123')
+      cy.get('#submit').click()
+      //todo to finish test configuration
+      //cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
 it('12 MASTERCARD BO Order Refunding', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
@@ -171,7 +170,7 @@ it('12 MASTERCARD BO Order Refunding', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('13 AMERICAN EXPRESS Checkouting', () => {
+it.only('13 AMERICAN EXPRESS Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
