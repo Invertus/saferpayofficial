@@ -169,7 +169,7 @@ it('12 MASTERCARD BO Order Refunding', () => {
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
 it.only('13 AMERICAN EXPRESS Checkouting', () => {
-      cy.visit('https://sp1770.eu.ngrok.io/en/order-history')
+      cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
@@ -204,7 +204,7 @@ it.only('14 AMERICAN EXPRESS BO Order Refunding and Capturing', () => {
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
 it.only('15 DINERS CLUB Checkouting', () => {
-      cy.visit('https://sp1770.eu.ngrok.io/en/order-history')
+      cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
@@ -394,7 +394,7 @@ it.only('26 POSTEFINANCE BO Order Refunding', () => {
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
 it.only('27 POSTCARD Checkouting', () => {
-      cy.visit('https://sp1770.eu.ngrok.io/en/order-history')
+      cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
@@ -423,7 +423,7 @@ it.only('28 POSTCARD BO Order Refunding', () => {
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
 it.only('29 BANCONTACT Checkouting', () => {
-      cy.visit('https://sp1770.eu.ngrok.io/en/order-history')
+      cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
@@ -455,7 +455,7 @@ it.only('30 BANCONTACT BO Order Refunding', () => {
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
 it.only('31 UNIONPAY Checkouting', () => {
-      cy.visit('https://sp1770.eu.ngrok.io/en/order-history')
+      cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
@@ -486,7 +486,7 @@ it.only('32 UNIONPAY BO Order Refunding', () => {
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
 it.only('33 KLARNA Checkouting', () => {
-      cy.visit('https://sp1770.eu.ngrok.io/en/order-history')
+      cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
       //Billing country LT, DE etc.
@@ -522,7 +522,7 @@ it('35 GOOGLEPAY Checkouting', () => {//TODO to finish
             // failing the test
             return false
         })
-      cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
+      cy.visit('https://sp1770.eu.ngrok.io/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-2').click()
