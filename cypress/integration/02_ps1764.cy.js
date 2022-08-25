@@ -140,7 +140,7 @@ it('10 VISA BO Order Refunding', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible').as('@order status')
 })
-it.only('11 MASTERCARD Checkouting', () => {
+it('11 MASTERCARD Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -170,7 +170,7 @@ it('12 MASTERCARD BO Order Refunding', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it.only('13 AMERICAN EXPRESS Checkouting', () => {
+it('13 AMERICAN EXPRESS Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -241,7 +241,7 @@ it('16 DINERS CLUB BO Order Refunding and Capturing', () => {
       cy.get('[class="alert alert-success"]').should('be.visible') //visible success message
       cy.contains('Order Refunded by Saferpay').should('be.visible')
 })
-it('17 JCB Checkouting', () => {
+it.only('17 JCB Checkouting', () => {
       cy.visit('https://sp1764.eu.ngrok.io/en/order-history')
       cy.contains('Reorder').click()
       cy.get('#id-address-delivery-address-8').click()
@@ -263,7 +263,7 @@ it('17 JCB Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it('18 JCB BO Order Refunding and Capturing', () => {
+it.only('18 JCB BO Order Refunding and Capturing', () => {
       cy.visit('https://sp1764.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get('.btn-continue').click()
       cy.get('[class="btn-group pull-right"]').eq(0).click()
