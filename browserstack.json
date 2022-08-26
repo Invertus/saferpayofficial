@@ -1,13 +1,6 @@
 {
     "browsers": [
         {
-            "browser": "chrome",
-            "os": "Windows 11",
-            "versions": [
-                "latest"
-            ]
-        },
-        {
             "browser": "edge",
             "os": "Windows 11",
             "versions": [
