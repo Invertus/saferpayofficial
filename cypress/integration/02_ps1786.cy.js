@@ -49,7 +49,7 @@ describe('PS1786 Saferpay Tests Suite', () => {
       cy.viewport(1920,1080)
       login('SaferpayBOFOLoggingIn')
   })
-it('05 TWINT Checkouting', () => {
+it.only('05 TWINT Checkouting', () => {
       cy.visit('https://sp1786.eu.ngrok.io/en/index.php?controller=history')
       cy.get('a').click()
       cy.contains('Reorder').click()
@@ -70,7 +70,7 @@ it('05 TWINT Checkouting', () => {
       })
       cy.get('[id="content-hook_order_confirmation"]').should('exist') //verification of Success Screen
       })
-it('06 TWINT BO Order Refunding', () => {
+it.only('06 TWINT BO Order Refunding', () => {
       cy.visit('https://sp1786.eu.ngrok.io/admin1/index.php?controller=AdminOrders')
       cy.get(':nth-child(1) > .column-payment').click()
       cy.contains('Payment completed by Saferpay').should('be.visible')
