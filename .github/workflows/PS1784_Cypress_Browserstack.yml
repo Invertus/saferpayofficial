@@ -34,7 +34,6 @@ jobs:
         with: 
           spec: |
             cypress/integration/01_ps1784.Module.Configure.cy.js
-            cypress/integration/02_ps1784.cy.js
         env:
           CYPRESS_SAFERPAY_EMAIL: ${{ secrets.SAFERPAY_EMAIL }}
           CYPRESS_SAFERPAY_PASSWORD: ${{ secrets.SAFERPAY_PASSWORD }}
