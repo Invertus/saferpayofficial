@@ -94,8 +94,6 @@ class ResponseObjectCreator
         $deliveryAddress = $this->createDeliveryAddress($payer->DeliveryAddress);
 
         $payerObj = new Payer();
-        $payerObj->setIpAddress($payer->IpAddress);
-        $payerObj->setIpLocation($payer->IpLocation);
         $payerObj->setDeliveryAddress($deliveryAddress);
 
         return $payerObj;

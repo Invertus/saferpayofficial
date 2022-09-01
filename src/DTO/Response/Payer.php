@@ -27,63 +27,17 @@ class Payer
 {
 
     /**
-     * @var string|null
-     */
-    private $ipAddress;
-
-    /**
-     * @var string|null
-     */
-    private $ipLocation;
-
-    /**
      * @var DeliveryAddress|null
      */
     private $deliveryAddress;
 
     /**
      * Payer constructor.
-     * @param string $ipAddress
-     * @param string $ipLocation
      * @param DeliveryAddress|null $deliveryAddress
      */
-    public function __construct($ipAddress = null, $ipLocation = null, DeliveryAddress $deliveryAddress = null)
+    public function __construct(DeliveryAddress $deliveryAddress = null)
     {
-        $this->ipAddress = $ipAddress;
-        $this->ipLocation = $ipLocation;
         $this->deliveryAddress = $deliveryAddress;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIpAddress()
-    {
-        return $this->ipAddress;
-    }
-
-    /**
-     * @param mixed $ipAddress
-     */
-    public function setIpAddress($ipAddress)
-    {
-        $this->ipAddress = $ipAddress;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getIpLocation()
-    {
-        return $this->ipLocation;
-    }
-
-    /**
-     * @param mixed $ipLocation
-     */
-    public function setIpLocation($ipLocation)
-    {
-        $this->ipLocation = $ipLocation;
     }
 
     /**
