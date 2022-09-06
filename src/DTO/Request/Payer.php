@@ -25,11 +25,29 @@ namespace Invertus\SaferPay\DTO\Request;
 
 class Payer
 {
+    private $ipAddress;
     private $languageCode;
 
-    public function __construct($languageCode = null)
+    public function __construct($ipAddress = null, $languageCode = null)
     {
+        $this->ipAddress = $ipAddress;
         $this->languageCode = $languageCode;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIpAddress()
+    {
+        return $this->ipAddress;
+    }
+
+    /**
+     * @param mixed $ipAddress
+     */
+    public function setIpAddress($ipAddress)
+    {
+        $this->ipAddress = $ipAddress;
     }
 
     /**

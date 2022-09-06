@@ -182,6 +182,8 @@ class InitializeRequest
             ],
             'PaymentMeans' => $this->getPaymentMeansField() ?: null,
             'Payer' => [
+                'IpAddress' => $this->payer->getIpAddress(),
+                'LanguageCode' => $this->payer->getLanguageCode(),
                 'DeliveryAddress' => [
                     'FirstName' => $this->deliveryAddress->getFirstName() ?: null,
                     'LastName' => $this->deliveryAddress->getLastName() ?: null,
