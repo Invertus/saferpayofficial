@@ -30,5 +30,5 @@ interface PaymentRestrictionProviderInterface
     /**
      * @return array<PaymentRestrictionValidationInterface>
      */
-    public function getPaymentValidators(): array;
+    public function getPaymentValidators();
 }

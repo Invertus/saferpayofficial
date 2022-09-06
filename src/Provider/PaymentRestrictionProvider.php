@@ -26,6 +26,7 @@ namespace Invertus\SaferPay\Provider;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\ApplePayPaymentRestrictionValidation;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\BasePaymentRestrictionValidation;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\KlarnaPaymentRestrictionValidation;
+use Invertus\SaferPay\Service\PaymentRestrictionValidation\PaymentRestrictionValidationInterface;
 
 class PaymentRestrictionProvider implements PaymentRestrictionProviderInterface
 {
@@ -56,7 +57,10 @@ class PaymentRestrictionProvider implements PaymentRestrictionProviderInterface
         $this->klarnaPaymentRestrictionValidation = $klarnaPaymentRestrictionValidation;
     }
 
-    public function getPaymentValidators(): array
+    /**
+     * @return array<PaymentRestrictionValidationInterface>
+     */
+    public function getPaymentValidators()
     {
         return [
             $this->applePayPaymentRestrictionValidation,
