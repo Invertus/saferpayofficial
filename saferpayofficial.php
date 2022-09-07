@@ -441,7 +441,7 @@ class SaferPayOfficial extends PaymentModule
             if ($isBusinessLicenseEnabled && $isCreditCard && $isCardSaveEnabled) {
                 $savedCards = $cardAliasRep->getSavedValidCardsByUserIdAndPaymentMethod(
                     $this->context->customer->id,
-                    $paymentMethod,
+                    $paymentMethod['paymentMethod'],
                     $currentDate
                 );
 
