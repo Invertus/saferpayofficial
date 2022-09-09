@@ -88,7 +88,7 @@ class SaferPayConfig
     const PAYMENT_INVOICE = 'INVOICE';
     const PAYMENT_JCB = 'JCB';
     const PAYMENT_MAESTRO = 'MAESTRO';
-    const PAYMENT_MASTERCARD = 'MasterCard';
+    const PAYMENT_MASTERCARD = 'MASTERCARD';
     const PAYMENT_MYONE = 'MYONE';
     const PAYMENT_PAYPAL = 'PAYPAL';
     const PAYMENT_PAYDIREKT = 'PAYDIREKT';
@@ -105,6 +105,7 @@ class SaferPayConfig
     const PAYMENT_GOOGLEPAY = 'GOOGLEPAY';
     const PAYMENT_MASTERPASS = 'MASTERPASS';
     const PAYMENT_BONUS = 'BONUS';
+    const PAYMENT_LASTSCHRIFT = 'DIRECTDEBIT';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -132,6 +133,7 @@ class SaferPayConfig
         'WLCryptoPayments' => self::PAYMENT_WLCRYPTOPAYMENTS,
         'Postcard' => self::PAYMENT_POSTCARD,
         'BonusCard' => self::PAYMENT_BONUS,
+        'Lastschrift' => self::PAYMENT_LASTSCHRIFT
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
