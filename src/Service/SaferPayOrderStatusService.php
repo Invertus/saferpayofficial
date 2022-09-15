@@ -176,6 +176,9 @@ class SaferPayOrderStatusService
                 $saferPayOrder->update();
                 $order->setCurrentState(_SAFERPAY_PAYMENT_REFUND_);
                 $order->update();
+            } else {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_PARTLY_REFUND_);
+                $order->update();
             }
 
             return;
