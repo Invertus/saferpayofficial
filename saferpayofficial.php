@@ -1,4 +1,7 @@
 <?php
+
+use Invertus\SaferPay\Service\SaferPayPaymentNotation;
+
 /**
  *NOTICE OF LICENSE
  *
@@ -204,6 +207,10 @@ class SaferPayOfficial extends PaymentModule
             $translator =  $this->getModuleContainer()->get(
                 \Invertus\SaferPay\Service\LegacyTranslator::class
             );
+            /** @var SaferPayPaymentNotation $paymentRepository */
+            $saferPayPaymentNotation = $this->getModuleContainer()
+                ->get(SaferPayPaymentNotation::class);
+            $paymentMethod['paymentMethod'] = $saferPayPaymentNotation->getForDisplay($paymentMethod['paymentMethod']);
             $newOption->setModuleName($this->name)
                 ->setCallToActionText($translator->translate($paymentMethod['paymentMethod']))
                 ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']))
