@@ -263,6 +263,7 @@ services:
 #            - '@=service("adapter.context").getContext()'
             - '@Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService'
             - '@Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator'
+            - '@Invertus\SaferPay\Service\SaferPayPaymentNotation'
 
     Invertus\SaferPay\Service\SaferPayRefreshPaymentsService:
         class: Invertus\SaferPay\Service\SaferPayRefreshPaymentsService
@@ -274,3 +275,6 @@ services:
 
     Invertus\SaferPay\Service\SaferPayMailService:
         class: Invertus\SaferPay\Service\SaferPayMailService
+
+    Invertus\SaferPay\Service\SaferPayPaymentNotation:
+        class: Invertus\SaferPay\Service\SaferPayPaymentNotation

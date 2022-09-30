@@ -32,13 +32,16 @@ class SaferPayObtainPaymentMethods
 {
     private $obtainPaymentMethodsService;
     private $obtainPaymentMethodsObjectCreator;
+    private $saferPayPaymentNotation;
 
     public function __construct(
         ObtainPaymentMethodsService $obtainPaymentMethodsService,
-        ObtainPaymentMethodsObjectCreator $obtainPaymentMethodsObjectCreator
+        ObtainPaymentMethodsObjectCreator $obtainPaymentMethodsObjectCreator,
+        SaferPayPaymentNotation $saferPayPaymentNotation
     ) {
         $this->obtainPaymentMethodsService = $obtainPaymentMethodsService;
         $this->obtainPaymentMethodsObjectCreator = $obtainPaymentMethodsObjectCreator;
+        $this->saferPayPaymentNotation = $saferPayPaymentNotation;
     }
 
     public function obtainPaymentMethods()
@@ -55,8 +58,9 @@ class SaferPayObtainPaymentMethods
 
         if (!empty($paymentMethodsObject->PaymentMethods)) {
             foreach ($paymentMethodsObject->PaymentMethods as $paymentMethodObject) {
+                $paymentNotation = $this->saferPayPaymentNotation->getShortName($paymentMethodObject->PaymentMethod);
                 $paymentMethods[] = [
-                    'paymentMethod' => $paymentMethodObject->PaymentMethod,
+                    'paymentMethod' => $paymentNotation,
                     'logoUrl' => $paymentMethodObject->LogoUrl,
                 ];
             }

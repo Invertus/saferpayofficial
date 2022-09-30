@@ -30,6 +30,7 @@ use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Service\SaferPayFieldCreator;
 use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayPaymentCreator;
+use Invertus\SaferPay\Service\SaferPayPaymentNotation;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
 use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
@@ -257,11 +258,13 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
             return;
         }
+        /** @var \Invertus\SaferPay\Service\SaferPayPaymentNotation $saferPayPaymentNotation */
+        $saferPayPaymentNotation = $this->module->getModuleContainer()->get(SaferPayPaymentNotation::class);
 
         foreach ($paymentMethods as $paymentMethod) {
             $fields[] = [
                 'type' => 'free',
-                'label' => $this->l($paymentMethod),
+                'label' => $saferPayPaymentNotation->getForDisplay($paymentMethod) ,
                 'name' => $paymentMethod,
                 'form_group_class' => 'saferpay-group',
             ];
