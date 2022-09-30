@@ -173,10 +173,8 @@ class SaferPayOfficial extends PaymentModule
             $imageUrl = ($paymentRepository->isLogoEnabledByName($paymentMethod['paymentMethod']))
                 ? $paymentMethod['logoUrl'] : '';
 
-            $fixedPaymentNotation = $this->fixPaymentNotation($paymentMethod['paymentMethod']);
-
             $isCreditCard = in_array(
-                $fixedPaymentNotation,
+                $paymentMethod['paymentMethod'],
                 \Invertus\SaferPay\Config\SaferPayConfig::TRANSACTION_METHODS
             );
             $isBusinessLicenseEnabled =
@@ -713,25 +711,5 @@ class SaferPayOfficial extends PaymentModule
         }
 
         return true;
-    }
-
-    private function fixPaymentNotation(string $paymentNotation)
-    {
-        $fixedPaymentNotation = strtoupper($paymentNotation);
-        switch ($paymentNotation) {
-            case "AmericanExpress":
-                $fixedPaymentNotation = "AMEX";
-                break;
-            case "DinersClub":
-                $fixedPaymentNotation = "DINERS";
-                break;
-            case "Bonus Card":
-                $fixedPaymentNotation = "BONUS";
-                break;
-            case "Lastschrift":
-                $fixedPaymentNotation = "DIRECTDEBIT";
-                break;
-        }
-        return $fixedPaymentNotation;
     }
 }

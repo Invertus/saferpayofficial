@@ -261,7 +261,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         foreach ($paymentMethods as $paymentMethod) {
             $fields[] = [
                 'type' => 'free',
-                'label' => $this->l($paymentMethod),
+                'label' => $this->l($this->formatPaymentNotation($paymentMethod)),
                 'name' => $paymentMethod,
                 'form_group_class' => 'saferpay-group',
             ];
@@ -301,5 +301,33 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
             return null;
         }
+    }
+    /**
+     * @param string $notation
+     *
+     * @return string
+     */
+    private function formatPaymentNotation(string $notation)
+    {
+
+        switch ($notation) {
+            case "AMEX":
+                $notation = "AmericanExpress";
+                break;
+            case "DINERS":
+                $notation = "DinersClub";
+                break;
+            case "BONUS":
+                $notation = "BonusCard";
+                break;
+            case "DIRECTDEBIT":
+                $notation = "Lastschrift";
+                break;
+            default:
+                $notation = strtolower($notation);
+                $notation = ucfirst($notation);
+
+        }
+        return $notation;
     }
 }

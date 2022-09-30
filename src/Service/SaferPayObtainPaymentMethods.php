@@ -56,7 +56,7 @@ class SaferPayObtainPaymentMethods
         if (!empty($paymentMethodsObject->PaymentMethods)) {
             foreach ($paymentMethodsObject->PaymentMethods as $paymentMethodObject) {
                 $paymentMethods[] = [
-                    'paymentMethod' => $paymentMethodObject->PaymentMethod,
+                    'paymentMethod' => $this->fixPaymentNotation($paymentMethodObject->PaymentMethod),
                     'logoUrl' => $paymentMethodObject->LogoUrl,
                 ];
             }
@@ -86,5 +86,26 @@ class SaferPayObtainPaymentMethods
         }
 
         return $paymentMethodsArray;
+    }
+
+    private function fixPaymentNotation(string $paymentNotation)
+    {
+        $paymentNotation = str_replace(' ', '', $paymentNotation);
+        $fixedPaymentNotation = strtoupper($paymentNotation);
+        switch ($paymentNotation) {
+            case "AmericanExpress":
+                $fixedPaymentNotation = "AMEX";
+                break;
+            case "DinersClub":
+                $fixedPaymentNotation = "DINERS";
+                break;
+            case "BonusCard":
+                $fixedPaymentNotation = "BONUS";
+                break;
+            case "Lastschrift":
+                $fixedPaymentNotation = "DIRECTDEBIT";
+                break;
+        }
+        return $fixedPaymentNotation;
     }
 }
