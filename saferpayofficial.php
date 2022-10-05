@@ -210,9 +210,9 @@ class SaferPayOfficial extends PaymentModule
             /** @var SaferPayPaymentNotation $paymentRepository */
             $saferPayPaymentNotation = $this->getModuleContainer()
                 ->get(SaferPayPaymentNotation::class);
-            $paymentMethod['paymentMethod'] = $saferPayPaymentNotation->getForDisplay($paymentMethod['paymentMethod']);
+            $paymentMethodName = $saferPayPaymentNotation->getForDisplay($paymentMethod['paymentMethod']);
             $newOption->setModuleName($this->name)
-                ->setCallToActionText($translator->translate($paymentMethod['paymentMethod']))
+                ->setCallToActionText($translator->translate($paymentMethodName))
                 ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']))
                 ->setLogo($imageUrl)
                 ->setInputs(
