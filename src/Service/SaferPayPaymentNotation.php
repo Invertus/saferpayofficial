@@ -30,7 +30,8 @@ class SaferPayPaymentNotation
         'AMEX' => 'AmericanExpress',
         'DINERS' => 'DinersClub',
         'BONUS' => 'BonusCard',
-        'DIRECTDEBIT' => 'Lastschrift'
+        'DIRECTDEBIT' => 'Lastschrift',
+        'POSTFINANCE' => 'PostEFinance'
     ];
 
     public function getForDisplay(string $payment)
