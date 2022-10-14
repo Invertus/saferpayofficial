@@ -36,7 +36,7 @@ class SaferPayPaymentNotation
 
     public function getForDisplay(string $payment)
     {
-        if (isset(self::PAYMENTS[$payment])) {
+        if (array_key_exists($payment, self::PAYMENTS)) {
             return self::PAYMENTS[$payment];
         }
 
