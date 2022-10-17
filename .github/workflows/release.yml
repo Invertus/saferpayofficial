@@ -1,0 +1,45 @@
+name: release
+on:
+  release:
+    types: [ published, edited, updated, drafted]
+jobs:
+  build_release:
+    name: build_release
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: build
+        # IF YOU EDIT THIS, DON'T FORGET TO EDIT deploy.yml
+        run: |
+          composer install --no-dev --optimize-autoloader --classmap-authoritative
+          composer dump-autoload --no-dev --optimize --classmap-authoritative
+          cp .github/.htaccess vendor/.htaccess
+          rm -rf .git
+          rm -rf .github
+          rm -rf tests
+          rm -rf cypress
+          rm -rf .docker
+          mkdir saferpayofficial
+          rsync -Rr ./ ./saferpayofficial
+          shopt -s extglob
+          rm -r !(saferpayofficial)
+          find . -maxdepth 1 -type f -exec rm "{}" \;
+          cd saferpayofficial && rm -rf saferpayofficial
+          cd ../ && zip -r saferpayofficial.zip saferpayofficial/
+      - name: Update release
+        id: update_release
+        uses: tubone24/update_release@v1.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.update_release.outputs.upload_url }}
+          asset_path: ./saferpayofficial.zip
+          asset_name: saferpayofficial.zip
+          asset_content_type: application/zip

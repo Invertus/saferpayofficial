@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: build
+        # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
+        run: |
+          composer install --no-dev --optimize-autoloader --classmap-authoritative
+          composer dump-autoload --no-dev --optimize --classmap-authoritative
+          cp .github/.htaccess vendor/.htaccess
+          rm -rf .git
+          rm -rf .github
+          rm -rf tests
+          rm -rf cypress
+          rm -rf .docker
+          mkdir saferpayofficial
+          rsync -Rr ./ ./saferpayofficial
+          shopt -s extglob
+          rm -r !(saferpayofficial)
+          find . -maxdepth 1 -type f -exec rm "{}" \;
+          cd saferpayofficial && rm -rf saferpayofficial
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: saferpayofficial
+          path: |
+            .
