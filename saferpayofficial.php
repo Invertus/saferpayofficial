@@ -118,6 +118,11 @@ class SaferPayOfficial extends PaymentModule
         return $this->moduleContainer;
     }
 
+    public function getService($service)
+    {
+        return $this->getModuleContainer()->get($service);
+    }
+
     private function compile()
     {
         $containerCache = $this->getLocalPath() . 'var/cache/container.php';
