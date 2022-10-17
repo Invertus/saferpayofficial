@@ -116,6 +116,10 @@ class PaymentRedirectionProvider
             return false;
         }
 
+        if (!Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
+            return false;
+        }
+
         return true;
     }
 }

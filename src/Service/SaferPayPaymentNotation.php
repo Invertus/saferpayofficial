@@ -34,7 +34,7 @@ class SaferPayPaymentNotation
         'POSTFINANCE' => 'PostEFinance'
     ];
 
-    public function getForDisplay(string $payment)
+    public function getForDisplay($payment)
     {
         if (array_key_exists($payment, self::PAYMENTS)) {
             return self::PAYMENTS[$payment];
@@ -46,7 +46,7 @@ class SaferPayPaymentNotation
         return $notation;
     }
 
-    public function getShortName(string $payment)
+    public function getShortName($payment)
     {
         $paymentNotation = str_replace(' ', '', $payment);
 
