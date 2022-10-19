@@ -43,6 +43,8 @@ You can download the module straight from GitHub:
 3)    Press on "saferpayofficial.zip" file and it will download automatically.
 4)    Install the module to your shop.
 
+Press here:
+
 <p align="center">
   <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/pic1.png">
 </p>
