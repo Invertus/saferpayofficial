@@ -48,4 +48,5 @@ Press here:
 
 <p align="center">
   <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/pic1.png">
+  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/pic2.png">
 </p>
