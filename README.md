@@ -38,6 +38,7 @@ Please be sure to have composer installed on your device before installing the m
 <h1>Steps to use module from Github</h1>
 You can download the module straight from GitHub:
 
+
 1)    Find the section "Releases"
 2)    Press on the latest release.
 3)    Press on "saferpayofficial.zip" file and it will download automatically.
