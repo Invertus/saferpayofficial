@@ -26,6 +26,7 @@ namespace Invertus\SaferPay\Provider;
 use Configuration;
 use Context;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 
@@ -63,7 +64,7 @@ class PaymentRedirectionProvider
         if ($paymentType === PaymentType::HOSTED_IFRAME) {
             return $this->context->link->getModuleLink(
                 $this->moduleName,
-                'hostedIframe',
+                ControllerName::HOSTED_IFRAME,
                 ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
                 true
             );
@@ -72,7 +73,7 @@ class PaymentRedirectionProvider
         if ($paymentType === PaymentType::IFRAME) {
             return $this->context->link->getModuleLink(
                 $this->moduleName,
-                'iframe',
+                ControllerName::IFRAME,
                 ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
                 true
             );
@@ -80,7 +81,7 @@ class PaymentRedirectionProvider
 
         return $this->context->link->getModuleLink(
             $this->moduleName,
-            'validation',
+            ControllerName::VALIDATION,
             ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => false],
             true
         );
