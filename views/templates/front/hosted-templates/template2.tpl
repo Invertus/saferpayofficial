@@ -62,9 +62,11 @@
             </div>
         </div>
         <div class="row">
-            <button class="offset-md-8 col-md-4 btn btn-primary" id="submit" disabled="disabled">{l s='Pay' mod='saferpayofficial'}</button>
+            <button class="offset-md-8 col-md-4 btn btn-primary" id="submit_hosted_field" disabled="disabled">{l s='Pay' mod='saferpayofficial'}</button>
         </div>
         <input class="form-control" id="token" readonly="" type="hidden"/>
+
+        <input type="hidden" name="saferpay_selected_card" value="{$saferpay_selected_card}" />
     </div>
 
 {/block}

@@ -70,14 +70,15 @@ class SaferPayInitialize
         $isBusinessLicence,
         $selectedCard = -1,
         $alias = null,
-        $fieldToken = null
+        $fieldToken = null,
+        $successController = null
     ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
 
         $successUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+            $successController ?: $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
             [
                 'cartId' => $cartId,
                 'secureKey' => $this->context->cart->secure_key,

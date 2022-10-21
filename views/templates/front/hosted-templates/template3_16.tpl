@@ -47,7 +47,7 @@
 
         <div class="button-container">
             <div class="form-group row button-box col-sm-7">
-                <button class="btn btn-primary submit-button" id="submit"
+                <button class="btn btn-primary submit-button" id="submit_hosted_field"
                         disabled="disabled">{l s='Pay' mod='saferpayofficial'}</button>
             </div>
         </div>
@@ -59,4 +59,6 @@
         </div>
 
     </div>
+
+    <input type="hidden" name="saferpay_selected_card" value="{$saferpay_selected_card}" />
 </div>

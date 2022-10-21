@@ -1,7 +1,5 @@
 <?php
 
-use Invertus\SaferPay\Service\SaferPayPaymentNotation;
-
 /**
  *NOTICE OF LICENSE
  *
@@ -19,11 +17,10 @@ use Invertus\SaferPay\Service\SaferPayPaymentNotation;
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- *@copyright SIX Payment Services
- *@license   SIX Payment Services
+ * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ * @copyright SIX Payment Services
+ * @license   SIX Payment Services
  */
-
 class SaferPayOfficial extends PaymentModule
 {
     const ADMIN_SAFERPAY_MODULE_CONTROLLER = 'AdminSaferPayOfficialModule';
@@ -44,7 +41,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.0.18';
+        $this->version = '1.0.19';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -151,6 +148,10 @@ class SaferPayOfficial extends PaymentModule
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
             return;
         }
+
+        /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
+        $paymentTypeProvider = $this->getModuleContainer()->get(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
+
         /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $obtainPaymentMethods */
         $obtainPaymentMethods = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
@@ -209,33 +210,30 @@ class SaferPayOfficial extends PaymentModule
                 ->get(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
 
             $newOption = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $translator =  $this->getModuleContainer()->get(
+            $translator = $this->getModuleContainer()->get(
                 \Invertus\SaferPay\Service\LegacyTranslator::class
             );
-            /** @var SaferPayPaymentNotation $paymentRepository */
+            /** @var \Invertus\SaferPay\Service\SaferPayPaymentNotation $saferPayPaymentNotation */
             $saferPayPaymentNotation = $this->getModuleContainer()
-                ->get(SaferPayPaymentNotation::class);
+                ->get(\Invertus\SaferPay\Service\SaferPayPaymentNotation::class);
             $paymentMethodName = $saferPayPaymentNotation->getForDisplay($paymentMethod['paymentMethod']);
-            $newOption->setModuleName($this->name)
-                ->setCallToActionText($translator->translate($paymentMethodName))
-                ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']))
-                ->setLogo($imageUrl)
-                ->setInputs(
-                    [
-                        'saved_card_method' => [
-                            'name' => 'saved_card_method',
-                            'type' => 'hidden',
-                            'value' => $paymentMethod['paymentMethod'],
-                        ],
-                        'selectedCreditCard' => [
-                            'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
-                            'type' => 'hidden',
-                            'value' => $selectedCard,
-                        ],
-                    ]
-                );
-            $currentDate = date('Y-m-d h:i:s');
+
+            $inputs = [
+                'saved_card_method' => [
+                    'name' => 'saved_card_method',
+                    'type' => 'hidden',
+                    'value' => $paymentMethod['paymentMethod'],
+                ],
+                'selectedCreditCard' => [
+                    'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
+                    'type' => 'hidden',
+                    'value' => $selectedCard,
+                ],
+            ];
+            
             if ($isCreditCardSavingEnabled && $isCreditCard && $isBusinessLicenseEnabled) {
+                $currentDate = date('Y-m-d h:i:s');
+
                 $savedCards = $cardAliasRep->getSavedValidCardsByUserIdAndPaymentMethod(
                     $this->context->customer->id,
                     $paymentMethod['paymentMethod'],
@@ -251,21 +249,31 @@ class SaferPayOfficial extends PaymentModule
 
                 if ($savedCards) {
                     /** Select first card if any are saved **/
-                    $newOption->setInputs(
-                        [
-                            'selectedCreditCard' => [
-                                'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
-                                'type' => 'hidden',
-                                'value' => $savedCards[0]['id_saferpay_card_alias'],
-                            ],
-                        ]
-                    );
+
+                    $inputs['selectedCreditCard'] = [
+                        'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
+                        'type' => 'hidden',
+                        'value' => $savedCards[0]['id_saferpay_card_alias'],
+                    ];
                 }
 
                 $newOption->setAdditionalInformation(
                     $this->display(__FILE__, 'front/saferpay_additional_info.tpl')
                 );
             }
+
+            $inputs['type'] = [
+                'name' => 'saferpayPaymentType',
+                'type' => 'hidden',
+                'value' => $paymentTypeProvider->get($paymentMethod['paymentMethod'])
+            ];
+
+            $newOption->setModuleName($this->name)
+                ->setCallToActionText($translator->translate($paymentMethodName))
+                ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']))
+                ->setLogo($imageUrl)
+                ->setInputs($inputs);
+
             $paymentOptions[] = $newOption;
         }
 
@@ -289,6 +297,11 @@ class SaferPayOfficial extends PaymentModule
 
     public function hookActionFrontControllerSetMedia()
     {
+        /** @var \Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader $paymentFormAssetsLoader */
+        $paymentFormAssetsLoader = $this->getService(\Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader::class);
+
+        $paymentFormAssetsLoader->register($this->context->controller);
+
         if ($this->context->controller instanceof OrderController) {
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
                 $this->context->controller->registerJavascript(
@@ -403,9 +416,6 @@ class SaferPayOfficial extends PaymentModule
             return;
         }
 
-        $paymentOptions = [];
-
-        /** @var \Invertus\SaferPay\Repository\SaferPayPaymentRepository: $paymentRepository */
         /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
         $paymentRepository = $this->getModuleContainer()
             ->get(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
@@ -477,11 +487,16 @@ class SaferPayOfficial extends PaymentModule
             /** @var \Invertus\SaferPay\Provider\PaymentRedirectionProvider $paymentRedirectionProvider */
             $paymentRedirectionProvider = $this->getModuleContainer()
                 ->get(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
+
+            /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
+            $paymentTypeProvider = $this->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
+
             $this->smarty->assign(
                 [
                     'redirect' => $paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']),
                     'imgUrl' => $imageUrl,
                     'method' => $paymentMethod['paymentMethod'],
+                    'saferpayPaymentType' => $paymentTypeProvider->get($paymentMethod['paymentMethod'])
                 ]
             );
 
@@ -672,8 +687,8 @@ class SaferPayOfficial extends PaymentModule
             );
         } else {
             $action = $this->context->link->getAdminLink(
-                self::ADMIN_ORDER_CONTROLLER
-            ) . '&id_order=' . (int) $orderId;
+                    self::ADMIN_ORDER_CONTROLLER
+                ) . '&id_order=' . (int) $orderId;
         }
 
 

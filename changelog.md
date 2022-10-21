@@ -82,3 +82,7 @@
 
 - BO: Added new switch to control when new order mail is sent to merchant.
 - BO : Fixed issue where on older PS version capture order would send wrong price.
+- 
+## [1.0.19] - *
+
+- FO: added ability to save and use saved cards with hosted fields payment

@@ -31,10 +31,12 @@
     </a>
 </p>
 <div class="saferpay_additional_info {$method|escape:'htmlall':'UTF-8'}" style="display: none">
-    <form action="{$redirect|escape:'htmlall':'UTF-8'}">
+    <form id="payment-form" action="{$redirect|escape:'htmlall':'UTF-8'}">
         {$additional_info}
         <input type="hidden" class="saved_card_method" name="isBusinessLicence" value="1">
-        <a type="submit" class="btn btn-default button button-medium" onclick='this.parentNode.submit()'>
+        <input type="hidden" name="saferpayPaymentType" value="{$saferpayPaymentType}">
+
+        <a type="submit" class="btn btn-default button button-medium" onclick="$(this).closest('form').submit();">
             <span>{l s='Pay' mod='saferpayofficial'}<i class="icon-chevron-right right"></i></span>
         </a>
     </form>

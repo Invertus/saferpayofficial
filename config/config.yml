@@ -43,3 +43,9 @@ services:
 
     Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder:
         class: Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder
+
+    Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader:
+        class: Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader
+        arguments:
+            - '@saferpay'
+            - '@=service("adapter.context").getContext()'

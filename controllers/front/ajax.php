@@ -23,6 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
+use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
 class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
@@ -42,14 +43,23 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             if (!Order::getOrderByCartId($this->context->cart->id)) {
                 $this->validateOrder();
             }
+
+            /** @var SaferPayCardAliasRepository $cardAliasRep */
+            $cardAliasRep = $this->module->getModuleContainer()->get(SaferPayCardAliasRepository::class);
+
+            $selectedCard = Tools::getValue('selectedCard');
+
+            $alias = $cardAliasRep->getSavedCardAliasFromId($selectedCard);
+
             /** @var SaferPayInitialize $initializeService */
             $initializeService = $this->module->getModuleContainer()->get(SaferPayInitialize::class);
             $initializeBody = $initializeService->initialize(
                 Tools::getValue('paymentMethod'),
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
-                -1,
-                null,
-                Tools::getValue('fieldToken')
+                $selectedCard,
+                $alias,
+                Tools::getValue('fieldToken'),
+                'successHosted'
             );
             $this->createSaferPayOrder($initializeBody);
             $redirectUrl = $this->getRedirectionUrl($initializeBody);
@@ -59,14 +69,14 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             }
 
             $this->ajaxDie(json_encode([
-                'status' => true,
+                'erorr' => false,
                 'url' => $redirectUrl,
             ]));
         } catch (Exception $e) {
             $this->ajaxDie(json_encode([
-                'status' => false,
-                'url' => $this->getRedirectionToControllerUrl('fail'),
+                'erorr' => true,
                 'message' => $e->getMessage(),
+                'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
         }
     }

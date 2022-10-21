@@ -26,6 +26,7 @@ namespace Invertus\SaferPay\Provider;
 use Configuration;
 use Context;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 
 class PaymentRedirectionProvider
@@ -40,16 +41,14 @@ class PaymentRedirectionProvider
      */
     private $moduleName;
 
-    /**
-     * @var SaferPayFieldRepository
-     */
-    private $saferPayFieldRepository;
+    /** @var PaymentTypeProvider */
+    private $paymentTypeProvider;
 
-    public function __construct(Context $context, $moduleName, SaferPayFieldRepository $saferPayFieldRepository)
+    public function __construct(Context $context, $moduleName, PaymentTypeProvider $paymentTypeProvider)
     {
         $this->context = $context;
         $this->moduleName = $moduleName;
-        $this->saferPayFieldRepository = $saferPayFieldRepository;
+        $this->paymentTypeProvider = $paymentTypeProvider;
     }
 
     /**
@@ -59,24 +58,10 @@ class PaymentRedirectionProvider
      */
     public function provideRedirectionLinkByPaymentMethod($paymentMethod)
     {
-        $redirectionLink = $this->context->link->getModuleLink(
-            $this->moduleName,
-            'validation',
-            ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => false],
-            true
-        );
+        $paymentType = $this->paymentTypeProvider->get($paymentMethod);
 
-        if ($this->isIframeRedirect($paymentMethod)) {
-            $redirectionLink = $this->context->link->getModuleLink(
-                $this->moduleName,
-                'iframe',
-                ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
-                true
-            );
-        }
-
-        if ($this->isHostedIframeRedirect($paymentMethod)) {
-            $redirectionLink = $this->context->link->getModuleLink(
+        if ($paymentType === PaymentType::HOSTED_IFRAME) {
+            return $this->context->link->getModuleLink(
                 $this->moduleName,
                 'hostedIframe',
                 ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
@@ -84,42 +69,20 @@ class PaymentRedirectionProvider
             );
         }
 
-        return $redirectionLink;
-    }
-
-    /**
-     * @param string $paymentMethod
-     *
-     * @return bool
-     */
-    private function isIframeRedirect($paymentMethod)
-    {
-        if (!in_array($paymentMethod, SaferPayConfig::TRANSACTION_METHODS)) {
-            return false;
+        if ($paymentType === PaymentType::IFRAME) {
+            return $this->context->link->getModuleLink(
+                $this->moduleName,
+                'iframe',
+                ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
+                true
+            );
         }
 
-        if (!Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string $paymentMethod
-     *
-     * @return bool
-     */
-    private function isHostedIframeRedirect($paymentMethod)
-    {
-        if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
-            return false;
-        }
-
-        if (!Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
-            return false;
-        }
-
-        return true;
+        return $this->context->link->getModuleLink(
+            $this->moduleName,
+            'validation',
+            ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => false],
+            true
+        );
     }
 }
