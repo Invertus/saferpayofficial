@@ -28,11 +28,4 @@ $(document).ready(function () {
         var $additionalInfo = $('.saferpay_additional_info.' + method);
         $additionalInfo.show();
     })
-
-    var $savedCards = $("input[name^='saved_card_']");
-    $savedCards.on('change', function () {
-        var $selectedCard = $(this);
-        var method = $selectedCard.closest('div.saved_cards').find('.saved_card_method').val();
-        $("input[name='selectedCreditCard_" + method + "']").val($selectedCard.val());
-    });
 });
