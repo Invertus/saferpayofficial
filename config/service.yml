@@ -212,7 +212,7 @@ services:
         arguments:
             - '@=service("adapter.context").getContext()'
             - '@=service("saferpay").name'
-            - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'
+            - '@Invertus\SaferPay\Provider\PaymentTypeProvider'
 
     Invertus\SaferPay\Provider\PaymentRestrictionProvider:
         class: Invertus\SaferPay\Provider\PaymentRestrictionProvider
@@ -278,3 +278,8 @@ services:
 
     Invertus\SaferPay\Service\SaferPayPaymentNotation:
         class: Invertus\SaferPay\Service\SaferPayPaymentNotation
+
+    Invertus\SaferPay\Provider\PaymentTypeProvider:
+        class: Invertus\SaferPay\Provider\PaymentTypeProvider
+        arguments:
+            - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'

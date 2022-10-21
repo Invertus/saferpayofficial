@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -20,12 +21,11 @@
  *@license   SIX Payment Services
  */
 
-$(document).ready(function () {
-    $('.saferpay_method.js_credit_card').on('click', function () {
-        event.preventDefault();
-        var method = $(this).attr('data-saferpay-method');
-        $('.saferpay_additional_info').hide();
-        var $additionalInfo = $('.saferpay_additional_info.' + method);
-        $additionalInfo.show();
-    })
-});
+namespace Invertus\SaferPay\Enum;
+
+class PaymentType
+{
+    const BASIC = 'basic';
+    const IFRAME = 'iframe';
+    const HOSTED_IFRAME = 'hosted_iframe';
+}

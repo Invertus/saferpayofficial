@@ -31,10 +31,18 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
     public function initContent()
     {
         parent::initContent();
+
+        $paymentMethod = Tools::getValue('saved_card_method');
+        $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");
+        if (!SaferPayConfig::isVersion17()) {
+            $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
+        }
+
         $this->context->smarty->assign([
             'credit_card_front_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-front.png",
             'credit_card_back_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-back.png",
             'tos_cms' => SaferPayConfig::isVersionAbove177() ? $this->getDefaultTermsAndConditions() : null,
+            'saferpay_selected_card' => $selectedCard
         ]);
 
         if (SaferPayConfig::isVersion17()) {
