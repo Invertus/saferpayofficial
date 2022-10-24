@@ -50,6 +50,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
         $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
         $moduleId = Tools::getValue('moduleId');
+        $selectedCard = Tools::getValue('selectedCard');
 
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
@@ -71,7 +72,15 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
             $saferPayOrder = new SaferPayOrder($saferPayOrderId);
             $order = new Order($orderId);
-            $authResponseBody = $this->authorizeTransaction($cartId);
+
+            /** @var SaferPayTransactionAuthorization $saferPayTransactionAuthorization */
+            $saferPayTransactionAuthorization = $this->module->getModuleContainer()->get(SaferPayTransactionAuthorization::class);
+
+            $authResponseBody = $saferPayTransactionAuthorization->authorize(
+                $orderId,
+                (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
+                $selectedCard
+            );
 
             if (!$authResponseBody->getLiability()->getLiabilityShift()) {
                 /** @var SaferPay3DSecureService $secureService */
@@ -151,24 +160,5 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 'key' => $secureKey,
             ]
         );
-    }
-
-    /**
-     * @param int $cartId
-     *
-     * @return AssertBody
-     * @throws Exception
-     */
-    private function authorizeTransaction($cartId)
-    {
-        /** @var SaferPayTransactionAuthorization $transactionAuth */
-        $transactionAuth = $this->module->getModuleContainer()->get(SaferPayTransactionAuthorization::class);
-        $authorizationResponse = $transactionAuth->authorize(
-            Order::getOrderByCartId($cartId),
-            0,
-            -1
-        );
-
-        return $authorizationResponse;
     }
 }

@@ -69,12 +69,12 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             }
 
             $this->ajaxDie(json_encode([
-                'erorr' => false,
+                'error' => false,
                 'url' => $redirectUrl,
             ]));
         } catch (Exception $e) {
             $this->ajaxDie(json_encode([
-                'erorr' => true,
+                'error' => true,
                 'message' => $e->getMessage(),
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));

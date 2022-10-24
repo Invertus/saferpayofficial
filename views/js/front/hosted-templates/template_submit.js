@@ -34,6 +34,7 @@ $(document).ready(function () {
                         data: {
                             action: 'submitHostedFields',
                             paymentMethod: saved_card_method,
+                            selectedCard: $("[name=saferpay_selected_card]").val(),
                             fieldToken: evt.token,
                             isBusinessLicence: isBusinessLicence,
                             ajax: 1
