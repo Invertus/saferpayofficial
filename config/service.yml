@@ -60,6 +60,7 @@ services:
             - '@=service("adapter.context").getContext()'
             - '@Invertus\SaferPay\Api\Request\InitializeService'
             - '@Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator'
+            - '@Invertus\SaferPay\Repository\SaferPayCardAliasRepository'
 
     #Request object creator
     Invertus\SaferPay\Service\Request\AssertRequestObjectCreator:
@@ -283,3 +284,15 @@ services:
         class: Invertus\SaferPay\Provider\PaymentTypeProvider
         arguments:
             - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'
+
+    Invertus\SaferPay\Processor\CheckoutProcessor:
+        class: Invertus\SaferPay\Processor\CheckoutProcessor
+        arguments:
+            - '@saferpay'
+            - '@Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder'
+            - '@Invertus\SaferPay\Service\SaferPayInitialize'
+
+    Invertus\SaferPay\Controller\Front\PaymentFrontController:
+        class: Invertus\SaferPay\Controller\Front\PaymentFrontController
+        arguments:
+            - '@Invertus\SaferPay\Processor\CheckoutProcessor'

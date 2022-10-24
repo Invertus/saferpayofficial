@@ -23,7 +23,6 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
@@ -68,25 +67,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         if (!Validate::isLoadedObject($customer)) {
             Tools::redirect($redirectLink);
         }
-
-        $currency = $this->context->currency;
-        $total = (float) $cart->getOrderTotal();
-
-        $orderId = Order::getOrderByCartId($cart->id);
-        if (!$orderId) {
-            $paymentMethod = Tools::getValue('saved_card_method');
-            $this->module->validateOrder(
-                $cart->id,
-                Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
-                $total,
-                $paymentMethod,
-                null,
-                [],
-                (int) $currency->id,
-                false,
-                $customer->secure_key
-            );
-        }
     }
 
     public function initContent()
@@ -97,19 +77,21 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         if (!SaferPayConfig::isVersion17()) {
             $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
         }
-        /** @var SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getModuleContainer()->get(SaferPayOrderBuilder::class);
-        $isBusinessLicence = Tools::getValue(\Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE);
 
-        /** @var SaferPayInitialize $initializeService */
-        $initializeService = $this->module->getModuleContainer()->get(SaferPayInitialize::class);
         try {
-            /** @var SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->module->getModuleContainer()->get(SaferPayCardAliasRepository::class);
-            $alias = $cardAliasRep->getSavedCardAliasFromId($selectedCard);
-            $response = $initializeService->initialize($paymentMethod, $isBusinessLicence, $selectedCard, $alias);
-        } catch (Exception $e) {
-            $redirectLink = $this->context->link->getModuleLink(
+            /** @var \Invertus\SaferPay\Controller\Front\PaymentFrontController $paymentFrontController */
+            $paymentFrontController = $this->module->getModuleContainer()->get(\Invertus\SaferPay\Controller\Front\PaymentFrontController::class);
+
+            $initializeResponse = $paymentFrontController->create(
+                $this->context->cart,
+                $paymentMethod,
+                Tools::getValue(\Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE),
+                $selectedCard
+            );
+
+            $redirectUrl = $paymentFrontController->getRedirectionUrl($initializeResponse);
+        } catch (\Exception $exception) {
+            $redirectUrl = $this->context->link->getModuleLink(
                 $this->module->name,
                 'fail',
                 [
@@ -120,22 +102,18 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 ],
                 true
             );
-            $this->redirectWithNotifications($redirectLink);
+            $this->redirectWithNotifications($redirectUrl);
         }
-        $saferPayOrderBuilder->create(
-            $response,
-            $this->context->cart,
-            $this->context->customer,
-            true,
-            $isBusinessLicence
-        );
+
         $this->context->smarty->assign([
-            'redirect' => $response->Redirect->RedirectUrl,
+            'redirect' => $redirectUrl,
         ]);
+
         if (SaferPayConfig::isVersion17()) {
             $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_iframe.tpl');
             return;
         }
+
         $this->setTemplate('saferpay_iframe_16.tpl');
     }
 

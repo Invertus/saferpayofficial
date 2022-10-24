@@ -31,13 +31,13 @@ use SaferPayOrder;
 class SaferPayOrderBuilder
 {
     //TODO to pass $body as InitializeBody.
-    public function create($body, Cart $cart, Customer $customer, $isTransaction, $isBusinessLicence)
+    public function create($body, $cartId, $customerId, $isTransaction)
     {
-        $orderId = Order::getOrderByCartId($cart->id);
+        $orderId = Order::getOrderByCartId($cartId);
         $saferPayOrder = new SaferPayOrder();
         $saferPayOrder->token = $body->Token;
         $saferPayOrder->id_order = $orderId;
-        $saferPayOrder->id_customer = $customer->id;
+        $saferPayOrder->id_customer = $customerId;
         $saferPayOrder->redirect_url = $this->getRedirectionUrl($body);
         $saferPayOrder->is_transaction = $isTransaction;
         $saferPayOrder->add();
