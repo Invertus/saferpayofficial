@@ -21,7 +21,7 @@
  */
 
 $(document).ready(function () {
-    document.getElementById('submit').onclick = function () {
+    document.getElementById('submit_hosted_field').onclick = function () {
         if (!areAllFieldsValid) {
             return;
         }

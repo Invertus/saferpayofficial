@@ -42,7 +42,7 @@ $(document).ready(function () {
             $('.initialize-error').show();
         },
         onSuccess: function () {
-            var element = document.getElementById('submit');
+            var element = document.getElementById('submit_hosted_field');
             element.removeAttribute('disabled');
         },
         onValidated: function (e) {
