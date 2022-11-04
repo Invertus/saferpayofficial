@@ -219,12 +219,14 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
         $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethods();
 
-        $currencies[0] = $this->l('All');
+        $currencyOptions[0] = $this->l('All');
         foreach ($paymentMethods[$paymentMethod]['currencies'] as $currencyIso) {
-            $currencies[Currency::getIdByIsoCode($currencyIso)] = $currencyIso;
+            if (Currency::getIdByIsoCode($currencyIso)) {
+                $currencyOptions[Currency::getIdByIsoCode($currencyIso)] = $currencyIso;
+            }
         }
 
-        return $currencies;
+        return $currencyOptions;
     }
 
     protected function initForm()
