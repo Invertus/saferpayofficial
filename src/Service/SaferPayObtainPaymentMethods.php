@@ -59,18 +59,20 @@ class SaferPayObtainPaymentMethods
         if (!empty($paymentMethodsObject->PaymentMethods)) {
             foreach ($paymentMethodsObject->PaymentMethods as $paymentMethodObject) {
                 $paymentNotation = $this->saferPayPaymentNotation->getShortName($paymentMethodObject->PaymentMethod);
-                $paymentMethods[] = [
+                $paymentMethods[$paymentNotation] = [
                     'paymentMethod' => $paymentNotation,
                     'logoUrl' => $paymentMethodObject->LogoUrl,
+                    'currencies' => $paymentMethodObject->Currencies
                 ];
             }
         }
 
         if (!empty($paymentMethodsObject->Wallets)) {
             foreach ($paymentMethodsObject->Wallets as $wallet) {
-                $paymentMethods[] = [
+                $paymentMethods[$wallet->WalletName] = [
                     'paymentMethod' => $wallet->WalletName,
                     'logoUrl' => $wallet->LogoUrl,
+                    'currencies' => $paymentMethodObject->Currencies
                 ];
             }
         }
