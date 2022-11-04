@@ -23,9 +23,11 @@
 
 namespace Invertus\SaferPay\Service\PaymentRestrictionValidation;
 
+use Currency;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
+use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 
 class BasePaymentRestrictionValidation implements PaymentRestrictionValidationInterface
@@ -45,14 +47,21 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
      */
     private $legacyContext;
 
+    /**
+     * @var SaferPayObtainPaymentMethods
+     */
+    private $obtainPaymentMethods;
+
     public function __construct(
         LegacyContext $legacyContext,
         SaferPayPaymentRepository $paymentRepository,
-        SaferPayRestrictionRepository $restrictionRepository
+        SaferPayRestrictionRepository $restrictionRepository,
+        SaferPayObtainPaymentMethods $obtainPaymentMethods
     ) {
         $this->paymentRepository = $paymentRepository;
         $this->restrictionRepository = $restrictionRepository;
         $this->legacyContext = $legacyContext;
+        $this->obtainPaymentMethods = $obtainPaymentMethods;
     }
 
     /**
@@ -133,9 +142,14 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
     {
         $enabledCurrencies = $this->getEnabledCurrenciesByPaymentName($paymentName);
 
-        $isAllCurrencies = in_array('0', $enabledCurrencies);
-        $isCurrencyInList = in_array($this->legacyContext->getCurrencyId(), $enabledCurrencies);
+        if (in_array('0', $enabledCurrencies)) {
+            $enabledCurrenciesIsoCode = $this->obtainPaymentMethods->obtainPaymentMethods()[$paymentName]['currencies'];
+            foreach ($enabledCurrenciesIsoCode as $isoCode) {
+                $currencyId = Currency::getIdByIsoCode($isoCode);
+                $enabledCurrencies[$currencyId] = $currencyId;
+            }
+        }
 
-        return $isCurrencyInList || $isAllCurrencies;
+        return in_array($this->legacyContext->getCurrencyId(), $enabledCurrencies);
     }
 }

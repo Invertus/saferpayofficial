@@ -187,6 +187,7 @@ services:
             - '@=service("adapter.context")'
             - '@Invertus\SaferPay\Repository\SaferPayPaymentRepository'
             - '@Invertus\SaferPay\Repository\SaferPayRestrictionRepository'
+            - '@Invertus\SaferPay\Service\SaferPayObtainPaymentMethods'
         tags:
             - { name: saferpay.paymentrestriction }
 
