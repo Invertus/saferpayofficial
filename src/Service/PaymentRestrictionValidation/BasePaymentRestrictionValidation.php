@@ -144,8 +144,8 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
 
         if (in_array('0', $enabledCurrencies)) {
             $enabledCurrencies = [];
-            $enabledCurrenciesIsoCode = $this->obtainPaymentMethods->obtainPaymentMethods()[$paymentName]['currencies'];
-            foreach ($enabledCurrenciesIsoCode as $isoCode) {
+            $currencyOptions = $this->obtainPaymentMethods->obtainPaymentMethods()[$paymentName]['currencies'];
+            foreach ($currencyOptions as $isoCode) {
                 $enabledCurrencies[$isoCode] = $isoCode;
             }
         }

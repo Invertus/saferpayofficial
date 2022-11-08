@@ -212,7 +212,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         return $countriesWithNames;
     }
 
-    public function getActiveCurrenciesList(string $paymentMethod)
+    public function getActiveCurrenciesList($paymentMethod)
     {
         /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
         $saferPayObtainPaymentMethods = $this->module->getModuleContainer()->get(SaferPayObtainPaymentMethods::class);
