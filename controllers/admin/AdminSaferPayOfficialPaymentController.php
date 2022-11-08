@@ -177,7 +177,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
                     'paymentMethod' => $paymentMethod,
                     'countryOptions' => $this->getActiveCountriesList(),
                     'countrySelect' => $selectedCountries,
-                    'currencyOptions' => $this->getActiveCurrenciesList(),
+                    'currencyOptions' => $this->getActiveCurrenciesList($paymentMethod),
                     'currencySelect' => $selectedCurrencies,
                     'is_field_active' => $isFieldActive,
                     'supported_field_payments' => SaferPayConfig::FIELD_SUPPORTED_PAYMENT_METHODS,
@@ -212,17 +212,21 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         return $countriesWithNames;
     }
 
-    public function getActiveCurrenciesList($onlyActive = true)
+    public function getActiveCurrenciesList($paymentMethod)
     {
-        $langId = $this->context->language->id;
-        $currencies = Currency::getCurrencies($langId, $onlyActive);
-        $currenciesWithNames = [];
-        $currenciesWithNames[0] = $this->l('All');
-        foreach ($currencies as $currency) {
-            $currenciesWithNames[$currency->id] = $currency->name;
+        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+        $saferPayObtainPaymentMethods = $this->module->getModuleContainer()->get(SaferPayObtainPaymentMethods::class);
+
+        $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethods();
+
+        $currencyOptions[0] = $this->l('All');
+        foreach ($paymentMethods[$paymentMethod]['currencies'] as $currencyIso) {
+            if (Currency::getIdByIsoCode($currencyIso)) {
+                $currencyOptions[Currency::getIdByIsoCode($currencyIso)] = $currencyIso;
+            }
         }
 
-        return $currenciesWithNames;
+        return $currencyOptions;
     }
 
     protected function initForm()
