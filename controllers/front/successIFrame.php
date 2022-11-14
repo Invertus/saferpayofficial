@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Api\Request\AuthorizationService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator;
@@ -77,7 +78,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
             $this->redirectWithNotifications($this->context->link->getModuleLink(
                 $this->module->name,
-                'failValidation',
+                ControllerName::FAIL_VALIDATION,
                 [
                     'cartId' => $cartId,
                     'secureKey' => $secureKey,
@@ -104,7 +105,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
 
             $this->redirectWithNotifications($this->context->link->getModuleLink(
                 $this->module->name,
-                'fail',
+                ControllerName::FAIL,
                 [
                     'cartId' => $cartId,
                     'secureKey' => $secureKey,

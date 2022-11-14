@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
+use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
@@ -87,7 +88,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
                 $this->redirectWithNotifications($this->context->link->getModuleLink(
                     $this->module->name,
-                    'fail',
+                    ControllerName::FAIL,
                     [
                         'cartId' => $cartId,
                         'secureKey' => $secureKey,
@@ -126,7 +127,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
             Tools::redirect(
                 $this->context->link->getModuleLink(
                     $this->module->name,
-                    'fail',
+                    ControllerName::FAIL,
                     [
                         'cartId' => $cartId,
                         'secureKey' => $secureKey,
