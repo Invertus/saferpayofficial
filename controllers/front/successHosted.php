@@ -54,23 +54,13 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
-            $redirectLink = $this->context->link->getPageLink(
-                'order',
-                true,
-                null,
-                [
-                    'step' => 1,
-                ]
-            );
-            Tools::redirect($redirectLink);
+            Tools::redirect($this->getOrderLink());
         }
 
         try {
-            /** @var SaferPayOrderRepository $orderRepo */
-            $orderRepo = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
-            $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
 
-            $saferPayOrder = new SaferPayOrder($saferPayOrderId);
             $order = new Order($orderId);
 
             /** @var SaferPayTransactionAuthorization $saferPayTransactionAuthorization */
@@ -82,22 +72,43 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 $selectedCard
             );
 
-            if (!$authResponseBody->getLiability()->getLiabilityShift()) {
-                /** @var SaferPay3DSecureService $secureService */
-                $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
-                $secureService->processNotSecuredPayment($order);
-                Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
+            /** @var SaferPay3DSecureService $secureService */
+            $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
+
+            $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
+
+            if (
+                !$authResponseBody->getLiability()->getLiabilityShift() &&
+                $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+            ) {
+                $secureService->cancelPayment($order);
+
+                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+
+                $this->redirectWithNotifications($this->context->link->getModuleLink(
+                    $this->module->name,
+                    'fail',
+                    [
+                        'cartId' => $cartId,
+                        'secureKey' => $secureKey,
+                        'orderId' => $orderId,
+                        'moduleId' => $moduleId,
+                    ],
+                    true
+                ));
             }
 
-            $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
-            if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
-                !$saferPayOrder->captured
-            ) {
-                /** @var SaferPayOrderStatusService $orderStatusService */
-                $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
+            $orderStatusService->authorize($order);
+
+            $paymentBehaviour = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
+
+            if ($paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE) {
+
                 $orderStatusService->capture($order);
                 Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
             }
+
+            Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
             PrestaShopLogger::addLog(
                 sprintf(
@@ -158,6 +169,18 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 'id_module' => $moduleId,
                 'id_order' => $orderId,
                 'key' => $secureKey,
+            ]
+        );
+    }
+
+    private function getOrderLink()
+    {
+        return $this->context->link->getPageLink(
+            'order',
+            true,
+            null,
+            [
+                'step' => 1,
             ]
         );
     }

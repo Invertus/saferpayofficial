@@ -248,6 +248,9 @@ class SaferPayConfig
 
     const EMAIL_ALERTS_MODULE_NAME = 'ps_emailalerts';
 
+    const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
+    const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
+
     public static function getConfigSuffix()
     {
         if (Configuration::get(self::TEST_MODE)) {

@@ -49,9 +49,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         if ($cart->secure_key !== $secureKey) {
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
-        /** @var SaferPayOrderRepository $saferPayOrderRepository */
-        $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
-        $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
 
         try {
             $assertResponseBody = $this->assertTransaction($cartId);
@@ -60,20 +57,28 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
-            if (in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                !$assertResponseBody->getLiability()->getLiabilityShift()
+            /** @var SaferPay3DSecureService $secureService */
+            $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
+
+            $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
+
+            if (
+                !$assertResponseBody->getLiability()->getLiabilityShift() &&
+                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
+                $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
             ) {
-                /** @var SaferPay3DSecureService $secureService */
-                $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
-                $secureService->processNotSecuredPayment($order);
+                $secureService->cancelPayment($order);
+
                 die($this->module->l('Liability shift is false', self::FILENAME));
             }
 
             //NOTE to get latest information possible and not override new information.
             $order = new Order($orderId);
 
-            $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
-            if ((int) $defaultBehavior === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+            $paymentBehaviour = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
+
+            if (
+                $paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $assertResponseBody->getTransaction()->getStatus() !== 'CAPTURED'
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
