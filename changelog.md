@@ -86,3 +86,8 @@
 ## [1.0.19] - *
 
 - FO: added ability to save and use saved cards with hosted fields payment
+
+## [1.0.20] - *
+
+- FO: Fixed issue when payment was cancelled due to 3DS failure but Order confirmation was still shown
+- FO: Fixed issue when 3DS failed, but it still captured/authorized payment
