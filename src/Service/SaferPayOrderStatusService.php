@@ -33,6 +33,7 @@ use Invertus\SaferPay\Api\Request\CaptureService;
 use Invertus\SaferPay\Api\Request\RefundService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\PendingNotification;
+use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\CancelRequestObjectCreator;
@@ -229,7 +230,7 @@ class SaferPayOrderStatusService
             $saferPayAssert->payment_method === SaferPayConfig::PAYMENT_PAYDIREKT) {
             $pendingNotify = $this->context->getLink()->getModuleLink(
                 $this->module->name,
-                'pendingNotify',
+                ControllerName::PENDING_NOTIFY,
                 [
                     'success' => 1,
                     'cartId' => $cart->id,

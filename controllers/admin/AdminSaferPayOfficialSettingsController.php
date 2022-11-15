@@ -235,8 +235,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'title' => $this->l('Behaviour when 3D secure fails'),
                         'validation' => 'isInt',
                         'choices' => [
-                            0 => $this->l('Cancel'),
-                            1 => $this->l('Authorize'),
+                            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL => $this->l('Cancel'),
+                            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE => $this->l('Authorize'),
                         ],
                         'desc' => $this->l('Default payment behavior for payment without 3-D Secure'),
                         'form_group_class' => 'thumbs_chose',

@@ -26,6 +26,7 @@ namespace Invertus\SaferPay\Service;
 use Context;
 use Exception;
 use Invertus\SaferPay\Api\Request\InitializeService;
+use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
 use Order;
@@ -90,7 +91,7 @@ class SaferPayInitialize
         );
         $notifyUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            'notify',
+            ControllerName::NOTIFY,
             [
                 'success' => 1,
                 'cartId' => $this->context->cart->id,
@@ -101,7 +102,7 @@ class SaferPayInitialize
         );
         $failUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            'failValidation',
+            ControllerName::FAIL_VALIDATION,
             [
                 'cartId' => $this->context->cart->id,
                 'secureKey' => $this->context->cart->secure_key,

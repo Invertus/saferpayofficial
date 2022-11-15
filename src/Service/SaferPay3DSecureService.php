@@ -58,27 +58,9 @@ class SaferPay3DSecureService
     /**
      * @param Order $order
      */
-    public function processNotSecuredPayment(Order $order)
+    public function cancelPayment(Order $order)
     {
-        $defaultBehavior = Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
-        if ($defaultBehavior) {
-            return;
-        }
         $this->cartDuplicationService->restoreCart($order->id_cart);
         $this->orderStatusService->cancel($order);
-    }
-
-    /**
-     * @param $orderId
-     * @return bool
-     * @throws \PrestaShopDatabaseException
-     * @throws \PrestaShopException
-     */
-    public function isSaferPayOrderCanceled($orderId)
-    {
-        $saferPayOrderId = $this->orderRepository->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
-        return $saferPayOrder->canceled;
     }
 }

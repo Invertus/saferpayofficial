@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
+use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
@@ -111,7 +112,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         } catch (Exception $e) {
             $redirectLink = $this->context->link->getModuleLink(
                 $this->module->name,
-                'fail',
+                ControllerName::FAIL,
                 [
                     'cartId' => $this->context->cart->id,
                     'orderId' => Order::getOrderByCartId($this->context->cart->id),

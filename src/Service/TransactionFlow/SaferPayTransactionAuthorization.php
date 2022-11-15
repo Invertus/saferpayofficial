@@ -84,7 +84,6 @@ class SaferPayTransactionAuthorization
     public function authorize($orderId, $saveCard, $selectedCard)
     {
         $saferPayOrder = $this->getSaferPayOrder($orderId);
-        $order = new Order($orderId);
 
         $authRequest = $this->authRequestCreator->create($saferPayOrder->token, $saveCard);
         $authResponse = $this->authorizationService->authorize($authRequest);
@@ -98,8 +97,6 @@ class SaferPayTransactionAuthorization
 
         $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
         $saferPayOrder->update();
-
-        $this->orderStatusService->authorize($order);
 
         return $assertBody;
     }
