@@ -88,6 +88,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             Tools::redirect($redirectLink);
         }
 
+        /** @var CartDuplicationService $cartDuplicationService */
         $cartDuplicationService = $this->module->getService(CartDuplicationService::class);
         $cartDuplicationService->restoreCart($this->id_cart);
 
