@@ -26,9 +26,6 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator;
-use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
