@@ -60,7 +60,6 @@ class SaferPay3DSecureService
      */
     public function cancelPayment(Order $order)
     {
-        $this->cartDuplicationService->restoreCart($order->id_cart);
         $this->orderStatusService->cancel($order);
     }
 }

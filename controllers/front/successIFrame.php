@@ -78,7 +78,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
             $this->redirectWithNotifications($this->context->link->getModuleLink(
                 $this->module->name,
-                ControllerName::FAIL_VALIDATION,
+                ControllerName::FAIL_IFRAME,
                 [
                     'cartId' => $cartId,
                     'secureKey' => $secureKey,
@@ -89,23 +89,20 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             ));
         }
 
-        /** @var SaferPay3DSecureService $secureService */
-        $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
-
         $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
         if (
-            $authResponseBody->getLiability()->getThreeDs() &&
             !$authResponseBody->getLiability()->getLiabilityShift() &&
+            in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
             $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
         ) {
-            $secureService->cancelPayment($order);
+            $orderStatusService->cancel($order);
 
             $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
 
             $this->redirectWithNotifications($this->context->link->getModuleLink(
                 $this->module->name,
-                ControllerName::FAIL,
+                ControllerName::FAIL_IFRAME,
                 [
                     'cartId' => $cartId,
                     'secureKey' => $secureKey,
@@ -125,10 +122,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $authResponseBody->getLiability()->getThreeDs()
         ) {
             $orderStatusService->capture($order);
-            Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         }
-
-        Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
     }
 
     public function initContent()
