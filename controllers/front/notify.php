@@ -24,11 +24,8 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
-use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
 
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
@@ -57,8 +54,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
-            /** @var SaferPay3DSecureService $secureService */
-            $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
 
             $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
@@ -67,7 +64,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
                 $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
             ) {
-                $secureService->cancelPayment($order);
+                $orderStatusService->cancel($order);
 
                 die($this->module->l('Liability shift is false', self::FILENAME));
             }
@@ -81,8 +78,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $assertResponseBody->getTransaction()->getStatus() !== 'CAPTURED'
             ) {
-                /** @var SaferPayOrderStatusService $orderStatusService */
-                $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {

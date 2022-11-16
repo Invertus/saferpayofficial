@@ -169,13 +169,6 @@ services:
     Invertus\SaferPay\Service\CartDuplicationService:
         class: Invertus\SaferPay\Service\CartDuplicationService
 
-    Invertus\SaferPay\Service\SaferPay3DSecureService:
-        class: Invertus\SaferPay\Service\SaferPay3DSecureService
-        arguments:
-            - '@Invertus\SaferPay\Service\SaferPayOrderStatusService'
-            - '@Invertus\SaferPay\Repository\SaferPayOrderRepository'
-            - '@Invertus\SaferPay\Service\CartDuplicationService'
-
     Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate:
         class: Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate
         arguments:

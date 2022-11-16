@@ -23,10 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Enum\ControllerName;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use Invertus\SaferPay\Service\SaferPay3DSecureService;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
@@ -73,16 +70,14 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 $selectedCard
             );
 
-            /** @var SaferPay3DSecureService $secureService */
-            $secureService = $this->module->getModuleContainer()->get(SaferPay3DSecureService::class);
-
             $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
             if (
                 !$authResponseBody->getLiability()->getLiabilityShift() &&
+                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
                 $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
             ) {
-                $secureService->cancelPayment($order);
+                $orderStatusService->cancel($order);
 
                 $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
 
