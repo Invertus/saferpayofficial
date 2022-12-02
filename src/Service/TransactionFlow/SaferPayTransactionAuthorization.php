@@ -83,7 +83,10 @@ class SaferPayTransactionAuthorization
      */
     public function authorize($orderId, $saveCard, $selectedCard)
     {
-        $saferPayOrder = $this->getSaferPayOrder($orderId);
+        $order = new Order($orderId);
+
+        $saferPayOrderId = $this->orderRepository->getIdByOrderId($orderId);
+        $saferPayOrder =  new SaferPayOrder($saferPayOrderId);
 
         $authRequest = $this->authRequestCreator->create($saferPayOrder->token, $saveCard);
         $authResponse = $this->authorizationService->authorize($authRequest);
@@ -91,7 +94,7 @@ class SaferPayTransactionAuthorization
         $assertBody = $this->authorizationService->createObjectsFromAuthorizationResponse(
             $authResponse,
             $saferPayOrder->id,
-            $this->context->customer->id,
+            $order->id_customer,
             $selectedCard
         );
 
@@ -99,17 +102,5 @@ class SaferPayTransactionAuthorization
         $saferPayOrder->update();
 
         return $assertBody;
-    }
-
-    /**
-     * @param $orderId
-     *
-     * @return false|SaferPayOrder
-     */
-    private function getSaferPayOrder($orderId)
-    {
-        $saferPayOrderId = $this->orderRepository->getIdByOrderId($orderId);
-
-        return new SaferPayOrder($saferPayOrderId);
     }
 }
