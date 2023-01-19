@@ -31,7 +31,8 @@ class SaferPayPaymentNotation
         'DINERS' => 'DinersClub',
         'BONUS' => 'BonusCard',
         'DIRECTDEBIT' => 'Lastschrift',
-        'POSTFINANCE' => 'PostEFinance'
+        'POSTFINANCE' => 'PostEFinance',
+        'MAESTRO' => 'Maestro-Intl.'
     ];
 
     public function getForDisplay($payment)
