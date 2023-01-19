@@ -95,3 +95,4 @@
 ## [1.0.21] - *
 
 - FO: Fixed issue with payments not being displayed when currency option was not set to "ALL"
+- BO: Fixed issue with "Maestro Intl." not being enabled in BO
