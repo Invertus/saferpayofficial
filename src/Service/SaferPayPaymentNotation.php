@@ -48,7 +48,7 @@ class SaferPayPaymentNotation
 
     public function getShortName($payment)
     {
-        $paymentNotation = str_replace([' ', '.'], '', $payment);
+        $paymentNotation = str_replace(' ', '', $payment);
 
         $map = array_flip(self::PAYMENTS);
         $fixedPaymentNotation = strtoupper($paymentNotation);
