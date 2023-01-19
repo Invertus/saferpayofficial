@@ -91,3 +91,7 @@
 
 - FO: Fixed issue when payment was cancelled due to 3DS failure but Order confirmation was still shown
 - FO: Fixed issue when 3DS failed, but it still captured/authorized payment
+
+## [1.0.21] - *
+
+- FO: Fixed issue with payments not being displayed when currency option was not set to "ALL"
