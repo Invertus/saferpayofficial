@@ -15,8 +15,13 @@
             "Invertus\\SaferPay\\Tests\\": "tests/"
         }
     },
+    "config": {
+        "prepend-autoloader": false,
+        "platform": {
+            "php": "5.6"
+        }
+    },
     "require": {
-        "php": ">=5.6",
         "vlucas/phpdotenv": "^3.6",
         "symfony/expression-language": "^3.4",
         "symfony/config": "^3.4",
@@ -34,12 +39,6 @@
     "scripts": {
         "test-integration": "./vendor/bin/phpunit --configuration ./tests/Integration/phpunit.xml",
         "test-unit": "./vendor/bin/phpunit --configuration tests/Unit/phpunit.xml"
-    },
-    "config": {
-        "prepend-autoloader": false,
-        "platform": {
-            "php": "5.6"
-        }
     },
     "author": "PrestaShop",
     "license": "AFL-3.0"
