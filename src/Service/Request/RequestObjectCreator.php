@@ -175,7 +175,7 @@ class RequestObjectCreator
         $orderItem->setType($product['is_virtual'] ? OrderItem::ITEM_DIGITAL : OrderItem::ITEM_PHYSICAL);
         $orderItem->setUnitPrice($this->priceUtility->convertToCents($product['price_wt']));
         $orderItem->setTaxRate($this->priceUtility->convertToCents($product['rate']));
-        $orderItem->setTaxAmount($this->priceUtility->convertToCents($product['price_wt'] - $product['price']));
+        $orderItem->setTaxAmount($this->priceUtility->convertToCents(($product['price_wt'] - $product['price']) * $product['cart_quantity']));
 
         return $orderItem;
     }
