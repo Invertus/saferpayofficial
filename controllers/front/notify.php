@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
@@ -76,7 +77,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             if (
                 $paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
-                $assertResponseBody->getTransaction()->getStatus() !== 'CAPTURED'
+                $assertResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
                 $orderStatusService->capture($order);
             }
