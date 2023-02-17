@@ -96,3 +96,7 @@
 
 - FO: Fixed issue with payments not being displayed when currency option was not set to "ALL"
 - BO: Fixed issue with "Maestro Intl." not being enabled in BO
+
+- ## [1.0.22] - *
+
+- BO: Fixed issue with Bancontact payment being captured twice, thus causing an error from API.

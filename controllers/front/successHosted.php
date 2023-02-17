@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
@@ -98,8 +99,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
             $paymentBehaviour = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
 
-            if ($paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE) {
-
+            if ($paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE && $authResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED) {
                 $orderStatusService->capture($order);
                 Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
             }
