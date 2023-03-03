@@ -42,6 +42,7 @@ use Invertus\SaferPay\DTO\Request\ReturnUrls;
 use Invertus\SaferPay\DTO\Request\SaferPayNotification;
 use Invertus\SaferPay\DTO\Response\Amount;
 use Invertus\SaferPay\Enum\GenderEnum;
+use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;
 use Invertus\SaferPay\Utility\PriceUtility;
 use SaferPayOfficial;
@@ -65,21 +66,26 @@ class RequestObjectCreator
     private $orderRepository;
 
     //TODO extract logic to appropriate services.
+    /** @var IdempotencyProviderInterface */
+    private $idempotencyProvider;
+
     public function __construct(
         SaferPayOfficial $module,
         PriceUtility $priceUtility,
-        OrderRepositoryInterface $orderRepository
+        OrderRepositoryInterface $orderRepository,
+        IdempotencyProviderInterface $idempotencyProvider
     ) {
         $this->module = $module;
         $this->priceUtility = $priceUtility;
         $this->orderRepository = $orderRepository;
+        $this->idempotencyProvider = $idempotencyProvider;
     }
 
     public function createRequestHeader()
     {
         $specVersion = Configuration::get(RequestHeader::SPEC_VERSION);
         $customerId = Configuration::get(RequestHeader::CUSTOMER_ID . SaferPayConfig::getConfigSuffix());
-        $requestId = Configuration::get(RequestHeader::REQUEST_ID);
+        $requestId = $this->idempotencyProvider->getIdempotencyKey();
         $retryIndicator = Configuration::get(RequestHeader::RETRY_INDICATOR);
         $clientInfo = [
             'ShopInfo' => 'PrestaShop_' . _PS_VERSION_ . ':Invertus_' . $this->module->version,

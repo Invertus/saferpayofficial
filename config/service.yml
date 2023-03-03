@@ -44,6 +44,7 @@ services:
             - '@saferpay'
             - '@Invertus\SaferPay\Utility\PriceUtility'
             - '@Invertus\SaferPay\Repository\OrderRepository'
+            - '@Invertus\SaferPay\Provider\IdempotencyProviderInterface'
 
     Invertus\SaferPay\Api\Request\AuthorizationService:
         class: Invertus\SaferPay\Api\Request\AuthorizationService
@@ -277,3 +278,8 @@ services:
         class: Invertus\SaferPay\Provider\PaymentTypeProvider
         arguments:
             - '@Invertus\SaferPay\Repository\SaferPayFieldRepository'
+
+    Invertus\SaferPay\Provider\BasicIdempotencyProvider:
+        class: Invertus\SaferPay\Provider\BasicIdempotencyProvider
+
+    Invertus\SaferPay\Provider\IdempotencyProviderInterface: '@Invertus\SaferPay\Provider\BasicIdempotencyProvider'
