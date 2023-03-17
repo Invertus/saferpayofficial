@@ -10,11 +10,19 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: build
-        # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
+
+      - name: Install PHP 5.6
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '5.6'
+      - name: Run composer install
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
+
+      - name: build
+        # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
+        run: |
           cp .github/.htaccess vendor/.htaccess
           rm -rf .git
           rm -rf .github
