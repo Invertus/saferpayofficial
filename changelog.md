@@ -100,3 +100,7 @@
 - ## [1.0.22] - *
 
 - BO: Fixed issue with Bancontact payment being captured twice, thus causing an error from API.
+
+- ## [1.0.23] - *
+
+- BO: Fixed release script.

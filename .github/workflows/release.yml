@@ -11,11 +11,19 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - name: Install PHP 5.6
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '5.6'
+      - name: Run composer install
+        run: |
+          composer install --no-dev --optimize-autoloader --classmap-authoritative
+          composer dump-autoload --no-dev --optimize --classmap-authoritative    
+
       - name: build
         # IF YOU EDIT THIS, DON'T FORGET TO EDIT deploy.yml
         run: |
-          composer install --no-dev --optimize-autoloader --classmap-authoritative
-          composer dump-autoload --no-dev --optimize --classmap-authoritative
           cp .github/.htaccess vendor/.htaccess
           rm -rf .git
           rm -rf .github
