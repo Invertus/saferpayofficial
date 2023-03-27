@@ -39,14 +39,18 @@ class Uninstaller extends AbstractInstaller
 
     public function uninstall()
     {
-        if (!$this->uninstallConfiguration()) {
-            $this->errors[] = $this->module->l('Failed to uninstall configuration', __CLASS__);
-            return false;
+        foreach (SaferPayConfig::getUninstallConfiguration() as $configuration) {
+            if (!Configuration::deleteByName($configuration)) {
+                $this->errors[] = $this->module->l('Failed to uninstall configuration', __CLASS__);
+                return false;
+            }
         }
 
-        if (!$this->uninstallDatabase()) {
-            $this->errors[] = $this->module->l('Failed to uninstall database tables', __CLASS__);
-            return false;
+        foreach ($this->getCommands() as $tableName => $command) {
+            if (false === \Db::getInstance()->execute($command)) {
+                $this->errors[] = sprintf($this->module->l('Failed to uninstall database table [%s]' , __CLASS__), $tableName);
+                return false;
+            }
         }
 
         if (!SaferPayConfig::isVersion17()) {
@@ -59,34 +63,20 @@ class Uninstaller extends AbstractInstaller
         return true;
     }
 
-    private function uninstallConfiguration()
+    private function getCommands()
     {
-        $configurations = SaferPayConfig::getUninstallConfiguration();
-
-        foreach ($configurations as $configuration) {
-            if (!Configuration::deleteByName($configuration)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function uninstallDatabase()
-    {
-        return Db::getInstance()->execute(
-            'DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_payment;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_logo;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_country;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_currency;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_order;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_assert;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_card_alias;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_log;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_field;
-            DROP TABLE IF EXISTS ' . _DB_PREFIX_ . 'saferpay_order_refund;
-            '
-        );
+        return [
+            \SaferPayPayment::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayPayment::$definition['table']) . '`;',
+            \SaferPayLogo::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayLogo::$definition['table']) . '`;',
+            \SaferPayCountry::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayCountry::$definition['table']) . '`;',
+            \SaferPayCurrency::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayCurrency::$definition['table']) . '`;',
+            \SaferPayOrder::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayOrder::$definition['table']) . '`;',
+            \SaferPayAssert::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayAssert::$definition['table']) . '`;',
+            \SaferPayCardAlias::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayCardAlias::$definition['table']) . '`;',
+            \SaferPayLog::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '`;',
+            \SaferPayField::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayField::$definition['table']) . '`;',
+            \SaferPayOrderRefund::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayOrderRefund::$definition['table']) . '`;',
+        ];
     }
 
     private function uninstallTabs()
