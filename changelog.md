@@ -104,3 +104,7 @@
 ## [1.0.23] - *
 
 - BO: Fixed release script.
+
+## [1.0.24] - *
+
+- BO: Fixed uninstall functionality not working for later versions of PrestaShop.
