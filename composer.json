@@ -27,7 +27,7 @@
         "symfony/config": "^3.4",
         "symfony/dependency-injection": "^3.4",
         "symfony/filesystem": "^3.4",
-        "guzzlehttp/guzzle": "^5.3.3",
+        "apimatic/unirest-php": "^2.3",
         "symfony/yaml": "^3.4"
     },
     "require-dev": {
