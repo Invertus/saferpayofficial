@@ -23,25 +23,14 @@
 
 namespace Invertus\SaferPay\Api;
 
-use Invertus\SaferPay\Factory\HttpClientFactory;
+use Configuration;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use SaferPayLog;
+use Unirest\Request;
+use Unirest\Response;
 
 class ApiRequest
 {
-    /**
-     * @var HttpClientFactory
-     */
-    private $clientFactory;
-
-    /**
-     * ApiRequest constructor.
-     * @param HttpClientFactory $clientFactory
-     */
-    public function __construct(HttpClientFactory $clientFactory)
-    {
-        $this->clientFactory = $clientFactory;
-    }
-
     /**
      * API Request Post Method.
      *
@@ -50,14 +39,16 @@ class ApiRequest
      * @return array |null
      * @throws \Exception
      */
-    public function post($url, $params = [])
+    public function post($url, $params)
     {
-        $response = null;
-
         try {
-            $response = $this->clientFactory->getClient()->post($url, $params);
+            $response = Request::post(
+                $this->getBaseUrl() . $url,
+                $this->getHeaders(),
+                $params
+            );
 
-            return $response ?: [];
+            return json_decode($response->raw_body);
         } catch (\Exception $exception) {
             $logs = new SaferPayLog();
             $logs->message = $exception->getResponse() ? $exception->getResponse()->getBody()->getContents() : 'missing response';
@@ -68,7 +59,7 @@ class ApiRequest
     }
 
     /**
-     * API Request Post Method.
+     * API Request Get Method.
      *
      * @param string $url
      * @param array $params
@@ -77,12 +68,18 @@ class ApiRequest
      */
     public function get($url, $params = [])
     {
-        $response = null;
 
         try {
-            $response = $this->clientFactory->getClient()->get($url, $params);
+            $response = Request::get(
+                $this->getBaseUrl() . $url,
+                $this->getHeaders(),
+                $params
+            );
 
-            return $response ?: [];
+            #TODO: Add validation http codes and handlers
+            //$this->isValidResponse($response);
+
+            return json_decode($response->raw_body);
         } catch (\Exception $exception) {
             $logs = new SaferPayLog();
             $logs->message = $exception->getResponse() ? $exception->getResponse()->getBody()->getContents() : 'missing response';
@@ -91,4 +88,34 @@ class ApiRequest
             throw $exception;
         }
     }
+
+    private function getHeaders()
+    {
+        $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
+        $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
+        $credentials = base64_encode("$username:$password");
+
+        $headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
+            'Saferpay-RequestId' => 'false',
+            'Authorization' => "Basic $credentials"
+        ];
+
+        return $headers;
+    }
+
+    private function getBaseUrl()
+    {
+        return SaferPayConfig::getBaseApiUrl();
+    }
+
+    private function isValidResponse(Response $response)
+    {
+        #TODO: add new exception throw
+        return 1;
+    }
+
 }
+

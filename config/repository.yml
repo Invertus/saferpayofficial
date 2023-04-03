@@ -1,4 +1,7 @@
 services:
+    _defaults:
+        public: true
+
     Invertus\SaferPay\Repository\SaferPayLogoRepository:
         class: Invertus\SaferPay\Repository\SaferPayLogoRepository
 

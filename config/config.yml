@@ -3,6 +3,9 @@ imports:
     - { resource: repository.yml }
 
 services:
+    _defaults:
+        public: true
+
     saferpay:
         class: 'SaferPayOfficial'
         factory: ['Module', 'getInstanceByName']

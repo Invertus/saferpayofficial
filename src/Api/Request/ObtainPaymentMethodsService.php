@@ -38,8 +38,6 @@ class ObtainPaymentMethodsService
 
     public function getPaymentMethods(ObtainPaymentMethodsRequest $obtainPaymentMethodsRequestDTO)
     {
-        $response = $this->apiRequest->get($obtainPaymentMethodsRequestDTO->generateRequestUrl());
-
-        return json_decode($response->getBody()->getContents());
+        return $this->apiRequest->get($obtainPaymentMethodsRequestDTO->generateRequestUrl());
     }
 }

@@ -1,4 +1,7 @@
 services:
+    _defaults:
+        public: true
+
     Invertus\SaferPay\Service\SaferPayCartService:
         class: Invertus\SaferPay\Service\SaferPayCartService
         arguments:

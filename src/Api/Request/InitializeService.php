@@ -42,6 +42,9 @@ class InitializeService
         $this->apiRequest = $apiRequest;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function initialize(InitializeRequest $initializeRequest, $isBusinessLicence)
     {
         $initializeApi = self::INITIALIZE_API_PAYMENT;
@@ -50,11 +53,8 @@ class InitializeService
         }
         $response = $this->apiRequest->post(
             $initializeApi,
-            [
-                'body' => json_encode($initializeRequest->getAsArray()),
-            ]
+            json_encode($initializeRequest->getAsArray()),
         );
-
-        return json_decode($response->getBody()->getContents());
+        return $response;
     }
 }
