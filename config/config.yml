@@ -15,13 +15,8 @@ services:
     config:
         class: Invertus\SaferPay\Config\SaferPayConfig
 
-    http.client.factory:
-        class: Invertus\SaferPay\Factory\HttpClientFactory
-
     api.request:
         class: 'Invertus\SaferPay\Api\ApiRequest'
-        arguments:
-            - '@http.client.factory'
 
     saferpay.order.repository:
         class: Invertus\SaferPay\Repository\SaferPayOrderRepository

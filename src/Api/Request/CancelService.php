@@ -28,7 +28,7 @@ use Invertus\SaferPay\DTO\Request\Cancel\CancelRequest;
 
 class CancelService
 {
-    const CANCEL_API = '/api/Payment/v1/Transaction/Cancel';
+    const CANCEL_API = 'Payment/v1/Transaction/Cancel';
 
     /**
      * @var ApiRequest
@@ -40,15 +40,14 @@ class CancelService
         $this->apiRequest = $apiRequest;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function cancel(CancelRequest $cancelRequest)
     {
-        $response = $this->apiRequest->post(
+        return $this->apiRequest->post(
             self::CANCEL_API,
-            [
-                'body' => json_encode($cancelRequest->getAsArray()),
-            ]
+             json_encode($cancelRequest->getAsArray())
         );
-
-        return json_decode($response->getBody()->getContents());
     }
 }

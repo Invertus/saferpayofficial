@@ -28,7 +28,7 @@ use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
 class RefundService
 {
-    const REFUND_API = '/api/Payment/v1/Transaction/Refund';
+    const REFUND_API = 'Payment/v1/Transaction/Refund';
 
     /**
      * @var ApiRequest
@@ -40,15 +40,14 @@ class RefundService
         $this->apiRequest = $apiRequest;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function refund(RefundRequest $refundRequest)
     {
-        $response = $this->apiRequest->post(
+        return $this->apiRequest->post(
             self::REFUND_API,
-            [
-                'body' => json_encode($refundRequest->getAsArray()),
-            ]
+             json_encode($refundRequest->getAsArray())
         );
-
-        return json_decode($response->getBody()->getContents());
     }
 }

@@ -72,18 +72,13 @@ class AuthorizationService
     public function authorize(AuthorizationRequest $authorizationRequest)
     {
         try {
-            $response = $this->apiRequest->post(
+            return $this->apiRequest->post(
                 self::AUTHORIZE_API,
-                [
-                    'body' => json_encode($authorizationRequest->getAsArray()),
-                ]
+                json_encode($authorizationRequest->getAsArray())
             );
         } catch (Exception $e) {
             throw new SaferPayApiException('Authorize API failed', SaferPayApiException::AUTHORIZE);
         }
-        $responseBody =  json_decode($response->getBody()->getContents());
-
-        return $responseBody;
     }
 
     /**

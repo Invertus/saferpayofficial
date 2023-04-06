@@ -65,29 +65,27 @@ class AssertService
      * @param AssertRequest $assertRequest
      * @param int $saferPayOrderId
      *
-     * @return AssertBody
+     * @return array|null
      * @throws \Exception
      */
     public function assert(AssertRequest $assertRequest, $saferPayOrderId)
     {
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+
         $assertApi = self::ASSERT_API_PAYMENT;
+
         if ($saferPayOrder->is_transaction) {
             $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
         try {
-            $response = $this->apiRequest->post(
+            return $this->apiRequest->post(
                 $assertApi,
-                [
-                    'body' => json_encode($assertRequest->getAsArray()),
-                ]
+                json_encode($assertRequest->getAsArray())
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new SaferPayApiException('Assert API failed', SaferPayApiException::ASSERT);
         }
-
-        return json_decode($response->getBody()->getContents());
     }
 
     /**

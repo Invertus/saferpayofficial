@@ -66,24 +66,21 @@ class AssertRefundService
     /**
      * @param AssertRefundRequest $assertRefundRequest
      *
-     * @return AssertBody
+     * @return array |null
      * @throws \Exception
      */
     public function assertRefund(AssertRefundRequest $assertRefundRequest)
     {
         $assertApi = self::ASSERT_REFUND_API_TRANSACTION;
+
         try {
-            $response = $this->apiRequest->post(
+            return $this->apiRequest->post(
                 $assertApi,
-                [
-                    'body' => json_encode($assertRefundRequest->getAsArray()),
-                ]
+                json_encode($assertRefundRequest->getAsArray())
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new SaferPayApiException('Assert Refund API failed', SaferPayApiException::ASSERT);
         }
-
-        return json_decode($response->getBody()->getContents());
     }
 
     /**
@@ -93,8 +90,6 @@ class AssertRefundService
      */
     public function createObjectsFromAssertRefundResponse($responseBody)
     {
-        $assertBody = $this->assertRefundResponseObjectCreator->createAssertRefundObject($responseBody);
-
-        return $assertBody;
+        return $this->assertRefundResponseObjectCreator->createAssertRefundObject($responseBody);
     }
 }
