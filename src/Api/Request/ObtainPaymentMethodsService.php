@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
+use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
 
@@ -36,6 +37,9 @@ class ObtainPaymentMethodsService
         $this->apiRequest = $apiRequest;
     }
 
+    /**
+     * @throws Exception
+     */
     public function getPaymentMethods(ObtainPaymentMethodsRequest $obtainPaymentMethodsRequestDTO)
     {
         return $this->apiRequest->get($obtainPaymentMethodsRequestDTO->generateRequestUrl());

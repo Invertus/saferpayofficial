@@ -24,13 +24,10 @@
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
 use Invertus\SaferPay\Api\Request\AssertRefundService;
-use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator;
-use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
-use Invertus\SaferPay\Service\SaferPayOrderStatusService;
-use Order;
+use Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator;
 use SaferPayOrder;
 
 class SaferPayTransactionRefundAssertion
@@ -51,20 +48,20 @@ class SaferPayTransactionRefundAssertion
     private $assertionRefundService;
 
     /**
-     * @var SaferPayOrderStatusService
+     * @var AssertRefundResponseObjectCreator
      */
-    private $orderStatusService;
+    private $assertRefundResponseObjectCreator;
 
     public function __construct(
         AssertRefundRequestObjectCreator $assertionRefundService,
         SaferPayOrderRepository $orderRepository,
         AssertRefundService $assertRefundService,
-        SaferPayOrderStatusService $orderStatusService
+        AssertRefundRequestObjectCreator $assertRefundRequestObjectCreator
     ) {
         $this->assertRefundRequestCreator = $assertionRefundService;
         $this->orderRepository = $orderRepository;
         $this->assertionRefundService = $assertRefundService;
-        $this->orderStatusService = $orderStatusService;
+        $this->assertRefundResponseObjectCreator = $assertRefundRequestObjectCreator;
     }
 
     /**
@@ -78,11 +75,9 @@ class SaferPayTransactionRefundAssertion
         $assertRequest = $this->assertRefundRequestCreator->create($transactionId);
         $assertResponse = $this->assertionRefundService->assertRefund($assertRequest);
 
-        $assertBody = $this->assertionRefundService->createObjectsFromAssertRefundResponse(
+        return $this->assertRefundResponseObjectCreator->createAssertRefundObject(
             $assertResponse
         );
-
-        return $assertBody;
     }
 
     /**
