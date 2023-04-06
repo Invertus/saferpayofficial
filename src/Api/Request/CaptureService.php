@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
+use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Capture\CaptureRequest;
 
@@ -41,13 +42,13 @@ class CaptureService
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function capture(CaptureRequest $captureRequest)
     {
         return $this->apiRequest->post(
             self::CAPTURE_API,
-            json_encode($captureRequest->getAsArray())
+            $captureRequest->getAsArray()
         );
     }
 }

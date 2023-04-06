@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
+use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
@@ -41,13 +42,13 @@ class RefundService
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function refund(RefundRequest $refundRequest)
     {
         return $this->apiRequest->post(
             self::REFUND_API,
-             json_encode($refundRequest->getAsArray())
+             $refundRequest->getAsArray()
         );
     }
 }

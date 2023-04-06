@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
+use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 
@@ -43,7 +44,7 @@ class InitializeService
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function initialize(InitializeRequest $initializeRequest, $isBusinessLicence)
     {
@@ -53,7 +54,7 @@ class InitializeService
         }
         return $this->apiRequest->post(
             $initializeApi,
-            json_encode($initializeRequest->getAsArray())
+            $initializeRequest->getAsArray()
         );
     }
 }

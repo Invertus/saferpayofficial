@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
+use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
@@ -33,7 +34,6 @@ use Invertus\SaferPay\EntityBuilder\SaferPayAssertRefundBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
-use PHPUnit\Exception;
 use SaferPayOrder;
 
 class AssertRefundService
@@ -44,10 +44,7 @@ class AssertRefundService
      * @var ApiRequest
      */
     private $apiRequest;
-    /**
-     * @var AssertRefundResponseObjectCreator
-     */
-    private $assertRefundResponseObjectCreator;
+
     /**
      * @var SaferPayAssertRefundBuilder
      */
@@ -67,7 +64,7 @@ class AssertRefundService
      * @param AssertRefundRequest $assertRefundRequest
      *
      * @return array |null
-     * @throws \Exception
+     * @throws Exception
      */
     public function assertRefund(AssertRefundRequest $assertRefundRequest)
     {
@@ -76,20 +73,10 @@ class AssertRefundService
         try {
             return $this->apiRequest->post(
                 $assertApi,
-                json_encode($assertRefundRequest->getAsArray())
+                $assertRefundRequest->getAsArray()
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new SaferPayApiException('Assert Refund API failed', SaferPayApiException::ASSERT);
         }
-    }
-
-    /**
-     * @param object $responseBody
-     *
-     * @return AssertRefundBody
-     */
-    public function createObjectsFromAssertRefundResponse($responseBody)
-    {
-        return $this->assertRefundResponseObjectCreator->createAssertRefundObject($responseBody);
     }
 }

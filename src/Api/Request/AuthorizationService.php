@@ -74,7 +74,7 @@ class AuthorizationService
         try {
             return $this->apiRequest->post(
                 self::AUTHORIZE_API,
-                json_encode($authorizationRequest->getAsArray())
+                $authorizationRequest->getAsArray()
             );
         } catch (Exception $e) {
             throw new SaferPayApiException('Authorize API failed', SaferPayApiException::AUTHORIZE);
@@ -88,6 +88,7 @@ class AuthorizationService
      * @param $selectedCardOption
      *
      * @return AssertBody
+     * @throws Exception
      */
     public function createObjectsFromAuthorizationResponse(
         $responseBody,

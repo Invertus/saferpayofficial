@@ -23,13 +23,13 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
+use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
-use PHPUnit\Exception;
 use SaferPayOrder;
 
 class AssertService
@@ -81,9 +81,9 @@ class AssertService
         try {
             return $this->apiRequest->post(
                 $assertApi,
-                json_encode($assertRequest->getAsArray())
+                $assertRequest->getAsArray()
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new SaferPayApiException('Assert API failed', SaferPayApiException::ASSERT);
         }
     }
@@ -93,6 +93,7 @@ class AssertService
      * @param int $saferPayOrderId
      *
      * @return AssertBody
+     * @throws Exception
      */
     public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId)
     {

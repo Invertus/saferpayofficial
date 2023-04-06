@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
+use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Cancel\CancelRequest;
 
@@ -41,13 +42,13 @@ class CancelService
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function cancel(CancelRequest $cancelRequest)
     {
         return $this->apiRequest->post(
             self::CANCEL_API,
-             json_encode($cancelRequest->getAsArray())
+             $cancelRequest->getAsArray()
         );
     }
 }

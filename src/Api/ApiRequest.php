@@ -24,6 +24,7 @@
 namespace Invertus\SaferPay\Api;
 
 use Configuration;
+use Exception;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use SaferPayLog;
@@ -36,25 +37,25 @@ class ApiRequest
      * API Request Post Method.
      *
      * @param string $url
-     * @param string |null $params
+     * @param array $params
      * @return array |null
-     * @throws \Exception
+     * @throws Exception
      */
-    public function post($url, $params = null)
+    public function post($url, $params = [])
     {
         try {
             $response = Request::post(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
-                $params
+                json_encode($params)
             );
 
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $logs = new SaferPayLog();
-            $logs->message = $exception->getMessage() ? : "missing response";
+            $logs->message = $exception->getMessage() ?: "missing response";
             $logs->payload = json_encode($params);
             $logs->add();
             throw $exception;
@@ -65,25 +66,25 @@ class ApiRequest
      * API Request Get Method.
      *
      * @param string $url
-     * @param string |null $params
+     * @param array $params
      * @return array |null
-     * @throws \Exception
+     * @throws Exception
      */
-    public function get($url, $params = null)
+    public function get($url, $params = [])
     {
         try {
             $response = Request::get(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
-                $params
+                json_encode($params)
             );
 
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $logs = new SaferPayLog();
-            $logs->message = $exception->getMessage() ? : "missing response";
+            $logs->message = $exception->getMessage() ?: "missing response";
             $logs->payload = json_encode($params);
             $logs->add();
             throw $exception;
