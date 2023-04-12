@@ -52,8 +52,8 @@ class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferP
         $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
         /** @var SaferPayOrderRepository $orderRepo */
         /** @var CartDuplicationService $cartDuplicationService */
-        $orderRepo = $this->module->getModuleContainer()->get('saferpay.order.repository');
-        $cartDuplicationService = $this->module->getModuleContainer()->get(CartDuplicationService::class);
+        $orderRepo = $this->module->getService('saferpay.order.repository');
+        $cartDuplicationService = $this->module->getService(CartDuplicationService::class);
 
         $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);

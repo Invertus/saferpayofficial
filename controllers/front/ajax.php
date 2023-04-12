@@ -45,14 +45,14 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             }
 
             /** @var SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->module->getModuleContainer()->get(SaferPayCardAliasRepository::class);
+            $cardAliasRep = $this->module->getService(SaferPayCardAliasRepository::class);
 
             $selectedCard = Tools::getValue('selectedCard');
 
             $alias = $cardAliasRep->getSavedCardAliasFromId($selectedCard);
 
             /** @var SaferPayInitialize $initializeService */
-            $initializeService = $this->module->getModuleContainer()->get(SaferPayInitialize::class);
+            $initializeService = $this->module->getService(SaferPayInitialize::class);
             $initializeBody = $initializeService->initialize(
                 Tools::getValue('paymentMethod'),
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
@@ -105,7 +105,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
     private function createSaferPayOrder($initializeBody)
     {
         /** @var Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getModuleContainer()->get(SaferPayOrderBuilder::class);
+        $saferPayOrderBuilder = $this->module->getService(SaferPayOrderBuilder::class);
         $saferPayOrderBuilder->create(
             $initializeBody,
             $this->context->cart,

@@ -23,24 +23,23 @@
 
 namespace Invertus\SaferPay\Presentation\Loader;
 
-use FrontController;
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use Media;
 use OrderControllerCore;
-use SaferPayOfficial;
-use Context;
 
 class PaymentFormAssetLoader
 {
-    /** @var SaferPayOfficial */
+    /** @var ModuleFactory */
     private $module;
-    /** @var Context */
+    /** @var LegacyContext */
     private $context;
 
-    public function __construct(SaferPayOfficial $module, Context $context)
+    public function __construct(ModuleFactory $module, LegacyContext $context)
     {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->context = $context;
     }
 
@@ -51,7 +50,7 @@ class PaymentFormAssetLoader
         }
 
         Media::addJsDef([
-            'saferpay_official_ajax_url' => $this->context->link->getModuleLink('saferpayofficial', ControllerName::AJAX),
+            'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink($this->module->name, ControllerName::AJAX),
             'saferpay_payment_types' => [
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
                 'iframe' => PaymentType::IFRAME,

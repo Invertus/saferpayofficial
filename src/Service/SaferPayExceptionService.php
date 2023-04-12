@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Service;
 
 use Exception;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use SaferPayOfficial;
 
 class SaferPayExceptionService
@@ -32,13 +33,13 @@ class SaferPayExceptionService
     const SHORT_CLASS_NAME = 'SaferPayExceptionService';
 
     /**
-     * @var SaferPayOfficial
+     * @var ModuleFactory
      */
     private $module;
 
-    public function __construct(SaferPayOfficial $module)
+    public function __construct(ModuleFactory $module)
     {
-        $this->module = $module;
+        $this->module = $module->getModule();
     }
 
     public function getErrorMessages()

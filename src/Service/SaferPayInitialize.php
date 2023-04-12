@@ -23,24 +23,24 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Context;
 use Exception;
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\InitializeService;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
 use Order;
-use SaferPayOfficial;
 
 class SaferPayInitialize
 {
     /**
-     * @var \SaferPayOfficial
+     * @var ModuleFactory
      */
     private $module;
 
     /**
-     * @var Context
+     * @var LegacyContext
      */
     private $context;
 
@@ -55,13 +55,13 @@ class SaferPayInitialize
     private $requestObjectCreator;
 
     public function __construct(
-        SaferPayOfficial $module,
-        Context $context,
+        ModuleFactory $module,
+        LegacyContext $context,
         InitializeService $initializeService,
         InitializeRequestObjectCreator $requestObjectCreator
     ) {
-        $this->module = $module;
-        $this->context = $context;
+        $this->module = $module->getModule();
+        $this->context = $context->getContext();
         $this->initializeService = $initializeService;
         $this->requestObjectCreator = $requestObjectCreator;
     }

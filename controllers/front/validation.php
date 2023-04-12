@@ -95,13 +95,13 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         }
 
         /** @var SaferPayInitialize $initializeService */
-        $initializeService = $this->module->getModuleContainer()->get(SaferPayInitialize::class);
+        $initializeService = $this->module->getService(SaferPayInitialize::class);
         try {
             $isBusinessLicence = Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
             $initializeBody = $initializeService->initialize($paymentMethod, $isBusinessLicence);
         } catch (SaferPayApiException $e) {
             /** @var SaferPayExceptionService $exceptionService */
-            $exceptionService = $this->module->getModuleContainer()->get(SaferPayExceptionService::class);
+            $exceptionService = $this->module->getService(SaferPayExceptionService::class);
             $this->errors[] = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
             $redirectLink = $this->context->link->getModuleLink(
                 $this->module->name,
@@ -117,8 +117,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $this->redirectWithNotifications($redirectLink);
         }
         /** @var Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getModuleContainer()
-            ->get(\Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder::class);
+        $saferPayOrderBuilder = $this->module->getService(\Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder::class);
         $saferPayOrderBuilder->create(
             $initializeBody,
             $this->context->cart,
