@@ -50,6 +50,7 @@ class SaferPayOfficial extends PaymentModule
         parent::__construct($name);
 
         $this->autoload();
+        $this->loadConfig();
     }
 
     public function getContent()
