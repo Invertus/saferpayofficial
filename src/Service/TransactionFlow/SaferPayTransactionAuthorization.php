@@ -23,7 +23,7 @@
 
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
-use Context;
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\AuthorizationService;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -55,7 +55,7 @@ class SaferPayTransactionAuthorization
     private $orderStatusService;
 
     /**
-     * @var Context
+     * @var LegacyContext
      */
     private $context;
 
@@ -64,7 +64,7 @@ class SaferPayTransactionAuthorization
         SaferPayOrderRepository $orderRepository,
         AuthorizationService $authorizationService,
         SaferPayOrderStatusService $orderStatusService,
-        Context $context
+        LegacyContext $context
     ) {
         $this->authRequestCreator = $authRequestCreator;
         $this->orderRepository = $orderRepository;

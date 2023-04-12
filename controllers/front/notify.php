@@ -56,7 +56,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $order = new Order($orderId);
 
             /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
 
             $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
@@ -109,7 +109,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     private function assertTransaction($cartId)
     {
         /** @var SaferPayTransactionAssertion $transactionAssert */
-        $transactionAssert = $this->module->getModuleContainer()->get(SaferPayTransactionAssertion::class);
+        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
         $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId));
 
         return $assertionResponse;

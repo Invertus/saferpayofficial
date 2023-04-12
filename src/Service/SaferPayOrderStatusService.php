@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Cart;
-use Context;
 use Customer;
 use Exception;
 use Invertus\SaferPay\Adapter\LegacyContext;
@@ -35,6 +34,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\PendingNotification;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\CancelRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\CaptureRequestObjectCreator;
@@ -80,7 +80,7 @@ class SaferPayOrderStatusService
     private $context;
 
     /**
-     * @var \SaferPayOfficial
+     * @var ModuleFactory
      */
     private $module;
 
@@ -93,7 +93,7 @@ class SaferPayOrderStatusService
         RefundService $refundService,
         RefundRequestObjectCreator $refundRequestObjectCreator,
         LegacyContext $context,
-        \SaferPayOfficial $module
+        ModuleFactory $module
     ) {
         $this->captureService = $captureService;
         $this->captureRequestObjectCreator = $captureRequestObjectCreator;
@@ -103,7 +103,7 @@ class SaferPayOrderStatusService
         $this->refundService = $refundService;
         $this->refundRequestObjectCreator = $refundRequestObjectCreator;
         $this->context = $context;
-        $this->module = $module;
+        $this->module = $module->getModule();
     }
 
     /**

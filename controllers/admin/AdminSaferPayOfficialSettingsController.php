@@ -51,7 +51,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $isCreditCardSaveEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
         if (!$isCreditCardSaveEnabled) {
             /** @var SaferPaySavedCreditCardRepository $cardRepo */
-            $cardRepo = $this->module->getModuleContainer()->get(SaferPaySavedCreditCardRepository::class);
+            $cardRepo = $this->module->getService(SaferPaySavedCreditCardRepository::class);
             $cardRepo->deleteAllSavedCreditCards();
         }
     }
