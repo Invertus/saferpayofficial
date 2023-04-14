@@ -32,16 +32,11 @@ class SaferPayOfficial extends PaymentModule
 
     const DISABLE_CACHE = true;
 
-    /**
-     * Symfony DI Container
-     **/
-    private $moduleContainer;
-
     public function __construct($name = null)
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.0.24';
+        $this->version = '1.1.0';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
