@@ -41,6 +41,7 @@ use Invertus\SaferPay\Service\Request\CaptureRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\RefundRequestObjectCreator;
 use Order;
 use SaferPayAssert;
+use SaferPayOfficial;
 use SaferPayOrder;
 
 class SaferPayOrderStatusService
@@ -80,7 +81,7 @@ class SaferPayOrderStatusService
     private $context;
 
     /**
-     * @var ModuleFactory
+     * @var SaferPayOfficial
      */
     private $module;
 

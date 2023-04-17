@@ -33,7 +33,7 @@ class SaferPayExceptionService
     const SHORT_CLASS_NAME = 'SaferPayExceptionService';
 
     /**
-     * @var ModuleFactory
+     * @var SaferPayOfficial
      */
     private $module;
 

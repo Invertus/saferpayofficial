@@ -11,12 +11,6 @@ class ModuleFactory
      */
     public function getModule()
     {
-        $response = Module::getInstanceByName('saferpayofficial');
-
-        if (!$response) {
-            return null;
-        }
-
-        return $response;
+        return Module::getInstanceByName('saferpayofficial');
     }
 }

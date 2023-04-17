@@ -52,7 +52,7 @@ use Tax;
 class RequestObjectCreator
 {
     /**
-     * @var ModuleFactory
+     * @var SaferPayOfficial
      */
     protected $module;
 

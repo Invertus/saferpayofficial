@@ -39,18 +39,12 @@ class PaymentRedirectionProvider
      */
     private $context;
 
-    /**
-     * @var ModuleFactory
-     */
-    private $module;
-
     /** @var PaymentTypeProvider */
     private $paymentTypeProvider;
 
-    public function __construct(LegacyContext $context, ModuleFactory $moduleFactory, PaymentTypeProvider $paymentTypeProvider)
+    public function __construct(LegacyContext $context, PaymentTypeProvider $paymentTypeProvider)
     {
         $this->context = $context;
-        $this->module = $moduleFactory->getModule();
         $this->paymentTypeProvider = $paymentTypeProvider;
     }
 
@@ -65,7 +59,7 @@ class PaymentRedirectionProvider
 
         if ($paymentType === PaymentType::HOSTED_IFRAME) {
             return $this->context->getLink()->getModuleLink(
-                $this->module->name,
+                'saferpayofficial',
                 ControllerName::HOSTED_IFRAME,
                 ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
                 true
@@ -74,7 +68,7 @@ class PaymentRedirectionProvider
 
         if ($paymentType === PaymentType::IFRAME) {
             return $this->context->getLink()->getModuleLink(
-                $this->module->name,
+                'saferpayofficial',
                 ControllerName::IFRAME,
                 ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
                 true
@@ -82,7 +76,7 @@ class PaymentRedirectionProvider
         }
 
         return $this->context->getLink()->getModuleLink(
-            $this->module->name,
+            'saferpayofficial',
             ControllerName::VALIDATION,
             ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => false],
             true

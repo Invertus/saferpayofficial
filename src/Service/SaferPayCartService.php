@@ -31,7 +31,7 @@ use SaferPayOfficial;
 class SaferPayCartService
 {
     /**
-     * @var ModuleFactory
+     * @var SaferPayOfficial
      */
     private $module;
 

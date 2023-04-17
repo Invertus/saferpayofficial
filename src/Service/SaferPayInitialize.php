@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Service;
 
+use Context;
 use Exception;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\InitializeService;
@@ -31,16 +32,17 @@ use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
 use Order;
+use SaferPayOfficial;
 
 class SaferPayInitialize
 {
     /**
-     * @var ModuleFactory
+     * @var SaferPayOfficial
      */
     private $module;
 
     /**
-     * @var LegacyContext
+     * @var Context
      */
     private $context;
 
