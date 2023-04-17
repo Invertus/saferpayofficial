@@ -42,6 +42,7 @@ use Invertus\SaferPay\DTO\Request\ReturnUrls;
 use Invertus\SaferPay\DTO\Request\SaferPayNotification;
 use Invertus\SaferPay\DTO\Response\Amount;
 use Invertus\SaferPay\Enum\GenderEnum;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;
 use Invertus\SaferPay\Utility\PriceUtility;
@@ -70,12 +71,12 @@ class RequestObjectCreator
     private $idempotencyProvider;
 
     public function __construct(
-        SaferPayOfficial $module,
+        ModuleFactory $module,
         PriceUtility $priceUtility,
         OrderRepositoryInterface $orderRepository,
         IdempotencyProviderInterface $idempotencyProvider
     ) {
-        $this->module = $module;
+        $this->module = $module->getModule();
         $this->priceUtility = $priceUtility;
         $this->orderRepository = $orderRepository;
         $this->idempotencyProvider = $idempotencyProvider;

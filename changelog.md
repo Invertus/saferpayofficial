@@ -108,3 +108,8 @@
 ## [1.0.24] - *
 
 - BO: Fixed uninstall functionality not working for later versions of PrestaShop.
+
+## [1.1.0] - *
+
+- BO : Module compatible with PS 1.6.* - 8.0.*
+- FO : Module compatible with PS 1.6.* - 8.0.*

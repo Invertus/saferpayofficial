@@ -23,13 +23,12 @@
 
 namespace Invertus\SaferPay\Builder;
 
+use Invertus\SaferPay\Factory\ModuleFactory;
 use SaferPayOfficial;
 
 class OrderConfirmationMessageTemplate
 {
     /**
-     * Module Main Class Variable Declaration.
-     *
      * @var SaferPayOfficial
      */
     private $module;
@@ -58,11 +57,11 @@ class OrderConfirmationMessageTemplate
     /**
      * TagScriptTemplate constructor.
      *
-     * @param SaferPayOfficial $module
+     * @param ModuleFactory $module
      */
-    public function __construct(SaferPayOfficial $module)
+    public function __construct(ModuleFactory $module)
     {
-        $this->module = $module;
+        $this->module = $module->getModule();
     }
 
     /**

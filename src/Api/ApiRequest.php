@@ -23,72 +23,99 @@
 
 namespace Invertus\SaferPay\Api;
 
-use Invertus\SaferPay\Factory\HttpClientFactory;
+use Configuration;
+use Exception;
+use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use SaferPayLog;
+use Unirest\Request;
+use Unirest\Response;
 
 class ApiRequest
 {
     /**
-     * @var HttpClientFactory
-     */
-    private $clientFactory;
-
-    /**
-     * ApiRequest constructor.
-     * @param HttpClientFactory $clientFactory
-     */
-    public function __construct(HttpClientFactory $clientFactory)
-    {
-        $this->clientFactory = $clientFactory;
-    }
-
-    /**
      * API Request Post Method.
      *
      * @param string $url
      * @param array $params
      * @return array |null
-     * @throws \Exception
+     * @throws Exception
      */
     public function post($url, $params = [])
     {
-        $response = null;
-
         try {
-            $response = $this->clientFactory->getClient()->post($url, $params);
+            $response = Request::post(
+                $this->getBaseUrl() . $url,
+                $this->getHeaders(),
+                json_encode($params)
+            );
 
-            return $response ?: [];
-        } catch (\Exception $exception) {
+            $this->isValidResponse($response);
+
+            return json_decode($response->raw_body);
+        } catch (Exception $exception) {
             $logs = new SaferPayLog();
-            $logs->message = $exception->getResponse() ? $exception->getResponse()->getBody()->getContents() : 'missing response';
-            $logs->payload = $params['body'];
-            $logs->add();
-            throw $exception;
-        }
-    }
-
-    /**
-     * API Request Post Method.
-     *
-     * @param string $url
-     * @param array $params
-     * @return array |null
-     * @throws \Exception
-     */
-    public function get($url, $params = [])
-    {
-        $response = null;
-
-        try {
-            $response = $this->clientFactory->getClient()->get($url, $params);
-
-            return $response ?: [];
-        } catch (\Exception $exception) {
-            $logs = new SaferPayLog();
-            $logs->message = $exception->getResponse() ? $exception->getResponse()->getBody()->getContents() : 'missing response';
+            $logs->message = $exception->getMessage() ?: "missing response";
             $logs->payload = json_encode($params);
             $logs->add();
             throw $exception;
         }
     }
+
+    /**
+     * API Request Get Method.
+     *
+     * @param string $url
+     * @param array $params
+     * @return array |null
+     * @throws Exception
+     */
+    public function get($url, $params = [])
+    {
+        try {
+            $response = Request::get(
+                $this->getBaseUrl() . $url,
+                $this->getHeaders(),
+                json_encode($params)
+            );
+
+            $this->isValidResponse($response);
+
+            return json_decode($response->raw_body);
+        } catch (Exception $exception) {
+            $logs = new SaferPayLog();
+            $logs->message = $exception->getMessage() ?: "missing response";
+            $logs->payload = json_encode($params);
+            $logs->add();
+            throw $exception;
+        }
+    }
+
+    private function getHeaders()
+    {
+        $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
+        $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
+        $credentials = base64_encode("$username:$password");
+
+        return [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
+            'Saferpay-RequestId' => 'false',
+            'Authorization' => "Basic $credentials"
+        ];
+    }
+
+    private function getBaseUrl()
+    {
+        return SaferPayConfig::getBaseApiUrl();
+    }
+
+    private function isValidResponse(Response $response)
+    {
+        if ($response->code >= 300){
+            throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
+        }
+    }
 }
+

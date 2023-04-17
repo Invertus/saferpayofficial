@@ -32,16 +32,11 @@ class SaferPayOfficial extends PaymentModule
 
     const DISABLE_CACHE = true;
 
-    /**
-     * Symfony DI Container
-     **/
-    private $moduleContainer;
-
     public function __construct($name = null)
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.0.24';
+        $this->version = '1.1.0';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -51,7 +46,6 @@ class SaferPayOfficial extends PaymentModule
 
         $this->autoload();
         $this->loadConfig();
-        $this->compile();
     }
 
     public function getContent()
@@ -106,58 +100,28 @@ class SaferPayOfficial extends PaymentModule
     {
         require $this->getLocalPath() . 'saferpay.config.php';
     }
-
-    /**
-     * @return mixed
-     */
-    public function getModuleContainer()
-    {
-        return $this->moduleContainer;
-    }
-
     public function getService($service)
     {
-        return $this->getModuleContainer()->get($service);
-    }
+        $containerProvider = new \Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider();
 
-    private function compile()
-    {
-        $containerCache = $this->getLocalPath() . 'var/cache/container.php';
-        $containerConfigCache = new \Symfony\Component\Config\ConfigCache($containerCache, self::DISABLE_CACHE);
-        $containerClass = get_class($this) . 'Container';
-        if (!$containerConfigCache->isFresh()) {
-            $containerBuilder = new \Symfony\Component\DependencyInjection\ContainerBuilder();
-            $locator = new \Symfony\Component\Config\FileLocator($this->getLocalPath() . 'config');
-            $loader = new \Symfony\Component\DependencyInjection\Loader\YamlFileLoader($containerBuilder, $locator);
-            $loader->load('config.yml');
-            $containerBuilder->compile();
-            $dumper = new \Symfony\Component\DependencyInjection\Dumper\PhpDumper($containerBuilder);
-            $containerConfigCache->write(
-                $dumper->dump(['class' => $containerClass]),
-                $containerBuilder->getResources()
-            );
-        }
-        require_once $containerCache;
-        $this->moduleContainer = new $containerClass();
+        return $containerProvider->getService($service);
     }
 
     public function hookPaymentOptions($params)
     {
         /** @var Invertus\SaferPay\Service\SaferPayCartService $assertService */
-        $cartService = $this->getModuleContainer()->get(\Invertus\SaferPay\Service\SaferPayCartService::class);
+        $cartService = $this->getService(\Invertus\SaferPay\Service\SaferPayCartService::class);
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
             return;
         }
 
         /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
-        $paymentTypeProvider = $this->getModuleContainer()->get(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
+        $paymentTypeProvider = $this->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
 
         /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $obtainPaymentMethods */
-        $obtainPaymentMethods = $this->getModuleContainer()
-            ->get(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
+        $obtainPaymentMethods = $this->getService(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
         /** @var \Invertus\SaferPay\Repository\SaferPayPaymentRepository $paymentRepository */
-        $paymentRepository = $this->getModuleContainer()
-            ->get(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
+        $paymentRepository = $this->getService(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
 
         try {
             $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
@@ -168,7 +132,7 @@ class SaferPayOfficial extends PaymentModule
         $paymentOptions = [];
 
         /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
-        $paymentRestrictionValidation = $this->getModuleContainer()->get(
+        $paymentRestrictionValidation = $this->getService(
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
@@ -193,7 +157,7 @@ class SaferPayOfficial extends PaymentModule
                 );
 
             /** @var \Invertus\SaferPay\Repository\SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->getModuleContainer()->get(
+            $cardAliasRep = $this->getService(
                 \Invertus\SaferPay\Repository\SaferPayCardAliasRepository::class
             );
             $isCreditCardSavingEnabled = Configuration::get(
@@ -206,16 +170,14 @@ class SaferPayOfficial extends PaymentModule
             }
 
             /** @var \Invertus\SaferPay\Provider\PaymentRedirectionProvider $paymentRedirectionProvider */
-            $paymentRedirectionProvider = $this->getModuleContainer()
-                ->get(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
+            $paymentRedirectionProvider = $this->getService(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
 
             $newOption = new \PrestaShop\PrestaShop\Core\Payment\PaymentOption();
-            $translator = $this->getModuleContainer()->get(
+            $translator = $this->getService(
                 \Invertus\SaferPay\Service\LegacyTranslator::class
             );
             /** @var \Invertus\SaferPay\Service\SaferPayPaymentNotation $saferPayPaymentNotation */
-            $saferPayPaymentNotation = $this->getModuleContainer()
-                ->get(\Invertus\SaferPay\Service\SaferPayPaymentNotation::class);
+            $saferPayPaymentNotation = $this->getService(\Invertus\SaferPay\Service\SaferPayPaymentNotation::class);
             $paymentMethodName = $saferPayPaymentNotation->getForDisplay($paymentMethod['paymentMethod']);
 
             $inputs = [
@@ -319,8 +281,7 @@ class SaferPayOfficial extends PaymentModule
             }
 
             /** @var \Invertus\SaferPay\Service\SaferPayErrorDisplayService $errorDisplayService */
-            $errorDisplayService = $this->getModuleContainer()
-                ->get(\Invertus\SaferPay\Service\SaferPayErrorDisplayService::class);
+            $errorDisplayService = $this->getService(\Invertus\SaferPay\Service\SaferPayErrorDisplayService::class);
             $errorDisplayService->showCookieError('saferpay_payment_canceled_error');
         }
     }
@@ -411,18 +372,16 @@ class SaferPayOfficial extends PaymentModule
         }
 
         /** @var \Invertus\SaferPay\Service\SaferPayCartService $assertService */
-        $cartService = $this->getModuleContainer()->get(\Invertus\SaferPay\Service\SaferPayCartService::class);
+        $cartService = $this->getService(\Invertus\SaferPay\Service\SaferPayCartService::class);
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
             return;
         }
 
         /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
-        $paymentRepository = $this->getModuleContainer()
-            ->get(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
+        $paymentRepository = $this->getService(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
 
         /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $obtainPaymentMethods */
-        $obtainPaymentMethods = $this->getModuleContainer()
-            ->get(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
+        $obtainPaymentMethods = $this->getService(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
         try {
             $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
         } catch (\Invertus\SaferPay\Exception\Api\SaferPayApiException $exception) {
@@ -431,7 +390,7 @@ class SaferPayOfficial extends PaymentModule
 
         $paymentOptions = [];
 
-        $paymentRestrictionValidation = $this->getModuleContainer()->get(
+        $paymentRestrictionValidation = $this->getService(
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
@@ -452,7 +411,7 @@ class SaferPayOfficial extends PaymentModule
                 );
 
             /** @var \Invertus\SaferPay\Repository\SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->getModuleContainer()->get(
+            $cardAliasRep = $this->getService(
                 \Invertus\SaferPay\Repository\SaferPayCardAliasRepository::class
             );
 
@@ -485,8 +444,7 @@ class SaferPayOfficial extends PaymentModule
             }
 
             /** @var \Invertus\SaferPay\Provider\PaymentRedirectionProvider $paymentRedirectionProvider */
-            $paymentRedirectionProvider = $this->getModuleContainer()
-                ->get(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
+            $paymentRedirectionProvider = $this->getService(\Invertus\SaferPay\Provider\PaymentRedirectionProvider::class);
 
             /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
             $paymentTypeProvider = $this->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
@@ -519,7 +477,7 @@ class SaferPayOfficial extends PaymentModule
         }
 
         /** @var \Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate $OrderConfirmationMessageTemplate */
-        $OrderConfirmationMessageTemplate = $this->getModuleContainer()->get(
+        $OrderConfirmationMessageTemplate = $this->getService(
             \Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate::class
         );
         $OrderConfirmationMessageTemplate->setSmarty($this->context->smarty);
@@ -603,7 +561,7 @@ class SaferPayOfficial extends PaymentModule
         $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
         if ($orderStatus->id === $saferPayAuthorizedStatus) {
             /** @var \Invertus\SaferPay\Service\SaferPayMailService $mailService */
-            $mailService = $this->getModuleContainer()->get(
+            $mailService = $this->getService(
                 \Invertus\SaferPay\Service\SaferPayMailService::class
             );
             $mailService->sendNewOrderMail($order, $orderStatus->id);
@@ -621,7 +579,7 @@ class SaferPayOfficial extends PaymentModule
             $order = new Order($orderId);
 
             /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $orderRepo */
-            $orderRepo = $this->getModuleContainer()->get(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+            $orderRepo = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
             $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
             $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
@@ -666,7 +624,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $orderId = $params['id_order'];
         $order = new Order($orderId);
-        $orderRepo = $this->getModuleContainer()->get(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+        $orderRepo = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
         $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 

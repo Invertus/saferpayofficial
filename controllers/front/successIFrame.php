@@ -59,10 +59,10 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         }
 
         /** @var SaferPayTransactionAuthorization $saferPayTransactionAuthorization */
-        $saferPayTransactionAuthorization = $this->module->getModuleContainer()->get(SaferPayTransactionAuthorization::class);
+        $saferPayTransactionAuthorization = $this->module->getService(SaferPayTransactionAuthorization::class);
 
         /** @var SaferPayOrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getModuleContainer()->get(SaferPayOrderStatusService::class);
+        $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
 
         $order = new Order($orderId);
 

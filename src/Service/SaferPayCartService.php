@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Service;
 
 use Cart;
 use Currency;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use SaferPayOfficial;
 
 class SaferPayCartService
@@ -34,9 +35,9 @@ class SaferPayCartService
      */
     private $module;
 
-    public function __construct(SaferPayOfficial $module)
+    public function __construct(ModuleFactory $moduleFactory)
     {
-        $this->module = $module;
+        $this->module = $moduleFactory->getModule();
     }
 
     public function isCurrencyAvailable(Cart $cart)

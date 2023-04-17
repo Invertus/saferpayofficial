@@ -51,7 +51,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
     {
         $customerId = $this->context->customer->id;
         /** @var SaferPayCardAliasRepository $cardAliasRep */
-        $cardAliasRep = $this->module->getModuleContainer()->get(SaferPayCardAliasRepository::class);
+        $cardAliasRep = $this->module->getService(SaferPayCardAliasRepository::class);
         $savedCustomerCards = $cardAliasRep->getSavedCardsByCustomerId($customerId);
         $rows = [];
         foreach ($savedCustomerCards as $savedCard) {

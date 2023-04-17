@@ -99,14 +99,14 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
         }
         /** @var SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getModuleContainer()->get(SaferPayOrderBuilder::class);
+        $saferPayOrderBuilder = $this->module->getService(SaferPayOrderBuilder::class);
         $isBusinessLicence = Tools::getValue(\Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE);
 
         /** @var SaferPayInitialize $initializeService */
-        $initializeService = $this->module->getModuleContainer()->get(SaferPayInitialize::class);
+        $initializeService = $this->module->getService(SaferPayInitialize::class);
         try {
             /** @var SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->module->getModuleContainer()->get(SaferPayCardAliasRepository::class);
+            $cardAliasRep = $this->module->getService(SaferPayCardAliasRepository::class);
             $alias = $cardAliasRep->getSavedCardAliasFromId($selectedCard);
             $response = $initializeService->initialize($paymentMethod, $isBusinessLicence, $selectedCard, $alias);
         } catch (Exception $e) {

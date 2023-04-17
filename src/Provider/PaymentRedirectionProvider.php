@@ -25,30 +25,26 @@ namespace Invertus\SaferPay\Provider;
 
 use Configuration;
 use Context;
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 
 class PaymentRedirectionProvider
 {
     /**
-     * @var Context
+     * @var LegacyContext
      */
     private $context;
-
-    /**
-     * @var string
-     */
-    private $moduleName;
 
     /** @var PaymentTypeProvider */
     private $paymentTypeProvider;
 
-    public function __construct(Context $context, $moduleName, PaymentTypeProvider $paymentTypeProvider)
+    public function __construct(LegacyContext $context, PaymentTypeProvider $paymentTypeProvider)
     {
         $this->context = $context;
-        $this->moduleName = $moduleName;
         $this->paymentTypeProvider = $paymentTypeProvider;
     }
 
@@ -62,8 +58,8 @@ class PaymentRedirectionProvider
         $paymentType = $this->paymentTypeProvider->get($paymentMethod);
 
         if ($paymentType === PaymentType::HOSTED_IFRAME) {
-            return $this->context->link->getModuleLink(
-                $this->moduleName,
+            return $this->context->getLink()->getModuleLink(
+                'saferpayofficial',
                 ControllerName::HOSTED_IFRAME,
                 ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
                 true
@@ -71,16 +67,16 @@ class PaymentRedirectionProvider
         }
 
         if ($paymentType === PaymentType::IFRAME) {
-            return $this->context->link->getModuleLink(
-                $this->moduleName,
+            return $this->context->getLink()->getModuleLink(
+                'saferpayofficial',
                 ControllerName::IFRAME,
                 ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
                 true
             );
         }
 
-        return $this->context->link->getModuleLink(
-            $this->moduleName,
+        return $this->context->getLink()->getModuleLink(
+            'saferpayofficial',
             ControllerName::VALIDATION,
             ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => false],
             true

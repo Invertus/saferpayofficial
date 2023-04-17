@@ -47,7 +47,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
-        $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
+        $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
         $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
 
         $orderRefunds = $saferPayOrderRepository->getOrderRefunds($saferPayOrderId);
@@ -73,7 +73,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
     private function assertRefundTransaction($transactionId)
     {
         /** @var SaferPayTransactionRefundAssertion $transactionAssertRefund */
-        $transactionAssertRefund = $this->module->getModuleContainer()->get(SaferPayTransactionRefundAssertion::class);
+        $transactionAssertRefund = $this->module->getService(SaferPayTransactionRefundAssertion::class);
 
         return $transactionAssertRefund->assertRefund($transactionId);
     }
@@ -81,7 +81,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
     private function handleCapturedRefund($orderRefundId)
     {
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
-        $saferPayOrderRepository = $this->module->getModuleContainer()->get(SaferPayOrderRepository::class);
+        $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
 
         $orderRefund = new SaferPayOrderRefund($orderRefundId);
         $orderRefund->status = SaferPayConfig::TRANSACTION_STATUS_CAPTURED;
