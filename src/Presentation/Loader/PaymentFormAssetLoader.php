@@ -29,10 +29,11 @@ use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Media;
 use OrderControllerCore;
+use SaferPayOfficial;
 
 class PaymentFormAssetLoader
 {
-    /** @var ModuleFactory */
+    /** @var SaferPayOfficial */
     private $module;
     /** @var LegacyContext */
     private $context;
@@ -50,7 +51,7 @@ class PaymentFormAssetLoader
         }
 
         Media::addJsDef([
-            'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink($this->module->name, ControllerName::AJAX),
+            'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
             'saferpay_payment_types' => [
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
                 'iframe' => PaymentType::IFRAME,
