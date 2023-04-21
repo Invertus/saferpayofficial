@@ -113,3 +113,7 @@
 
 - BO : Module compatible with PS 1.6.* - 8.0.*
 - FO : Module compatible with PS 1.6.* - 8.0.*
+
+## [1.1.1] - *
+
+- FO : Fixed issue with ApplePay payment method was not displayed on Macintosh PC's. 
