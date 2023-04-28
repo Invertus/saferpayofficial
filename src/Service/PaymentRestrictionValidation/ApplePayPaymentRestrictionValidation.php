@@ -43,11 +43,7 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
      */
     public function isValid($paymentName)
     {
-        if (!$this->isIosDevice()) {
-            return false;
-        }
-
-        return true;
+        return $this->isIosDevice() || $this->isMacDesktop();
     }
 
     /**
@@ -70,5 +66,16 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
         }
 
         return (bool) $this->context->getMobileDetect()->is('ios');
+    }
+
+    private function isMacDesktop()
+    {
+        if (SaferPayConfig::isTestMode()) {
+            return true;
+        }
+
+        $device = $this->context->getDeviceDetect();
+
+        return $device === \Context::DEVICE_COMPUTER && preg_match('/macintosh|mac os x|mac_powerpc/i', $_SERVER['HTTP_USER_AGENT']) !== false;
     }
 }
