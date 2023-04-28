@@ -117,3 +117,7 @@
 ## [1.1.1] - *
 
 - FO : Fixed ApplePay payment method was not displayed on Macintosh PC's. 
+
+## [1.1.2] - *
+
+- BO : Fixed problems with install and tab display.
