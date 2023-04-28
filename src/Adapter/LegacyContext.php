@@ -62,8 +62,11 @@ class LegacyContext
         return $this->getContext()->link;
     }
 
+    /**
+     * @return int
+     */
     public function getDeviceDetect()
     {
-        return $this->getContext()->getDevice();
+        return (int) $this->getContext()->getDevice();
     }
 }

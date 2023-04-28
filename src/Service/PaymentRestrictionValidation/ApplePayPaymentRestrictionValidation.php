@@ -76,6 +76,6 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
 
         $device = $this->context->getDeviceDetect();
 
-        return $device === 1 && strpos($_SERVER['HTTP_USER_AGENT'], 'Macintosh') !== false;
+        return $device === \Context::DEVICE_COMPUTER && preg_match('/macintosh|mac os x|mac_powerpc/i', $_SERVER['HTTP_USER_AGENT']) !== false;
     }
 }
