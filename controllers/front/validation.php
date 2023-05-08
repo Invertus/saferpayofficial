@@ -66,10 +66,6 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
                 $this->module->l('This payment method is not available.', self::FILENAME);
             $this->redirectWithNotifications($redirectLink);
         }
-        $customer = new Customer($cart->id_customer);
-        if (!Validate::isLoadedObject($customer)) {
-            Tools::redirect($redirectLink);
-        }
 
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer)) {
