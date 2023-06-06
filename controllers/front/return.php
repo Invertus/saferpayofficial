@@ -43,6 +43,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
+            // TODO: Handle
             $this->ajaxRender();
         }
 
@@ -70,6 +71,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             }
             Tools::redirect($redirectLink);
         } catch (Exception $e) {
+            // TODO: Handle
             $this->ajaxRender();
         }
     }
