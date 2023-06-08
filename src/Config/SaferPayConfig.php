@@ -323,8 +323,8 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.23',
-            RequestHeader::SPEC_REFUND_VERSION => '1.25',
+            RequestHeader::SPEC_VERSION => '1.32',
+            RequestHeader::SPEC_REFUND_VERSION => '1.32',
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,

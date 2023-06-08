@@ -38,7 +38,7 @@ use Invertus\SaferPay\DTO\Request\OrderItem;
 use Invertus\SaferPay\DTO\Request\PayerProfile;
 use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
-use Invertus\SaferPay\DTO\Request\ReturnUrls;
+use Invertus\SaferPay\DTO\Request\ReturnUrl;
 use Invertus\SaferPay\DTO\Request\SaferPayNotification;
 use Invertus\SaferPay\DTO\Response\Amount;
 use Invertus\SaferPay\Enum\GenderEnum;
@@ -118,9 +118,9 @@ class RequestObjectCreator
         return $payment;
     }
 
-    public function createReturnUrls($successUrl, $failUrl)
+    public function createReturnUrl($returnUrl)
     {
-        return new ReturnUrls($successUrl, $failUrl);
+        return new ReturnUrl($returnUrl);
     }
 
     public function createNotification($customerEmail, $notifyUrl)

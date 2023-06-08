@@ -73,21 +73,22 @@ class SaferPayInitialize
         $isBusinessLicence,
         $selectedCard = -1,
         $alias = null,
-        $fieldToken = null,
-        $successController = null
+        $fieldToken = null
     ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
 
-        $successUrl = $this->context->link->getModuleLink(
+        $returnUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            $successController ?: $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+            ControllerName::RETURN_URL,
             [
                 'cartId' => $cartId,
                 'secureKey' => $this->context->cart->secure_key,
                 'orderId' => Order::getOrderByCartId($cartId),
                 'moduleId' => $this->module->id,
                 'selectedCard' => $selectedCard,
+                'isBusinessLicence' => $isBusinessLicence,
+                'fieldToken' => $fieldToken
             ],
             true
         );
@@ -102,26 +103,13 @@ class SaferPayInitialize
             ],
             true
         );
-        $failUrl = $this->context->link->getModuleLink(
-            $this->module->name,
-            ControllerName::FAIL_VALIDATION,
-            [
-                'cartId' => $this->context->cart->id,
-                'secureKey' => $this->context->cart->secure_key,
-                'orderId' => Order::getOrderByCartId($cartId),
-                'moduleId' => $this->module->id,
-                'isBusinessLicence' => $isBusinessLicence,
-            ],
-            true
-        );
 
         $initializeRequest = $this->requestObjectCreator->create(
             $this->context->cart,
             $customerEmail,
             $paymentMethod,
-            $successUrl,
+            $returnUrl,
             $notifyUrl,
-            $failUrl,
             $this->context->cart->id_address_delivery,
             $this->context->cart->id_address_invoice,
             $this->context->cart->id_customer,
@@ -135,26 +123,5 @@ class SaferPayInitialize
         }
 
         return $initialize;
-    }
-
-    /**
-     * @param int $isBusinessLicence
-     * @param string $fieldToken
-     *
-     * @return string
-     */
-    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
-    {
-        $successController = 'success';
-
-        if ($isBusinessLicence) {
-            $successController = 'successIFrame';
-        }
-
-        if ($fieldToken) {
-            $successController = 'successHosted';
-        }
-
-        return $successController;
     }
 }

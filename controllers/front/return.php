@@ -36,43 +36,69 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
-        $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
         $fieldToken = Tools::getValue('fieldToken');
+        $moduleId = $this->module->id;
+        $selectedCard = Tools::getValue('selectedCard');
+
+        $orderId = Order::getOrderByCartId($cartId);
 
         $cart = new Cart($cartId);
+
+        if (!Validate::isLoadedObject($cart)) {
+            $this->ajaxDie(json_encode([
+                'error_type' => 'unknown_error',
+                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
+            ]));
+        }
+
         if ($cart->secure_key !== $secureKey) {
-            // TODO: Handle
-            $this->ajaxRender();
+            $this->ajaxDie(json_encode([
+                'error_type' => 'unknown_error',
+                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
+            ]));
         }
 
         try {
             $assertResponseBody = $this->assertTransaction($orderId);
-            $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
-            if ($transactionStatus === 'CANCELED'){
-                $redirectLink = $this->context->link->getPageLink(
+
+            if ($assertResponseBody->getTransaction()->getStatus() === 'CANCELED') {
+                Tools::redirect($this->context->link->getModuleLink(
+                    $this->module->name,
                     'failValidation',
-                    true,
-                    null,
                     [
-                        'step' => 1,
-                    ]
-                );
-            } else {
-                $redirectLink = $this->context->link->getPageLink(
-                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
-                    true,
-                    null,
-                    [
-                        'step' => 1,
-                    ]
-                );
+                        'cartId' => $cartId,
+                        'orderId' => $orderId,
+                        'secureKey' => $secureKey
+                    ],
+                    true
+                ));
             }
-            Tools::redirect($redirectLink);
+
+            Tools::redirect($this->context->link->getModuleLink(
+                $this->module->name,
+                $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                [
+                    'cartId' => $cartId,
+                    'orderId' => $orderId,
+                    'moduleId' => $moduleId,
+                    'secureKey' => $secureKey,
+                    'selectedCard' => $selectedCard
+                ],
+                true
+            ));
         } catch (Exception $e) {
-            // TODO: Handle
-            $this->ajaxRender();
+            $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+
+            $this->redirectWithNotifications($this->context->link->getPageLink(
+                'order',
+                true,
+                null,
+                [
+                    'step' => 1,
+                ]
+            ));
         }
     }
 

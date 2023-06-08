@@ -23,50 +23,28 @@
 
 namespace Invertus\SaferPay\DTO\Request;
 
-class ReturnUrls
+class ReturnUrl
 {
-    const SUCCESS = 'SAFERPAY_SUCCESS_URL';
+    private $returnUrl;
 
-    const FAIL = 'SAFERPAY_FAIL_URL';
-
-    private $success;
-    private $fail;
-
-    public function __construct($success, $fail)
+    public function __construct($returnUrl)
     {
-        $this->success = $success;
-        $this->fail = $fail;
+        $this->returnUrl = $returnUrl;
     }
 
     /**
      * @return mixed
      */
-    public function getSuccess()
+    public function getReturnUrl()
     {
-        return $this->success;
+        return $this->returnUrl;
     }
 
     /**
-     * @param mixed $success
+     * @param mixed $returnUrl
      */
-    public function setSuccess($success)
+    public function setReturnUrl($returnUrl)
     {
-        $this->success = $success;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFail()
-    {
-        return $this->fail;
-    }
-
-    /**
-     * @param mixed $fail
-     */
-    public function setFail($fail)
-    {
-        $this->fail = $fail;
+        $this->returnUrl = $returnUrl;
     }
 }

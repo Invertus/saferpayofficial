@@ -58,8 +58,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
                 $selectedCard,
                 $alias,
-                Tools::getValue('fieldToken'),
-                'successHosted'
+                Tools::getValue('fieldToken')
             );
             $this->createSaferPayOrder($initializeBody);
             $redirectUrl = $this->getRedirectionUrl($initializeBody);
