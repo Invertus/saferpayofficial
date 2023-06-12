@@ -93,19 +93,7 @@ class SaferPayInitialize
             true
         );
 
-        $notifySuccessUrl = $this->context->link->getModuleLink(
-            $this->module->name,
-            ControllerName::NOTIFY,
-            [
-                'success' => 1,
-                'cartId' => $this->context->cart->id,
-                'orderId' => Order::getOrderByCartId($cartId),
-                'secureKey' => $this->context->cart->secure_key,
-            ],
-            true
-        );
-
-        $notifyFailUrl = $this->context->link->getModuleLink(
+        $notifyUrl = $this->context->link->getModuleLink(
             $this->module->name,
             ControllerName::NOTIFY,
             [
@@ -122,8 +110,7 @@ class SaferPayInitialize
             $customerEmail,
             $paymentMethod,
             $returnUrl,
-            $notifySuccessUrl,
-            $notifyFailUrl,
+            $notifyUrl,
             $this->context->cart->id_address_delivery,
             $this->context->cart->id_address_invoice,
             $this->context->cart->id_customer,

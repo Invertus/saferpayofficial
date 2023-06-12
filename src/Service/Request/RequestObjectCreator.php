@@ -123,11 +123,11 @@ class RequestObjectCreator
         return new ReturnUrl($returnUrl);
     }
 
-    public function createNotification($customerEmail, $notifySuccessUrl, $notifyFailUrl)
+    public function createNotification($customerEmail, $notifyUrl)
     {
         $payerEmail = $customerEmail;
         $merchantEmail = Configuration::get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::getConfigSuffix());
-        return new SaferPayNotification($payerEmail, $merchantEmail, $notifySuccessUrl, $notifyFailUrl);
+        return new SaferPayNotification($payerEmail, $merchantEmail, $notifyUrl);
     }
 
     public function createDeliveryAddressForm()

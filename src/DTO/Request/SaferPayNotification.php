@@ -27,15 +27,13 @@ class SaferPayNotification
 {
     private $payerEmail;
     private $merchantEmail;
-    private $notifySuccessUrl;
-    private $notifyFailUrl;
+    private $notifyUrl;
 
-    public function __construct($payerEmail, $merchantEmail, $notifySuccessUrl, $notifyFailUrl)
+    public function __construct($payerEmail, $merchantEmail, $notifyUrl)
     {
         $this->payerEmail = $payerEmail;
         $this->merchantEmail = $merchantEmail;
-        $this->notifySuccessUrl = $notifySuccessUrl;
-        $this->notifyFailUrl = $notifyFailUrl;
+        $this->notifyUrl = $notifyUrl;
     }
 
     /**
@@ -73,32 +71,16 @@ class SaferPayNotification
     /**
      * @return mixed
      */
-    public function getSuccessNotifyUrl()
+    public function getNotifyUrl()
     {
-        return $this->notifySuccessUrl;
+        return $this->notifyUrl;
     }
 
     /**
-     * @param mixed $notifySuccessUrl
+     * @param mixed $notifyUrl
      */
-    public function setSuccessNotifyUrl($notifySuccessUrl)
+    public function setNotifyUrl($notifyUrl)
     {
-        $this->notifySuccessUrl = $notifySuccessUrl;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getFailNotifyUrl()
-    {
-        return $this->notifyFailUrl;
-    }
-
-    /**
-     * @param mixed $notifyFailUrl
-     */
-    public function setFailNotifyUrl($notifyFailUrl)
-    {
-        $this->notifyFailUrl = $notifyFailUrl;
+        $this->notifyUrl = $notifyUrl;
     }
 }
