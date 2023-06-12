@@ -31,7 +31,7 @@ use Invertus\SaferPay\DTO\Request\Payer;
 use Invertus\SaferPay\DTO\Request\PayerProfile;
 use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
-use Invertus\SaferPay\DTO\Request\ReturnUrls;
+use Invertus\SaferPay\DTO\Request\ReturnUrl;
 use Invertus\SaferPay\DTO\Request\SaferPayNotification;
 
 class InitializeRequest
@@ -63,9 +63,9 @@ class InitializeRequest
     private $payer;
 
     /**
-     * @var array
+     * @var ReturnUrl
      */
-    private $returnUrls;
+    private $returnUrl;
 
     /**
      * @var array
@@ -118,29 +118,29 @@ class InitializeRequest
     private $fieldToken;
 
     public function __construct(
-        RequestHeader $requestHeader,
-        $terminalId,
-        $paymentMethod,
-        Payment $payment,
-        Payer $payer,
-        ReturnUrls $returnUrls,
+        RequestHeader        $requestHeader,
+                             $terminalId,
+                             $paymentMethod,
+        Payment              $payment,
+        Payer                $payer,
+        ReturnUrl            $returnUrl,
         SaferPayNotification $notification,
-        DeliveryAddressForm $deliveryAddressForm,
-        $configSet,
-        $cssUrl,
-        Address $deliveryAddress,
-        Address $billingAddress,
-        $alias,
-        Order $order,
-        PayerProfile $payerProfile,
-        $fieldToken
+        DeliveryAddressForm  $deliveryAddressForm,
+                             $configSet,
+                             $cssUrl,
+        Address              $deliveryAddress,
+        Address              $billingAddress,
+                             $alias,
+        Order                $order,
+        PayerProfile         $payerProfile,
+                             $fieldToken
     ) {
         $this->requestHeader = $requestHeader;
         $this->terminalId = $terminalId;
         $this->paymentMethod = $paymentMethod;
         $this->payment = $payment;
         $this->payer = $payer;
-        $this->returnUrls = $returnUrls;
+        $this->returnUrl = $returnUrl;
         $this->notification = $notification;
         $this->deliveryAddressForm = $deliveryAddressForm;
         $this->configSet = $configSet;
@@ -211,17 +211,17 @@ class InitializeRequest
                     'Phone' => $this->billingAddress->getPhone() ?: null,
                 ],
             ],
-            'ReturnUrls' => [
-                'Success' => $this->returnUrls->getSuccess(),
-                'Fail' => $this->returnUrls->getFail(),
+            'ReturnUrl' => [
+                'Url' => $this->returnUrl->getReturnUrl(),
             ],
             'Notification' => [
                 'PayerEmail' => $this->notification->getPayerEmail(),
                 'MerchantEmails' => [$this->notification->getMerchantEmail()],
-                'NotifyUrl' => $this->notification->getNotifyUrl(),
+                'SuccessNotifyUrl' => $this->notification->getNotifyUrl(),
+                'FailNotifyUrl' => $this->notification->getNotifyUrl(),
             ],
             'DeliveryAddressForm' => [
-                'Display' => $this->deliveryAddressForm->getDisplay(),
+                'AddressSource' => $this->deliveryAddressForm->getAddressSource(),
                 'MandatoryFields' => $this->deliveryAddressForm->getMandatoryFields(),
             ],
         ];

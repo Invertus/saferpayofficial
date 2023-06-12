@@ -46,9 +46,8 @@ class InitializeRequestObjectCreator
         Cart $cart,
         $customerEmail,
         $paymentMethod,
-        $successUrl,
+        $returnUrl,
         $notifyUrl,
-        $failUrl,
         $deliveryAddressId,
         $invoiceAddressId,
         $customerId,
@@ -63,7 +62,7 @@ class InitializeRequestObjectCreator
         $totalPrice = (int)(round($totalPrice));
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
-        $returnUrls = $this->requestObjectCreator->createReturnUrls($successUrl, $failUrl);
+        $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);
         $notification = $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
         $configSet = Configuration::get(SaferPayConfig::CONFIGURATION_NAME);
@@ -86,7 +85,7 @@ class InitializeRequestObjectCreator
             $paymentMethod,
             $payment,
             $payer,
-            $returnUrls,
+            $returnUrl,
             $notification,
             $deliveryAddressForm,
             $configSet,

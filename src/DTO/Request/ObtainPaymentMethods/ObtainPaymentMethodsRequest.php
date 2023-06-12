@@ -43,6 +43,6 @@ class ObtainPaymentMethodsRequest
     {
         $customerId = $this->requestHeader->getCustomerId();
 
-        return "rest/customers/{$customerId}/terminals/{$this->terminalId}/payment-methods";
+        return "rest/customers/{$customerId}/terminals/{$this->terminalId}";
     }
 }

@@ -39,4 +39,5 @@ class ControllerName
     const SUCCESS_HOSTED = 'successHosted';
     const SUCCESS_IFRAME = 'successIframe';
     const VALIDATION = 'validation';
+    const RETURN_URL = 'return';
 }
