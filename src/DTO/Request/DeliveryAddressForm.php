@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\DTO\Request;
 
 class DeliveryAddressForm
 {
+    const ADDRESS_SOURCE = 'NONE';
     const MANDATORY_FIELDS = [
         'CITY',
         'COMPANY',
@@ -39,30 +40,31 @@ class DeliveryAddressForm
         'ZIP',
     ];
 
-    private $display;
+    private $addressSource;
 
     private $mandatoryFields;
 
-    public function __construct($mandatoryFields, $display = false)
+    public function __construct($mandatoryFields, $addressSource)
     {
-        $this->display = $display;
+        $this->addressSource = $addressSource;
         $this->mandatoryFields = $mandatoryFields;
     }
 
     /**
      * @return mixed
      */
-    public function getDisplay()
+    public function getAddressSource()
     {
-        return $this->display;
+        return $this->addressSource;
     }
 
+
     /**
-     * @param mixed $display
+     * @param string $addressSource
      */
-    public function setDisplay($display)
+    public function setAddressSource($addressSource)
     {
-        $this->display = $display;
+        $this->addressSource = $addressSource;
     }
 
     /**

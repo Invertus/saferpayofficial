@@ -123,16 +123,16 @@ class RequestObjectCreator
         return new ReturnUrl($returnUrl);
     }
 
-    public function createNotification($customerEmail, $notifyUrl)
+    public function createNotification($customerEmail, $notifySuccessUrl, $notifyFailUrl)
     {
         $payerEmail = $customerEmail;
         $merchantEmail = Configuration::get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::getConfigSuffix());
-        return new SaferPayNotification($payerEmail, $merchantEmail, $notifyUrl);
+        return new SaferPayNotification($payerEmail, $merchantEmail, $notifySuccessUrl, $notifyFailUrl);
     }
 
     public function createDeliveryAddressForm()
     {
-        return new DeliveryAddressForm(DeliveryAddressForm::MANDATORY_FIELDS);
+        return new DeliveryAddressForm(DeliveryAddressForm::MANDATORY_FIELDS, DeliveryAddressForm::ADDRESS_SOURCE);
     }
 
     public function createAmount($value, $currencyCode)

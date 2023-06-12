@@ -217,10 +217,11 @@ class InitializeRequest
             'Notification' => [
                 'PayerEmail' => $this->notification->getPayerEmail(),
                 'MerchantEmails' => [$this->notification->getMerchantEmail()],
-                'NotifyUrl' => $this->notification->getNotifyUrl(),
+                'SuccessNotifyUrl' => $this->notification->getSuccessNotifyUrl(),
+                'FailNotifyUrl' => $this->notification->getFailNotifyUrl(),
             ],
             'DeliveryAddressForm' => [
-                'Display' => $this->deliveryAddressForm->getDisplay(),
+                'AddressSource' => $this->deliveryAddressForm->getAddressSource(),
                 'MandatoryFields' => $this->deliveryAddressForm->getMandatoryFields(),
             ],
         ];
