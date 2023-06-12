@@ -92,6 +92,7 @@ class SaferPayInitialize
             ],
             true
         );
+
         $notifyUrl = $this->context->link->getModuleLink(
             $this->module->name,
             ControllerName::NOTIFY,

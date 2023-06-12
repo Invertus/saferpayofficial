@@ -132,7 +132,7 @@ class RequestObjectCreator
 
     public function createDeliveryAddressForm()
     {
-        return new DeliveryAddressForm(DeliveryAddressForm::MANDATORY_FIELDS);
+        return new DeliveryAddressForm(DeliveryAddressForm::MANDATORY_FIELDS, DeliveryAddressForm::ADDRESS_SOURCE);
     }
 
     public function createAmount($value, $currencyCode)
