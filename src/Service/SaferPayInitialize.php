@@ -109,7 +109,7 @@ class SaferPayInitialize
             $this->module->name,
             ControllerName::NOTIFY,
             [
-                'success' => 0,
+                'success' => 1,
                 'cartId' => $this->context->cart->id,
                 'orderId' => Order::getOrderByCartId($cartId),
                 'secureKey' => $this->context->cart->secure_key,
