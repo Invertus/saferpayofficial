@@ -92,7 +92,8 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         if (
             !$authResponseBody->getLiability()->getLiabilityShift() &&
             in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-            $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+            $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL ||
+            $authResponseBody->getTransaction()->getStatus() === 'CANCELED'
         ) {
             $orderStatusService->cancel($order);
 

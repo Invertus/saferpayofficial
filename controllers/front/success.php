@@ -22,6 +22,7 @@
  */
 
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
 class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
@@ -47,19 +48,43 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
 
             Tools::redirect($redirectLink);
         }
+        try {
+            $this->assertTransaction($orderId);
 
-        $orderLink = $this->context->link->getPageLink(
-            'order-confirmation',
-            true,
-            null,
-            [
-                'id_cart' => $cartId,
-                'id_module' => $moduleId,
-                'id_order' => $orderId,
-                'key' => $secureKey,
-            ]
-        );
+            $orderLink = $this->context->link->getPageLink(
+                'order-confirmation',
+                true,
+                null,
+                [
+                    'id_cart' => $cartId,
+                    'id_module' => $moduleId,
+                    'id_order' => $orderId,
+                    'key' => $secureKey,
+                ]
+            );
 
-        Tools::redirect($orderLink);
+            Tools::redirect($orderLink);
+
+        } catch (Exception $e) {
+            Tools::redirect($this->context->link->getModuleLink(
+                $this->module->name,
+                'failValidation',
+                [
+                    'cartId' => $cartId,
+                    'orderId' => $orderId,
+                    'secureKey' => $secureKey
+                ],
+                true
+            ));
+        }
+    }
+
+    private function assertTransaction($orderId)
+    {
+        /** @var SaferPayTransactionAssertion $transactionAssert */
+        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+        $assertionResponse = $transactionAssert->assert($orderId);
+
+        return $assertionResponse;
     }
 }

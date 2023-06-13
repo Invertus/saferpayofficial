@@ -61,21 +61,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         try {
-            $assertResponseBody = $this->assertTransaction($orderId);
-
-            if ($assertResponseBody->getTransaction()->getStatus() === 'CANCELED') {
-                Tools::redirect($this->context->link->getModuleLink(
-                    $this->module->name,
-                    'failValidation',
-                    [
-                        'cartId' => $cartId,
-                        'orderId' => $orderId,
-                        'secureKey' => $secureKey
-                    ],
-                    true
-                ));
-            }
-
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
                 $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
@@ -100,20 +85,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ]
             ));
         }
-    }
-
-    /**
-     * @param $cartId
-     * @return AssertBody
-     * @throws Exception
-     */
-    private function assertTransaction($orderId)
-    {
-        /** @var SaferPayTransactionAssertion $transactionAssert */
-        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert($orderId);
-
-        return $assertionResponse;
     }
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken)
