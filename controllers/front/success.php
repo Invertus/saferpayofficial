@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
@@ -49,8 +50,10 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
             Tools::redirect($redirectLink);
         }
         try {
-            $this->assertTransaction($orderId);
-
+            $authResponseBody = $this->assertTransaction($orderId);
+            if ($authResponseBody->getTransaction()->getStatus() === TransactionStatus::CANCELED) {
+                throw new Exception('Failed to authorize transaction');
+            }
             $orderLink = $this->context->link->getPageLink(
                 'order-confirmation',
                 true,
@@ -64,7 +67,6 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
             );
 
             Tools::redirect($orderLink);
-
         } catch (Exception $e) {
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
