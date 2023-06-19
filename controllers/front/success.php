@@ -51,10 +51,12 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
         }
         try {
             $authResponseBody = $this->assertTransaction($orderId);
+
             if ($authResponseBody->getTransaction()->getStatus() === TransactionStatus::CANCELED) {
                 throw new Exception('Failed to authorize transaction');
             }
-            $orderLink = $this->context->link->getPageLink(
+
+            Tools::redirect($this->context->link->getPageLink(
                 'order-confirmation',
                 true,
                 null,
@@ -64,10 +66,21 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
                     'id_order' => $orderId,
                     'key' => $secureKey,
                 ]
+            ));
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
+                sprintf(
+                    '%s has caught an error: %s',
+                    __CLASS__,
+                    $e->getMessage()
+                ),
+                1,
+                null,
+                null,
+                null,
+                true
             );
 
-            Tools::redirect($orderLink);
-        } catch (Exception $e) {
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
                 'failValidation',

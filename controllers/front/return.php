@@ -60,31 +60,18 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
-        try {
-            Tools::redirect($this->context->link->getModuleLink(
-                $this->module->name,
-                $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
-                [
-                    'cartId' => $cartId,
-                    'orderId' => $orderId,
-                    'moduleId' => $moduleId,
-                    'secureKey' => $secureKey,
-                    'selectedCard' => $selectedCard
-                ],
-                true
-            ));
-        } catch (Exception $e) {
-            $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
-
-            $this->redirectWithNotifications($this->context->link->getPageLink(
-                'order',
-                true,
-                null,
-                [
-                    'step' => 1,
-                ]
-            ));
-        }
+        Tools::redirect($this->context->link->getModuleLink(
+            $this->module->name,
+            $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+            [
+                'cartId' => $cartId,
+                'orderId' => $orderId,
+                'moduleId' => $moduleId,
+                'secureKey' => $secureKey,
+                'selectedCard' => $selectedCard
+            ],
+            true
+        ));
     }
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken)
