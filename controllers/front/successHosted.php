@@ -74,9 +74,10 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
             $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
             if (
-                !$authResponseBody->getLiability()->getLiabilityShift() &&
+                (!$authResponseBody->getLiability()->getLiabilityShift() &&
                 in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+                $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL) ||
+                $authResponseBody->getTransaction()->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CANCELED
             ) {
                 $orderStatusService->cancel($order);
 
