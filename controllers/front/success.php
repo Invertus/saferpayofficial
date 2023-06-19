@@ -37,6 +37,7 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
         $secureKey = Tools::getValue('secureKey');
 
         $cart = new Cart($cartId);
+
         if ($cart->secure_key !== $secureKey) {
             $redirectLink = $this->context->link->getPageLink(
                 'order',
@@ -49,12 +50,9 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
 
             Tools::redirect($redirectLink);
         }
-        try {
-            $authResponseBody = $this->assertTransaction($orderId);
 
-            if ($authResponseBody->getTransaction()->getStatus() === TransactionStatus::CANCELED) {
-                throw new Exception('Failed to authorize transaction');
-            }
+        try {
+            $this->assertTransaction($orderId);
 
             Tools::redirect($this->context->link->getPageLink(
                 'order-confirmation',
@@ -70,15 +68,10 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
         } catch (Exception $e) {
             PrestaShopLogger::addLog(
                 sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
+                    'Failed to assert transaction. Message: %s. File name: %s',
+                        $e->getMessage(),
+                    self::FILENAME
+                )
             );
 
             Tools::redirect($this->context->link->getModuleLink(
