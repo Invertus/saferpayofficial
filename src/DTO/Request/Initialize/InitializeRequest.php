@@ -68,12 +68,12 @@ class InitializeRequest
     private $returnUrl;
 
     /**
-     * @var array
+     * @var SaferPayNotification|null
      */
     private $notification;
 
     /**
-     * @var array
+     * @var DeliveryAddressForm
      */
     private $deliveryAddressForm;
 
@@ -124,7 +124,7 @@ class InitializeRequest
         Payment              $payment,
         Payer                $payer,
         ReturnUrl            $returnUrl,
-        SaferPayNotification $notification,
+                             $notification,
         DeliveryAddressForm  $deliveryAddressForm,
                              $configSet,
                              $cssUrl,
@@ -214,17 +214,21 @@ class InitializeRequest
             'ReturnUrl' => [
                 'Url' => $this->returnUrl->getReturnUrl(),
             ],
-            'Notification' => [
-                'PayerEmail' => $this->notification->getPayerEmail(),
-                'MerchantEmails' => [$this->notification->getMerchantEmail()],
-                'SuccessNotifyUrl' => $this->notification->getNotifyUrl(),
-                'FailNotifyUrl' => $this->notification->getNotifyUrl(),
-            ],
             'DeliveryAddressForm' => [
                 'AddressSource' => $this->deliveryAddressForm->getAddressSource(),
                 'MandatoryFields' => $this->deliveryAddressForm->getMandatoryFields(),
             ],
         ];
+
+        if ($this->notification !== null) {
+            $return['Notification'] = [
+                'PayerEmail' => $this->notification->getPayerEmail(),
+                'MerchantEmails' => [$this->notification->getMerchantEmail()],
+                'SuccessNotifyUrl' => $this->notification->getNotifyUrl(),
+                'FailNotifyUrl' => $this->notification->getNotifyUrl(),
+            ];
+        }
+
         if ($this->configSet) {
             $return['ConfigSet'] = $this->configSet;
         }

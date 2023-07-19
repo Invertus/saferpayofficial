@@ -27,6 +27,7 @@ use Cart;
 use Configuration;
 use Customer;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
 
@@ -51,6 +52,7 @@ class InitializeRequestObjectCreator
         $deliveryAddressId,
         $invoiceAddressId,
         $customerId,
+        $isBusinessLicence,
         $alias = null,
         $fieldToken = null
     ) {
@@ -63,7 +65,7 @@ class InitializeRequestObjectCreator
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
         $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);
-        $notification = $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
+        $notification = ($isBusinessLicence && version_compare(Configuration::get(RequestHeader::SPEC_VERSION), '1.35', '<')) ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
         $configSet = Configuration::get(SaferPayConfig::CONFIGURATION_NAME);
         $cssUrl = Configuration::get(SaferPayConfig::CSS_FILE);
