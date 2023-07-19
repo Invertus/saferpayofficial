@@ -114,6 +114,7 @@ class SaferPayInitialize
             $this->context->cart->id_address_delivery,
             $this->context->cart->id_address_invoice,
             $this->context->cart->id_customer,
+            $isBusinessLicence,
             $alias,
             $fieldToken
         );
