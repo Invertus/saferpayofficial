@@ -52,7 +52,8 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
         }
 
         try {
-            $this->assertTransaction($orderId);
+            // TODO The shopping cart should be locked to prevent problems with the notify.php process running at the same time.
+            // $this->assertTransaction($orderId);
 
             Tools::redirect($this->context->link->getPageLink(
                 'order-confirmation',
