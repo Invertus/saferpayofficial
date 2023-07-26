@@ -121,3 +121,11 @@
 ## [1.1.2] - *
 
 - BO : Fixed problems with install and tab display.
+
+## [1.1.3] - *
+
+- BO : Increased API version from 1.23 => 1.32
+- BO : Fixed compatibility with Notification Container for SaferPay API version lower than 1.35.
+- BO : ReturnSuccessUrl and ReturnFailUrl replaced by ReturnUrl container
+- BO : NotificationUrl container replaced by SuccessNotificationUrl and FailNotificationUrl,
+- BO : Display from BillingAddressForm and DeliveryAddressForm containers replaced by AddressSource
