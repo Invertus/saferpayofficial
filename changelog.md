@@ -129,3 +129,7 @@
 - BO : ReturnSuccessUrl and ReturnFailUrl replaced by ReturnUrl container
 - BO : NotificationUrl container replaced by SuccessNotificationUrl and FailNotificationUrl,
 - BO : Display from BillingAddressForm and DeliveryAddressForm containers replaced by AddressSource
+
+## [1.1.4] - *
+
+- BO : Fixed API version issue
