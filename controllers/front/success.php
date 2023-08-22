@@ -21,9 +21,7 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
 class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
@@ -51,49 +49,16 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
             Tools::redirect($redirectLink);
         }
 
-        try {
-            // TODO The shopping cart should be locked to prevent problems with the notify.php process running at the same time.
-            // $this->assertTransaction($orderId);
-
-            Tools::redirect($this->context->link->getPageLink(
-                'order-confirmation',
-                true,
-                null,
-                [
-                    'id_cart' => $cartId,
-                    'id_module' => $moduleId,
-                    'id_order' => $orderId,
-                    'key' => $secureKey,
-                ]
-            ));
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog(
-                sprintf(
-                    'Failed to assert transaction. Message: %s. File name: %s',
-                        $e->getMessage(),
-                    self::FILENAME
-                )
-            );
-
-            Tools::redirect($this->context->link->getModuleLink(
-                $this->module->name,
-                'failValidation',
-                [
-                    'cartId' => $cartId,
-                    'orderId' => $orderId,
-                    'secureKey' => $secureKey
-                ],
-                true
-            ));
-        }
-    }
-
-    private function assertTransaction($orderId)
-    {
-        /** @var SaferPayTransactionAssertion $transactionAssert */
-        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert($orderId);
-
-        return $assertionResponse;
+        Tools::redirect($this->context->link->getPageLink(
+            'order-confirmation',
+            true,
+            null,
+            [
+                'id_cart' => $cartId,
+                'id_module' => $moduleId,
+                'id_order' => $orderId,
+                'key' => $secureKey,
+            ]
+        ));
     }
 }

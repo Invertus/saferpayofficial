@@ -118,7 +118,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     {
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId));
+        $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId), true);
 
         return $assertionResponse;
     }

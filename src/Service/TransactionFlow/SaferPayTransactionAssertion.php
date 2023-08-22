@@ -71,7 +71,7 @@ class SaferPayTransactionAssertion
      * @return AssertBody
      * @throws \Exception
      */
-    public function assert($orderId)
+    public function assert($orderId, $changeOrderStatus)
     {
         $saferPayOrder = $this->getSaferPayOrder($orderId);
         $order = new Order($orderId);
@@ -87,7 +87,9 @@ class SaferPayTransactionAssertion
         $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
         $saferPayOrder->update();
 
-        $this->orderStatusService->assert($order, $assertBody->getTransaction()->getStatus());
+        if ($changeOrderStatus) {
+            $this->orderStatusService->assert($order, $assertBody->getTransaction()->getStatus());
+        }
 
         return $assertBody;
     }
