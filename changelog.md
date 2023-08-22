@@ -133,3 +133,7 @@
 ## [1.1.4] - *
 
 - BO : Fixed API version issue
+
+## [1.1.5] - *
+
+- BO : Fixed the redirect issue when payment was aborted.
