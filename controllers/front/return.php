@@ -60,18 +60,56 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
-        Tools::redirect($this->context->link->getModuleLink(
-            $this->module->name,
-            $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
-            [
-                'cartId' => $cartId,
-                'orderId' => $orderId,
-                'moduleId' => $moduleId,
-                'secureKey' => $secureKey,
-                'selectedCard' => $selectedCard
-            ],
-            true
-        ));
+        try {
+            $this->assertTransaction($orderId);
+
+            Tools::redirect($this->context->link->getModuleLink(
+                $this->module->name,
+                $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                [
+                    'cartId' => $cartId,
+                    'orderId' => $orderId,
+                    'moduleId' => $moduleId,
+                    'secureKey' => $secureKey,
+                    'selectedCard' => $selectedCard,
+                ],
+                true
+            ));
+
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
+                sprintf(
+                    'Failed to assert transaction. Message: %s. File name: %s',
+                    $e->getMessage(),
+                    self::FILENAME
+                )
+            );
+
+            Tools::redirect($this->context->link->getModuleLink(
+                $this->module->name,
+                'failValidation',
+                [
+                    'cartId' => $cartId,
+                    'orderId' => $orderId,
+                    'secureKey' => $secureKey,
+                ],
+                true
+            ));
+        }
+    }
+
+    /**
+     * @param $cartId
+     * @return AssertBody
+     * @throws Exception
+     */
+    private function assertTransaction($orderId)
+    {
+        /** @var SaferPayTransactionAssertion $transactionAssert */
+        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+        $assertionResponse = $transactionAssert->assert($orderId, false);
+
+        return $assertionResponse;
     }
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken)
