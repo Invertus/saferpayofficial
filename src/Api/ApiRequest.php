@@ -114,7 +114,7 @@ class ApiRequest
     private function isValidResponse(Response $response)
     {
         if ($response->code >= 300){
-            throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
+            throw new SaferPayApiException(sprintf('Initialize API failed: %s', $response->raw_body), SaferPayApiException::INITIALIZE);
         }
     }
 }

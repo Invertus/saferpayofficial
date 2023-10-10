@@ -508,6 +508,7 @@ class SaferPayOfficial extends PaymentModule
             return true;
         }
         $cart = new Cart($params['cart']->id);
+        /** @var \Order $order */
         $order = Order::getByCartId($cart->id);
 
         if (!$order) {
@@ -518,11 +519,11 @@ class SaferPayOfficial extends PaymentModule
             return true;
         }
 
+        /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
+        $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
+
         if ($params['template'] === 'order_conf') {
-            if (Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION)) {
-                return true;
-            }
-            return false;
+            return $canSendOrderConfirmationEmail->verify($order);
         }
 
         if ($params['template'] === 'new_order') {
@@ -554,17 +555,19 @@ class SaferPayOfficial extends PaymentModule
             return;
         }
 
-        if (!Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
-            return;
-        }
+        /** @var \Invertus\SaferPay\Service\SaferPayMailService $mailService */
+        $mailService = $this->getService(\Invertus\SaferPay\Service\SaferPayMailService::class);
 
         $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
-        if ($orderStatus->id === $saferPayAuthorizedStatus) {
-            /** @var \Invertus\SaferPay\Service\SaferPayMailService $mailService */
-            $mailService = $this->getService(
-                \Invertus\SaferPay\Service\SaferPayMailService::class
-            );
+        if ($orderStatus->id === $saferPayAuthorizedStatus && Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
             $mailService->sendNewOrderMail($order, $orderStatus->id);
+        }
+
+        /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
+        $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
+
+        if ($canSendOrderConfirmationEmail->verify($order)) {
+            $mailService->sendOrderConfMail($order, (int)$orderStatus->id);
         }
     }
 
