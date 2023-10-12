@@ -234,6 +234,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $fields = [];
         $fields[] = [
             'type' => 'free',
+            'label' => '',
             'name' => 'payment_method_label',
         ];
         $fields[] = [
