@@ -137,3 +137,5 @@
 ## [1.1.5] - *
 
 - BO : Fixed the redirect issue when payment was aborted.
+
+## [1.1.6] - *
