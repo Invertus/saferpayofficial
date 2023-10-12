@@ -27,30 +27,30 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 
 class CanSendOrderConfirmationEmail
 {
-    public function verify(\Order $order)
+    public function verify(\Order $order, $orderStatusId)
     {
         if (!\Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION)) {
             return false;
         }
 
-        if (!$this->isOrderStatusValid($order)) {
+        if (!$this->isOrderStatusValid($orderStatusId)) {
             return false;
         }
 
         return true;
     }
 
-    private function isOrderStatusValid(\Order $order): bool
+    private function isOrderStatusValid($orderStatusId)
     {
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $order->current_state) {
+        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatusId) {
             return true;
         }
 
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED) === (int) $order->current_state) {
+        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED) === (int) $orderStatusId) {
             return true;
         }
 
-        if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $order->current_state) {
+        if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $orderStatusId) {
             return true;
         }
 

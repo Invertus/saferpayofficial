@@ -523,7 +523,7 @@ class SaferPayOfficial extends PaymentModule
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
         if ($params['template'] === 'order_conf') {
-            return $canSendOrderConfirmationEmail->verify($order);
+            return $canSendOrderConfirmationEmail->verify($order, (int) $order->current_state);
         }
 
         if ($params['template'] === 'new_order') {
@@ -560,13 +560,13 @@ class SaferPayOfficial extends PaymentModule
 
         $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
         if ($orderStatus->id === $saferPayAuthorizedStatus && Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
-            $mailService->sendNewOrderMail($order, $orderStatus->id);
+            $mailService->sendNewOrderMail($order, (int) $orderStatus->id);
         }
 
         /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
-        if ($canSendOrderConfirmationEmail->verify($order)) {
+        if ($canSendOrderConfirmationEmail->verify($order, (int) $orderStatus->id)) {
             $mailService->sendOrderConfMail($order, (int)$orderStatus->id);
         }
     }
