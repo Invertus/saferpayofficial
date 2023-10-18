@@ -263,13 +263,12 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'desc' => $this->l('If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.'),
                         'form_group_class' => 'thumbs_chose',
                     ],
-                    SaferPayConfig::PAYMENT_DESCRIPTION => [ // todo change config
+                    SaferPayConfig::PAYMENT_DESCRIPTION => [
                         'title' => $this->l('Description'),
                         'type' => 'text',
                         'desc' => $this->l('This description is visible in payment page also in payment confirmation email'),
                         'class' => 'fixed-width-xxl',
                     ],
-                    //todo implement this into install uninstall and upgrade methods
                 ],
                 'buttons' => [
                     'save_and_connect' => [
