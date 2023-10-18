@@ -139,3 +139,4 @@
 - BO : Fixed the redirect issue when payment was aborted.
 
 ## [1.1.6] - *
+- BO : Added additional check for confirmation email regarding payment status and customer behavior
