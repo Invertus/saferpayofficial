@@ -137,3 +137,7 @@
 ## [1.1.5] - *
 
 - BO : Fixed the redirect issue when payment was aborted.
+- 
+## [1.1.6] - *
+
+- BO : New setting for payment description text on front office payment window.

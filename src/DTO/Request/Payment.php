@@ -46,9 +46,9 @@ class Payment
     private $payerNote = null;
 
     /**
-     * @var null
+     * @var string
      */
-    private $description = 'PrestaShop payment';
+    private $description;
 
     /**
      * @return string
@@ -115,7 +115,7 @@ class Payment
     }
 
     /**
-     * @return null
+     * @return string
      */
     public function getDescription()
     {
@@ -123,7 +123,7 @@ class Payment
     }
 
     /**
-     * @param null $description
+     * @param string $description
      */
     public function setDescription($description)
     {

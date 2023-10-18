@@ -43,6 +43,7 @@ class SaferPayConfig
     const PAYMENT_BEHAVIOR_WITHOUT_3D = 'SAFERPAY_PAYMENT_BEHAVIOR_WITHOUT_3D';
     const CREDIT_CARD_SAVE = 'SAFERPAY_CREDIT_CARD_SAVE';
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
+    const PAYMENT_DESCRIPTION = 'PAYMENT_DESCRIPTION';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
@@ -243,6 +244,7 @@ class SaferPayConfig
     const FIELDS_LIBRARY_DEFAULT_VALUE = 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js';
     const FIELDS_LIBRARY_TEST_DEFAULT_VALUE = 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js';
 
+    const PAYMENT_DESCRIPTION_DEFAULT_VALUE = 'PrestaShop Payment';
     const HOSTED_FIELDS_TEMPLATE_DEFAULT = 1;
     const HOSTED_FIELDS_TEMPLATE = 'SAFERPAY_HOSTED_FIELDS_TEMPLATE';
 
@@ -332,6 +334,7 @@ class SaferPayConfig
             SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => 1,
             SaferPayConfig::FIELDS_LIBRARY => self::FIELDS_LIBRARY_DEFAULT_VALUE,
             SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => self::FIELDS_LIBRARY_TEST_DEFAULT_VALUE,
+            SaferPayConfig::PAYMENT_DESCRIPTION => 'PrestaShop Payment',
             self::TEST_MODE => 1,
             self::HOSTED_FIELDS_TEMPLATE => self::HOSTED_FIELDS_TEMPLATE_DEFAULT,
             self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => Configuration::get(

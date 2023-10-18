@@ -114,6 +114,7 @@ class RequestObjectCreator
         $payment->setValue($totalPrice);
         $payment->setCurrencyCode($currency['iso_code']);
         $payment->setOrderReference($order->reference);
+        $payment->setDescription(Configuration::get(SaferPayConfig::PAYMENT_DESCRIPTION));
 
         return $payment;
     }
