@@ -28,6 +28,10 @@ use Db;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Tab;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Uninstaller extends AbstractInstaller
 {
     private $errors = [];

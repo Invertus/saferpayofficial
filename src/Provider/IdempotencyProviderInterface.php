@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Provider;
 
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

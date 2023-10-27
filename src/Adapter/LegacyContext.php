@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Adapter;
 
 use Context;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class LegacyContext
 {
     public function getContext()

@@ -27,6 +27,10 @@ use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use SaferPayOrder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AssertRefundRequestObjectCreator
 {
     /**

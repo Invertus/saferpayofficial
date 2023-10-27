@@ -23,6 +23,10 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminSaferPayOfficialFieldsController extends ModuleAdminController
 {
     public function __construct()

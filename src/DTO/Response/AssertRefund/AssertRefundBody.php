@@ -32,6 +32,10 @@ use Invertus\SaferPay\DTO\Response\ResponseHeader;
 use Invertus\SaferPay\DTO\Response\ThreeDs;
 use Invertus\SaferPay\DTO\Response\Transaction;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AssertRefundBody
 {
     /**

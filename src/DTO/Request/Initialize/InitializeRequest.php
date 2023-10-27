@@ -34,6 +34,10 @@ use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\ReturnUrl;
 use Invertus\SaferPay\DTO\Request\SaferPayNotification;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InitializeRequest
 {
 

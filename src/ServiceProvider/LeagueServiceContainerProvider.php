@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\ServiceProvider;
 use League\Container\Container;
 use League\Container\ReflectionContainer;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class LeagueServiceContainerProvider implements ServiceContainerProviderInterface
 {
     private $extendedServices = [];

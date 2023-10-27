@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\EntityBuilder;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use SaferPayAssert;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayAssertBuilder
 {
     /**

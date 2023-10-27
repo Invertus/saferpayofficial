@@ -28,6 +28,10 @@ use Customer;
 use Order;
 use SaferPayOrder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOrderBuilder
 {
     //TODO to pass $body as InitializeBody.

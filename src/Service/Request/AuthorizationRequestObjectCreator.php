@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\DTO\Request\Authorization\AuthorizationRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AuthorizationRequestObjectCreator
 {
     /**

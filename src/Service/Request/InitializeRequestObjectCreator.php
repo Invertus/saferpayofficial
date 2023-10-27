@@ -31,6 +31,10 @@ use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InitializeRequestObjectCreator
 {
     /**

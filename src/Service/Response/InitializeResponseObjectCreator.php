@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Service\Response;
 
 use Invertus\SaferPay\DTO\Response\Initialize\InitializeBody;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InitializeResponseObjectCreator extends ResponseObjectCreator
 {
     public function createInitializeObject($responseBody)

@@ -27,6 +27,10 @@ use Db;
 use DbQuery;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayRestrictionRepository
 {
     public function getRestrictionIdsByName($paymentName, $restrictionType)

@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Provider;
 
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\PaymentRestrictionValidationInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface PaymentRestrictionProviderInterface
 {
     /**

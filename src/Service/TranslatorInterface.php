@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * TranslatorInterface.
  *

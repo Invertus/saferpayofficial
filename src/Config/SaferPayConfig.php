@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Config;
 use Configuration;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayConfig
 {
     const TEST_API = 'https://test.saferpay.com/api/';

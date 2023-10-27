@@ -34,6 +34,10 @@ use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
 use Order;
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayInitialize
 {
     /**

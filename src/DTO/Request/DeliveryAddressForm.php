@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\DTO\Request;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class DeliveryAddressForm
 {
     const ADDRESS_SOURCE = 'NONE';

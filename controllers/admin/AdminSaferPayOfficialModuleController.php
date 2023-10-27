@@ -21,6 +21,10 @@
  *@license   SIX Payment Services
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminSaferPayOfficialModuleController extends ModuleAdminController
 {
     public function init()

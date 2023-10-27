@@ -27,6 +27,10 @@ use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class WlcryptopaymentsPaymentRestrictionValidation implements PaymentRestrictionValidationInterface
 {
     private $context;

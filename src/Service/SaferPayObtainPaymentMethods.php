@@ -28,6 +28,10 @@ use Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayObtainPaymentMethods
 {
     private $obtainPaymentMethodsService;

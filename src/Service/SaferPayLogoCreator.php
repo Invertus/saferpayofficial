@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Service;
 use Invertus\SaferPay\Repository\SaferPayLogoRepository;
 use SaferPayLogo;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayLogoCreator
 {
     /**

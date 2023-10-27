@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Controller;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AbstractSaferPayController extends \ModuleFrontControllerCore
 {
     public function redirectWithNotifications()

@@ -21,6 +21,10 @@
  *@license   SIX Payment Services
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Restriction\RestrictionException;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;

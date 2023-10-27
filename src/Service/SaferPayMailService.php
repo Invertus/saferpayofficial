@@ -35,6 +35,10 @@ use Product;
 use State;
 use Tools;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayMailService
 {
     const FILE_NAME = 'SaferPayMailService';

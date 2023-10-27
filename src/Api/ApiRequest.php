@@ -31,6 +31,10 @@ use SaferPayLog;
 use Unirest\Request;
 use Unirest\Response;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApiRequest
 {
     /**

@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Api\Enum;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class TransactionStatus
 {
     const AUTHORIZED = 'AUTHORIZED';

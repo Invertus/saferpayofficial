@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Enum;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ControllerName
 {
     const AJAX = 'ajax';

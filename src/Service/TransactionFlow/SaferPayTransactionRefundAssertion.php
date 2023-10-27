@@ -30,6 +30,10 @@ use Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator;
 use Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator;
 use SaferPayOrder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayTransactionRefundAssertion
 {
     /**

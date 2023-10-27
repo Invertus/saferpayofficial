@@ -34,6 +34,10 @@ use Language;
 use OrderState;
 use Tab;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Class SaferPayInstaller
  */

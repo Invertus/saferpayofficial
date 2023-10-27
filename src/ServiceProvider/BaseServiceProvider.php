@@ -29,6 +29,10 @@ use Invertus\SaferPay\Repository\OrderRepository;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;
 use League\Container\Container;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 /**
  * Load base services here which are usually required
  */

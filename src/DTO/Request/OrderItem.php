@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\DTO\Request;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderItem implements \JsonSerializable
 {
     const ITEM_PHYSICAL = 'PHYSICAL';

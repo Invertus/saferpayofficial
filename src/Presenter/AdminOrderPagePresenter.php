@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Presenter;
 
 use SaferPayOrder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminOrderPagePresenter
 {
     public function present(SaferPayOrder $saferPayOrder, $action, $amountMultiplier, $currencySign)

@@ -23,9 +23,12 @@
 
 namespace Invertus\SaferPay\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayPaymentNotation
 {
-
     const PAYMENTS = [
         'AMEX' => 'AmericanExpress',
         'DINERS' => 'DinersClub',

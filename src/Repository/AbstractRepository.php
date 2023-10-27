@@ -27,6 +27,10 @@ use ObjectModel;
 use PrestaShopCollection;
 use PrestaShopException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AbstractRepository implements ReadOnlyRepositoryInterface
 {
     /**

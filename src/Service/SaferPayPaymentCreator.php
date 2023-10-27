@@ -26,9 +26,12 @@ namespace Invertus\SaferPay\Service;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use SaferPayPayment;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayPaymentCreator
 {
-
     /**
      * @var SaferPayPaymentRepository
      */

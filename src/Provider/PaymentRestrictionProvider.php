@@ -28,6 +28,10 @@ use Invertus\SaferPay\Service\PaymentRestrictionValidation\BasePaymentRestrictio
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\KlarnaPaymentRestrictionValidation;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\PaymentRestrictionValidationInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentRestrictionProvider implements PaymentRestrictionProviderInterface
 {
     /**

@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Repository;
 
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface OrderRepositoryInterface extends ReadOnlyRepositoryInterface
 {
     /**

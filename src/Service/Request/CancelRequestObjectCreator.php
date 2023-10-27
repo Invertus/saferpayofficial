@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\DTO\Request\Cancel\CancelRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CancelRequestObjectCreator
 {
     /**

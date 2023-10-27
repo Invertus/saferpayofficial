@@ -29,6 +29,10 @@ use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use SaferPayCountry;
 use SaferPayCurrency;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayRestrictionCreator
 {
     const RESTRICTION_ALL = 0;

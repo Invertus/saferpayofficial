@@ -27,6 +27,10 @@ use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use SaferPayAssert;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayAssertRefundBuilder
 {
     /**

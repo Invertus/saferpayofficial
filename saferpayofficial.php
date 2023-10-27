@@ -21,6 +21,11 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficial extends PaymentModule
 {
     const ADMIN_SAFERPAY_MODULE_CONTROLLER = 'AdminSaferPayOfficialModule';

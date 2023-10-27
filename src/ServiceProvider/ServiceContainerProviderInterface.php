@@ -13,6 +13,10 @@
 
 namespace Invertus\SaferPay\ServiceProvider;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ServiceContainerProviderInterface
 {
     /**

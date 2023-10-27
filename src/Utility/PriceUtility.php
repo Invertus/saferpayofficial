@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Utility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PriceUtility
 {
     /**

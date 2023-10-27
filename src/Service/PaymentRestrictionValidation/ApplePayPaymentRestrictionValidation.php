@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Service\PaymentRestrictionValidation;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidationInterface
 {
     /**

@@ -28,6 +28,10 @@ use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayExceptionService
 {
     const SHORT_CLASS_NAME = 'SaferPayExceptionService';

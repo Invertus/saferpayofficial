@@ -27,6 +27,10 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class LegacyTranslator implements TranslatorInterface
 {
     const FILE_NAME = 'LegacyTranslator';

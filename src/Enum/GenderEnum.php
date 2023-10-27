@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Enum;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class GenderEnum
 {
     const GENDER_MALE = 0;

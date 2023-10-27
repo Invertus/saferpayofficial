@@ -30,6 +30,10 @@ use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayRefreshPaymentsService
 {
     const ALL_COUNTRIES_ENABLED = "1";

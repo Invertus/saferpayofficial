@@ -30,6 +30,10 @@ use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class BasePaymentRestrictionValidation implements PaymentRestrictionValidationInterface
 {
     /**

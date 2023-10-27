@@ -24,6 +24,10 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 {
     public function __construct()

@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\DTO\Request;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RequestHeader
 {
     const SPEC_VERSION = 'SAFERPAY_SPEC_VERSION';

@@ -31,6 +31,10 @@ use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Order;
 use SaferPayOrder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayTransactionAssertion
 {
     /**

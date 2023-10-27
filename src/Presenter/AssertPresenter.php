@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Presenter;
 use SaferPayAssert;
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AssertPresenter
 {
     const FILE_NAME = 'AssertPresenter';

@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Factory;
 
 use Module;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ModuleFactory
 {
     /**

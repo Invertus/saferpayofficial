@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\DTO\Response;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class ThreeDs
 {
     /**

@@ -31,6 +31,10 @@ use Media;
 use OrderControllerCore;
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentFormAssetLoader
 {
     /** @var SaferPayOfficial */

@@ -30,6 +30,10 @@ use Invertus\SaferPay\DTO\Request\PendingNotification;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Configuration;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RefundRequest
 {
 

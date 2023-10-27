@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Builder;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class OrderConfirmationMessageTemplate
 {
     /**
