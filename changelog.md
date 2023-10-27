@@ -140,3 +140,7 @@
 
 ## [1.1.6] - *
 - BO : Added additional check for confirmation email regarding payment status and customer behavior
+
+## [1.1.7] - *
+- BO : Added PrestaShop module security validations
+- FO : Added PrestaShop module security validations
