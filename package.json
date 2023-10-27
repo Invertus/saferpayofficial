@@ -1,6 +1,8 @@
 {
-  "devDependencies": {
-    "cypress": "^9.6.1",
-    "cypress-iframe": "^1.0.1"
-  }
+    "devDependencies": {
+        "cypress": "^9.6.1",
+        "cypress-iframe": "^1.0.1"
+    },
+    "author": "PrestaShop",
+    "license": "AFL-3.0"
 }
