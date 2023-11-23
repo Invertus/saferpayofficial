@@ -98,7 +98,7 @@ class AssertService
     }
 
     /**
-     * @param array $responseBody
+     * @param object $responseBody
      * @param int $saferPayOrderId
      *
      * @return AssertBody
