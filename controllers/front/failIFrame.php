@@ -24,6 +24,10 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'failIFrame';

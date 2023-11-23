@@ -26,6 +26,10 @@ use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 {
     public function postProcess()

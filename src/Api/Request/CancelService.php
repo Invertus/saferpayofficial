@@ -27,6 +27,10 @@ use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Cancel\CancelRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CancelService
 {
     const CANCEL_API = 'Payment/v1/Transaction/Cancel';

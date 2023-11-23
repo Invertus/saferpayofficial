@@ -27,6 +27,10 @@ use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'pendingNotify';

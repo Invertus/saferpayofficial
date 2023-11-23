@@ -27,6 +27,10 @@ use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'validation';

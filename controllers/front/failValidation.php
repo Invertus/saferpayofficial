@@ -25,6 +25,10 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\CartDuplicationService;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'failValidation';

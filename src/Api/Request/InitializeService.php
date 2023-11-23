@@ -27,6 +27,10 @@ use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InitializeService
 {
     const INITIALIZE_API_PAYMENT = 'Payment/v1/PaymentPage/Initialize';

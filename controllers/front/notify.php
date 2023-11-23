@@ -28,6 +28,10 @@ use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'notify';

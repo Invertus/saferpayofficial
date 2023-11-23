@@ -36,6 +36,10 @@ use Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 use SaferPayOrder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AssertRefundService
 {
     const ASSERT_REFUND_API_TRANSACTION = 'Payment/v1/Transaction/AssertRefund';

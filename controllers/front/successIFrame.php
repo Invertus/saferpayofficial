@@ -30,6 +30,10 @@ use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'successIFrame';

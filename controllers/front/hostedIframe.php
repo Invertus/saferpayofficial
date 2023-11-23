@@ -24,6 +24,10 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontController
 {
     const FILENAME = 'hostedIframe';

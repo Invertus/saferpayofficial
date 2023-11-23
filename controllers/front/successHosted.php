@@ -28,6 +28,10 @@ use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'successHosted';

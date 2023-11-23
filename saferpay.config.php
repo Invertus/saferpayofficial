@@ -23,6 +23,10 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 if (!defined('_SAFERPAY_PAYMENT_COMPLETED_')) {
     /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_COMPLETED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED));
