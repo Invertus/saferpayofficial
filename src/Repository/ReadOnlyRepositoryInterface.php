@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Repository;
 use ObjectModel;
 use PrestaShopCollection;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 interface ReadOnlyRepositoryInterface
 {
     /**

@@ -49,6 +49,10 @@ use Invertus\SaferPay\Utility\PriceUtility;
 use SaferPayOfficial;
 use Tax;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RequestObjectCreator
 {
     /**

@@ -16,13 +16,17 @@
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- * @copyright SIX Payment Services
- * @license   SIX Payment Services
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontController
 {
@@ -42,7 +46,7 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             'credit_card_front_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-front.png",
             'credit_card_back_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-back.png",
             'tos_cms' => SaferPayConfig::isVersionAbove177() ? $this->getDefaultTermsAndConditions() : null,
-            'saferpay_selected_card' => $selectedCard
+            'saferpay_selected_card' => $selectedCard,
         ]);
 
         if (SaferPayConfig::isVersion17()) {

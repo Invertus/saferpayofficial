@@ -33,6 +33,10 @@ use Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AuthorizationService
 {
     const AUTHORIZE_API = 'Payment/v1/Transaction/Authorize';

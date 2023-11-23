@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Repository;
 use Db;
 use DbQuery;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayFieldRepository
 {
     public function isActiveByName($paymentName)
@@ -50,7 +54,7 @@ class SaferPayFieldRepository
 
     public function truncateTable()
     {
-        $query = 'TRUNCATE TABLE '. _DB_PREFIX_ .'saferpay_field;';
+        $query = 'TRUNCATE TABLE ' . _DB_PREFIX_ . 'saferpay_field;';
 
         return Db::getInstance()->execute($query);
     }

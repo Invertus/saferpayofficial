@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Install;
 
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 abstract class AbstractInstaller
 {
     /**

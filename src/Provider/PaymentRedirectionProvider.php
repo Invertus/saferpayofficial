@@ -23,14 +23,14 @@
 
 namespace Invertus\SaferPay\Provider;
 
-use Configuration;
-use Context;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
-use Invertus\SaferPay\Factory\ModuleFactory;
-use Invertus\SaferPay\Repository\SaferPayFieldRepository;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class PaymentRedirectionProvider
 {

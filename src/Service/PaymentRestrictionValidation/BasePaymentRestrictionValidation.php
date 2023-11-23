@@ -23,12 +23,15 @@
 
 namespace Invertus\SaferPay\Service\PaymentRestrictionValidation;
 
-use Currency;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class BasePaymentRestrictionValidation implements PaymentRestrictionValidationInterface
 {

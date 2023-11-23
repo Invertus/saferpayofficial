@@ -28,6 +28,10 @@ use Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayObtainPaymentMethods
 {
     private $obtainPaymentMethodsService;
@@ -62,7 +66,7 @@ class SaferPayObtainPaymentMethods
                 $paymentMethods[$paymentNotation] = [
                     'paymentMethod' => $paymentNotation,
                     'logoUrl' => $paymentMethodObject->LogoUrl,
-                    'currencies' => $paymentMethodObject->Currencies
+                    'currencies' => $paymentMethodObject->Currencies,
                 ];
             }
         }
@@ -72,7 +76,7 @@ class SaferPayObtainPaymentMethods
                 $paymentMethods[$wallet->WalletName] = [
                     'paymentMethod' => $wallet->WalletName,
                     'logoUrl' => $wallet->LogoUrl,
-                    'currencies' => $paymentMethodObject->Currencies
+                    'currencies' => $paymentMethodObject->Currencies,
                 ];
             }
         }

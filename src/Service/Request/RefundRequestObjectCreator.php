@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Service\Request;
 use Cart;
 use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RefundRequestObjectCreator
 {
     /**

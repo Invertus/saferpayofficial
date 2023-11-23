@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Tests\Unit\Service;
 
-use Invertus\SaferPay\Service\SaferPayPaymentNotation;
 use Invertus\SaferPay\Tests\Unit\Tools\UnitTestCase;
 
 class SaferPayPaymentNotationTest extends UnitTestCase
@@ -63,5 +62,4 @@ class SaferPayPaymentNotationTest extends UnitTestCase
             ['paymentMethod' => 'AMEX', 'expected' => 'AmericanExpress'],
         ];
     }
-
 }

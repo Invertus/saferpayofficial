@@ -16,9 +16,9 @@
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- * @copyright SIX Payment Services
- * @license   SIX Payment Services
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
@@ -26,6 +26,10 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
 {
@@ -95,7 +99,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
 
         $order = new Order($orderRefund->id_order);
 
-        if ((int)$orderAssert->refunded_amount === (int)$orderAssert->amount) {
+        if ((int) $orderAssert->refunded_amount === (int) $orderAssert->amount) {
             $saferPayOrder = new SaferPayOrder($orderRefund->id_saferpay_order);
             $saferPayOrder->refunded = 1;
             $saferPayOrder->save();

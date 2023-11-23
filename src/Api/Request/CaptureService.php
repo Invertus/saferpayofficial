@@ -27,6 +27,10 @@ use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Capture\CaptureRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CaptureService
 {
     const CAPTURE_API = 'Payment/v1/Transaction/Capture';

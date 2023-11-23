@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Service\Response;
 
 use Invertus\SaferPay\DTO\Response\Authorization\AuthorizationBody;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AuthorizationResponseObjectCreator extends ResponseObjectCreator
 {
     public function createAuthorizationObject($responseBody)

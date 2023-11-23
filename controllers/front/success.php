@@ -23,6 +23,10 @@
 
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'success';

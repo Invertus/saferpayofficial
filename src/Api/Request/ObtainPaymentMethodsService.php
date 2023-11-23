@@ -27,6 +27,11 @@ use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+
 class ObtainPaymentMethodsService
 {
     private $apiRequest;

@@ -27,6 +27,10 @@ use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RefundService
 {
     const REFUND_API = 'Payment/v1/Transaction/Refund';
@@ -48,7 +52,7 @@ class RefundService
     {
         return $this->apiRequest->post(
             self::REFUND_API,
-             $refundRequest->getAsArray()
+            $refundRequest->getAsArray()
         );
     }
 }

@@ -21,6 +21,10 @@
  *@license   SIX Payment Services
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayCardAlias extends ObjectModel
 {
     public $id_customer;

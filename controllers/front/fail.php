@@ -26,6 +26,10 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Service\CartDuplicationService;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'fail';

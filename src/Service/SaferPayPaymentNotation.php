@@ -23,16 +23,19 @@
 
 namespace Invertus\SaferPay\Service;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayPaymentNotation
 {
-
     const PAYMENTS = [
         'AMEX' => 'AmericanExpress',
         'DINERS' => 'DinersClub',
         'BONUS' => 'BonusCard',
         'DIRECTDEBIT' => 'Lastschrift',
         'POSTFINANCE' => 'PostEFinance',
-        'MAESTRO' => 'Maestro-Intl.'
+        'MAESTRO' => 'Maestro-Intl.',
     ];
 
     public function getForDisplay($payment)

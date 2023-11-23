@@ -34,6 +34,10 @@ use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\ReturnUrl;
 use Invertus\SaferPay\DTO\Request\SaferPayNotification;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class InitializeRequest
 {
 
@@ -119,21 +123,21 @@ class InitializeRequest
 
     public function __construct(
         RequestHeader        $requestHeader,
-                             $terminalId,
-                             $paymentMethod,
+        $terminalId,
+        $paymentMethod,
         Payment              $payment,
         Payer                $payer,
         ReturnUrl            $returnUrl,
-                             $notification,
+        $notification,
         DeliveryAddressForm  $deliveryAddressForm,
-                             $configSet,
-                             $cssUrl,
+        $configSet,
+        $cssUrl,
         Address              $deliveryAddress,
         Address              $billingAddress,
-                             $alias,
+        $alias,
         Order                $order,
         PayerProfile         $payerProfile,
-                             $fieldToken
+        $fieldToken
     ) {
         $this->requestHeader = $requestHeader;
         $this->terminalId = $terminalId;

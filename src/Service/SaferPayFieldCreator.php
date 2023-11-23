@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Service;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use SaferPayField;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayFieldCreator
 {
     /**

@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Service\Response;
 
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AssertRefundResponseObjectCreator extends ResponseObjectCreator
 {
     /**

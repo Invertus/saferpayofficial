@@ -32,6 +32,10 @@ use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 use SaferPayOrder;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AssertService
 {
     const ASSERT_API_PAYMENT = 'Payment/v1/PaymentPage/Assert';

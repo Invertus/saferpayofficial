@@ -31,6 +31,10 @@ use Media;
 use OrderControllerCore;
 use SaferPayOfficial;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentFormAssetLoader
 {
     /** @var SaferPayOfficial */
@@ -56,7 +60,7 @@ class PaymentFormAssetLoader
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
                 'iframe' => PaymentType::IFRAME,
                 'basic' => PaymentType::BASIC,
-            ]
+            ],
         ]);
 
         if (method_exists($controller, 'registerJavascript')) {

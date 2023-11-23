@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\DTO\Request\Capture;
 use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CaptureRequest
 {
     /**
@@ -69,7 +73,7 @@ class CaptureRequest
             ],
             'TransactionReference' => [
                 'TransactionId' => $this->transactionId,
-            ]
+            ],
         ];
 
         return $return;

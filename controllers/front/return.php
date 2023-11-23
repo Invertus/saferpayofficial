@@ -26,6 +26,10 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'return';
@@ -75,7 +79,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ],
                 true
             ));
-
         } catch (Exception $e) {
             PrestaShopLogger::addLog(
                 sprintf(

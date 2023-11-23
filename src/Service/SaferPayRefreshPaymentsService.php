@@ -23,12 +23,15 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Exception;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class SaferPayRefreshPaymentsService
 {
@@ -79,17 +82,17 @@ class SaferPayRefreshPaymentsService
         $this->fieldRepository->truncateTable();
 
         foreach ($paymentsFromAPI as $payment) {
-            $paymentActive = (isset($paymentsInfo[$payment]['active'])) ? (int)$paymentsInfo[$payment]['active'] : 0;
-            $fieldActive = (isset($paymentsInfo[$payment]['field'])) ? (int)$paymentsInfo[$payment]['field'] : 0;
+            $paymentActive = (isset($paymentsInfo[$payment]['active'])) ? (int) $paymentsInfo[$payment]['active'] : 0;
+            $fieldActive = (isset($paymentsInfo[$payment]['field'])) ? (int) $paymentsInfo[$payment]['field'] : 0;
 
             $this->paymentRepository->insertPayment([
                 'name' => $payment,
-                'active' => $paymentActive
+                'active' => $paymentActive,
             ]);
 
             $this->fieldRepository->insertField([
                 'name' => $payment,
-                'active' => $fieldActive
+                'active' => $fieldActive,
             ]);
         }
     }

@@ -23,14 +23,11 @@
 
 namespace Invertus\SaferPay\DTO\Response\AssertRefund;
 
-use Invertus\SaferPay\DTO\Response\Dcc;
-use Invertus\SaferPay\DTO\Response\Liability;
-use Invertus\SaferPay\DTO\Response\Payer;
-use Invertus\SaferPay\DTO\Response\PaymentMeans;
-use Invertus\SaferPay\DTO\Response\RegistrationResult;
 use Invertus\SaferPay\DTO\Response\ResponseHeader;
-use Invertus\SaferPay\DTO\Response\ThreeDs;
-use Invertus\SaferPay\DTO\Response\Transaction;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 class AssertRefundBody
 {

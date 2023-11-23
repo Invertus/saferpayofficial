@@ -29,6 +29,10 @@ use Context;
 use Db;
 use Order;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CartDuplicationService
 {
     public function restoreCart($cartId)

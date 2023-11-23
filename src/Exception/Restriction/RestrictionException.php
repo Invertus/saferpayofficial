@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Exception\Restriction;
 
 use RuntimeException;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class RestrictionException extends RuntimeException
 {
 }

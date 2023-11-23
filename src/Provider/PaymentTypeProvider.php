@@ -27,6 +27,10 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class PaymentTypeProvider
 {
     /** @var SaferPayFieldRepository */

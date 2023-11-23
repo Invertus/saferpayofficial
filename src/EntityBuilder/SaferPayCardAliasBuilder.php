@@ -27,6 +27,10 @@ use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use SaferPayCardAlias;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayCardAliasBuilder
 {
 

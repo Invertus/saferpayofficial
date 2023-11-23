@@ -27,12 +27,13 @@ use Configuration;
 use Context;
 use Db;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\Service\SaferPayLogoCreator;
-use Invertus\SaferPay\Service\SaferPayPaymentCreator;
-use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Language;
 use OrderState;
 use Tab;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * Class SaferPayInstaller

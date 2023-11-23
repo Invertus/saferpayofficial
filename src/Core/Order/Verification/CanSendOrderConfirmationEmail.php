@@ -25,6 +25,10 @@ namespace Invertus\SaferPay\Core\Order\Verification;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class CanSendOrderConfirmationEmail
 {
     public function verify(\Order $order, $orderStatusId)

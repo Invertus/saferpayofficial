@@ -16,12 +16,16 @@
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- * @copyright SIX Payment Services
- * @license   SIX Payment Services
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
  */
 
 namespace Invertus\SaferPay\Service;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
 /**
  * TranslatorInterface.

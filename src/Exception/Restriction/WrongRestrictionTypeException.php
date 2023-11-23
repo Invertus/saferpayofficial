@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Exception\Restriction;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class WrongRestrictionTypeException extends RestrictionException
 {
 }

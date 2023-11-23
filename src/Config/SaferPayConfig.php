@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Config;
 use Configuration;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayConfig
 {
     const TEST_API = 'https://test.saferpay.com/api/';
@@ -134,7 +138,7 @@ class SaferPayConfig
         'Postcard' => self::PAYMENT_POSTCARD,
         'BonusCard' => self::PAYMENT_BONUS,
         'Lastschrift' => self::PAYMENT_LASTSCHRIFT,
-        'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT
+        'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [

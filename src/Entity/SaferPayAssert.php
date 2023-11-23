@@ -21,6 +21,10 @@
  *@license   SIX Payment Services
  */
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayAssert extends ObjectModel
 {
     public $id_saferpay_order;

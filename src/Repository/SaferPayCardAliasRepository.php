@@ -26,6 +26,10 @@ namespace Invertus\SaferPay\Repository;
 use Db;
 use DbQuery;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class SaferPayCardAliasRepository
 {
     public function getSavedValidCardsByUserIdAndPaymentMethod($userId, $paymentMethod, $currentDate)
