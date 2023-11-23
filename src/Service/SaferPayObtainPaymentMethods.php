@@ -66,7 +66,7 @@ class SaferPayObtainPaymentMethods
                 $paymentMethods[$paymentNotation] = [
                     'paymentMethod' => $paymentNotation,
                     'logoUrl' => $paymentMethodObject->LogoUrl,
-                    'currencies' => $paymentMethodObject->Currencies
+                    'currencies' => $paymentMethodObject->Currencies,
                 ];
             }
         }
@@ -76,7 +76,7 @@ class SaferPayObtainPaymentMethods
                 $paymentMethods[$wallet->WalletName] = [
                     'paymentMethod' => $wallet->WalletName,
                     'logoUrl' => $wallet->LogoUrl,
-                    'currencies' => $paymentMethodObject->Currencies
+                    'currencies' => $paymentMethodObject->Currencies,
                 ];
             }
         }

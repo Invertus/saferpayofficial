@@ -92,7 +92,7 @@ class SaferPayInitialize
                 'moduleId' => $this->module->id,
                 'selectedCard' => $selectedCard,
                 'isBusinessLicence' => $isBusinessLicence,
-                'fieldToken' => $fieldToken
+                'fieldToken' => $fieldToken,
             ],
             true
         );

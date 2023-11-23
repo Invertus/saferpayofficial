@@ -79,7 +79,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ],
                 true
             ));
-
         } catch (Exception $e) {
             PrestaShopLogger::addLog(
                 sprintf(

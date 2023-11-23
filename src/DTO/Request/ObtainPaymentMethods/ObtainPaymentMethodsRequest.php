@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\DTO\Request\ObtainPaymentMethods;
 
-use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 if (!defined('_PS_VERSION_')) {

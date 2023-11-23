@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Install;
 
 use Configuration;
-use Db;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Tab;
 
@@ -52,7 +51,7 @@ class Uninstaller extends AbstractInstaller
 
         foreach ($this->getCommands() as $tableName => $command) {
             if (false === \Db::getInstance()->execute($command)) {
-                $this->errors[] = sprintf($this->module->l('Failed to uninstall database table [%s]' , __CLASS__), $tableName);
+                $this->errors[] = sprintf($this->module->l('Failed to uninstall database table [%s]', __CLASS__), $tableName);
                 return false;
             }
         }

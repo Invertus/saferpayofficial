@@ -231,7 +231,7 @@ class SaferPayOfficial extends PaymentModule
             $inputs['type'] = [
                 'name' => 'saferpayPaymentType',
                 'type' => 'hidden',
-                'value' => $paymentTypeProvider->get($paymentMethod['paymentMethod'])
+                'value' => $paymentTypeProvider->get($paymentMethod['paymentMethod']),
             ];
 
             $newOption->setModuleName($this->name)
@@ -458,7 +458,7 @@ class SaferPayOfficial extends PaymentModule
                     'redirect' => $paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']),
                     'imgUrl' => $imageUrl,
                     'method' => $paymentMethod['paymentMethod'],
-                    'saferpayPaymentType' => $paymentTypeProvider->get($paymentMethod['paymentMethod'])
+                    'saferpayPaymentType' => $paymentTypeProvider->get($paymentMethod['paymentMethod']),
                 ]
             );
 
@@ -571,7 +571,7 @@ class SaferPayOfficial extends PaymentModule
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
         if ($canSendOrderConfirmationEmail->verify($order, (int) $orderStatus->id)) {
-            $mailService->sendOrderConfMail($order, (int)$orderStatus->id);
+            $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
         }
     }
 
@@ -652,8 +652,8 @@ class SaferPayOfficial extends PaymentModule
             );
         } else {
             $action = $this->context->link->getAdminLink(
-                    self::ADMIN_ORDER_CONTROLLER
-                ) . '&id_order=' . (int) $orderId;
+                self::ADMIN_ORDER_CONTROLLER
+            ) . '&id_order=' . (int) $orderId;
         }
 
 

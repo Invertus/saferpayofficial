@@ -54,7 +54,7 @@ class SaferPayFieldRepository
 
     public function truncateTable()
     {
-        $query = 'TRUNCATE TABLE '. _DB_PREFIX_ .'saferpay_field;';
+        $query = 'TRUNCATE TABLE ' . _DB_PREFIX_ . 'saferpay_field;';
 
         return Db::getInstance()->execute($query);
     }

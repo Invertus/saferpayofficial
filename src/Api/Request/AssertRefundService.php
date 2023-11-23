@@ -25,16 +25,10 @@ namespace Invertus\SaferPay\Api\Request;
 
 use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
-use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
-use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
-use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
-use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertRefundBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator;
-use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;

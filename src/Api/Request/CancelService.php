@@ -52,7 +52,7 @@ class CancelService
     {
         return $this->apiRequest->post(
             self::CANCEL_API,
-             $cancelRequest->getAsArray()
+            $cancelRequest->getAsArray()
         );
     }
 }

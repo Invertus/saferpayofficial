@@ -73,7 +73,7 @@ class CaptureRequest
             ],
             'TransactionReference' => [
                 'TransactionId' => $this->transactionId,
-            ]
+            ],
         ];
 
         return $return;

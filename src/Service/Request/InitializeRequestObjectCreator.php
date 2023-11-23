@@ -65,7 +65,7 @@ class InitializeRequestObjectCreator
 
         $cartDetails = $cart->getSummaryDetails();
         $totalPrice = $cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
-        $totalPrice = (int)(round($totalPrice));
+        $totalPrice = (int) (round($totalPrice));
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
         $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);

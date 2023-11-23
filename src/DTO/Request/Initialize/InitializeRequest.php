@@ -123,21 +123,21 @@ class InitializeRequest
 
     public function __construct(
         RequestHeader        $requestHeader,
-                             $terminalId,
-                             $paymentMethod,
+        $terminalId,
+        $paymentMethod,
         Payment              $payment,
         Payer                $payer,
         ReturnUrl            $returnUrl,
-                             $notification,
+        $notification,
         DeliveryAddressForm  $deliveryAddressForm,
-                             $configSet,
-                             $cssUrl,
+        $configSet,
+        $cssUrl,
         Address              $deliveryAddress,
         Address              $billingAddress,
-                             $alias,
+        $alias,
         Order                $order,
         PayerProfile         $payerProfile,
-                             $fieldToken
+        $fieldToken
     ) {
         $this->requestHeader = $requestHeader;
         $this->terminalId = $terminalId;

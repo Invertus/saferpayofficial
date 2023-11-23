@@ -61,8 +61,8 @@ class AssertRefundRequest
                 'ClientInfo' => $this->requestHeader->getClientInfo(),
             ],
             'TransactionReference' => [
-                'TransactionId' => $this->transactionId
-            ]
+                'TransactionId' => $this->transactionId,
+            ],
         ];
 
         return $return;

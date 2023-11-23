@@ -272,7 +272,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         foreach ($paymentMethods as $paymentMethod) {
             $fields[] = [
                 'type' => 'free',
-                'label' => $saferPayPaymentNotation->getForDisplay($paymentMethod) ,
+                'label' => $saferPayPaymentNotation->getForDisplay($paymentMethod),
                 'name' => $paymentMethod,
                 'form_group_class' => 'saferpay-group',
             ];

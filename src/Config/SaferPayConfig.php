@@ -138,7 +138,7 @@ class SaferPayConfig
         'Postcard' => self::PAYMENT_POSTCARD,
         'BonusCard' => self::PAYMENT_BONUS,
         'Lastschrift' => self::PAYMENT_LASTSCHRIFT,
-        'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT
+        'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [

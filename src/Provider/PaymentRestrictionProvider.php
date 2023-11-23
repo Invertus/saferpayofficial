@@ -49,13 +49,11 @@ class PaymentRestrictionProvider implements PaymentRestrictionProviderInterface
      */
     private $klarnaPaymentRestrictionValidation;
 
-    public function __construct
-    (
+    public function __construct(
         ApplePayPaymentRestrictionValidation $applePayPaymentRestrictionValidation,
         BasePaymentRestrictionValidation $basePaymentRestrictionValidation,
         KlarnaPaymentRestrictionValidation $klarnaPaymentRestrictionValidation
-    )
-    {
+    ) {
         $this->applePayPaymentRestrictionValidation = $applePayPaymentRestrictionValidation;
         $this->basePaymentRestrictionValidation = $basePaymentRestrictionValidation;
         $this->klarnaPaymentRestrictionValidation = $klarnaPaymentRestrictionValidation;
@@ -69,7 +67,7 @@ class PaymentRestrictionProvider implements PaymentRestrictionProviderInterface
         return [
             $this->applePayPaymentRestrictionValidation,
             $this->basePaymentRestrictionValidation,
-            $this->klarnaPaymentRestrictionValidation
+            $this->klarnaPaymentRestrictionValidation,
         ];
     }
 }

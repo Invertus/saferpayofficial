@@ -60,7 +60,7 @@ class PaymentFormAssetLoader
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
                 'iframe' => PaymentType::IFRAME,
                 'basic' => PaymentType::BASIC,
-            ]
+            ],
         ]);
 
         if (method_exists($controller, 'registerJavascript')) {

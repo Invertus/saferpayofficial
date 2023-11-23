@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\DTO\Request\Refund;
 
-use Invertus\SaferPay\Api\Request\RefundService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\PendingNotification;
@@ -73,7 +72,7 @@ class RefundRequest
     {
         $return = [
             'RequestHeader' => [
-                'SpecVersion' => (string)Configuration::get(RequestHeader::SPEC_REFUND_VERSION),
+                'SpecVersion' => (string) Configuration::get(RequestHeader::SPEC_REFUND_VERSION),
                 'CustomerId' => $this->requestHeader->getCustomerId(),
                 'RequestId' => $this->requestHeader->getRequestId(),
                 'RetryIndicator' => $this->requestHeader->getRetryIndicator(),
@@ -86,7 +85,7 @@ class RefundRequest
                 ],
                 'OrderId' => $this->payment->getOrderReference(), //for delay testing: NotifyRefund_DelayedResponse60
                 'RestrictRefundAmountToCapturedAmount' =>
-                    (bool)Configuration::get(SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT),
+                    (bool) Configuration::get(SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT),
             ],
             'CaptureReference' => [
                 'CaptureId' => $this->transactionId,

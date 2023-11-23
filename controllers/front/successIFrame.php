@@ -22,7 +22,6 @@
  */
 
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
-use Invertus\SaferPay\Api\Request\AuthorizationService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;

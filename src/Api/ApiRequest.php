@@ -106,7 +106,7 @@ class ApiRequest
             'Content-Type' => 'application/json',
             'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
             'Saferpay-RequestId' => 'false',
-            'Authorization' => "Basic $credentials"
+            'Authorization' => "Basic $credentials",
         ];
     }
 
@@ -117,9 +117,8 @@ class ApiRequest
 
     private function isValidResponse(Response $response)
     {
-        if ($response->code >= 300){
+        if ($response->code >= 300) {
             throw new SaferPayApiException(sprintf('Initialize API failed: %s', $response->raw_body), SaferPayApiException::INITIALIZE);
         }
     }
 }
-

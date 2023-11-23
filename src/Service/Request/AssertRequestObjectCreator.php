@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
-use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use SaferPayOrder;
 

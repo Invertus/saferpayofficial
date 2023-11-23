@@ -52,7 +52,7 @@ class RefundService
     {
         return $this->apiRequest->post(
             self::REFUND_API,
-             $refundRequest->getAsArray()
+            $refundRequest->getAsArray()
         );
     }
 }

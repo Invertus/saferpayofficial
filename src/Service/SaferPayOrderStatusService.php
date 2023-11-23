@@ -158,7 +158,7 @@ class SaferPayOrderStatusService
         $cart = new Cart($order->id_cart);
         $transactionId = $saferPayOrder->transaction_id;
         $totalPrice = $order->total_paid_tax_incl * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
-        $totalPrice = (int)(round($totalPrice));
+        $totalPrice = (int) (round($totalPrice));
         if ($isRefund) {
             $transactionId = $saferPayOrder->refund_id;
             $totalPrice = $refundedAmount;
@@ -177,7 +177,7 @@ class SaferPayOrderStatusService
         if ($isRefund) {
             $saferPayAssert->refunded_amount += $refundedAmount;
             $saferPayAssert->update();
-            if ((int)$saferPayAssert->refunded_amount === (int)$saferPayAssert->amount) {
+            if ((int) $saferPayAssert->refunded_amount === (int) $saferPayAssert->amount) {
                 $saferPayOrder->refunded = 1;
                 $saferPayOrder->update();
                 $order->setCurrentState(_SAFERPAY_PAYMENT_REFUND_);
@@ -222,7 +222,7 @@ class SaferPayOrderStatusService
         $saferPayAssert = new SaferPayAssert($assertId);
 
         $refundAmount = $refundedAmount * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
-        $refundAmount = (int)(round($refundAmount));
+        $refundAmount = (int) (round($refundAmount));
 
         $isRefundValid = ($saferPayAssert->amount >= $saferPayAssert->refunded_amount + $refundAmount);
         if (!$isRefundValid) {
@@ -269,7 +269,7 @@ class SaferPayOrderStatusService
         if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
             $saferPayAssert->refunded_amount += $refundAmount;
             $saferPayAssert->update();
-            if ((int)$saferPayAssert->refunded_amount === (int)$saferPayAssert->amount) {
+            if ((int) $saferPayAssert->refunded_amount === (int) $saferPayAssert->amount) {
                 $saferPayOrder->refunded = 1;
                 $saferPayOrder->update();
                 $order->setCurrentState(_SAFERPAY_PAYMENT_REFUND_);

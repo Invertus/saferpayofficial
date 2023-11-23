@@ -35,7 +35,7 @@ class SaferPayPaymentNotation
         'BONUS' => 'BonusCard',
         'DIRECTDEBIT' => 'Lastschrift',
         'POSTFINANCE' => 'PostEFinance',
-        'MAESTRO' => 'Maestro-Intl.'
+        'MAESTRO' => 'Maestro-Intl.',
     ];
 
     public function getForDisplay($payment)

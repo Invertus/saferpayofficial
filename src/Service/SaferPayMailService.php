@@ -73,12 +73,14 @@ class SaferPayMailService
             Mail::l('Order confirmation', (int) $order->id_lang),
             $data,
             $customer->email,
-
             implode(' ', [$customer->firstname, $customer->lastname]),
             null,
             null,
             $fileAttachment,
-            null, _PS_MAIL_DIR_, false, (int) $order->id_shop
+            null,
+            _PS_MAIL_DIR_,
+            false,
+            (int) $order->id_shop
         );
     }
 
@@ -348,7 +350,13 @@ class SaferPayMailService
                         $params,
                         $customer->email,
                         implode(' ', [$customer->firstname, $customer->lastname]),
-                        null, null, null, null, _PS_MAIL_DIR_, false, (int) $order->id_shop
+                        null,
+                        null,
+                        null,
+                        null,
+                        _PS_MAIL_DIR_,
+                        false,
+                        (int) $order->id_shop
                     );
                 }
 

@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Service\PaymentRestrictionValidation;
 
-use Currency;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;

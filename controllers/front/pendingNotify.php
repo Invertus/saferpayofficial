@@ -99,7 +99,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
 
         $order = new Order($orderRefund->id_order);
 
-        if ((int)$orderAssert->refunded_amount === (int)$orderAssert->amount) {
+        if ((int) $orderAssert->refunded_amount === (int) $orderAssert->amount) {
             $saferPayOrder = new SaferPayOrder($orderRefund->id_saferpay_order);
             $saferPayOrder->refunded = 1;
             $saferPayOrder->save();
