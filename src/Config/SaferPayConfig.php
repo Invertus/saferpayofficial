@@ -354,6 +354,7 @@ class SaferPayConfig
             RequestHeader::SPEC_VERSION,
             RequestHeader::RETRY_INDICATOR,
             RequestHeader::SPEC_REFUND_VERSION,
+            self::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL,
             self::TEST_MODE,
             self::USERNAME,
             self::PASSWORD,
