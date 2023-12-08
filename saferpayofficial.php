@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -109,6 +111,46 @@ class SaferPayOfficial extends PaymentModule
         $containerProvider = new \Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider();
 
         return $containerProvider->getService($service);
+    }
+
+    public function hookActionObjectOrderPaymentAddAfter($params)
+    {
+        /** @var OrderPayment $orderPayment */
+        $orderPayment = $params['object'];
+
+        /** @var SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->getService(SaferPayOrderRepository::class);
+
+        $orders = Order::getByReference($orderPayment->order_reference);
+
+        /** @var Order $order */
+        $order = $orders->getFirst();
+
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+
+        $saferPayOrderId = (int) $saferPayOrderRepository->getIdByOrderId($order->id);
+
+        if (!$saferPayOrderId) {
+            return;
+        }
+
+        $saferPayAssertId = (int) $saferPayOrderRepository->getAssertIdBySaferPayOrderId($saferPayOrderId);
+
+        if (!$saferPayAssertId) {
+            return;
+        }
+
+        $brand = $saferPayOrderRepository->getPaymentBrandByAssertId($saferPayAssertId);
+
+        if (!$brand) {
+            return;
+        }
+
+        // NOTE: ask on what to name the payment method. Ex. SaferPay - PayPal ...
+        $orderPayment->payment_method = $brand;
+        $orderPayment->update();
     }
 
     public function hookPaymentOptions($params)

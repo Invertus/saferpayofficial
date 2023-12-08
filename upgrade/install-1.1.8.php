@@ -26,13 +26,15 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-function upgrade_module_1_1_8()
+function upgrade_module_1_1_8(SaferPayOfficial $module)
 {
     Configuration::updateValue(SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL, 1);
     Configuration::updateValue(
         SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION,
         SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE
     );
+
+    $module->registerHook('actionObjectOrderPaymentAddAfter');
 
     return true;
 }

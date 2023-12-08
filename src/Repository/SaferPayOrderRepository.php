@@ -66,4 +66,14 @@ class SaferPayOrderRepository
 
         return Db::getInstance()->executeS($query);
     }
+
+    public function getPaymentBrandByAssertId($assertId)
+    {
+        $query = new DbQuery();
+        $query->select('`brand`');
+        $query->from('saferpay_assert');
+        $query->where('id_saferpay_assert = "' . (int) $assertId . '"');
+
+        return Db::getInstance()->getValue($query);
+    }
 }

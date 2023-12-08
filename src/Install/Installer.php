@@ -95,6 +95,7 @@ class Installer extends AbstractInstaller
         $this->module->registerHook('displayAdminOrderTabContent');
         $this->module->registerHook('actionAdminControllerSetMedia');
         $this->module->registerHook('actionOrderStatusUpdate');
+        $this->module->registerHook('actionObjectOrderPaymentAddAfter');
     }
 
     private function installConfiguration()
