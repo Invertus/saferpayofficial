@@ -30,6 +30,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
+use PrestaShop\PrestaShop\Adapter\Shop\Context;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -68,6 +69,7 @@ class InitializeRequestObjectCreator
         $totalPrice = (int) (round($totalPrice));
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
+        $payer->setLanguageCode($cart->getAssociatedLanguage()->iso_code);
         $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);
         $notification = ($isBusinessLicence && version_compare(Configuration::get(RequestHeader::SPEC_VERSION), '1.35', '<')) ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
