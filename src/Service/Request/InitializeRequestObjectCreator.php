@@ -69,7 +69,12 @@ class InitializeRequestObjectCreator
         $totalPrice = (int) (round($totalPrice));
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
-        $payer->setLanguageCode($cart->getAssociatedLanguage()->iso_code);
+
+        $languageCode = !empty($cart->getAssociatedLanguage()->iso_code)
+            ? $cart->getAssociatedLanguage()->iso_code
+            : 'en';
+
+        $payer->setLanguageCode($languageCode);
         $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);
         $notification = ($isBusinessLicence && version_compare(Configuration::get(RequestHeader::SPEC_VERSION), '1.35', '<')) ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
