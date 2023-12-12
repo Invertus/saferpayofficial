@@ -74,12 +74,12 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
 
     private function isMacDesktop()
     {
-        if (SaferPayConfig::isTestMode()) {
-            return true;
-        }
+//        if (SaferPayConfig::isTestMode()) {
+//            return true;
+//        }
 
         $device = $this->context->getDeviceDetect();
 
-        return $device === \Context::DEVICE_COMPUTER && preg_match('/macintosh|mac os x|mac_powerpc/i', $_SERVER['HTTP_USER_AGENT']);
+        return $device === \Context::DEVICE_COMPUTER && (int) preg_match('/macintosh|mac os x|mac_powerpc/i', $_SERVER['HTTP_USER_AGENT']);
     }
 }
