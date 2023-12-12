@@ -144,3 +144,6 @@
 ## [1.1.7] - *
 - BO : Added PrestaShop module security validations
 - FO : Added PrestaShop module security validations
+- 
+- ## [1.2.0] - *
+- BO : TODO
