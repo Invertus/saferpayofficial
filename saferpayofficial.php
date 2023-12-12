@@ -21,8 +21,6 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -115,18 +113,26 @@ class SaferPayOfficial extends PaymentModule
 
     public function hookActionObjectOrderPaymentAddAfter($params)
     {
+        if (!isset($params['object'])) {
+            return;
+        }
+
         /** @var OrderPayment $orderPayment */
         $orderPayment = $params['object'];
 
-        /** @var SaferPayOrderRepository $saferPayOrderRepository */
-        $saferPayOrderRepository = $this->getService(SaferPayOrderRepository::class);
+        if (!Validate::isLoadedObject($orderPayment)) {
+            return;
+        }
+
+        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
 
         $orders = Order::getByReference($orderPayment->order_reference);
 
-        /** @var Order $order */
+        /** @var Order|bool $order */
         $order = $orders->getFirst();
 
-        if (!Validate::isLoadedObject($order)) {
+        if (!Validate::isLoadedObject($order) || !$order) {
             return;
         }
 
@@ -136,20 +142,13 @@ class SaferPayOfficial extends PaymentModule
             return;
         }
 
-        $saferPayAssertId = (int) $saferPayOrderRepository->getAssertIdBySaferPayOrderId($saferPayOrderId);
-
-        if (!$saferPayAssertId) {
-            return;
-        }
-
-        $brand = $saferPayOrderRepository->getPaymentBrandByAssertId($saferPayAssertId);
+        $brand = $saferPayOrderRepository->getPaymentBrandBySaferpayOrderId($saferPayOrderId);
 
         if (!$brand) {
             return;
         }
 
-        // NOTE: ask on what to name the payment method. Ex. SaferPay - PayPal ...
-        $orderPayment->payment_method = $brand;
+        $orderPayment->payment_method = 'Saferpay - ' . $brand;
         $orderPayment->update();
     }
 

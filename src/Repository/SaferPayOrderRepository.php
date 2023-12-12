@@ -67,12 +67,12 @@ class SaferPayOrderRepository
         return Db::getInstance()->executeS($query);
     }
 
-    public function getPaymentBrandByAssertId($assertId)
+    public function getPaymentBrandBySaferpayOrderId($saferpayOrderId)
     {
         $query = new DbQuery();
         $query->select('`brand`');
         $query->from('saferpay_assert');
-        $query->where('id_saferpay_assert = "' . (int) $assertId . '"');
+        $query->where('id_saferpay_order = "' . (int) $saferpayOrderId . '"');
 
         return Db::getInstance()->getValue($query);
     }
