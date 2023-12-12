@@ -27,7 +27,7 @@ use Invertus\SaferPay\DTO\Request\RequestHeader;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-function upgrade_module_1_1_4($module)
+function upgrade_module_1_1_4()
 {
     Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION);
     Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION);

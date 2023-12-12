@@ -144,3 +144,7 @@
 ## [1.1.7] - *
 - BO : Added PrestaShop module security validations
 - FO : Added PrestaShop module security validations
+
+## [1.1.8] - *
+- BO : Added a toggle setting for Saferpay email sending option.
+- BO : Added a configuration field for the customization of the description parameter.
