@@ -111,6 +111,47 @@ class SaferPayOfficial extends PaymentModule
         return $containerProvider->getService($service);
     }
 
+    public function hookActionObjectOrderPaymentAddAfter($params)
+    {
+        if (!isset($params['object'])) {
+            return;
+        }
+
+        /** @var OrderPayment $orderPayment */
+        $orderPayment = $params['object'];
+
+        if (!Validate::isLoadedObject($orderPayment)) {
+            return;
+        }
+
+        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+
+        $orders = Order::getByReference($orderPayment->order_reference);
+
+        /** @var Order|bool $order */
+        $order = $orders->getFirst();
+
+        if (!Validate::isLoadedObject($order) || !$order) {
+            return;
+        }
+
+        $saferPayOrderId = (int) $saferPayOrderRepository->getIdByOrderId($order->id);
+
+        if (!$saferPayOrderId) {
+            return;
+        }
+
+        $brand = $saferPayOrderRepository->getPaymentBrandBySaferpayOrderId($saferPayOrderId);
+
+        if (!$brand) {
+            return;
+        }
+
+        $orderPayment->payment_method = 'Saferpay - ' . $brand;
+        $orderPayment->update();
+    }
+
     public function hookPaymentOptions($params)
     {
         /** @var Invertus\SaferPay\Service\SaferPayCartService $assertService */
