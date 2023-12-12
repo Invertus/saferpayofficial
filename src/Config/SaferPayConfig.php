@@ -221,6 +221,7 @@ class SaferPayConfig
     const SAFERPAY_PAYMENT_AUTHORIZATION_FAILED = 'SAFERPAY_PAYMENT_AUTHORIZATION_FAILED';
     const SAFERPAY_SEND_ORDER_CONFIRMATION = 'SAFERPAY_SEND_ORDER_CONFIRMATION';
     const SAFERPAY_SEND_NEW_ORDER_MAIL = 'SAFERPAY_SEND_NEW_ORDER_MAIL';
+    const SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL = 'SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL';
 
     const STATUS_PS_OS_OUTOFSTOCK_PAID = 'PS_OS_OUTOFSTOCK_PAID';
 
@@ -336,6 +337,7 @@ class SaferPayConfig
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
             SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => 1,
+            SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => 1,
             SaferPayConfig::FIELDS_LIBRARY => self::FIELDS_LIBRARY_DEFAULT_VALUE,
             SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => self::FIELDS_LIBRARY_TEST_DEFAULT_VALUE,
             self::TEST_MODE => 1,
@@ -352,6 +354,7 @@ class SaferPayConfig
             RequestHeader::SPEC_VERSION,
             RequestHeader::RETRY_INDICATOR,
             RequestHeader::SPEC_REFUND_VERSION,
+            self::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL,
             self::TEST_MODE,
             self::USERNAME,
             self::PASSWORD,
