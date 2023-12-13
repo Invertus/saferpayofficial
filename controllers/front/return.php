@@ -45,8 +45,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $fieldToken = Tools::getValue('fieldToken');
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
-
-        $orderId = Order::getOrderByCartId($cartId);
+        $orderId =  Tools::getValue('orderId');
 
         $cart = new Cart($cartId);
 
@@ -65,7 +64,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         try {
-            $this->assertTransaction($orderId);
+            if ($orderId) {
+                $this->assertTransactionByOrderId($orderId);
+            } else {
+                $this->assertTransactionByCartId($cartId);
+                //todo if assertion is good create order
+            }
 
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
@@ -106,7 +110,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
      * @return AssertBody
      * @throws Exception
      */
-    private function assertTransaction($orderId)
+    private function assertTransactionByOrderId($orderId)
     {
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);

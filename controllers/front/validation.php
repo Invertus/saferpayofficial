@@ -79,8 +79,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         $currency = $this->context->currency;
         $total = (float) $cart->getOrderTotal();
 
-        $orderId = Order::getOrderByCartId($cart->id);
-        if (!$orderId) {
+        if (!(int) Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION)) {
             $this->module->validateOrder(
                 $cart->id,
                 Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
@@ -116,15 +115,18 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             );
             $this->redirectWithNotifications($redirectLink);
         }
-        /** @var Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getService(\Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder::class);
-        $saferPayOrderBuilder->create(
-            $initializeBody,
-            $this->context->cart,
-            $this->context->customer,
-            false,
-            $isBusinessLicence
-        );
+        if (!(int) Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION)) {
+            /** @var Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder $saferPayOrderBuilder */
+            $saferPayOrderBuilder = $this->module->getService(\Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder::class);
+
+            $saferPayOrderBuilder->create(
+                $initializeBody,
+                $this->context->cart,
+                $this->context->customer,
+                false,
+                $isBusinessLicence
+            );
+        }
 
         Tools::redirect($initializeBody->RedirectUrl);
     }

@@ -80,6 +80,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         $orderId = Order::getOrderByCartId($cart->id);
         if (!$orderId) {
             $paymentMethod = Tools::getValue('saved_card_method');
+
             $this->module->validateOrder(
                 $cart->id,
                 Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),

@@ -275,7 +275,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                             1 => $this->l('After authorization'),
                             0 => $this->l('Before authorization'),
                         ],
-                        'desc' => $this->l('If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.'),
+                        'desc' => $this->l('TODO'),
                         'form_group_class' => 'thumbs_chose',
                     ],
                 ],

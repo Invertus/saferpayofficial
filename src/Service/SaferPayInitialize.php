@@ -31,6 +31,7 @@ use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Order;
 use SaferPayOfficial;
 
@@ -81,6 +82,7 @@ class SaferPayInitialize
     ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
+        $createAfterAuthorization = (int) \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION);
 
         $returnUrl = $this->context->link->getModuleLink(
             $this->module->name,
@@ -88,7 +90,7 @@ class SaferPayInitialize
             [
                 'cartId' => $cartId,
                 'secureKey' => $this->context->cart->secure_key,
-                'orderId' => Order::getOrderByCartId($cartId),
+                'orderId' => $createAfterAuthorization ? 0 : Order::getOrderByCartId($cartId),
                 'moduleId' => $this->module->id,
                 'selectedCard' => $selectedCard,
                 'isBusinessLicence' => $isBusinessLicence,
@@ -103,7 +105,7 @@ class SaferPayInitialize
             [
                 'success' => 1,
                 'cartId' => $this->context->cart->id,
-                'orderId' => Order::getOrderByCartId($cartId),
+                'orderId' => $createAfterAuthorization ? 0 : Order::getOrderByCartId($cartId),
                 'secureKey' => $this->context->cart->secure_key,
             ],
             true

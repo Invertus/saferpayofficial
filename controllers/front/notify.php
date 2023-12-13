@@ -93,6 +93,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             ) {
                 $orderStatusService->capture($order);
             }
+
         } catch (Exception $e) {
             PrestaShopLogger::addLog(
                 sprintf(

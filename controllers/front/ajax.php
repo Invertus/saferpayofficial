@@ -41,12 +41,13 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
         }
     }
 
-    private function submitHostedFields()
+    private function submitHostedFields(): void
     {
         try {
-            if (!Order::getOrderByCartId($this->context->cart->id)) {
-                $this->validateOrder();
-            }
+            //todo do not create yet here if setting is true
+//            if (!Order::getOrderByCartId($this->context->cart->id)) {
+//                $this->validateOrder();
+//            }
 
             /** @var SaferPayCardAliasRepository $cardAliasRep */
             $cardAliasRep = $this->module->getService(SaferPayCardAliasRepository::class);
@@ -71,6 +72,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 $redirectUrl = $this->getRedirectionToControllerUrl('successHosted');
             }
 
+            //todo create here an order if setting is true
             $this->ajaxDie(json_encode([
                 'error' => false,
                 'url' => $redirectUrl,
