@@ -69,7 +69,7 @@ class AssertService
      * @param AssertRequest $assertRequest
      * @param int $saferPayOrderId
      *
-     * @return array|null
+     * @return object|null
      * @throws \Exception
      */
     public function assert(AssertRequest $assertRequest, $saferPayOrderId)
@@ -83,7 +83,7 @@ class AssertService
         // also we call authorize method in some of the success controllers, so if we leave the logic here,
         // we get an error with TRANSACTION_IN_WRONG_STATE
         if ($saferPayOrder->is_transaction) {
-            return [];
+            return null;
 //          $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
@@ -98,7 +98,7 @@ class AssertService
     }
 
     /**
-     * @param object $responseBody
+     * @param object|null $responseBody
      * @param int $saferPayOrderId
      *
      * @return AssertBody

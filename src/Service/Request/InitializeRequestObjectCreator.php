@@ -76,7 +76,7 @@ class InitializeRequestObjectCreator
 
         $payer->setLanguageCode($languageCode);
         $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);
-        $notification = ($isBusinessLicence && version_compare(Configuration::get(RequestHeader::SPEC_VERSION), '1.35', '<')) ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
+        $notification = $isBusinessLicence ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
         $configSet = Configuration::get(SaferPayConfig::CONFIGURATION_NAME);
         $cssUrl = Configuration::get(SaferPayConfig::CSS_FILE);
