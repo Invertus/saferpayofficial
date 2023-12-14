@@ -31,7 +31,7 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayOrder extends ObjectModel
 {
     /**
-     * @var Int
+     * @var Int|null
      */
     public $id_order;
 
@@ -92,7 +92,8 @@ class SaferPayOrder extends ObjectModel
         'table' => 'saferpay_order',
         'primary' => 'id_saferpay_order',
         'fields' => [
-            'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isInt', 'required' => false],
+            'id_cart' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'id_customer' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'transaction_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'refund_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],

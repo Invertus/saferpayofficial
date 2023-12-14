@@ -25,6 +25,8 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Processor\CheckoutProcessor;
+
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -64,12 +66,17 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         try {
-            if ($orderId) {
-                $this->assertTransactionByOrderId($orderId);
-            } else {
-                $this->assertTransactionByCartId($cartId);
-                //todo if assertion is good create order
+            /** @var SaferPayTransactionAssertion $transactionAssert */
+            $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+            $assertionResponse = $transactionAssert->assert($cartId);
+
+            if (!$orderId) { // todo check config too
+                /** @var CheckoutProcessor $checkoutProcessor **/
+                $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+                $checkoutProcessor->processCreateOrder(new \Cart($cartId), 'MASTERCARD'); // todo payment method if not in assertionResone then add to response
             }
+
+            $orderId = \Order::getOrderByCartId($cartId);
 
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
@@ -103,20 +110,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 true
             ));
         }
-    }
-
-    /**
-     * @param $cartId
-     * @return AssertBody
-     * @throws Exception
-     */
-    private function assertTransactionByOrderId($orderId)
-    {
-        /** @var SaferPayTransactionAssertion $transactionAssert */
-        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert($orderId, false);
-
-        return $assertionResponse;
     }
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken)

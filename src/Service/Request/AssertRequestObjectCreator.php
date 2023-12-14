@@ -51,11 +51,9 @@ class AssertRequestObjectCreator
         $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function create($orderId)
+    public function create($token)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
-        $saferPayOrderId =  $this->saferPayOrderRepository->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
         return new AssertRequest($requestHeader, $saferPayOrder->token);
     }

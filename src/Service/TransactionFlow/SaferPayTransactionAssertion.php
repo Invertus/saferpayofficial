@@ -75,12 +75,11 @@ class SaferPayTransactionAssertion
      * @return AssertBody
      * @throws \Exception
      */
-    public function assert($orderId, $changeOrderStatus)
+    public function assert($cartId)
     {
-        $saferPayOrder = $this->getSaferPayOrder($orderId);
-        $order = new Order($orderId);
+        $saferPayOrder = $this->getSaferPayOrder($cartId);
 
-        $assertRequest = $this->assertRequestCreator->create($orderId);
+        $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
         $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
 
         $assertBody = $this->assertionService->createObjectsFromAssertResponse(
@@ -91,22 +90,18 @@ class SaferPayTransactionAssertion
         $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
         $saferPayOrder->update();
 
-        if ($changeOrderStatus) {
-            $this->orderStatusService->assert($order, $assertBody->getTransaction()->getStatus());
-        }
-
         return $assertBody;
     }
 
     /**
-     * @param $orderId
+     * @param $cartId
      *
      * @return false|SaferPayOrder
      * @throws \Exception
      */
-    private function getSaferPayOrder($orderId)
+    private function getSaferPayOrder($cartId)
     {
-        $saferPayOrderId = $this->orderRepository->getIdByOrderId($orderId);
+        $saferPayOrderId = $this->orderRepository->getIdByCartId($orderId);
 
         return new SaferPayOrder($saferPayOrderId);
     }

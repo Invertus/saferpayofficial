@@ -67,6 +67,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
         if (!SaferPayConfig::isVersion17()) {
             return parent::init();
         }
+
         parent::init();
 
         $this->id_cart = (int) Tools::getValue('cartId', 0);

@@ -36,6 +36,11 @@ class LegacyContext
         return Context::getContext();
     }
 
+    public function getShopId()
+    {
+        return $this->getContext()->shop->id;
+    }
+
     public function getCurrencyIsoCode()
     {
         return $this->getContext()->currency->iso_code;

@@ -23,13 +23,30 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
+use Configuration;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+
+//todo test it and todo upgrade method
 function upgrade_module_1_2_0($module)
 {
+    // Make id_order nullable
+    $sql = 'ALTER TABLE `' . bqSQL(_DB_PREFIX_ . 'saferpay_order') . '` MODIFY `id_order` INT NULL;';
+
+    if (!Db::getInstance()->execute($sql)) {
+        return false;
+    }
+
+    // Add the new column id_cart after id_order
+    $sql = 'ALTER TABLE `' . bqSQL(_DB_PREFIX_ . 'saferpay_order') . '` ADD COLUMN `id_cart` INT AFTER `id_order`;';
+    if (!Db::getInstance()->execute($sql)) {
+        return false;
+    }
+
     Configuration::updateValue(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION, 0);
+
     return true;
 }
 

@@ -119,8 +119,12 @@ class RequestObjectCreator
         $payment->setValue($totalPrice);
         $payment->setCurrencyCode($currency['iso_code']);
 
-        //todo what is the reference ?? todo recommended
-        $payment->setOrderReference('random');
+        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION) && empty($order)) {
+            return $payment;
+        }
+
+        /** This param is not mandatory, but recommended **/
+        $payment->setOrderReference($order->reference);
 
         return $payment;
     }

@@ -26,6 +26,7 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Service\SaferPayInitialize;
+use Invertus\SaferPay\Controller\Front\PaymentFrontController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -34,6 +35,9 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'validation';
+
+    /** @var SaferPayOfficial */
+    public $module;
 
     /**
      * @see FrontController::postProcess()
@@ -66,42 +70,33 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             }
         }
         if (!$authorized) {
-            $this->errors[] =
-                $this->module->l('This payment method is not available.', self::FILENAME);
+            $this->errors[] = $this->module->l('This payment method is not available.', self::FILENAME);
             $this->redirectWithNotifications($redirectLink);
         }
 
-        $customer = new Customer($cart->id_customer);
-        if (!Validate::isLoadedObject($customer)) {
-            Tools::redirect($redirectLink);
+        if (Order::getOrderByCartId($this->context->cart->id)) {
+            $this->errors[] = $this->module->l('Order already exists.', self::FILENAME);
+            $this->redirectWithNotifications($redirectLink);
         }
 
-        $currency = $this->context->currency;
-        $total = (float) $cart->getOrderTotal();
-
-        if (!(int) Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION)) {
-            $this->module->validateOrder(
-                $cart->id,
-                Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
-                $total,
-                $paymentMethod,
-                null,
-                [],
-                (int) $currency->id,
-                false,
-                $customer->secure_key
-            );
-        }
-
-        /** @var SaferPayInitialize $initializeService */
-        $initializeService = $this->module->getService(SaferPayInitialize::class);
         try {
-            $isBusinessLicence = Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
-            $initializeBody = $initializeService->initialize($paymentMethod, $isBusinessLicence);
-        } catch (SaferPayApiException $e) {
+            /** @var PaymentFrontController $paymentFrontController */
+            $paymentFrontController = $this->module->getService(PaymentFrontController::class);
+
+            $initializeResponse = $paymentFrontController->create(
+            $this->context->cart,
+            $paymentMethod,
+            (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
+        );
+
+        $redirectLink = $paymentFrontController->getRedirectionUrl($initializeResponse);
+
+        Tools::redirect($redirectLink);
+        } catch (\Exception $exception) {
             /** @var SaferPayExceptionService $exceptionService */
             $exceptionService = $this->module->getService(SaferPayExceptionService::class);
-            $this->errors[] = $exceptionService->getErrorMessageForException($e, $exceptionService->getErrorMessages());
+            $this->errors[] = $exceptionService->getErrorMessageForException($exception, $exceptionService->getErrorMessages());
+
             $redirectLink = $this->context->link->getModuleLink(
                 $this->module->name,
                 'fail',
@@ -115,19 +110,5 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             );
             $this->redirectWithNotifications($redirectLink);
         }
-        if (!(int) Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION)) {
-            /** @var Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder $saferPayOrderBuilder */
-            $saferPayOrderBuilder = $this->module->getService(\Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder::class);
-
-            $saferPayOrderBuilder->create(
-                $initializeBody,
-                $this->context->cart,
-                $this->context->customer,
-                false,
-                $isBusinessLicence
-            );
-        }
-
-        Tools::redirect($initializeBody->RedirectUrl);
     }
 }
