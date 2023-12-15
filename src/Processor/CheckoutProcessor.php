@@ -23,10 +23,14 @@
 
 namespace Invertus\SaferPay\Processor;
 
+use Cart;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Factory\ModuleFactory;
+use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
+use Order;
+use SaferPayOrder;
 
 class CheckoutProcessor
 {
@@ -39,17 +43,22 @@ class CheckoutProcessor
     /** @var SaferPayInitialize */
     private $saferPayInitialize;
 
+    /** @var SaferPayOrderRepository */
+    private $saferPayOrderRepository;
+
     public function __construct(
         ModuleFactory $module,
         SaferPayOrderBuilder $saferPayOrderBuilder,
-        SaferPayInitialize $saferPayInitialize
+        SaferPayInitialize $saferPayInitialize,
+        SaferPayOrderRepository $saferPayOrderRepository
     ) {
         $this->module = $module->getModule();
         $this->saferPayOrderBuilder = $saferPayOrderBuilder;
         $this->saferPayInitialize = $saferPayInitialize;
+        $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function processCreateOrder(\Cart $cart, $paymentMethod)
+    public function processCreateOrder(Cart $cart, $paymentMethod)
     {
         $customer = new \Customer($cart->id_customer);
 
@@ -92,5 +101,16 @@ class CheckoutProcessor
             $customerId,
             $isTransaction
         );
+    }
+
+    public function processCreateOrderAfterAuthorization(Cart $cart, $paymentMethod)
+    {
+        $this->processCreateOrder($cart, $paymentMethod);
+
+        $saferPayOrderId = $this->saferPayOrderRepository->getIdByCartId($cart->id);
+        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder->id_order = Order::getIdByCartId($cart->id);
+
+        $saferPayOrder->update();
     }
 }

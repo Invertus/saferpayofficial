@@ -37,11 +37,11 @@ class SaferPayOrderBuilder
     //TODO to pass $body as InitializeBody.
     public function create($body, $cartId, $customerId, $isTransaction)
     {
-        $orderId = Order::getOrderByCartId($cartId);
+        $orderId = Order::getIdByCartId($cartId);
 
         $saferPayOrder = new SaferPayOrder();
         $saferPayOrder->token = $body->Token;
-        $saferPayOrder->id_order = $orderId ? $orderId : null;
+        $saferPayOrder->id_order = $orderId ?: null;
         $saferPayOrder->id_cart = $cartId;
         $saferPayOrder->id_customer = $customerId;
         $saferPayOrder->redirect_url = $this->getRedirectionUrl($body);

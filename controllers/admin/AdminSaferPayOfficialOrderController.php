@@ -50,7 +50,7 @@ class AdminSaferPayOfficialOrderController extends ModuleAdminController
                 $orderStatusService->capture($order);
                 $this->context->cookie->captured = true;
             } elseif (Tools::isSubmit('submitCancelOrder')) {
-                $orderStatusService->cancel($order);
+                $orderStatusService->cancel($order); //todo saferPayOrder
                 $this->context->cookie->canceled = true;
             } elseif (Tools::isSubmit('submitRefundOrder')) {
                 $refundAmount = Tools::getValue('saferpay_refund_amount');

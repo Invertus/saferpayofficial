@@ -23,6 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Enum\ControllerName;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -76,7 +77,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
 
         $failUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            'fail',
+            ControllerName::FAIL,
             [
                 'cartId' => $cartId,
                 'secureKey' => $secureKey,

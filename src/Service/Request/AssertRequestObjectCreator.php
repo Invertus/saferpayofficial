@@ -51,10 +51,15 @@ class AssertRequestObjectCreator
         $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
+    /**
+     * @param string $token
+     *
+     * @return AssertRequest
+     */
     public function create($token)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
 
-        return new AssertRequest($requestHeader, $saferPayOrder->token);
+        return new AssertRequest($requestHeader, $token);
     }
 }

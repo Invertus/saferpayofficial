@@ -94,6 +94,7 @@ class SaferPayTransactionAssertion
     }
 
     /**
+     *  TODO DO WE NEED IT OR WE CAN JUST INSERT REPO INTO CLASS
      * @param $cartId
      *
      * @return false|SaferPayOrder
@@ -101,7 +102,7 @@ class SaferPayTransactionAssertion
      */
     private function getSaferPayOrder($cartId)
     {
-        $saferPayOrderId = $this->orderRepository->getIdByCartId($orderId);
+        $saferPayOrderId = $this->orderRepository->getIdByCartId($cartId);
 
         return new SaferPayOrder($saferPayOrderId);
     }

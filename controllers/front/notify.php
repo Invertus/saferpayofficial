@@ -41,6 +41,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      * # WILL NOT work for local development, to AUTHORIZE payment this must be called manually. #
      * Example manual request: https://saferpay.demo.com/en/module/saferpayofficial/notify?success=1&cartId=12&orderId=12&secureKey=9366c61b59e918b2cd96ed0567c82e90
      */
+//http://localhost/ps17810/index.php?fc=module&module=saferpayofficial&controller=notify&success=1&cartId=179&orderId=93&secureKey=6780efac67f4422574332bf887249bd7    //todo add correct data
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
@@ -65,10 +66,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
-
-            //todo we need to do it with cart and on cancel we need to cancel it
             $order = new Order($orderId);
-            //todo check if cart can give as payment option
 
             if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
                 in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
@@ -76,7 +74,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-                $orderStatusService->cancel($order);
+                $orderStatusService->cancel($cart);
 
                 die($this->module->l('Liability shift is false', self::FILENAME));
             }
@@ -87,6 +85,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $assertResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
             }
 
@@ -119,13 +119,13 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     {
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert($cartId); //todo just a cart id
+        $assertionResponse = $transactionAssert->assert($cartId);
 
         $orderId = \Order::getOrderByCartId($cartId);
-        //todo repo to get saferpayOrder
+
         /** @var SaferPayOrderStatusService $orderStatusService */
         $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-        $orderStatusService->assert($saferPayOrder, $assertionResponse->getTransaction()->getStatus());
+        $orderStatusService->assert(new Order($orderId), $assertionResponse->getTransaction()->getStatus());
 
         return $assertionResponse;
     }

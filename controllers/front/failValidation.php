@@ -52,14 +52,20 @@ class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferP
 
             Tools::redirect($redirectLink);
         }
+
         $order = new Order($orderId);
-        $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
+
+        if (Validate::isLoadedObject($order)) {
+            $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
+        }
+
         /** @var SaferPayOrderRepository $orderRepo */
         $orderRepo = $this->module->getService(SaferPayOrderRepository::class);
+
         /** @var CartDuplicationService $cartDuplicationService */
         $cartDuplicationService = $this->module->getService(CartDuplicationService::class);
 
-        $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
+        $saferPayOrderId = $orderRepo->getIdByCartId($cartId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $saferPayOrder->canceled = 1;
         $saferPayOrder->update();

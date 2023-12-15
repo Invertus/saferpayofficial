@@ -23,9 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
-use Invertus\SaferPay\Service\SaferPayInitialize;
 use Invertus\SaferPay\Controller\Front\PaymentFrontController;
 
 if (!defined('_PS_VERSION_')) {
@@ -102,7 +100,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
                 'fail',
                 [
                     'cartId' => $this->context->cart->id,
-                    'orderId' => Order::getOrderByCartId($this->context->cart->id),
+                    'orderId' => Order::getIdByCartId($this->context->cart->id),
                     'secureKey' => $this->context->cart->secure_key,
                     'moduleId' => $this->module->id,
                 ],

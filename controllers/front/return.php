@@ -24,6 +24,8 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
+use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 
@@ -70,13 +72,15 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
             $assertionResponse = $transactionAssert->assert($cartId);
 
-            if (!$orderId) { // todo check config too
+            if (!$orderId) {
+                $paymentMethod = $assertionResponse->getPaymentMeans()->getBrand()->getPaymentMethod();
+
                 /** @var CheckoutProcessor $checkoutProcessor **/
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
-                $checkoutProcessor->processCreateOrder(new \Cart($cartId), 'MASTERCARD'); // todo payment method if not in assertionResone then add to response
+                $checkoutProcessor->processCreateOrderAfterAuthorization(new \Cart($cartId), $paymentMethod);
             }
 
-            $orderId = \Order::getOrderByCartId($cartId);
+            $orderId = \Order::getIdByCartId($cartId);
 
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
@@ -114,14 +118,14 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken)
     {
-        $successController = 'success';
+        $successController = ControllerName::SUCCESS;
 
         if ($isBusinessLicence) {
-            $successController = 'successIFrame';
+            $successController = ControllerName::SUCCESS_IFRAME;
         }
 
         if ($fieldToken) {
-            $successController = 'successHosted';
+            $successController = ControllerName::SUCCESS_HOSTED;
         }
 
         return $successController;
