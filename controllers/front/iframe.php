@@ -24,8 +24,6 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
-use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
-use Invertus\SaferPay\Service\SaferPayInitialize;
 
 if (!defined('_PS_VERSION_')) {
     exit;

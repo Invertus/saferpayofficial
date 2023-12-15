@@ -23,15 +23,12 @@
 
 namespace Invertus\SaferPay\Controller\Front;
 
-use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
-use Invertus\SaferPay\Service\SaferPayInitialize;
 use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Config\SaferPayConfig;
 
 class PaymentFrontController
 {
-
     /**
      * @var CheckoutProcessor
      */
@@ -78,8 +75,6 @@ class PaymentFrontController
     }
 
     /**
-     * TODO Extract initializeBody to class and have method to get redirectionUrl
-     *
      * @param object $initializeBody
      *
      * @return string

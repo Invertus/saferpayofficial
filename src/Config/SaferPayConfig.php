@@ -376,7 +376,7 @@ class SaferPayConfig
             self::FIELDS_ACCESS_TOKEN . self::TEST_SUFFIX,
             self::FIELDS_LIBRARY,
             self::FIELDS_LIBRARY . self::TEST_SUFFIX,
-            self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION
+            self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION,
         ];
     }
 

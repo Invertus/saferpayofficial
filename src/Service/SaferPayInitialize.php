@@ -67,9 +67,7 @@ class SaferPayInitialize
     /** @var SaferPayCardAliasRepository */
     private $saferPayCardAliasRepository;
 
-    /**
-     * @var Configuration
-     */
+    /** @var Configuration */
     private $configuration;
 
     public function __construct(
@@ -117,7 +115,7 @@ class SaferPayInitialize
             [
                 'cartId' => $cartId,
                 'secureKey' => $this->context->cart->secure_key,
-                'orderId' => $creationAfterInitialization ? 0 :Order::getOrderByCartId($cartId),
+                'orderId' => $creationAfterInitialization ? 0 : Order::getOrderByCartId($cartId),
                 'moduleId' => $this->module->id,
                 'selectedCard' => $selectedCard,
                 'isBusinessLicence' => $isBusinessLicence,
@@ -132,7 +130,7 @@ class SaferPayInitialize
             [
                 'success' => 1,
                 'cartId' => $this->context->cart->id,
-                'orderId' => $creationAfterInitialization ? 0 :Order::getOrderByCartId($cartId),
+                'orderId' => $creationAfterInitialization ? 0 : Order::getOrderByCartId($cartId),
                 'secureKey' => $this->context->cart->secure_key,
             ],
             true
@@ -140,7 +138,7 @@ class SaferPayInitialize
 
         $failUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            'failValidation',
+            ControllerName::FAIL_VALIDATION,
             [
                 'cartId' => $this->context->cart->id,
                 'secureKey' => $this->context->cart->secure_key,
@@ -166,23 +164,5 @@ class SaferPayInitialize
         );
 
         return $initializeRequest;
-    }
-
-    /**
-     * @param int $isBusinessLicence
-     * @param string $fieldToken
-     *
-     * @return string
-     */
-    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
-    {
-        $successController = 'success';
-        if ($isBusinessLicence) {
-            $successController = 'successIFrame';
-        }
-        if ($fieldToken) {
-            $successController = 'successHosted';
-        }
-        return $successController;
     }
 }

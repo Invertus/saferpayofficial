@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Adapter;
 
 use Configuration as PrestaShopConfiguration;
-use Invertus\SaferPay\Adapter\LegacyContext;
 
 if (!defined('_PS_VERSION_')) {
     exit;

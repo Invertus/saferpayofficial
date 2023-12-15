@@ -22,7 +22,6 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Configuration;
 
 if (!defined('_PS_VERSION_')) {
@@ -49,4 +48,3 @@ function upgrade_module_1_2_0($module)
 
     return true;
 }
-

@@ -28,7 +28,6 @@ use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
-use Order;
 use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {

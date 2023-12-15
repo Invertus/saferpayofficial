@@ -82,14 +82,14 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $paymentFrontController = $this->module->getService(PaymentFrontController::class);
 
             $initializeResponse = $paymentFrontController->create(
-            $this->context->cart,
-            $paymentMethod,
-            (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
-        );
+                $this->context->cart,
+                $paymentMethod,
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
+            );
 
-        $redirectLink = $paymentFrontController->getRedirectionUrl($initializeResponse);
+            $redirectLink = $paymentFrontController->getRedirectionUrl($initializeResponse);
 
-        Tools::redirect($redirectLink);
+            Tools::redirect($redirectLink);
         } catch (\Exception $exception) {
             /** @var SaferPayExceptionService $exceptionService */
             $exceptionService = $this->module->getService(SaferPayExceptionService::class);

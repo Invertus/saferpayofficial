@@ -32,20 +32,6 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderRepository
 {
-    /**
-     * @param int $cartId
-     * @return false|string
-     */
-    public function getOrderByCartId($cartId)
-    {
-        $query = new DbQuery();
-        $query->select('`*`');
-        $query->from('saferpay_order');
-        $query->where('id_cart = "' . (int) $cartId . '"');
-
-        return Db::getInstance()->getValue($query);
-    }
-
     public function getIdByOrderId($orderId)
     {
         $query = new DbQuery();

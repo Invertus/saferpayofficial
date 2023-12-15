@@ -23,8 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\Front\PaymentFrontController;
-use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
-use Invertus\SaferPay\Service\SaferPayInitialize;
+use Invertus\SaferPay\Enum\ControllerName;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,7 +45,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
         }
     }
 
-    private function submitHostedFields(): void
+    private function submitHostedFields()
     {
         try {
             /** @var PaymentFrontController $paymentFrontController */
@@ -66,7 +65,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
                 Tools::getValue('selectedCard'),
                 Tools::getValue('fieldToken'),
-                'successHosted',
+                ControllerName::SUCCESS_HOSTED,
                 true
             );
 

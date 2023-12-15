@@ -41,7 +41,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      * # WILL NOT work for local development, to AUTHORIZE payment this must be called manually. #
      * Example manual request: https://saferpay.demo.com/en/module/saferpayofficial/notify?success=1&cartId=12&orderId=12&secureKey=9366c61b59e918b2cd96ed0567c82e90
      */
-//http://localhost/ps17810/index.php?fc=module&module=saferpayofficial&controller=notify&success=1&cartId=179&orderId=93&secureKey=6780efac67f4422574332bf887249bd7    //todo add correct data
+    //http://localhost/ps17810/index.php?fc=module&module=saferpayofficial&controller=notify&success=1&cartId=179&orderId=93&secureKey=6780efac67f4422574332bf887249bd7    //todo add correct data
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
@@ -89,7 +89,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
             }
-
         } catch (Exception $e) {
             PrestaShopLogger::addLog(
                 sprintf(

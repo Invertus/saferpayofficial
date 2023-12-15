@@ -25,7 +25,6 @@ namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
