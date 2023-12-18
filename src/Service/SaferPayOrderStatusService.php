@@ -127,29 +127,6 @@ class SaferPayOrderStatusService
         $order->update();
     }
 
-    /**
-     * @param Order $order
-     *
-     * @throws \Exception
-     */
-    public function assert(Order $order, $status = 'AUTHORIZED')
-    {
-        $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-        if ($saferPayOrder->authorized) {
-            return;
-        }
-        $saferPayOrder->authorized = 1;
-        if ($status === 'AUTHORIZED') {
-            $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
-        } elseif ($status === 'CAPTURED') {
-            $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
-        }
-
-        $saferPayOrder->update();
-        $order->update();
-    }
-
     /** TODO extract capture api code to different service like Assert for readability */
     public function capture(Order $order, $refundedAmount = 0, $isRefund = false)
     {

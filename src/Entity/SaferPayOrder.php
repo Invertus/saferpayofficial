@@ -92,7 +92,7 @@ class SaferPayOrder extends ObjectModel
         'table' => 'saferpay_order',
         'primary' => 'id_saferpay_order',
         'fields' => [
-            'id_order' => ['type' => self::TYPE_INT, 'validate' => 'isInt', 'required' => false],
+            'id_order' => ['type' => self::TYPE_NOTHING, 'allow_null' => true],
             'id_cart' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'id_customer' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'transaction_id' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],

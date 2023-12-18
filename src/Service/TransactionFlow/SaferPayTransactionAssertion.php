@@ -27,7 +27,6 @@ use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
-use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
@@ -51,25 +50,18 @@ class SaferPayTransactionAssertion
      */
     private $assertionService;
 
-    /**
-     * @var SaferPayOrderStatusService
-     */
-    private $orderStatusService;
-
     public function __construct(
         AssertRequestObjectCreator $assertRequestCreator,
         SaferPayOrderRepository $orderRepository,
-        AssertService $assertionService,
-        SaferPayOrderStatusService $orderStatusService
+        AssertService $assertionService
     ) {
         $this->assertRequestCreator = $assertRequestCreator;
         $this->orderRepository = $orderRepository;
         $this->assertionService = $assertionService;
-        $this->orderStatusService = $orderStatusService;
     }
 
     /**
-     * @param int $orderId
+     * @param int $cartId
      *
      * @return AssertBody
      * @throws \Exception
@@ -93,7 +85,6 @@ class SaferPayTransactionAssertion
     }
 
     /**
-     *  TODO DO WE NEED IT OR WE CAN JUST INSERT REPO INTO CLASS
      * @param $cartId
      *
      * @return false|SaferPayOrder
