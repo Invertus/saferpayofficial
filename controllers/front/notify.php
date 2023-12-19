@@ -25,7 +25,6 @@ use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Order\Action\UpdateOrderStatusAction;
-use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
@@ -155,5 +154,4 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     {
         return true;
     }
-
 }
