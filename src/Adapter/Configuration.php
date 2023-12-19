@@ -42,7 +42,13 @@ class Configuration
         $this->context = $context;
     }
 
-    public function set(string $id, $value, ?int $shopId = null)
+    /**
+     * @param string $id
+     * @param $value
+     * @param int|null $shopId
+     * @return void
+     */
+    public function set($id, $value, $shopId = null)
     {
         if (!$shopId) {
             $shopId = $this->context->getShopId();
@@ -51,7 +57,12 @@ class Configuration
         PrestaShopConfiguration::updateValue($id, $value, false, null, $shopId);
     }
 
-    public function get(string $id, ?int $shopId = null)
+    /**
+     * @param string $id
+     * @param int|null $shopId
+     * @return false|string|null
+     */
+    public function get($id, $shopId = null)
     {
         if (!$shopId) {
             $shopId = $this->context->getShopId();
@@ -62,7 +73,12 @@ class Configuration
         return $result ?: null;
     }
 
-    public function getAsBoolean(string $id, ?int $shopId = null)
+    /**
+     * @param string $id
+     * @param int|null $shopId
+     * @return bool
+     */
+    public function getAsBoolean($id, $shopId = null)
     {
         $result = $this->get($id, $shopId);
 
@@ -73,7 +89,12 @@ class Configuration
         return (bool) $result;
     }
 
-    public function getAsInteger(string $id, ?int $shopId = null)
+    /**
+     * @param string $id
+     * @param int|null $shopId
+     * @return int
+     */
+    public function getAsInteger($id, $shopId = null)
     {
         $result = $this->get($id, $shopId);
 
@@ -88,9 +109,9 @@ class Configuration
      * Removes by specific shop id
      *
      * @param string $id
-     * @param int $shopId
+     * @param int|null $shopId
      */
-    public function remove(string $id, ?int $shopId)
+    public function remove($id, $shopId)
     {
         // making sure to set to null value only for single shop id
         PrestaShopConfiguration::updateValue($id, null, false, null, $shopId);
@@ -101,7 +122,7 @@ class Configuration
      *
      * @param string $id
      */
-    public function delete(string $id)
+    public function delete($id)
     {
         PrestaShopConfiguration::deleteByName($id);
     }

@@ -21,45 +21,45 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Core\Order\Action;
+namespace Invertus\SaferPay\Core\SaferPayOrder\Action;
 
-use Invertus\SaferPay\Exception\CouldNotChangeOrderStatus;
-use Order;
+use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class UpdateOrderStatusAction
+class UpdateSaferPayOrderAction
 {
+    const ACTION_AUTHORIZE = 'AUTHORIZE';
+
     /**
-     * @param int $orderId
-     * @param int $orderStatusId
-     *
+     * @param SaferPayOrder $saferPayOrder
+     * @param string $action
      * @return void
-     * @throws CouldNotChangeOrderStatus
      */
-    public function run($orderId, $orderStatusId)
+    public function run(SaferPayOrder $saferPayOrder, string $action)
     {
-        try {
-            /** @var \Order|null $order */
-            $order = new Order($orderId);
-        } catch (\Exception $exception) {
-            throw CouldNotChangeOrderStatus::unknownError($exception);
+        switch ($action) {
+            case self::ACTION_AUTHORIZE:
+                $this->authorizeSaferPayOrder($saferPayOrder);
+                break;
+            default:
+                throw new \InvalidArgumentException('Unsupported saferpay order action provided.');
+        }
+    }
+
+    /**
+     * @param SaferPayOrder $saferPayOrder
+     * @return void
+     */
+    private function authorizeSaferPayOrder($saferPayOrder)
+    {
+        if ($saferPayOrder->authorized) {
+            return;
         }
 
-        if (!$order) {
-            throw CouldNotChangeOrderStatus::failedToFindOrder($orderId);
-        }
-
-        try {
-            if ((int) $order->getCurrentState() !== (int) $orderStatusId) {
-                $order->setCurrentState($orderStatusId);
-                $order->update();
-            }
-        } catch (\Exception $exception) {
-            throw CouldNotChangeOrderStatus::unknownError($exception);
-        }
-
+        $saferPayOrder->authorized = 1;
+        $saferPayOrder->update();
     }
 }

@@ -22,7 +22,8 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\Controller\Front\PaymentFrontController;
+use Invertus\SaferPay\Controller\Front\CheckoutController;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
 
 if (!defined('_PS_VERSION_')) {
@@ -48,9 +49,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
     private function submitHostedFields()
     {
         try {
-            /** @var PaymentFrontController $paymentFrontController */
-            $paymentFrontController = $this->module->getService(PaymentFrontController::class);
-
             if (Order::getOrderByCartId($this->context->cart->id)) {
                 $this->ajaxDie(json_encode([
                     'error' => true,
@@ -59,7 +57,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 ]));
             }
 
-            $initializeResponse = $paymentFrontController->create(
+            // refactor it to create checkout data from validator request
+            $checkoutData = CheckoutData::createFromRequest(
                 $this->context->cart,
                 Tools::getValue('paymentMethod'),
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
@@ -69,7 +68,9 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 true
             );
 
-            $redirectUrl = $paymentFrontController->getRedirectionUrl($initializeResponse);
+            /** @var CheckoutController $checkoutController */
+            $checkoutController = $this->module->getService(CheckoutController::class);
+            $redirectUrl = $checkoutController->execute($checkoutData);
 
             if (empty($redirectUrl)) {
                 $redirectUrl = $this->getRedirectionToControllerUrl('successHosted');

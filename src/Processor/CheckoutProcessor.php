@@ -25,11 +25,15 @@ namespace Invertus\SaferPay\Processor;
 
 use Cart;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Exception\CouldNotProcessCheckout;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 use Order;
+use PrestaShopException;
 use SaferPayOrder;
 
 class CheckoutProcessor
@@ -58,7 +62,70 @@ class CheckoutProcessor
         $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function processCreateOrder(Cart $cart, $paymentMethod)
+    public function run(CheckoutData $data) {
+
+        $cart = new Cart($data->getCartId());
+
+        if (!$cart) {
+            throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
+        }
+
+        if ($data->getIsAuthorizedOrder()) {
+            try {
+                $this->processCreateOrder($cart, $data->getPaymentMethod());
+
+                $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
+                $saferPayOrder->id_order = Order::getIdByCartId($cart->id);
+
+                $saferPayOrder->update();
+
+                return '';
+            } catch (\Exception $exception) {
+                throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
+            }
+        }
+
+        try {
+            if (!$data->getCreateAfterAuthorization()) {
+                $this->processCreateOrder($cart, $data->getPaymentMethod());
+            }
+        } catch (\Exception $exception) {
+            throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
+        }
+
+        try {
+            $response = $this->processInitializePayment(
+                $data->getPaymentMethod(),
+                $data->getIsBusinessLicense(),
+                $data->getSelectedCard(),
+                $data->getFieldToken(),
+                $data->getSuccessController()
+            );
+        } catch (\Exception $exception) {
+            throw new SaferPayApiException('Failed to initialize payment API', SaferPayApiException::INITIALIZE);
+        }
+
+        try {
+            $this->processCreateSaferPayOrder(
+                $response,
+                $cart->id,
+                $cart->id_customer,
+                $data->getIsTransaction()
+            );
+        } catch (\Exception $exception) {
+            throw CouldNotProcessCheckout::failedToCreateSaferPayOrder($data->getCartId());
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param Cart $cart
+     * @param $paymentMethod
+     * @return void
+     * @throws PrestaShopException
+     */
+    private function processCreateOrder(Cart $cart, $paymentMethod)
     {
         $customer = new \Customer($cart->id_customer);
 
@@ -75,7 +142,15 @@ class CheckoutProcessor
         );
     }
 
-    public function initializePayment(
+    /**
+     * @param $paymentMethod
+     * @param $isBusinessLicense
+     * @param $selectedCard
+     * @param $fieldToken
+     * @param $successController
+     * @return array|null
+     */
+    private function processInitializePayment(
         $paymentMethod,
         $isBusinessLicense,
         $selectedCard,
@@ -93,7 +168,14 @@ class CheckoutProcessor
         return $this->saferPayInitialize->initialize($request, $isBusinessLicense);
     }
 
-    public function processCreateSaferPayOrder($initializeBody, $cartId, $customerId, $isTransaction)
+    /**
+     * @param $initializeBody
+     * @param $cartId
+     * @param $customerId
+     * @param $isTransaction
+     * @return void
+     */
+    private function processCreateSaferPayOrder($initializeBody, $cartId, $customerId, $isTransaction)
     {
         $this->saferPayOrderBuilder->create(
             $initializeBody,
@@ -101,15 +183,5 @@ class CheckoutProcessor
             $customerId,
             $isTransaction
         );
-    }
-
-    public function processCreateOrderAfterAuthorization(Cart $cart, $paymentMethod)
-    {
-        $this->processCreateOrder($cart, $paymentMethod);
-
-        $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
-        $saferPayOrder->id_order = Order::getIdByCartId($cart->id);
-
-        $saferPayOrder->update();
     }
 }

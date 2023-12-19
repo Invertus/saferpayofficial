@@ -23,6 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
@@ -70,11 +71,17 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $assertionResponse = $transactionAssert->assert($cartId);
 
             if (!$orderId) {
-                $paymentMethod = $assertionResponse->getPaymentMeans()->getBrand()->getPaymentMethod();
+                $checkoutData = CheckoutData::createFromRequest(
+                    new \Cart($cartId),
+                    $assertionResponse->getPaymentMeans()->getBrand()->getPaymentMethod(),
+                    $isBusinessLicence
+                );
+
+                $checkoutData->setIsAuthorizedOrder(true);
 
                 /** @var CheckoutProcessor $checkoutProcessor **/
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
-                $checkoutProcessor->processCreateOrderAfterAuthorization(new \Cart($cartId), $paymentMethod);
+                $checkoutProcessor->run($checkoutData);
             }
 
             $orderId = \Order::getIdByCartId($cartId);

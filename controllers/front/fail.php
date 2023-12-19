@@ -71,7 +71,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
 
         $cart = new Cart($this->id_cart);
 
-        if (!$this->module->id || !$this->secure_key || empty($this->secure_key)) {
+        if (!$this->module->id || empty($this->secure_key)) {
             Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
         }
 

@@ -23,8 +23,9 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
-use Invertus\SaferPay\Controller\Front\PaymentFrontController;
+use Invertus\SaferPay\Controller\Front\CheckoutController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -78,16 +79,16 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         }
 
         try {
-            /** @var PaymentFrontController $paymentFrontController */
-            $paymentFrontController = $this->module->getService(PaymentFrontController::class);
-
-            $initializeResponse = $paymentFrontController->create(
-                $this->context->cart,
+            /** @var CheckoutController $checkoutController */
+            $checkoutController = $this->module->getService(CheckoutController::class);
+            // refactor it to create checkout data from validator request
+            $checkoutData = CheckoutData::createFromRequest(
+                $this->context->cart->id,
                 $paymentMethod,
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
             );
 
-            $redirectLink = $paymentFrontController->getRedirectionUrl($initializeResponse);
+            $redirectLink = $checkoutController->execute($checkoutData);
 
             Tools::redirect($redirectLink);
         } catch (\Exception $exception) {

@@ -275,7 +275,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                             1 => $this->l('After authorization'),
                             0 => $this->l('Before authorization'),
                         ],
-                        'desc' => $this->l('TODO'),
+                        'desc' => $this->l('Select the option to determine whether the order should be created'),
                         'form_group_class' => 'thumbs_chose',
                     ],
                 ],

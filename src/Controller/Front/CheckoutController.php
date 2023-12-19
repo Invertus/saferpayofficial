@@ -23,55 +23,27 @@
 
 namespace Invertus\SaferPay\Controller\Front;
 
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
-use Invertus\SaferPay\Adapter\Configuration;
-use Invertus\SaferPay\Config\SaferPayConfig;
 
-class PaymentFrontController
+class CheckoutController
 {
     /**
      * @var CheckoutProcessor
      */
     private $checkoutProcessor;
 
-    /**
-     * @var Configuration
-     */
-    private $configuration;
-
     public function __construct(
-        CheckoutProcessor $checkoutProcessor,
-        Configuration $configuration
+        CheckoutProcessor $checkoutProcessor
     ) {
         $this->checkoutProcessor = $checkoutProcessor;
-        $this->configuration = $configuration;
     }
 
-    public function create(\Cart $cart, $paymentMethod, $isBusinessLicense, $selectedCard = -1, $fieldToken = null, $successController = null, $isTransaction = false)
+    public function execute(CheckoutData $checkoutData)
     {
-        if (!$this->configuration->getAsBoolean(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION)) {
-            $this->checkoutProcessor->processCreateOrder(
-                $cart,
-                $paymentMethod
-            );
-        }
+        $response = $this->checkoutProcessor->run($checkoutData);
 
-        $response = $this->checkoutProcessor->initializePayment(
-            $paymentMethod,
-            $isBusinessLicense,
-            $selectedCard,
-            $fieldToken,
-            $successController
-        );
-
-        $this->checkoutProcessor->processCreateSaferPayOrder(
-            $response,
-            $cart->id,
-            $cart->id_customer,
-            $isTransaction
-        );
-
-        return $response;
+        return $this->getRedirectionUrl($response);
     }
 
     /**
@@ -79,7 +51,7 @@ class PaymentFrontController
      *
      * @return string
      */
-    public function getRedirectionUrl($initializeBody)
+    private function getRedirectionUrl($initializeBody)
     {
         if (isset($initializeBody->RedirectUrl)) {
             return $initializeBody->RedirectUrl;
