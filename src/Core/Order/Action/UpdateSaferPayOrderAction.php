@@ -21,7 +21,7 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Core\SaferPayOrder\Action;
+namespace Invertus\SaferPay\Core\Order\Action;
 
 use SaferPayOrder;
 
@@ -38,7 +38,7 @@ class UpdateSaferPayOrderAction
      * @param string $action
      * @return void
      */
-    public function run(SaferPayOrder $saferPayOrder, string $action)
+    public function run(SaferPayOrder $saferPayOrder, $action)
     {
         switch ($action) {
             case self::ACTION_AUTHORIZE:

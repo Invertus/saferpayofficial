@@ -25,8 +25,8 @@ use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Order\Action\UpdateOrderStatusAction;
+use Invertus\SaferPay\Core\Order\Action\UpdateSaferPayOrderAction;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
-use Invertus\SaferPay\Core\SaferPayOrder\Action\UpdateSaferPayOrderAction;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
@@ -81,10 +81,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             if (!$orderId) {
                 /** @var CheckoutProcessor $checkoutProcessor **/
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
-                $checkoutData = CheckoutData::createFromRequest(
-                    $cart,
+                $checkoutData = CheckoutData::create(
+                    (int) $cart->id,
                     $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-                    Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+                    (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
                 );
                 $checkoutData->setIsAuthorizedOrder(true);
 

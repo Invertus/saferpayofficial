@@ -61,7 +61,7 @@ class CouldNotProcessCheckout extends  SaferPayException
     /**
      * @param int $cartId
      *
-     * @return static
+     * @return self
      */
     public static function failedToCreateSaferPayOrder($cartId)
     {

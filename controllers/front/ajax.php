@@ -58,8 +58,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             }
 
             // refactor it to create checkout data from validator request
-            $checkoutData = CheckoutData::createFromRequest(
-                $this->context->cart,
+            $checkoutData = CheckoutData::create(
+                (int) $this->context->cart->id,
                 Tools::getValue('paymentMethod'),
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
                 Tools::getValue('selectedCard'),

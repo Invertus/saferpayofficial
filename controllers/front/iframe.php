@@ -90,10 +90,10 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             $checkoutController = $this->module->getService(CheckoutController::class);
 
             // refactor it to create checkout data from validator request
-            $checkoutData = CheckoutData::createFromRequest(
-                $this->context->cart,
+            $checkoutData = CheckoutData::create(
+                (int) $this->context->cart->id,
                 $paymentMethod,
-                Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
                 $selectedCard
             );
 

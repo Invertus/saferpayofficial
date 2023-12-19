@@ -63,8 +63,8 @@ class CheckoutData
         $this->isAuthorizedOrder = false;
     }
 
-    public static function createFromRequest(
-        $cartId,
+    public static function create(
+          $cartId,
           $paymentMethod,
           $isBusinessLicense,
           $selectedCard = -1,
@@ -101,7 +101,7 @@ class CheckoutData
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getIsBusinessLicense()
     {
