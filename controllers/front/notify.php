@@ -44,7 +44,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      * # WILL NOT work for local development, to AUTHORIZE payment this must be called manually. #
      * Example manual request: https://saferpay.demo.com/en/module/saferpayofficial/notify?success=1&cartId=12&orderId=12&secureKey=9366c61b59e918b2cd96ed0567c82e90
      */
-    //http://localhost/ps17810/index.php?fc=module&module=saferpayofficial&controller=notify&success=1&cartId=223&orderId=0&secureKey=26496a9004c1d081062e00bf2a1f9254    //todo add correct data
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
