@@ -64,7 +64,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         }
 
         try {
-            $assertResponseBody = $this->assertTransaction($cartId);
+            /** @var SaferPayTransactionAssertion $transactionAssert */
+            $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+            $assertResponseBody = $transactionAssert->assert($cartId);
+
             $this->authorizeSaferPayOrderEntity($cartId);
 
             // If order does not exist but assertion is valid that means order authorized or captured.
@@ -126,19 +129,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         }
 
         die($this->module->l('Success', self::FILENAME));
-    }
-
-    /**
-     * @param int $cartId
-     *
-     * @return AssertBody
-     * @throws Exception
-     */
-    private function assertTransaction($cartId)
-    {
-        /** @var SaferPayTransactionAssertion $transactionAssert */
-        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        return $transactionAssert->assert($cartId);
     }
 
     /**

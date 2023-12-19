@@ -107,8 +107,7 @@ class CheckoutProcessor
     {
         $this->processCreateOrder($cart, $paymentMethod);
 
-        $saferPayOrderId = $this->saferPayOrderRepository->getIdByCartId($cart->id);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
         $saferPayOrder->id_order = Order::getIdByCartId($cart->id);
 
         $saferPayOrder->update();
