@@ -22,6 +22,7 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,6 +34,9 @@ function upgrade_module_1_1_8(SaferPayOfficial $module)
         SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION,
         SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE
     );
+
+    Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION);
+    Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION);
 
     $module->registerHook('actionObjectOrderPaymentAddAfter');
 

@@ -154,7 +154,6 @@ class ResponseObjectCreator
     {
         $threeDsObj = new ThreeDs();
         $threeDsObj->setAuthenticated($threeDs->Authenticated);
-        $threeDsObj->setLiabilityShift($threeDs->LiabilityShift);
         $threeDsObj->setXid($threeDs->Xid);
         $threeDsObj->setVerificationValue($threeDs->VerificationValue);
 
@@ -168,7 +167,6 @@ class ResponseObjectCreator
             $threeDs = $liability->ThreeDs;
             $threeDsObj = new ThreeDs();
             $threeDsObj->setAuthenticated($threeDs->Authenticated);
-            $threeDsObj->setLiabilityShift($threeDs->LiabilityShift);
             $threeDsObj->setXid($threeDs->Xid);
             if (isset($threeDs->VerificationValue)) {
                 $threeDsObj->setVerificationValue($threeDs->VerificationValue);

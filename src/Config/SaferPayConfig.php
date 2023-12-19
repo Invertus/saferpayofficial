@@ -50,7 +50,7 @@ class SaferPayConfig
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = 1.32;
+    const API_VERSION = 1.37;
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
@@ -72,7 +72,6 @@ class SaferPayConfig
         self::PAYMENT_POSTFINANCE,
         self::PAYMENT_SOFORT,
         self::PAYMENT_TWINT,
-        self::PAYMENT_UNIONPAY,
         self::PAYMENT_VISA,
         self::PAYMENT_VPAY,
         self::PAYMENT_APPLEPAY,
@@ -100,21 +99,22 @@ class SaferPayConfig
     const PAYMENT_POSTFINANCE = 'POSTFINANCE';
     const PAYMENT_SOFORT = 'SOFORT';
     const PAYMENT_TWINT = 'TWINT';
-    const PAYMENT_UNIONPAY = 'UNIONPAY';
     const PAYMENT_VISA = 'VISA';
     const PAYMENT_VPAY = 'VPAY';
     const PAYMENT_KLARNA = 'KLARNA';
     const PAYMENT_APPLEPAY = 'APPLEPAY';
     const PAYMENT_WLCRYPTOPAYMENTS = 'WLCRYPTOPAYMENTS';
     const PAYMENT_GOOGLEPAY = 'GOOGLEPAY';
-    const PAYMENT_MASTERPASS = 'MASTERPASS';
     const PAYMENT_BONUS = 'BONUS';
     const PAYMENT_LASTSCHRIFT = 'DIRECTDEBIT';
+    const PAYMENT_ACCOUNTTOACCOUNT = 'ACCOUNTTOACCOUNT';
+    const PAYMENT_PAYCONIQ = 'PAYCONIQ';
+    const PAYMENT_CARD = 'CARD';
+    const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_GOOGLEPAY,
-        self::PAYMENT_MASTERPASS,
     ];
 
     const PAYMENT_METHODS_KEYS = [
@@ -127,18 +127,20 @@ class SaferPayConfig
         'KlarnaPayments' => self::PAYMENT_KLARNA,
         'MaestroInternational' => self::PAYMENT_MAESTRO,
         'Mastercard' => self::PAYMENT_MASTERCARD,
-        'Masterpass' =>self::PAYMENT_MASTERPASS,
         'myOne' => self::PAYMENT_MYONE,
         'paydirekt' => self::PAYMENT_PAYDIREKT,
         'PayPal' => self::PAYMENT_PAYPAL,
         'Twint' => self::PAYMENT_TWINT,
-        'UnionPay' => self::PAYMENT_UNIONPAY,
         'Visa' => self::PAYMENT_VISA,
         'WLCryptoPayments' => self::PAYMENT_WLCRYPTOPAYMENTS,
         'Postcard' => self::PAYMENT_POSTCARD,
         'BonusCard' => self::PAYMENT_BONUS,
         'Lastschrift' => self::PAYMENT_LASTSCHRIFT,
         'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT,
+        'AccountToAccount' => self::PAYMENT_ACCOUNTTOACCOUNT,
+        'Payconiq' => self::PAYMENT_PAYCONIQ,
+        'Card' => self::PAYMENT_CARD,
+        'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -204,7 +206,6 @@ class SaferPayConfig
         self::PAYMENT_MASTERCARD,
         self::PAYMENT_VISA,
         self::PAYMENT_VPAY,
-        self::PAYMENT_UNIONPAY,
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_AMEX,
     ];
@@ -332,8 +333,8 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.32',
-            RequestHeader::SPEC_REFUND_VERSION => '1.32',
+            RequestHeader::SPEC_VERSION => '1.37',
+            RequestHeader::SPEC_REFUND_VERSION => '1.37',
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,

@@ -37,11 +37,6 @@ class ThreeDs
     /**
      * @var string|null
      */
-    private $liabilityShift;
-
-    /**
-     * @var string|null
-     */
     private $xid;
 
     /**
@@ -52,14 +47,12 @@ class ThreeDs
     /**
      * ThreeDs constructor.
      * @param string $authenticated
-     * @param string $liabilityShift
      * @param string $xid
      * @param string $verificationValue
      */
-    public function __construct($authenticated = null, $liabilityShift = null, $xid = null, $verificationValue = null)
+    public function __construct($authenticated = null, $xid = null, $verificationValue = null)
     {
         $this->authenticated = $authenticated;
-        $this->liabilityShift = $liabilityShift;
         $this->xid = $xid;
         $this->verificationValue = $verificationValue;
     }
@@ -78,22 +71,6 @@ class ThreeDs
     public function setAuthenticated($authenticated)
     {
         $this->authenticated = $authenticated;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLiabilityShift()
-    {
-        return $this->liabilityShift;
-    }
-
-    /**
-     * @param mixed $liabilityShift
-     */
-    public function setLiabilityShift($liabilityShift)
-    {
-        $this->liabilityShift = $liabilityShift;
     }
 
     /**
