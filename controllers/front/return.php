@@ -77,7 +77,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             );
 
             $checkoutData->setIsAuthorizedOrder(true);
-            $checkoutData->setOrderStatus($assertBody->getTransaction()->getStatus());
+            $checkoutData->setOrderStatus($assertionResponse->getTransaction()->getStatus());
 
             /** @var CheckoutProcessor $checkoutProcessor **/
             $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
