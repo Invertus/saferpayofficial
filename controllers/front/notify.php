@@ -86,7 +86,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                     $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
                     (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
                 );
+
                 $checkoutData->setIsAuthorizedOrder(true);
+                $checkoutData->setOrderStatus($assertResponseBody->getTransaction()->getStatus());
 
                 $checkoutProcessor->run($checkoutData);
             }
