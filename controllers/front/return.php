@@ -70,19 +70,17 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
             $assertionResponse = $transactionAssert->assert($cartId);
 
-            if (!$orderId) {
-                $checkoutData = CheckoutData::create(
-                    (int) $cartId,
-                    $assertionResponse->getPaymentMeans()->getBrand()->getPaymentMethod(),
-                    (int) $isBusinessLicence
-                );
+            $checkoutData = CheckoutData::create(
+                (int) $cartId,
+                $assertionResponse->getPaymentMeans()->getBrand()->getPaymentMethod(),
+                (int) $isBusinessLicence
+            );
 
-                $checkoutData->setIsAuthorizedOrder(true);
+            $checkoutData->setIsAuthorizedOrder(true);
 
-                /** @var CheckoutProcessor $checkoutProcessor **/
-                $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
-                $checkoutProcessor->run($checkoutData);
-            }
+            /** @var CheckoutProcessor $checkoutProcessor **/
+            $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+            $checkoutProcessor->run($checkoutData);
 
             $orderId = \Order::getIdByCartId($cartId);
 

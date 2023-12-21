@@ -72,12 +72,24 @@ class CheckoutProcessor
 
         if ($data->getIsAuthorizedOrder()) {
             try {
-                $this->processCreateOrder($cart, $data->getPaymentMethod());
-
                 $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
-                $saferPayOrder->id_order = Order::getIdByCartId($cart->id);
+
+                if (!$saferPayOrder->id_order) {
+                    $this->processCreateOrder($cart, $data->getPaymentMethod());
+                    $saferPayOrder->authorized = 1;
+                }
+
+                $order = new Order(Order::getIdByCartId($cart->id));
+                $saferPayOrder->id_order = $order->id;
+
+                if ($status === 'AUTHORIZED') {
+                    $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+                } elseif ($status === 'CAPTURED') {
+                    $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
+                }
 
                 $saferPayOrder->update();
+                $order->update();
 
                 return '';
             } catch (\Exception $exception) {
