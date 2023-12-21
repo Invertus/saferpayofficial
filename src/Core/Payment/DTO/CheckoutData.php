@@ -41,6 +41,7 @@ class CheckoutData
     private $isTransaction;
     private $createAfterAuthorization;
     private $isAuthorizedOrder;
+    private $status;
 
     public function __construct(
           $cartId,
@@ -157,6 +158,14 @@ class CheckoutData
     }
 
     /**
+     * @return string
+     */
+    public function getOrderStatus()
+    {
+        return $this->status;
+    }
+
+    /**
      * @param bool $isAuthorized
      *
      * @return void
@@ -164,5 +173,15 @@ class CheckoutData
     public function setIsAuthorizedOrder($isAuthorized)
     {
         $this->isAuthorizedOrder = $isAuthorized;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return void
+     */
+    public function setOrderStatus($status)
+    {
+        $this->status = $status;
     }
 }

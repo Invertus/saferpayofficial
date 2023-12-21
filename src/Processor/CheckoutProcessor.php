@@ -82,9 +82,9 @@ class CheckoutProcessor
                 $order = new Order(Order::getIdByCartId($cart->id));
                 $saferPayOrder->id_order = $order->id;
 
-                if ($status === 'AUTHORIZED') {
+                if ($data->getOrderStatus() === 'AUTHORIZED') {
                     $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
-                } elseif ($status === 'CAPTURED') {
+                } elseif ($data->getOrderStatus() === 'CAPTURED') {
                     $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
                 }
 
