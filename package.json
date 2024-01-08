@@ -1,8 +1,34 @@
 {
-    "devDependencies": {
-        "cypress": "^9.6.1",
-        "cypress-iframe": "^1.0.1"
-    },
-    "author": "PrestaShop",
-    "license": "AFL-3.0"
+  "name": "saferpayofficial",
+  "version": "1.0.0",
+  "description": "<p align=\"center\">   <img src=\"https://info.saferpayofficial.com/hubfs/github/prestashop/logo.png\" width=\"128\" height=\"128\"/> </p> <h1 align=\"center\">saferpayofficial for Prestashop</h1>",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saferpayofficial/PrestaShop.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/saferpayofficial/PrestaShop/issues"
+  },
+  "homepage": "https://github.com/saferpayofficial/PrestaShop#readme",
+  "devDependencies": {
+    "cypress": "^13.6.1",
+    "cypress-fail-fast": "^7.0.0",
+    "cypress-iframe": "^1.0.1",
+    "cypress-terminal-report": "^5.2.0",
+    "cypress-testrail": "^2.6.0",
+    "human-signals": "^3.0.1"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "dotenv-expand": "^10.0.0"
+  }
 }
