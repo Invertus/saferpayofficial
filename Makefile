@@ -156,14 +156,6 @@ e2eh1784:
 	sleep 90s
 	# seeding the customized settings for PS
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
-	# installing module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# uninstalling module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
-	# installing the module again
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# enabling the module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module enable saferpayofficial"
 	# chmod all folders
 	docker exec -i prestashop-1784 sh -c "chmod -R 777 /var/www/html"
 
@@ -177,14 +169,6 @@ e2eh1784_local:
 	/bin/bash .docker/wait-loader.sh 8001
 	# seeding the customized settings for PS
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
-	# installing module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# uninstalling module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
-	# installing the module again
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# enabling the module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module enable saferpayofficial"
 	# chmod all folders
 	docker exec -i prestashop-1784 sh -c "chmod -R 777 /var/www/html"
 
@@ -198,14 +182,6 @@ e2eh8:
 	sleep 60s
 	# seeding the customized settings for PS
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_812.sql
-	# installing module
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# uninstalling module
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
-	# installing the module again
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# enabling the module
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable saferpayofficial"
 	# chmod all folders
 	docker exec -i prestashop-saferpayofficial-8 sh -c "chmod -R 777 /var/www/html"
 
@@ -219,13 +195,5 @@ e2eh8_local:
 	/bin/bash .docker/wait-loader.sh 8142
 	# seeding the customized settings for PS
 	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_812.sql
-	# installing module
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# uninstalling module
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
-	# installing the module again
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# enabling the module
-	docker exec -i prestashop-saferpayofficial-8 sh -c "cd /var/www/html && php  bin/console prestashop:module enable saferpayofficial"
 	# chmod all folders
 	docker exec -i prestashop-saferpayofficial-8 sh -c "chmod -R 777 /var/www/html"
