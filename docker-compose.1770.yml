@@ -19,7 +19,7 @@ services:
 
   prestashop-17:
     #platform: linux/amd64
-    container_name: prestashop-1770
+    container_name: saferpayofficial-prestashop-1770
     build:
       context: .
       dockerfile: .docker/Dockerfile.1770

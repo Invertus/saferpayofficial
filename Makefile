@@ -172,32 +172,6 @@ e2eh1784_local:
 	# chmod all folders
 	docker exec -i prestashop-1784 sh -c "chmod -R 777 /var/www/html"
 
-#PS8 CI build
-e2eh8:
-	# detaching containers
-	docker-compose -f docker-compose.8.yml up -d --force-recreate
-	# sees what containers are running
-	docker-compose -f docker-compose.8.yml ps
-	# waiting for app containers to build up
-	sleep 60s
-	# seeding the customized settings for PS
-	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_812.sql
-	# chmod all folders
-	docker exec -i prestashop-saferpayofficial-8 sh -c "chmod -R 777 /var/www/html"
-
-#PS8 running on local machine
-e2eh8_local:
-	# detaching containers
-	docker-compose -f docker-compose.8.yml up -d --force-recreate
-	# sees what containers are running
-	docker-compose -f docker-compose.8.yml ps
-	# waiting for app containers to build up
-	/bin/bash .docker/wait-loader.sh 8142
-	# seeding the customized settings for PS
-	mysql -h 127.0.0.1 -P 9459 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_812.sql
-	# chmod all folders
-	docker exec -i prestashop-saferpayofficial-8 sh -c "chmod -R 777 /var/www/html"
-
 #PS1770 CI build
 e2eh1770:
 	# detaching containers
@@ -209,7 +183,7 @@ e2eh1770:
 	# seeding the customized settings for PS
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1770.sql
 	# chmod all folders
-	docker exec -i prestashop-saferpayofficial-8 sh -c "chmod -R 777 /var/www/html"
+	docker exec -i saferpayofficial-prestashop-1770 sh -c "chmod -R 777 /var/www/html"
 
 #PS1770 running on local machine
 e2eh1770_local:
@@ -222,4 +196,4 @@ e2eh1770_local:
 	# seeding the customized settings for PS
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1770.sql
 	# chmod all folders
-	docker exec -i prestashop-saferpayofficial-1770 sh -c "chmod -R 777 /var/www/html"
+	docker exec -i saferpayofficial-prestashop-1770 sh -c "chmod -R 777 /var/www/html"
