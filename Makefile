@@ -180,8 +180,6 @@ e2eh1770:
 	docker-compose -f docker-compose.1770.yml ps
 	# waiting for app containers to build up
 	sleep 60s
-	# seeding the customized settings for PS
-	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1770.sql
 	# chmod all folders
 	docker exec -i saferpayofficial-prestashop-1770 sh -c "chmod -R 777 /var/www/html"
 
@@ -193,7 +191,5 @@ e2eh1770_local:
 	docker-compose -f docker-compose.1770.yml ps
 	# waiting for app containers to build up
 	/bin/bash .docker/wait-loader.sh 8001
-	# seeding the customized settings for PS
-	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1770.sql
 	# chmod all folders
 	docker exec -i saferpayofficial-prestashop-1770 sh -c "chmod -R 777 /var/www/html"
