@@ -3960,8 +3960,8 @@ INSERT INTO `ps_configuration` (`id_configuration`, `id_shop_group`, `id_shop`, 
 (231,	NULL,	NULL,	'HOMESLIDER_PAUSE',	'7700',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (232,	NULL,	NULL,	'HOMESLIDER_LOOP',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
 (233,	NULL,	NULL,	'PS_BASE_DISTANCE_UNIT',	'm',	'0000-00-00 00:00:00',	'2022-03-23 08:34:58'),
-(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'klarnapayment1784.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
-(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'klarnapayment1784.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
+(234,	NULL,	NULL,	'PS_SHOP_DOMAIN',	'saferpayofficial1784.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
+(235,	NULL,	NULL,	'PS_SHOP_DOMAIN_SSL',	'saferpayofficial1784.ngrok.io',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
 (236,	NULL,	NULL,	'PS_SHOP_NAME',	'PS1784',	'0000-00-00 00:00:00',	'2022-03-18 13:44:55'),
 (237,	NULL,	NULL,	'PS_SHOP_EMAIL',	'demo@demo.com',	'0000-00-00 00:00:00',	'2022-03-18 13:44:56'),
 (238,	NULL,	NULL,	'PS_MAIL_METHOD',	'1',	'0000-00-00 00:00:00',	'0000-00-00 00:00:00'),
@@ -24037,8 +24037,8 @@ CREATE TABLE `ps_shop_url` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `ps_shop_url` (`id_shop_url`, `id_shop`, `domain`, `domain_ssl`, `physical_uri`, `virtual_uri`, `main`, `active`) VALUES
-(1,	1,	'klarnapayment1784.ngrok.io',	'klarnapayment1784.ngrok.io',	'/',	'',	1,	1),
-(3,	3,	'klarnapayment1784.ngrok.io',	'klarnapayment1784.ngrok.io',	'/',	'SHOP2/',	1,	1);
+(1,	1,	'saferpayofficial1784.ngrok.io',	'saferpayofficial1784.ngrok.io',	'/',	'',	1,	1),
+(3,	3,	'saferpayofficial1784.ngrok.io',	'saferpayofficial1784.ngrok.io',	'/',	'SHOP2/',	1,	1);
 
 DROP TABLE IF EXISTS `ps_smarty_cache`;
 CREATE TABLE `ps_smarty_cache` (
