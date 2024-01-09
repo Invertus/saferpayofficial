@@ -50,4 +50,4 @@ if [ "$#" -lt 1 ]; then
 fi
 
 port=$1
-show_loader "Building app containers. Please wait " "$port" sleep 90
+show_loader "Building app containers. Please wait " "$port" sleep 120
