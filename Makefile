@@ -14,11 +14,11 @@ build-ps-1784:
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
 	# installing module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# uninstalling module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
+	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall wl"
 	# installing the module again
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# chmod all folders
 	docker exec -i prestashop-1784 sh -c "chmod -R 777 /var/www/html"
 
@@ -30,7 +30,7 @@ e2e-1784-prepare:
 	# sees what containers are running
 	docker-compose -f docker-compose.1784.yml ps
 	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1784
+	/bin/bash .docker/wait-for-container.sh wl-mysql-1784
 	# preloads initial data
 	make bps1784
 
@@ -49,11 +49,11 @@ build-ps-1764:
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1764.sql
 	# installing module
-	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# uninstalling module
-	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
+	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall wl"
 	# installing the module again
-	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# chmod all folders
 	docker exec -i prestashop-1764 sh -c "chmod -R 777 /var/www/html"
 
@@ -65,7 +65,7 @@ e2e-1764-prepare:
 	# sees what containers are running
 	docker-compose -f docker-compose.1764.yml ps
 	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1764
+	/bin/bash .docker/wait-for-container.sh wl-mysql-1764
 	# preloads initial data
 	make bps1764
 
@@ -84,11 +84,11 @@ build-ps-1770:
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1770.sql
 	# installing module
-	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# uninstalling module
-	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
+	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall wl"
 	# installing the module again
-	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# chmod all folders
 	docker exec -i prestashop-1770 sh -c "chmod -R 777 /var/www/html"
 
@@ -100,7 +100,7 @@ e2e-1770-prepare:
 	# sees what containers are running
 	docker-compose -f docker-compose.1770.yml ps
 	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1770
+	/bin/bash .docker/wait-for-container.sh wl-mysql-1770
 	# preloads initial data
 	make bps1770
 
@@ -119,11 +119,11 @@ build-ps-1786:
 	# configuring base database
 	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1786.sql
 	# installing module
-	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# uninstalling module
-	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
+	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall wl"
 	# installing the module again
-	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module install wl"
 	# chmod all folders
 	docker exec -i prestashop-1786 sh -c "chmod -R 777 /var/www/html"
 
@@ -135,7 +135,7 @@ e2e-1786-prepare:
 	# sees what containers are running
 	docker-compose -f docker-compose.1786.yml ps
 	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1786
+	/bin/bash .docker/wait-for-container.sh wl-mysql-1786
 	# preloads initial data
 	make bps1786
 
@@ -181,7 +181,7 @@ e2eh1770:
 	# waiting for app containers to build up
 	sleep 60s
 	# chmod all folders
-	docker exec -i saferpayofficial-prestashop-1770 sh -c "chmod -R 777 /var/www/html"
+	docker exec -i wl-prestashop-1770 sh -c "chmod -R 777 /var/www/html"
 
 #PS1770 running on local machine
 e2eh1770_local:
@@ -192,4 +192,4 @@ e2eh1770_local:
 	# waiting for app containers to build up
 	/bin/bash .docker/wait-loader.sh 8001
 	# chmod all folders
-	docker exec -i saferpayofficial-prestashop-1770 sh -c "chmod -R 777 /var/www/html"
+	docker exec -i wl-prestashop-1770 sh -c "chmod -R 777 /var/www/html"

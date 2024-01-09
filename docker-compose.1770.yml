@@ -3,7 +3,7 @@ version: "3.7"
 services:
   mysql:
     #platform: linux/amd64
-    container_name: saferpayofficial-mysql-1770
+    container_name: wl-mysql-1770
     image: mysql:5.7
     ports:
       - "9002:3306"
@@ -15,11 +15,11 @@ services:
       test: "mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
       interval: 10s
     networks:
-      - prestashop_saferpayofficial_net_1770
+      - prestashop_wl_net_1770
 
   prestashop-17:
     #platform: linux/amd64
-    container_name: saferpayofficial-prestashop-1770
+    container_name: wl-prestashop-1770
     build:
       context: .
       dockerfile: .docker/Dockerfile.1770
@@ -39,7 +39,7 @@ services:
     volumes:
       - ./.docker/.htaccess1770:/var/www/html/.htaccess
     networks:
-      - prestashop_saferpayofficial_net_1770
+      - prestashop_wl_net_1770
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
       interval: 10s
@@ -50,7 +50,7 @@ services:
     ports:
       - '6969:8080'
     networks:
-      - prestashop_saferpayofficial_net_1770
+      - prestashop_wl_net_1770
 
   mailhog:
     image: mailhog/mailhog:latest
@@ -59,8 +59,8 @@ services:
       - 1025:1025 # smtp server
       - 8025:8025 # web ui
     networks:
-      - prestashop_saferpayofficial_net_1770
+      - prestashop_wl_net_1770
 
 networks:
-  prestashop_saferpayofficial_net_1770:
-    name: 'prestashop_saferpayofficial_net_1770'
+  prestashop_wl_net_1770:
+    name: 'prestashop_wl_net_1770'
