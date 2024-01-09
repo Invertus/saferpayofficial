@@ -37,6 +37,7 @@ services:
     ports:
       - "8001:80"
     volumes:
+      - ./:/var/www/html/modules/saferpayofficial
       - ./.docker/.htaccess1770:/var/www/html/.htaccess
     networks:
       - prestashop_wl_net_1770
