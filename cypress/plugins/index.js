@@ -1,23 +1,13 @@
 /**
- *NOTICE OF LICENSE
+ * NOTICE OF LICENSE
  *
- *This source file is subject to the Open Software License (OSL 3.0)
- *that is bundled with this package in the file LICENSE.txt.
- *It is also available through the world-wide-web at this URL:
- *http://opensource.org/licenses/osl-3.0.php
- *If you did not receive a copy of the license and are unable to
- *obtain it through the world-wide-web, please send an email
- *to license@prestashop.com so we can send you a copy immediately.
+ * @author    Klarna Bank AB www.klarna.com
+ * @copyright Copyright (c) permanent, Klarna Bank AB
+ * @license   ISC
  *
- *DISCLAIMER
+ * @see       /LICENSE
  *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- *versions in the future. If you wish to customize PrestaShop for your
- *needs please refer to http://www.prestashop.com for more information.
- *
- *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- *@copyright SIX Payment Services
- *@license   SIX Payment Services
+ * International Registered Trademark & Property of Klarna Bank AB
  */
 
 /// <reference types="cypress" />
@@ -37,8 +27,27 @@
 /**
  * @type {Cypress.PluginConfig}
  */
-// eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
+module.exports = (on, config) => {    on('before:browser:launch', (browser = {}, launchOptions) => {
+  if (browser.name === 'chrome' || browser.name === 'edge') {
+      launchOptions.args.push('--disable-features=SameSiteByDefaultCookies')
+      return launchOptions
+  }
+})
 }
+const TestRailReporter = require('cypress-testrail');
+
+module.exports = (on, config) => {
+new TestRailReporter(on, config).register();
+return config
+}
+
+const dotenv = require('dotenv');
+const dotenvExpand = require('dotenv-expand');
+
+const myEnv = dotenv.config();
+dotenvExpand(myEnv);
+
+module.exports = (on, config) => {
+  config.env = { ...config.env, ...process.env };
+  return config;
+};
