@@ -1,5 +1,5 @@
 describe('Admin journey - part 1', () => {
-  it.skip('1 - Configure plugin credentials', () => {
+  it('1 - Configure plugin credentials', () => {
     cy.LogInBO()
     cy.get('[name="worldlineopAccountSettings[testPspid]"]')
     cy.get('[name="worldlineopAccountSettings[testApiKey]"]')
@@ -23,6 +23,7 @@ describe('Admin journey - part 1', () => {
     cy.get('[id="worldlineopPaymentMethodsSettings_displayGenericOption_on"]').click({force:true})
     cy.get('[id="worldlineopPaymentMethodsSettings_displayRedirectPaymentOptions_on"]').click({force:true})
     cy.contains('Refresh list of available payment methods').click()
+    // validation of PMs begins here
     cy.contains('American Express').should('be.visible').should('exist')
     cy.contains('BCMC').should('be.visible').should('exist')
     cy.contains('CB').should('be.visible').should('exist')
@@ -34,5 +35,17 @@ describe('Admin journey - part 1', () => {
     cy.contains('Maestro').should('be.visible').should('exist')
     cy.contains('PAYPAL').should('be.visible').should('exist')
     cy.contains('VISA').should('be.visible').should('exist')
+    // enabling VISA, MasterCard only
+    cy.get('[class="payment-product panel"]')
+      .contains('VISA')
+      .parent() // Assuming the parent contains the toggle switch
+      .find('[class="switch prestashop-switch fixed-width-md"]')
+      .click()
+    cy.get('[class="payment-product panel"]')
+      .contains('MasterCard')
+      .parent() // Assuming the parent contains the toggle switch
+      .find('[class="switch prestashop-switch fixed-width-md"]')
+      .click()
+    cy.get('[name="submitPaymentMethodsSettingsForm"]').click() // saving the form
   })
 })
