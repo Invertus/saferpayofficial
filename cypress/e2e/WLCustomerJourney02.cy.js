@@ -17,5 +17,6 @@ describe('Admin journey - part 2', () => {
     cy.get(':nth-child(1) > .column-payment').click() // navigating into the last Order
     cy.get('#worldlineop-admin-order').scrollIntoView()
     cy.get('#worldlineop-btn-capture').click()
+    cy.contains('Capture requested successfully').should('exist').should('be.visible')
   })
 })
