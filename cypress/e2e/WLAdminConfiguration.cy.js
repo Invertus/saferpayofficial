@@ -13,5 +13,6 @@ describe('Admin journey - part 1', () => {
   it.only('2 - Configure plugin for test', () => {
     cy.LogInBO()
     cy.get('#worldlineopAdvancedSettings_advancedSettingsEnabled_on').click()
+    cy.contains('Advanced Settings').click()
   });
 })
