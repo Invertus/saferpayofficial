@@ -1,10 +1,7 @@
 describe('Admin journey - part 1', () => {
-  it.only('1 - PrestaShop environment', () => {
+  it('1 - PrestaShop environment', () => {
     cy.viewport(1920,1080)
-    cy.visit('/en/login?back=my-account')
-    cy.get('#field-email').type('demo@demo.com')
-    cy.get('#field-password').type('demodemo')
-    cy.get('#submit-login').click()
+    cy.LogInFO()
     cy.visit('/')
     cy.contains('Hummingbird printed t-shirt').click()
     cy.contains('Add to cart').click()
@@ -26,14 +23,22 @@ describe('Admin journey - part 1', () => {
     cy.get('#payment-cvc').type('123')
     cy.get('#submit-all').click()
   })
-  it('2 - Worldline environment', () => {
+  it.skip('2 - Worldline environment', () => {
     // todo
   })
-  it('3 - Back to PrestaShop environment', () => {
+  it.skip('3 - Back to PrestaShop environment', () => {
     cy.LogInBO()
     // todo
   })
   it('4 - Check order history', () => {
-    // todo
+    cy.viewport(1920,1080)
+    cy.LogInFO()
+    cy.visit('/en/order-history')
+    cy.get('[scope="row"]').eq(0).should('exist').should('be.visible')
+    cy.contains('Details').eq(0).click()
+    cy.get('#order-products > tbody > tr > :nth-child(4)')
+    cy.get('.line-products > :nth-child(2)')
+    cy.get('.line-shipping > :nth-child(2)')
+    cy.get('.line-total > :nth-child(2)')
   })
 })
