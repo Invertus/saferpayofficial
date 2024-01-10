@@ -8,6 +8,7 @@ module.exports = defineConfig({
   projectId: 'xb89dr',
   retries: 0,
   videoCompression: 13,
+  video: true,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
