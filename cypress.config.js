@@ -6,7 +6,7 @@ module.exports = defineConfig({
   numTestsKeptInMemory: 5,
   defaultCommandTimeout: 7000,
   projectId: 'xb89dr',
-  retries: 2,
+  retries: 0,
   videoCompression: 13,
   e2e: {
     // We've imported your old cypress plugins here.
