@@ -48,10 +48,10 @@ describe('Admin journey - part 1', () => {
       .click()
     cy.get('[name="submitPaymentMethodsSettingsForm"]').click() // saving the form
   })
-  it.only('3 - Configure PrestaShop (if needed)', () => {
+  it('3 - Configure PrestaShop (if needed)', () => {
     cy.LogInBO()
     cy.get('[id="subtab-AdminParentOrderPreferences"]').find('a').click({force:true})
-    cy.get('[name="gift_options[enable_gift_wrapping]"]').click()
-    cy.get('[id="form-gift-save-button"]').click({multiple:true})
+    cy.get('[name="gift_options[enable_gift_wrapping]"]').click({multiple:true, force:true})
+    cy.get('[id="form-gift-save-button"]').click() // saving the form
   })
 })
