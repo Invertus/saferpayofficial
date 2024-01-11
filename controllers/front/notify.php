@@ -24,7 +24,11 @@
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
+use Invertus\SaferPay\Core\Order\Action\UpdateOrderStatusAction;
+use Invertus\SaferPay\Core\Order\Action\UpdateSaferPayOrderAction;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Processor\CheckoutProcessor;
+use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
@@ -35,6 +39,7 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'notify';
+    const SAFERPAY_ORDER_AUTHORIZE_ACTION = 'AUTHORIZE';
 
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
@@ -44,7 +49,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
-        $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
 
         $cart = new Cart($cartId);
@@ -63,20 +67,46 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         try {
             $assertResponseBody = $this->assertTransaction($cartId);
 
+            /** @var SaferPayOrderRepository $saferPayOrderRepository */
+            $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
+            $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
+
+            /** @var UpdateSaferPayOrderAction $updateSaferPayOrderAction */
+            $updateSaferPayOrderAction = $this->module->getService(UpdateSaferPayOrderAction::class);
+            $updateSaferPayOrderAction->run(new SaferPayOrder($saferPayOrderId), self::SAFERPAY_ORDER_AUTHORIZE_ACTION);
+
+            // If order does not exist but assertion is valid that means order authorized or captured.
+            $orderId = Order::getIdByCartId($cartId);
+
+            if (!$orderId) {
+                /** @var CheckoutProcessor $checkoutProcessor **/
+                $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+                $checkoutData = CheckoutData::create(
+                    (int) $cart->id,
+                    $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
+                    (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+                );
+
+                $checkoutData->setIsAuthorizedOrder(true);
+                $checkoutData->setOrderStatus($assertResponseBody->getTransaction()->getStatus());
+
+                $checkoutProcessor->run($checkoutData);
+            }
+
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
-            /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+            /** @var UpdateOrderStatusAction $updateOrderStatusAction **/
+            $updateOrderStatusAction = $this->module->getService(UpdateOrderStatusAction::class);
+            $updateOrderStatusAction->run((int) $orderId, (int) Configuration::get('SAFERPAY_PAYMENT_AUTHORIZED'));
 
-            $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
-
-            if (
-                !$assertResponseBody->getLiability()->getLiabilityShift() &&
+            if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
                 in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+                (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
             ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->cancel($order);
 
                 die($this->module->l('Liability shift is false', self::FILENAME));
@@ -85,12 +115,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             //NOTE to get latest information possible and not override new information.
             $order = new Order($orderId);
 
-            $paymentBehaviour = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
-
-            if (
-                $paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+            if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $assertResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
@@ -112,19 +141,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         die($this->module->l('Success', self::FILENAME));
     }
 
-    /**
-     * @param int $cartId
-     *
-     * @return AssertBody
-     * @throws Exception
-     */
-    private function assertTransaction($cartId)
-    {
+    private function assertTransaction($cartId) {
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert(Order::getOrderByCartId($cartId), true);
 
-        return $assertionResponse;
+        return $transactionAssert->assert($cartId);
     }
 
     protected function displayMaintenancePage()

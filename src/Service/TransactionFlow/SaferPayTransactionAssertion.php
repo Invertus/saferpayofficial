@@ -27,8 +27,6 @@ use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
-use Invertus\SaferPay\Service\SaferPayOrderStatusService;
-use Order;
 use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
@@ -52,35 +50,27 @@ class SaferPayTransactionAssertion
      */
     private $assertionService;
 
-    /**
-     * @var SaferPayOrderStatusService
-     */
-    private $orderStatusService;
-
     public function __construct(
         AssertRequestObjectCreator $assertRequestCreator,
         SaferPayOrderRepository $orderRepository,
-        AssertService $assertionService,
-        SaferPayOrderStatusService $orderStatusService
+        AssertService $assertionService
     ) {
         $this->assertRequestCreator = $assertRequestCreator;
         $this->orderRepository = $orderRepository;
         $this->assertionService = $assertionService;
-        $this->orderStatusService = $orderStatusService;
     }
 
     /**
-     * @param int $orderId
+     * @param string $cartId
      *
      * @return AssertBody
      * @throws \Exception
      */
-    public function assert($orderId, $changeOrderStatus)
+    public function assert($cartId)
     {
-        $saferPayOrder = $this->getSaferPayOrder($orderId);
-        $order = new Order($orderId);
+        $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
 
-        $assertRequest = $this->assertRequestCreator->create($orderId);
+        $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
         $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
 
         if (empty($assertResponse)) {
@@ -95,23 +85,6 @@ class SaferPayTransactionAssertion
         $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
         $saferPayOrder->update();
 
-        if ($changeOrderStatus) {
-            $this->orderStatusService->assert($order, $assertBody->getTransaction()->getStatus());
-        }
-
         return $assertBody;
-    }
-
-    /**
-     * @param $orderId
-     *
-     * @return false|SaferPayOrder
-     * @throws \Exception
-     */
-    private function getSaferPayOrder($orderId)
-    {
-        $saferPayOrderId = $this->orderRepository->getIdByOrderId($orderId);
-
-        return new SaferPayOrder($saferPayOrderId);
     }
 }

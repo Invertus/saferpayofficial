@@ -21,44 +21,43 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Service\Request;
+namespace Invertus\SaferPay\Exception\Restriction;
 
-use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Exception\ExceptionCode;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AssertRequestObjectCreator
+class SaferPayException extends \Exception
 {
-    /**
-     * @var RequestObjectCreator
-     */
-    private $requestObjectCreator;
+    private $context;
 
-    /**
-     * @var SaferPayOrderRepository
-     */
-    private $saferPayOrderRepository;
+    final public function __construct(
+        $internalMessage,
+        $code,
+        array  $context = []
+    )
+    {
+        parent::__construct($internalMessage, $code);
+        $this->context = $context;
+    }
 
-    public function __construct(
-        RequestObjectCreator $requestObjectCreator,
-        SaferPayOrderRepository $saferPayOrderRepository
-    ) {
-        $this->requestObjectCreator = $requestObjectCreator;
-        $this->saferPayOrderRepository = $saferPayOrderRepository;
+    public function getContext()
+    {
+        return $this->context;
     }
 
     /**
-     * @param string $token
+     * @param \Exception $exception
      *
-     * @return AssertRequest
+     * @return static
      */
-    public function create($token)
+    public static function unknownError($exception)
     {
-        $requestHeader = $this->requestObjectCreator->createRequestHeader();
-
-        return new AssertRequest($requestHeader, $token);
+        return new static(
+            'An unknown error error occurred. Please check system logs or contact Click to Pay support.',
+            ExceptionCode::UNKNOWN_ERROR
+        );
     }
 }

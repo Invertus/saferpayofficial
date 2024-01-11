@@ -23,10 +23,9 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
+use Invertus\SaferPay\Controller\Front\CheckoutController;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
-use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
-use Invertus\SaferPay\Service\SaferPayInitialize;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -73,48 +72,35 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         if (!Validate::isLoadedObject($customer)) {
             Tools::redirect($redirectLink);
         }
-
-        $currency = $this->context->currency;
-        $total = (float) $cart->getOrderTotal();
-
-        $orderId = Order::getOrderByCartId($cart->id);
-        if (!$orderId) {
-            $paymentMethod = Tools::getValue('saved_card_method');
-            $this->module->validateOrder(
-                $cart->id,
-                Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
-                $total,
-                $paymentMethod,
-                null,
-                [],
-                (int) $currency->id,
-                false,
-                $customer->secure_key
-            );
-        }
     }
 
     public function initContent()
     {
         parent::initContent();
+
         $paymentMethod = Tools::getValue('saved_card_method');
         $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");
+
         if (!SaferPayConfig::isVersion17()) {
             $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
         }
-        /** @var SaferPayOrderBuilder $saferPayOrderBuilder */
-        $saferPayOrderBuilder = $this->module->getService(SaferPayOrderBuilder::class);
-        $isBusinessLicence = Tools::getValue(\Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE);
 
-        /** @var SaferPayInitialize $initializeService */
-        $initializeService = $this->module->getService(SaferPayInitialize::class);
         try {
-            /** @var SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->module->getService(SaferPayCardAliasRepository::class);
-            $alias = $cardAliasRep->getSavedCardAliasFromId($selectedCard);
-            $response = $initializeService->initialize($paymentMethod, $isBusinessLicence, $selectedCard, $alias);
-        } catch (Exception $e) {
-            $redirectLink = $this->context->link->getModuleLink(
+            /** @var CheckoutController $checkoutController */
+            $checkoutController = $this->module->getService(CheckoutController::class);
+
+            // refactor it to create checkout data from validator request
+            $checkoutData = CheckoutData::create(
+                (int) $this->context->cart->id,
+                $paymentMethod,
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                $selectedCard
+            );
+
+            $redirectUrl = $checkoutController->execute($checkoutData);
+
+        } catch (\Exception $exception) {
+            $redirectUrl = $this->context->link->getModuleLink(
                 $this->module->name,
                 ControllerName::FAIL,
                 [
@@ -125,22 +111,18 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 ],
                 true
             );
-            $this->redirectWithNotifications($redirectLink);
+            $this->redirectWithNotifications($redirectUrl);
         }
-        $saferPayOrderBuilder->create(
-            $response,
-            $this->context->cart,
-            $this->context->customer,
-            true,
-            $isBusinessLicence
-        );
+
         $this->context->smarty->assign([
-            'redirect' => $response->Redirect->RedirectUrl,
+            'redirect' => $redirectUrl,
         ]);
+
         if (SaferPayConfig::isVersion17()) {
             $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_iframe.tpl');
             return;
         }
+
         $this->setTemplate('saferpay_iframe_16.tpl');
     }
 

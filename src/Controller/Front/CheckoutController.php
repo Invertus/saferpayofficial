@@ -21,44 +21,46 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Service\Request;
+namespace Invertus\SaferPay\Controller\Front;
 
-use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Processor\CheckoutProcessor;
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class AssertRequestObjectCreator
+class CheckoutController
 {
     /**
-     * @var RequestObjectCreator
+     * @var CheckoutProcessor
      */
-    private $requestObjectCreator;
-
-    /**
-     * @var SaferPayOrderRepository
-     */
-    private $saferPayOrderRepository;
+    private $checkoutProcessor;
 
     public function __construct(
-        RequestObjectCreator $requestObjectCreator,
-        SaferPayOrderRepository $saferPayOrderRepository
+        CheckoutProcessor $checkoutProcessor
     ) {
-        $this->requestObjectCreator = $requestObjectCreator;
-        $this->saferPayOrderRepository = $saferPayOrderRepository;
+        $this->checkoutProcessor = $checkoutProcessor;
+    }
+
+    public function execute(CheckoutData $checkoutData)
+    {
+        $response = $this->checkoutProcessor->run($checkoutData);
+
+        return $this->getRedirectionUrl($response);
     }
 
     /**
-     * @param string $token
+     * @param object $initializeBody
      *
-     * @return AssertRequest
+     * @return string
      */
-    public function create($token)
+    private function getRedirectionUrl($initializeBody)
     {
-        $requestHeader = $this->requestObjectCreator->createRequestHeader();
+        if (isset($initializeBody->RedirectUrl)) {
+            return $initializeBody->RedirectUrl;
+        }
 
-        return new AssertRequest($requestHeader, $token);
+        if (isset($initializeBody->Redirect->RedirectUrl)) {
+            return $initializeBody->Redirect->RedirectUrl;
+        }
+
+        return '';
     }
 }

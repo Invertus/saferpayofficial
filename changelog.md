@@ -151,3 +151,6 @@
 - BO : Increased module's API version
 - BO : Added a more descriptive payment method name in invoices
 - BO : Additional improvements and fixes
+
+- ## [1.2.0] - *
+- BO : Added order creation after authorization functionality

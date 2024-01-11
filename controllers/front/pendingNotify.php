@@ -43,22 +43,24 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
     public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
-        $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
 
         $cart = new Cart($cartId);
+
         if ($cart->secure_key !== $secureKey) {
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
+
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
-        $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($orderId);
+        $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
 
         $orderRefunds = $saferPayOrderRepository->getOrderRefunds($saferPayOrderId);
         foreach ($orderRefunds as $orderRefund) {
             if ($orderRefund['status'] === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
                 continue;
             }
+
             $assertRefundResponse = $this->assertRefundTransaction($orderRefund['transaction_id']);
             if ($assertRefundResponse->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
                 $this->handleCapturedRefund($orderRefund['id_saferpay_order_refund']);
