@@ -127,3 +127,7 @@ Cypress.Commands.add("SwitchMultistore", () => {
 Cypress.Commands.add("acceptToken", () => {
   cy.contains('I understand').click()
 })
+// Command to highlight an element by adding a border
+Cypress.Commands.add('highlightElement', { prevSubject: true }, (subject) => {
+  cy.wrap(subject).invoke('css', 'border', '5px solid red');
+});
