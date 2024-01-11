@@ -27,7 +27,6 @@ describe('Admin journey - part 1', () => {
     // todo
   })
   it.only('3 - Back to PrestaShop environment', () => {
-    cy.LogInBO()
     cy.viewport(1920,1080)
     cy.LogInFO()
     cy.visit('/')
@@ -54,11 +53,14 @@ describe('Admin journey - part 1', () => {
     // Validate that the current URLs matches a specific pattern
     cy.url().should('include', '/module/worldlineop/redirect?action=redirectReturnHosted&RETURNMAC=')
     cy.url().should('include', '&hostedCheckoutId=')
+    cy.wait(2000)
     cy.contains('Your order is confirmed').should('exist').should('be.visible')
     // Validate that the current URLs matches a specific pattern
     cy.url().should('include', '/order-confirmation?id_cart=')
     cy.url().should('include', '&id_module=')
     cy.url().should('include', '&key=')
+    // empty cart validating
+    cy.contains('Cart (0)').should('be.visible').should('exist')
     
   })
   it('4 - Check order history', () => {
