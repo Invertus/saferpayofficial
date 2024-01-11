@@ -21,44 +21,45 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Service\Request;
+namespace Invertus\SaferPay\Core\Order\Action;
 
-use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AssertRequestObjectCreator
+class UpdateSaferPayOrderAction
 {
-    /**
-     * @var RequestObjectCreator
-     */
-    private $requestObjectCreator;
+    const ACTION_AUTHORIZE = 'AUTHORIZE';
 
     /**
-     * @var SaferPayOrderRepository
+     * @param SaferPayOrder $saferPayOrder
+     * @param string $action
+     * @return void
      */
-    private $saferPayOrderRepository;
-
-    public function __construct(
-        RequestObjectCreator $requestObjectCreator,
-        SaferPayOrderRepository $saferPayOrderRepository
-    ) {
-        $this->requestObjectCreator = $requestObjectCreator;
-        $this->saferPayOrderRepository = $saferPayOrderRepository;
+    public function run(SaferPayOrder $saferPayOrder, $action)
+    {
+        switch ($action) {
+            case self::ACTION_AUTHORIZE:
+                $this->authorizeSaferPayOrder($saferPayOrder);
+                break;
+            default:
+                throw new \InvalidArgumentException('Unsupported saferpay order action provided.');
+        }
     }
 
     /**
-     * @param string $token
-     *
-     * @return AssertRequest
+     * @param SaferPayOrder $saferPayOrder
+     * @return void
      */
-    public function create($token)
+    private function authorizeSaferPayOrder($saferPayOrder)
     {
-        $requestHeader = $this->requestObjectCreator->createRequestHeader();
+        if ($saferPayOrder->authorized) {
+            return;
+        }
 
-        return new AssertRequest($requestHeader, $token);
+        $saferPayOrder->authorized = 1;
+        $saferPayOrder->update();
     }
 }

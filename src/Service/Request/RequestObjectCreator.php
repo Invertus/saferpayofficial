@@ -111,12 +111,19 @@ class RequestObjectCreator
         /** @var \Order|null $order */
         $order = $this->orderRepository->findOneByCartId($cart->id);
 
-        if (empty($order)) {
+        if (!(int) \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION) && empty($order)) {
             return null;
         }
+
         $payment = new Payment();
         $payment->setValue($totalPrice);
         $payment->setCurrencyCode($currency['iso_code']);
+
+        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION) && empty($order)) {
+            return $payment;
+        }
+
+        /** This param is not mandatory, but recommended **/
         $payment->setOrderReference($order->reference);
 
         return $payment;

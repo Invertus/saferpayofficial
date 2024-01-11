@@ -21,44 +21,45 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Service\Request;
+namespace Invertus\SaferPay\Exception;
 
-use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Exception\Restriction\SaferPayException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AssertRequestObjectCreator
+class CouldNotChangeOrderStatus extends SaferPayException
 {
     /**
-     * @var RequestObjectCreator
+     * @param string $transactionStatus
+     *
+     * @return CouldNotChangeOrderStatus
      */
-    private $requestObjectCreator;
-
-    /**
-     * @var SaferPayOrderRepository
-     */
-    private $saferPayOrderRepository;
-
-    public function __construct(
-        RequestObjectCreator $requestObjectCreator,
-        SaferPayOrderRepository $saferPayOrderRepository
-    ) {
-        $this->requestObjectCreator = $requestObjectCreator;
-        $this->saferPayOrderRepository = $saferPayOrderRepository;
+    public static function unhandledOrderStatus($transactionStatus)
+    {
+        return new self(
+            sprintf('Unhandled transaction status (%s)', $transactionStatus),
+            ExceptionCode::ORDER_UNHANDLED_TRANSACTION_STATUS,
+            [
+                'transaction_status' => $transactionStatus,
+            ]
+        );
     }
 
     /**
-     * @param string $token
+     * @param int $orderId
      *
-     * @return AssertRequest
+     * @return CouldNotChangeOrderStatus
      */
-    public function create($token)
+    public static function failedToFindOrder($orderId)
     {
-        $requestHeader = $this->requestObjectCreator->createRequestHeader();
-
-        return new AssertRequest($requestHeader, $token);
+        return new self(
+            sprintf('Failed to find order %s', $orderId),
+            ExceptionCode::ORDER_FAILED_TO_FIND_ORDER,
+            [
+                'order_id' => $orderId,
+            ]
+        );
     }
 }
