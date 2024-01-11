@@ -53,8 +53,8 @@ describe('Admin journey - part 1', () => {
   })
   it('3 - Configure PrestaShop (if needed)', () => {
     cy.LogInBO()
-    cy.get('[id="subtab-AdminParentOrderPreferences"]').find('a').click({force:true}).highlightElement()
-    cy.get('[name="gift_options[enable_gift_wrapping]"]').click({multiple:true, force:true}).highlightElement()
-    cy.get('[id="form-gift-save-button"]').click().highlightElement() // saving the form
+    cy.get('[id="subtab-AdminParentOrderPreferences"]').highlightElement().find('a').click({force:true})
+    cy.get('[name="gift_options[enable_gift_wrapping]"]').highlightElement().click({multiple:true, force:true})
+    cy.get('[id="form-gift-save-button"]').highlightElement().click() // saving the form
   })
 })
