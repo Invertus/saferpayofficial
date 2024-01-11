@@ -70,7 +70,6 @@ class CheckoutProcessor
             throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
         }
 
-        //todo move to different
         if ($data->getIsAuthorizedOrder()) {
             try {
                 $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
