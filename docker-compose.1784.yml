@@ -29,7 +29,7 @@ services:
       DB_PASSWD: prestashop
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: saferpayofficial1784.ngrok.io
+      PS_DOMAIN: saferpayofficial1784.eu.ngrok.io
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:

@@ -22,6 +22,6 @@ module.exports = defineConfig({
     },
     excludeSpecPattern: ['index.php'],
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
-    baseUrl: 'https://saferpayofficial1784.ngrok.io',
+    baseUrl: 'https://saferpayofficial1784.eu.ngrok.io',
   },
 })
