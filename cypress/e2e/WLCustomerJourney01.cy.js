@@ -22,11 +22,30 @@ describe('Admin journey - part 1', () => {
     cy.get('#payment-cardholdername').type('MR TEST')
     cy.get('#payment-cvc').type('123')
     cy.get('#submit-all').click()
+
+    // starting the validation of the values
+    // Create an object to store multiple values
+    const dataToSave = {}
+    cy.get('.total-value > :nth-child(2)') // getting Total Value price
+      .invoke('text')
+      .then((textValue) => {
+        dataToSave.totalValuePrice = textValue;
+      })
+    cy.get('tbody > :nth-child(1) > :nth-child(2)') // getting Subtotal price
+      .invoke('text')
+      .then((textValue) => {
+        dataToSave.subtotalValuePrice = textValue;
+      })
+
+    // Save the values to a fixture
+    cy.writeFile('cypress/fixtures/multipleValues.json', dataToSave)
+
+
   })
   it.skip('2 - Worldline environment', () => {
     // todo
   })
-  it.only('3 - Back to PrestaShop environment', () => {
+  it('3 - Back to PrestaShop environment', () => {
     cy.viewport(1920,1080)
     cy.LogInFO()
     cy.visit('/')
