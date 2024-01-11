@@ -129,5 +129,5 @@ Cypress.Commands.add("acceptToken", () => {
 })
 // Command to highlight an element by adding a border
 Cypress.Commands.add('highlightElement', { prevSubject: true }, (subject) => {
-  cy.wrap(subject).invoke('attr', 'style', 'border: 5px solid red !important; animation: bounce 2s !important;');
+  cy.wrap(subject).invoke('attr', 'style', 'border: 5px solid red !important; animation: bounce 2s !important;').wait(400).scrollIntoView()
 });

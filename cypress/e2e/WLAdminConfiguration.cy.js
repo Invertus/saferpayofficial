@@ -1,5 +1,5 @@
 describe('Admin journey - part 1', () => {
-  it.only('1 - Configure plugin credentials', () => {
+  it('1 - Configure plugin credentials', () => {
     cy.LogInBO()
     cy.get('[name="worldlineopAccountSettings[testPspid]"]').highlightElement().clear().type(Cypress.env('TEST_PSPID'))
     cy.get('[name="worldlineopAccountSettings[testApiKey]"]').highlightElement().clear().type(Cypress.env('TEST_API_KEY'))
@@ -11,19 +11,19 @@ describe('Admin journey - part 1', () => {
     cy.wait(2000)
     // other actions to be confirmed with WL Steen
   })
-  it('2 - Configure plugin for test', () => {
+  it.only('2 - Configure plugin for test', () => {
     cy.LogInBO()
-    cy.get('[id="worldlineopAdvancedSettings_advancedSettingsEnabled_on"]').click({force:true}).highlightElement()
-    cy.contains('Advanced Settings').click().highlightElement()
-    cy.get('#worldlineop-type-auth').check().highlightElement()
-    cy.get('[id="worldlineopAdvancedSettings_logsEnabled_on"]').click({force:true}).highlightElement()
-    cy.get('[id="worldlineopAdvancedSettings_groupCardPaymentOptions_on"]').click({force:true}).highlightElement()
-    cy.get('[id="worldlineopAdvancedSettings_force3DsV2_on"]').click({force:true}).highlightElement()
-    cy.get('[name="submitSaveAdvancedSettingsForm"]').click().highlightElement() // saving the form
-    cy.get('[class="icon icon-credit-card"]').click().highlightElement() // going into Payment Methods
-    cy.get('[id="worldlineopPaymentMethodsSettings_displayGenericOption_on"]').click({force:true}).highlightElement()
-    cy.get('[id="worldlineopPaymentMethodsSettings_displayRedirectPaymentOptions_on"]').click({force:true}).highlightElement()
-    cy.contains('Refresh list of available payment methods').click().highlightElement()
+    cy.get('[id="worldlineopAdvancedSettings_advancedSettingsEnabled_on"]').highlightElement().click({force:true})
+    cy.contains('Advanced Settings').highlightElement().click().wait(1000)
+    cy.get('#worldlineop-type-auth').highlightElement().click()
+    cy.get('[id="worldlineopAdvancedSettings_logsEnabled_on"]').highlightElement().click({force:true})
+    cy.get('[id="worldlineopAdvancedSettings_groupCardPaymentOptions_on"]').highlightElement().click({force:true})
+    cy.get('[id="worldlineopAdvancedSettings_force3DsV2_on"]').highlightElement().click({force:true})
+    cy.get('[name="submitSaveAdvancedSettingsForm"]').highlightElement().click() // saving the form
+    cy.get('[class="icon icon-credit-card"]').highlightElement().click() // going into Payment Methods
+    cy.get('[id="worldlineopPaymentMethodsSettings_displayGenericOption_on"]').highlightElement().click({force:true})
+    cy.get('[id="worldlineopPaymentMethodsSettings_displayRedirectPaymentOptions_on"]').highlightElement().click({force:true})
+    cy.contains('Refresh list of available payment methods').highlightElement().click()
     // validation of PMs begins here
     cy.contains('American Express').should('be.visible').should('exist').highlightElement()
     cy.contains('BCMC').should('be.visible').should('exist').highlightElement()
@@ -37,17 +37,19 @@ describe('Admin journey - part 1', () => {
     cy.contains('PAYPAL').should('be.visible').should('exist').highlightElement()
     cy.contains('VISA').should('be.visible').should('exist').highlightElement()
     // enabling VISA, MasterCard only
-    cy.get('[class="payment-product panel"]').highlightElement()
-      .contains('VISA').highlightElement()
+    cy.get('[class="payment-product panel"]')
+      .contains('VISA')
       .parent() // Assuming the parent contains the toggle switch
-      .find('[class="switch prestashop-switch fixed-width-md"]').highlightElement()
-      .click().highlightElement()
-    cy.get('[class="payment-product panel"]').highlightElement()
-      .contains('MasterCard').highlightElement()
+      .find('[class="switch prestashop-switch fixed-width-md"]')
+      .highlightElement()
+      .click()
+    cy.get('[class="payment-product panel"]')
+      .contains('MasterCard')
       .parent() // Assuming the parent contains the toggle switch
-      .find('[class="switch prestashop-switch fixed-width-md"]').highlightElement()
-      .click().highlightElement()
-    cy.get('[name="submitPaymentMethodsSettingsForm"]').click().highlightElement() // saving the form
+      .find('[class="switch prestashop-switch fixed-width-md"]')
+      .highlightElement()
+      .click()
+    cy.get('[name="submitPaymentMethodsSettingsForm"]').highlightElement().click() // saving the form
   })
   it('3 - Configure PrestaShop (if needed)', () => {
     cy.LogInBO()
