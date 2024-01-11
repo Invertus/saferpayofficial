@@ -1,12 +1,12 @@
 describe('Admin journey - part 1', () => {
   it.only('1 - Configure plugin credentials', () => {
     cy.LogInBO()
-    cy.get('[name="worldlineopAccountSettings[testPspid]"]').clear().type(Cypress.env('TEST_PSPID')).highlightElement()
-    cy.get('[name="worldlineopAccountSettings[testApiKey]"]').clear().type(Cypress.env('TEST_API_KEY')).highlightElement()
-    cy.get('[name="worldlineopAccountSettings[testApiSecret]"]').clear().type(Cypress.env('TEST_API_SECRET')).highlightElement()
-    cy.get('[name="worldlineopAccountSettings[testWebhooksKey]"]').clear().type(Cypress.env('TEST_WEBHOOKS_KEY')).highlightElement()
-    cy.get('[name="worldlineopAccountSettings[testWebhooksSecret]"]').clear().type(Cypress.env('TEST_WEBHOOKS_SECRET')).highlightElement()
-    cy.get('[name="submitTestCredentialsForm"]').click().highlightElement()
+    cy.get('[name="worldlineopAccountSettings[testPspid]"]').highlightElement().clear().type(Cypress.env('TEST_PSPID'))
+    cy.get('[name="worldlineopAccountSettings[testApiKey]"]').highlightElement().clear().type(Cypress.env('TEST_API_KEY'))
+    cy.get('[name="worldlineopAccountSettings[testApiSecret]"]').highlightElement().clear().type(Cypress.env('TEST_API_SECRET'))
+    cy.get('[name="worldlineopAccountSettings[testWebhooksKey]"]').highlightElement().clear().type(Cypress.env('TEST_WEBHOOKS_KEY'))
+    cy.get('[name="worldlineopAccountSettings[testWebhooksSecret]"]').highlightElement().clear().type(Cypress.env('TEST_WEBHOOKS_SECRET'))
+    cy.get('[name="submitTestCredentialsForm"]').highlightElement().click()
     cy.contains('Account credentials are valid. Account settings saved successfully.').should('exist').should('be.visible').highlightElement()
     cy.wait(2000)
     // other actions to be confirmed with WL Steen
