@@ -145,5 +145,12 @@
 - BO : Added PrestaShop module security validations
 - FO : Added PrestaShop module security validations
 
+## [1.1.8] - *
+- BO : Added a toggle setting for Saferpay email sending option
+- BO : Added a configuration field for the customization of the description parameter
+- BO : Increased module's API version
+- BO : Added a more descriptive payment method name in invoices
+- BO : Additional improvements and fixes
+
 - ## [1.2.0] - *
 - BO : Added order creation after authorization functionality

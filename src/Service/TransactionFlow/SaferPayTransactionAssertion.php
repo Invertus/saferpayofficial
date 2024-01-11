@@ -73,6 +73,10 @@ class SaferPayTransactionAssertion
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
         $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
 
+        if (empty($assertResponse)) {
+            return null;
+        }
+
         $assertBody = $this->assertionService->createObjectsFromAssertResponse(
             $assertResponse,
             $saferPayOrder->id

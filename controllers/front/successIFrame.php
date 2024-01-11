@@ -84,7 +84,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                     'cartId' => $cartId,
                     'secureKey' => $secureKey,
                     'orderId' => $orderId,
-                    \Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
+                    'moduleId' => $moduleId,
                 ],
                 true
             ));
@@ -115,7 +115,24 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             ));
         }
 
-        $orderStatusService->authorize($order);
+        try {
+            $orderStatusService->authorize($order);
+
+            Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
+        } catch (Exception $exception) {
+            $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+            $this->redirectWithNotifications($this->context->link->getModuleLink(
+                $this->module->name,
+                ControllerName::FAIL_IFRAME,
+                [
+                    'cartId' => $cartId,
+                    'secureKey' => $secureKey,
+                    'orderId' => $orderId,
+                    'moduleId' => $moduleId,
+                ],
+                true
+            ));
+        }
 
         $paymentBehaviour = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
 

@@ -125,6 +125,7 @@ class RequestObjectCreator
 
         /** This param is not mandatory, but recommended **/
         $payment->setOrderReference($order->reference);
+        $payment->setDescription((string) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION));
 
         return $payment;
     }
