@@ -132,6 +132,6 @@ Cypress.Commands.add('highlightElement', { prevSubject: true }, (subject) => {
   cy.wrap(subject).invoke('attr', 'style', 'border: 5px solid red !important; animation: bounce 2s !important;').wait(400)
   // Check if the window is scrollable before invoking scrollIntoView
   if (Cypress.config('viewportHeight') < document.documentElement.scrollHeight) {
-    cy.scrollIntoView();
+    cy.scrollIntoView({ easing: 'linear' });
   }
 });

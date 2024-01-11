@@ -1,5 +1,5 @@
 describe('Admin journey - part 1', () => {
-  it.only('1 - PrestaShop environment', () => {
+  it('1 - PrestaShop environment', () => {
     cy.viewport(1920,1080)
     cy.LogInFO()
     cy.visit('/')
@@ -70,14 +70,14 @@ describe('Admin journey - part 1', () => {
     cy.get('#submit-all').highlightElement().click()
     cy.wait(2000)
     // Validate that the current URLs matches a specific pattern
-    cy.url().highlightElement().should('include', '/module/worldlineop/redirect?action=redirectReturnHosted&RETURNMAC=')
-    cy.url().highlightElement().should('include', '&hostedCheckoutId=')
+    cy.url().should('include', '/module/worldlineop/redirect?action=redirectReturnHosted&RETURNMAC=')
+    cy.url().should('include', '&hostedCheckoutId=')
     cy.wait(2000)
     cy.contains('Your order is confirmed').highlightElement().should('exist').should('be.visible')
     // Validate that the current URLs matches a specific pattern
-    cy.url().highlightElement().should('include', '/order-confirmation?id_cart=')
-    cy.url().highlightElement().should('include', '&id_module=')
-    cy.url().highlightElement().should('include', '&key=')
+    cy.url().should('include', '/order-confirmation?id_cart=')
+    cy.url().should('include', '&id_module=')
+    cy.url().should('include', '&key=')
     // empty cart validating
     cy.contains('Cart (0)').highlightElement().should('be.visible').should('exist')
     
@@ -88,7 +88,7 @@ describe('Admin journey - part 1', () => {
     cy.visit('/en/order-history')
     cy.get('[scope="row"]').eq(0).highlightElement().should('exist').should('be.visible')
     cy.contains('Details').eq(0).highlightElement().click()
-    cy.get('#order-products > tbody > tr > :nth-child(4)').highlightElement()
+    cy.get('#order-products > tbody > tr > :nth-child(4)').highlightElement().scrollIntoView()
     cy.get('.line-products > :nth-child(2)').highlightElement()
     cy.get('.line-shipping > :nth-child(2)').highlightElement()
     cy.get('.line-total > :nth-child(2)').highlightElement()

@@ -11,7 +11,7 @@ describe('Admin journey - part 1', () => {
     cy.wait(2000)
     // other actions to be confirmed with WL Steen
   })
-  it.only('2 - Configure plugin for test', () => {
+  it('2 - Configure plugin for test', () => {
     cy.LogInBO()
     cy.get('[id="worldlineopAdvancedSettings_advancedSettingsEnabled_on"]').highlightElement().click({force:true})
     cy.contains('Advanced Settings').highlightElement().click().wait(1000)
