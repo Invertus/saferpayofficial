@@ -7,7 +7,7 @@ Cypress.Commands.add("LogInBO", () => {
   cy.wait(1000)
 })
 Cypress.Commands.add("LogInFO", () => {
-  cy.visit('en/login?back=my-account').highlightElement()
+  cy.visit('en/login?back=my-account')
   cy.get('#field-email').type('demo@demo.com').highlightElement()
   cy.get('#field-password').type('demodemo').highlightElement()
   cy.get('#submit-login').click().highlightElement()
