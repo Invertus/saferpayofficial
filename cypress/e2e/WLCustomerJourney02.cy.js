@@ -9,6 +9,7 @@ describe('Admin journey - part 2', () => {
     cy.get('#worldlineop-admin-order').highlightElement().scrollIntoView()
     cy.get('[id="worldlineop-admin-order"]').highlightElement().contains('115.20 EUR').should('be.visible').should('exist') // hardcoded price verifying
     cy.get(':nth-child(1) > .col-md-12 > .info-block > .row > :nth-child(2) > :nth-child(2)').highlightElement() // todo transaction ID
+    cy.wait(2000)
   })
   it('2 - Fully capture transaction', () => {
     cy.LogInBO()
@@ -22,5 +23,6 @@ describe('Admin journey - part 2', () => {
     cy.get(':nth-child(1) > .card > .card-body > :nth-child(1) > .col > :nth-child(3) > :nth-child(2)').highlightElement().contains('115.20 EUR') // hardcoded so far - Amount pending capture
     cy.get(':nth-child(1) > .card > .card-body > :nth-child(1) > .col > :nth-child(4) > :nth-child(2)').highlightElement().contains('0.00 EUR') // hardcoded so far - Amount that can be captured
     cy.get('#update_order_status_action_input').contains('Awaiting payment capture').should('be.visible').highlightElement().should('exist')
+    cy.wait(2000)
   })
 })
