@@ -22,7 +22,7 @@ describe('Admin journey - part 1', () => {
     cy.get('#payment-cardholdername').highlightElement().type('MR TEST')
     cy.get('#payment-cvc').highlightElement().type('123')
     cy.get('#submit-all').highlightElement().click()
-
+    cy.wait(5000)
     // starting the validation of the values
     // Create an object to store multiple values
     const dataToSave = {}
