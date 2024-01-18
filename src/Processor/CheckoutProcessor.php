@@ -175,12 +175,6 @@ class CheckoutProcessor
         );
     }
 
-    /**
-     * @param CheckoutData $data
-     * @param Cart $cart
-     * @return void
-     * @throws CouldNotProcessCheckout
-     */
     private function processAuthorizedOrder(CheckoutData $data, Cart $cart): void
     {
         try {
@@ -203,7 +197,7 @@ class CheckoutProcessor
 
             $saferPayOrder->update();
             $order->update();
-            return ;
+            return;
         } catch (\Exception $exception) {
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
         }
