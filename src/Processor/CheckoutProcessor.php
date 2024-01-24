@@ -71,30 +71,8 @@ class CheckoutProcessor
         }
 
         if ($data->getIsAuthorizedOrder()) {
-            try {
-                $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
-
-                if (!$saferPayOrder->id_order) {
-                    $this->processCreateOrder($cart, $data->getPaymentMethod());
-                    $saferPayOrder->authorized = 1;
-                }
-
-                $order = new Order(Order::getIdByCartId($cart->id));
-                $saferPayOrder->id_order = $order->id;
-
-                if ($data->getOrderStatus() === 'AUTHORIZED') {
-                    $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
-                } elseif ($data->getOrderStatus() === 'CAPTURED') {
-                    $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
-                }
-
-                $saferPayOrder->update();
-                $order->update();
-
-                return '';
-            } catch (\Exception $exception) {
-                throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
-            }
+            $this->processAuthorizedOrder($data, $cart);
+            return '';
         }
 
         try {
@@ -195,5 +173,33 @@ class CheckoutProcessor
             $customerId,
             $isTransaction
         );
+    }
+
+    private function processAuthorizedOrder(CheckoutData $data, Cart $cart): void
+    {
+        try {
+            $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
+
+            if (!$saferPayOrder->id_order) {
+                $this->processCreateOrder($cart, $data->getPaymentMethod());
+            }
+
+            $order = new Order(Order::getIdByCartId($cart->id));
+            $saferPayOrder->id_order = $order->id;
+
+            if ($data->getOrderStatus() === 'AUTHORIZED') {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+                $saferPayOrder->authorized = 1;
+            } elseif ($data->getOrderStatus() === 'CAPTURED') {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
+                $saferPayOrder->captured = 1;
+            }
+
+            $saferPayOrder->update();
+            $order->update();
+            return;
+        } catch (\Exception $exception) {
+            throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
+        }
     }
 }
