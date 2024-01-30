@@ -91,6 +91,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $checkoutData->setOrderStatus($assertResponseBody->getTransaction()->getStatus());
 
                 $checkoutProcessor->run($checkoutData);
+
+                $orderId = Order::getIdByCartId($cart->id);
             }
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.

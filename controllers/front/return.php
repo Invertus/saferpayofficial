@@ -65,6 +65,22 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
+        // At this point notify controller possibly already created and order
+        if (Order::getIdByCartId($cartId)) {
+            Tools::redirect($this->context->link->getModuleLink(
+                $this->module->name,
+                $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                [
+                    'cartId' => $cartId,
+                    'orderId' => $orderId,
+                    'moduleId' => $moduleId,
+                    'secureKey' => $secureKey,
+                    'selectedCard' => $selectedCard,
+                ],
+                true
+            ));
+        }
+
         try {
             /** @var SaferPayTransactionAssertion $transactionAssert */
             $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
