@@ -41,7 +41,7 @@ class ControllerName
     const PENDING_NOTIFY = 'pendingNotify';
     const SUCCESS = 'success';
     const SUCCESS_HOSTED = 'successHosted';
-    const SUCCESS_IFRAME = 'successIframe';
+    const SUCCESS_IFRAME = 'successIFrame';
     const VALIDATION = 'validation';
     const RETURN_URL = 'return';
 }
