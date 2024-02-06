@@ -83,8 +83,7 @@ class AssertService
         // also we call authorize method in some of the success controllers, so if we leave the logic here,
         // we get an error with TRANSACTION_IN_WRONG_STATE
         if ($saferPayOrder->is_transaction) {
-            return null;
-//          $assertApi = self::ASSERT_API_TRANSACTION;
+          $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
         try {
