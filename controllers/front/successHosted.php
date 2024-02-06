@@ -56,9 +56,9 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
-            Tools::redirect($this->getOrderLink());
+            $this->errors[] = $this->module->l('Failed to validate cart.', self::FILE_NAME);
 
-            $this->errors[] = $this->module->l('Failed to validate order', self::FILE_NAME);
+            $this->redirectWithNotifications($this->getOrderLink());
         }
 
         try {
