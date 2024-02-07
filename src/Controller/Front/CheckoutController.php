@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Controller\Front;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 
