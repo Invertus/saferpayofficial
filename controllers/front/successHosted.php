@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'successHosted';
+    const FILE_NAME = 'successHosted';
 
     protected $display_header = false;
     protected $display_footer = false;
@@ -56,7 +56,9 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
-            Tools::redirect($this->getOrderLink());
+            $this->errors[] = $this->module->l('Failed to validate cart.', self::FILE_NAME);
+
+            $this->redirectWithNotifications($this->getOrderLink());
         }
 
         try {
@@ -89,17 +91,6 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 )
             );
         }
-    }
-
-    public function initContent()
-    {
-        parent::initContent();
-        $cartId = Tools::getValue('cartId');
-        $moduleId = Tools::getValue('moduleId');
-        $orderId = Tools::getValue('orderId');
-        $secureKey = Tools::getValue('secureKey');
-
-        Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
     }
 
     /**
