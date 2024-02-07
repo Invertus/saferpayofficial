@@ -21,10 +21,12 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 
@@ -84,6 +86,14 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $checkoutProcessor->run($checkoutData);
 
             $orderId = \Order::getIdByCartId($cartId);
+
+            if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+                $assertionResponse->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
+            ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+                $orderStatusService->capture(new Order($orderId));
+            }
 
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
