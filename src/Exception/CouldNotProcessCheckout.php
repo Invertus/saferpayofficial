@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CouldNotProcessCheckout extends \Invertus\SaferPay\Exception\Restriction\SaferPayException
+class CouldNotProcessCheckout extends SaferPayException
 {
     /**
      * @param int $cartId
