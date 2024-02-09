@@ -25,7 +25,6 @@ namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -51,12 +50,15 @@ class AssertRequestObjectCreator
         $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function create($orderId)
+    /**
+     * @param string $token
+     *
+     * @return AssertRequest
+     */
+    public function create($token)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
-        $saferPayOrderId =  $this->saferPayOrderRepository->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
-        return new AssertRequest($requestHeader, $saferPayOrder->token);
+        return new AssertRequest($requestHeader, $token);
     }
 }

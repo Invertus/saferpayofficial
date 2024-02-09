@@ -42,7 +42,7 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
-     * @return array |null
+     * @return object|null
      * @throws Exception
      */
     public function post($url, $params = [])

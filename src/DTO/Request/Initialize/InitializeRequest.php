@@ -226,11 +226,14 @@ class InitializeRequest
 
         if ($this->notification !== null) {
             $return['Notification'] = [
-                'PayerEmail' => $this->notification->getPayerEmail(),
                 'MerchantEmails' => [$this->notification->getMerchantEmail()],
                 'SuccessNotifyUrl' => $this->notification->getNotifyUrl(),
                 'FailNotifyUrl' => $this->notification->getNotifyUrl(),
             ];
+
+            if (\Configuration::get(SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL)) {
+                $return['Notification'] = ['PayerEmail' => $this->notification->getPayerEmail()];
+            }
         }
 
         if ($this->configSet) {

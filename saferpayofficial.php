@@ -40,11 +40,15 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.1.7';
+        $this->version = '1.2.0';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
         $this->tab = 'payments_gateways';
+        $this->ps_versions_compliancy = [
+            'min' => '1.6.1.0',
+            'max' => '8.0.4',
+        ];
 
         parent::__construct($name);
 
@@ -109,6 +113,47 @@ class SaferPayOfficial extends PaymentModule
         $containerProvider = new \Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider();
 
         return $containerProvider->getService($service);
+    }
+
+    public function hookActionObjectOrderPaymentAddAfter($params)
+    {
+        if (!isset($params['object'])) {
+            return;
+        }
+
+        /** @var OrderPayment $orderPayment */
+        $orderPayment = $params['object'];
+
+        if (!Validate::isLoadedObject($orderPayment)) {
+            return;
+        }
+
+        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+
+        $orders = Order::getByReference($orderPayment->order_reference);
+
+        /** @var Order|bool $order */
+        $order = $orders->getFirst();
+
+        if (!Validate::isLoadedObject($order) || !$order) {
+            return;
+        }
+
+        $saferPayOrderId = (int) $saferPayOrderRepository->getIdByOrderId($order->id);
+
+        if (!$saferPayOrderId) {
+            return;
+        }
+
+        $brand = $saferPayOrderRepository->getPaymentBrandBySaferpayOrderId($saferPayOrderId);
+
+        if (!$brand) {
+            return;
+        }
+
+        $orderPayment->payment_method = 'Saferpay - ' . $brand;
+        $orderPayment->update();
     }
 
     public function hookPaymentOptions($params)

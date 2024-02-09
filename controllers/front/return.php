@@ -21,10 +21,15 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Processor\CheckoutProcessor;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,8 +50,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $fieldToken = Tools::getValue('fieldToken');
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
-
-        $orderId = Order::getOrderByCartId($cartId);
+        $orderId =  Tools::getValue('orderId');
 
         $cart = new Cart($cartId);
 
@@ -65,7 +69,62 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         try {
-            $this->assertTransaction($orderId);
+            if ($isBusinessLicence) {
+                $response = $this->executeTransaction((int) $cartId, (int) $selectedCard);
+            } else {
+                $response = $this->executePaymentPageAssertion((int) $cartId, (int) $isBusinessLicence);
+            }
+
+            $checkoutData = CheckoutData::create(
+                (int) $cartId,
+                $response->getPaymentMeans()->getBrand()->getPaymentMethod(),
+                (int) $isBusinessLicence
+            );
+
+            $checkoutData->setIsAuthorizedOrder(true);
+            $checkoutData->setOrderStatus($response->getTransaction()->getStatus());
+
+            /** @var CheckoutProcessor $checkoutProcessor **/
+            $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+            $checkoutProcessor->run($checkoutData);
+
+            $orderId = \Order::getIdByCartId($cartId);
+
+            $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
+
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+
+            $order = new Order($orderId);
+
+            if (
+                (!$response->getLiability()->getLiabilityShift() &&
+                    in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
+                    $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL) ||
+                $response->getTransaction()->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CANCELED
+            ) {
+                $orderStatusService->cancel($order);
+
+                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+
+                $this->redirectWithNotifications($this->context->link->getModuleLink(
+                    $this->module->name,
+                    ControllerName::FAIL,
+                    [
+                        'cartId' => $cartId,
+                        'secureKey' => $secureKey,
+                        'orderId' => $orderId,
+                        'moduleId' => $moduleId,
+                    ],
+                    true
+                ));
+            }
+
+            if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+                $response->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
+            ) {
+                $orderStatusService->capture(new Order($orderId));
+            }
 
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
@@ -101,32 +160,43 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
     }
 
-    /**
-     * @param $cartId
-     * @return AssertBody
-     * @throws Exception
-     */
-    private function assertTransaction($orderId)
-    {
-        /** @var SaferPayTransactionAssertion $transactionAssert */
-        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-        $assertionResponse = $transactionAssert->assert($orderId, false);
-
-        return $assertionResponse;
-    }
-
     private function getSuccessControllerName($isBusinessLicence, $fieldToken)
     {
-        $successController = 'success';
+        $successController = ControllerName::SUCCESS;
 
         if ($isBusinessLicence) {
-            $successController = 'successIFrame';
+            $successController = ControllerName::SUCCESS_IFRAME;
         }
 
         if ($fieldToken) {
-            $successController = 'successHosted';
+            $successController = ControllerName::SUCCESS_HOSTED;
         }
 
         return $successController;
+    }
+
+    private function executeTransaction(int $orderId, int $selectedCard)
+    {
+        /** @var SaferPayTransactionAuthorization $saferPayTransactionAuthorization */
+        $saferPayTransactionAuthorization = $this->module->getService(SaferPayTransactionAuthorization::class);
+
+        $response = $saferPayTransactionAuthorization->authorize(
+            $orderId,
+            $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
+            $selectedCard
+        );
+
+        return $response;
+    }
+
+    private function executePaymentPageAssertion(int $cartId, int $isBusinessLicence)
+    {
+
+        /** @var SaferPayTransactionAssertion $transactionAssert */
+        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+        $assertionResponse = $transactionAssert->assert($cartId);
+
+
+        return $assertionResponse;
     }
 }

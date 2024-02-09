@@ -72,12 +72,15 @@ class LegacyTranslator implements TranslatorInterface
             SaferPayConfig::PAYMENT_POSTFINANCE => $this->module->l('Postfinance', self::FILE_NAME),
             SaferPayConfig::PAYMENT_SOFORT => $this->module->l('Sofort', self::FILE_NAME),
             SaferPayConfig::PAYMENT_TWINT => $this->module->l('Twint', self::FILE_NAME),
-            SaferPayConfig::PAYMENT_UNIONPAY => $this->module->l('Unionpay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_VISA => $this->module->l('Visa', self::FILE_NAME),
             SaferPayConfig::PAYMENT_VPAY => $this->module->l('Vpay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_APPLEPAY => $this->module->l('Applepay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_KLARNA => $this->module->l('Klarna', self::FILE_NAME),
             SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS => $this->module->l('Cryptocurrencies', self::FILE_NAME),
+            SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT => $this->module->l('AccountToAccount', self::FILE_NAME),
+            SaferPayConfig::PAYMENT_PAYCONIQ => $this->module->l('Payconiq', self::FILE_NAME),
+            SaferPayConfig::PAYMENT_CARD => $this->module->l('Card', self::FILE_NAME),
+            SaferPayConfig::PAYMENT_POSTFINANCE_PAY => $this->module->l('PostFinancePay', self::FILE_NAME),
         ];
     }
 }

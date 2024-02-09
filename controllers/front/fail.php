@@ -35,13 +35,6 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
     const FILENAME = 'fail';
 
     /**
-     * ID Order Variable Declaration.
-     *
-     * @var
-     */
-    private $id_order;
-
-    /**
      * Security Key Variable Declaration.
      *
      * @var
@@ -67,28 +60,25 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
         if (!SaferPayConfig::isVersion17()) {
             return parent::init();
         }
+
         parent::init();
 
         $this->id_cart = (int) Tools::getValue('cartId', 0);
 
         $redirectLink = 'index.php?controller=history';
 
-        $this->id_order = Order::getOrderByCartId((int) $this->id_cart);
         $this->secure_key = Tools::getValue('secureKey');
-        $order = new Order((int) $this->id_order);
 
-        if (!$this->id_order || !$this->module->id || !$this->secure_key || empty($this->secure_key)) {
+        $cart = new Cart($this->id_cart);
+
+        if (!$this->module->id || empty($this->secure_key)) {
             Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
         }
 
-        if ((string) $this->secure_key !== (string) $order->secure_key ||
-            (int) $order->id_customer !== (int) $this->context->customer->id ||
-            !Validate::isLoadedObject($order)
+        if ((string) $this->secure_key !== (string) $cart->secure_key ||
+            (int) $cart->id_customer !== (int) $this->context->customer->id ||
+            !Validate::isLoadedObject($cart)
         ) {
-            Tools::redirect($redirectLink);
-        }
-
-        if ($order->module !== $this->module->name) {
             Tools::redirect($redirectLink);
         }
 

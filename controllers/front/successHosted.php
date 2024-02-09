@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'successHosted';
+    const FILE_NAME = 'successHosted';
 
     protected $display_header = false;
     protected $display_footer = false;
@@ -53,62 +53,15 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
         $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
         $moduleId = Tools::getValue('moduleId');
-        $selectedCard = Tools::getValue('selectedCard');
 
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
-            Tools::redirect($this->getOrderLink());
+            $this->errors[] = $this->module->l('Failed to validate cart.', self::FILE_NAME);
+
+            $this->redirectWithNotifications($this->getOrderLink());
         }
 
         try {
-            /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-
-            $order = new Order($orderId);
-
-            /** @var SaferPayTransactionAuthorization $saferPayTransactionAuthorization */
-            $saferPayTransactionAuthorization = $this->module->getService(SaferPayTransactionAuthorization::class);
-
-            $authResponseBody = $saferPayTransactionAuthorization->authorize(
-                $orderId,
-                (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
-                $selectedCard
-            );
-
-            $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
-
-            if (
-                (!$authResponseBody->getLiability()->getLiabilityShift() &&
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                $paymentBehaviourWithout3DS === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL) ||
-                $authResponseBody->getTransaction()->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CANCELED
-            ) {
-                $orderStatusService->cancel($order);
-
-                $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
-
-                $this->redirectWithNotifications($this->context->link->getModuleLink(
-                    $this->module->name,
-                    ControllerName::FAIL,
-                    [
-                        'cartId' => $cartId,
-                        'secureKey' => $secureKey,
-                        'orderId' => $orderId,
-                        'moduleId' => $moduleId,
-                    ],
-                    true
-                ));
-            }
-
-            $orderStatusService->authorize($order);
-
-            $paymentBehaviour = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR);
-
-            if ($paymentBehaviour === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE && $authResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED) {
-                $orderStatusService->capture($order);
-                Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
-            }
-
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
             PrestaShopLogger::addLog(
@@ -138,17 +91,6 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 )
             );
         }
-    }
-
-    public function initContent()
-    {
-        parent::initContent();
-        $cartId = Tools::getValue('cartId');
-        $moduleId = Tools::getValue('moduleId');
-        $orderId = Tools::getValue('orderId');
-        $secureKey = Tools::getValue('secureKey');
-
-        Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
     }
 
     /**

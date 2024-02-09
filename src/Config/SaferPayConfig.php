@@ -50,7 +50,7 @@ class SaferPayConfig
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = 1.32;
+    const API_VERSION = 1.37;
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
@@ -72,7 +72,6 @@ class SaferPayConfig
         self::PAYMENT_POSTFINANCE,
         self::PAYMENT_SOFORT,
         self::PAYMENT_TWINT,
-        self::PAYMENT_UNIONPAY,
         self::PAYMENT_VISA,
         self::PAYMENT_VPAY,
         self::PAYMENT_APPLEPAY,
@@ -100,21 +99,22 @@ class SaferPayConfig
     const PAYMENT_POSTFINANCE = 'POSTFINANCE';
     const PAYMENT_SOFORT = 'SOFORT';
     const PAYMENT_TWINT = 'TWINT';
-    const PAYMENT_UNIONPAY = 'UNIONPAY';
     const PAYMENT_VISA = 'VISA';
     const PAYMENT_VPAY = 'VPAY';
     const PAYMENT_KLARNA = 'KLARNA';
     const PAYMENT_APPLEPAY = 'APPLEPAY';
     const PAYMENT_WLCRYPTOPAYMENTS = 'WLCRYPTOPAYMENTS';
     const PAYMENT_GOOGLEPAY = 'GOOGLEPAY';
-    const PAYMENT_MASTERPASS = 'MASTERPASS';
     const PAYMENT_BONUS = 'BONUS';
     const PAYMENT_LASTSCHRIFT = 'DIRECTDEBIT';
+    const PAYMENT_ACCOUNTTOACCOUNT = 'ACCOUNTTOACCOUNT';
+    const PAYMENT_PAYCONIQ = 'PAYCONIQ';
+    const PAYMENT_CARD = 'CARD';
+    const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_GOOGLEPAY,
-        self::PAYMENT_MASTERPASS,
     ];
 
     const PAYMENT_METHODS_KEYS = [
@@ -127,18 +127,20 @@ class SaferPayConfig
         'KlarnaPayments' => self::PAYMENT_KLARNA,
         'MaestroInternational' => self::PAYMENT_MAESTRO,
         'Mastercard' => self::PAYMENT_MASTERCARD,
-        'Masterpass' =>self::PAYMENT_MASTERPASS,
         'myOne' => self::PAYMENT_MYONE,
         'paydirekt' => self::PAYMENT_PAYDIREKT,
         'PayPal' => self::PAYMENT_PAYPAL,
         'Twint' => self::PAYMENT_TWINT,
-        'UnionPay' => self::PAYMENT_UNIONPAY,
         'Visa' => self::PAYMENT_VISA,
         'WLCryptoPayments' => self::PAYMENT_WLCRYPTOPAYMENTS,
         'Postcard' => self::PAYMENT_POSTCARD,
         'BonusCard' => self::PAYMENT_BONUS,
         'Lastschrift' => self::PAYMENT_LASTSCHRIFT,
         'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT,
+        'AccountToAccount' => self::PAYMENT_ACCOUNTTOACCOUNT,
+        'Payconiq' => self::PAYMENT_PAYCONIQ,
+        'Card' => self::PAYMENT_CARD,
+        'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -204,12 +206,12 @@ class SaferPayConfig
         self::PAYMENT_MASTERCARD,
         self::PAYMENT_VISA,
         self::PAYMENT_VPAY,
-        self::PAYMENT_UNIONPAY,
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_AMEX,
     ];
 
     const WEB_SERVICE_PASSWORD_PLACEHOLDER = '&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;';
+
     const SAFERPAY_PAYMENT_COMPLETED = 'SAFERPAY_PAYMENT_COMPLETED';
     const SAFERPAY_PAYMENT_AUTHORIZED = 'SAFERPAY_PAYMENT_AUTHORIZED';
     const SAFERPAY_PAYMENT_REJECTED = 'SAFERPAY_PAYMENT_REJECTED';
@@ -219,12 +221,18 @@ class SaferPayConfig
     const SAFERPAY_PAYMENT_PENDING_REFUND = 'SAFERPAY_PAYMENT_PENDING_REFUND';
     const SAFERPAY_PAYMENT_CANCELED = 'SAFERPAY_PAYMENT_CANCELED';
     const SAFERPAY_PAYMENT_AUTHORIZATION_FAILED = 'SAFERPAY_PAYMENT_AUTHORIZATION_FAILED';
+
     const SAFERPAY_SEND_ORDER_CONFIRMATION = 'SAFERPAY_SEND_ORDER_CONFIRMATION';
     const SAFERPAY_SEND_NEW_ORDER_MAIL = 'SAFERPAY_SEND_NEW_ORDER_MAIL';
+    const SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL = 'SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL';
+    const SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION = 'SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION';
 
     const STATUS_PS_OS_OUTOFSTOCK_PAID = 'PS_OS_OUTOFSTOCK_PAID';
 
     const SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT = 'SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT';
+
+    const SAFERPAY_PAYMENT_DESCRIPTION = 'SAFERPAY_PAYMENT_DESCRIPTION';
+    const SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE = 'Prestashop Payment';
 
     const SAFERPAY_TEMPLATE_LOCATION = 'module:saferpayofficial/views/templates/';
     const SAFERPAY_HOSTED_TEMPLATE_LOCATION = 'module:saferpayofficial/views/templates/front/hosted-templates/';
@@ -239,10 +247,6 @@ class SaferPayConfig
     const TRANSACTION_STATUS_CAPTURED = 'CAPTURED';
     const TRANSACTION_STATUS_PENDING = 'PENDING';
     const TRANSACTION_STATUS_CANCELED = 'CANCELED';
-
-    const LOG_TYPE_SUCCESS = 'SUCCESS';
-    const LOG_TYPE_ERROR = 'ERROR';
-    const LOG_TYPE_CRITICAL_ERROR = 'CRITICAL ERROR';
 
     const FIELDS_ACCESS_TOKEN = 'SAFERPAY_FIELDS_ACCESS_TOKEN';
     const FIELDS_LIBRARY = 'SAFERPAY_FIELDS_JAVASCRIPT_LIBRARY';
@@ -330,14 +334,17 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.32',
-            RequestHeader::SPEC_REFUND_VERSION => '1.32',
+            RequestHeader::SPEC_VERSION => '1.37',
+            RequestHeader::SPEC_REFUND_VERSION => '1.37',
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
             SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => 1,
+            SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => 1,
+            SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION => self::SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE,
             SaferPayConfig::FIELDS_LIBRARY => self::FIELDS_LIBRARY_DEFAULT_VALUE,
             SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => self::FIELDS_LIBRARY_TEST_DEFAULT_VALUE,
+            self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => 0,
             self::TEST_MODE => 1,
             self::HOSTED_FIELDS_TEMPLATE => self::HOSTED_FIELDS_TEMPLATE_DEFAULT,
             self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => Configuration::get(
@@ -352,6 +359,8 @@ class SaferPayConfig
             RequestHeader::SPEC_VERSION,
             RequestHeader::RETRY_INDICATOR,
             RequestHeader::SPEC_REFUND_VERSION,
+            self::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL,
+            self::SAFERPAY_PAYMENT_DESCRIPTION,
             self::TEST_MODE,
             self::USERNAME,
             self::PASSWORD,
@@ -374,6 +383,7 @@ class SaferPayConfig
             self::FIELDS_ACCESS_TOKEN . self::TEST_SUFFIX,
             self::FIELDS_LIBRARY,
             self::FIELDS_LIBRARY . self::TEST_SUFFIX,
+            self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION,
         ];
     }
 

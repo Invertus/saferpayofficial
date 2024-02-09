@@ -42,6 +42,15 @@ class SaferPayOrderRepository
         return Db::getInstance()->getValue($query);
     }
 
+    public function getIdByCartId($cartId)
+    {
+        $query = new DbQuery();
+        $query->select('`id_saferpay_order`');
+        $query->from('saferpay_order');
+        $query->where('id_cart = "' . (int) $cartId . '"');
+
+        return Db::getInstance()->getValue($query);
+    }
     public function getAssertIdBySaferPayOrderId($saferPayOrderId)
     {
         $query = new DbQuery();
@@ -65,5 +74,15 @@ class SaferPayOrderRepository
         $query->where('id_saferPay_order = "' . (int) $saferPayOrderId . '"');
 
         return Db::getInstance()->executeS($query);
+    }
+
+    public function getPaymentBrandBySaferpayOrderId($saferpayOrderId)
+    {
+        $query = new DbQuery();
+        $query->select('`brand`');
+        $query->from('saferpay_assert');
+        $query->where('id_saferpay_order = "' . (int) $saferpayOrderId . '"');
+
+        return Db::getInstance()->getValue($query);
     }
 }

@@ -95,6 +95,7 @@ class Installer extends AbstractInstaller
         $this->module->registerHook('displayAdminOrderTabContent');
         $this->module->registerHook('actionAdminControllerSetMedia');
         $this->module->registerHook('actionOrderStatusUpdate');
+        $this->module->registerHook('actionObjectOrderPaymentAddAfter');
     }
 
     private function installConfiguration()
@@ -228,7 +229,8 @@ class Installer extends AbstractInstaller
         return Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_order' . '(
             `id_saferpay_order` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            `id_order` INTEGER(10) DEFAULT 0,
+            `id_order` INTEGER(10) DEFAULT 0 NULL,
+            `id_cart` INTEGER(10) DEFAULT 0,
             `id_customer` INTEGER(10) DEFAULT 0,
             `transaction_id` VARCHAR(64) DEFAULT NULL,
             `refund_id` VARCHAR(64) DEFAULT NULL,

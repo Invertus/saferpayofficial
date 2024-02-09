@@ -51,7 +51,7 @@
             </tr>
             </thead>
             {foreach $rows as $row}
-                {$row nofilter}
+                {$row nofilter|escape:'htmlall':'UTF-8'}
             {/foreach}
         </table>
     </div>

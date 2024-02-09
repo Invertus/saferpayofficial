@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
+use Cart;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\AuthorizationService;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
@@ -85,11 +86,11 @@ class SaferPayTransactionAuthorization
      * @return AssertBody
      * @throws \Exception
      */
-    public function authorize($orderId, $saveCard, $selectedCard)
+    public function authorize($cartId, $saveCard, $selectedCard)
     {
-        $order = new Order($orderId);
+        $cart = new Cart($cartId);
 
-        $saferPayOrderId = $this->orderRepository->getIdByOrderId($orderId);
+        $saferPayOrderId = $this->orderRepository->getIdByCartId($cartId);
         $saferPayOrder =  new SaferPayOrder($saferPayOrderId);
 
         $authRequest = $this->authRequestCreator->create($saferPayOrder->token, $saveCard);
@@ -98,7 +99,7 @@ class SaferPayTransactionAuthorization
         $assertBody = $this->authorizationService->createObjectsFromAuthorizationResponse(
             $authResponse,
             $saferPayOrder->id,
-            $order->id_customer,
+            $cart->id_customer,
             $selectedCard
         );
 

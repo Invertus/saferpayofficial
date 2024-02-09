@@ -58,5 +58,5 @@
 
     </div>
 
-    <input type="hidden" name="saferpay_selected_card" value="{$saferpay_selected_card}" />
+    <input type="hidden" name="saferpay_selected_card" value="{$saferpay_selected_card|escape:'htmlall':'UTF-8'}" />
 {/block}

@@ -25,12 +25,16 @@ namespace Invertus\SaferPay\Service;
 
 use Context;
 use Exception;
+use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\InitializeService;
+use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Order;
 use SaferPayOfficial;
 
@@ -60,35 +64,58 @@ class SaferPayInitialize
      */
     private $requestObjectCreator;
 
+    /** @var SaferPayCardAliasRepository */
+    private $saferPayCardAliasRepository;
+
+    /** @var Configuration */
+    private $configuration;
+
     public function __construct(
         ModuleFactory $module,
         LegacyContext $context,
         InitializeService $initializeService,
-        InitializeRequestObjectCreator $requestObjectCreator
+        InitializeRequestObjectCreator $requestObjectCreator,
+        SaferPayCardAliasRepository $saferPayCardAliasRepository,
+        Configuration $configuration
     ) {
         $this->module = $module->getModule();
         $this->context = $context->getContext();
         $this->initializeService = $initializeService;
         $this->requestObjectCreator = $requestObjectCreator;
+        $this->saferPayCardAliasRepository = $saferPayCardAliasRepository;
+        $this->configuration = $configuration;
     }
 
-    public function initialize(
+    public function initialize(InitializeRequest $initializeRequest, $isBusinessLicence)
+    {
+        try {
+            $initialize = $this->initializeService->initialize($initializeRequest, $isBusinessLicence);
+        } catch (Exception $e) {
+            throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
+        }
+
+        return $initialize;
+    }
+
+    public function buildRequest(
         $paymentMethod,
         $isBusinessLicence,
         $selectedCard = -1,
-        $alias = null,
-        $fieldToken = null
+        $fieldToken = null,
+        $successController = null
     ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
+        $creationAfterInitialization = $this->configuration->getAsBoolean(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION);
+        $alias = $this->saferPayCardAliasRepository->getSavedCardAliasFromId($selectedCard);
 
-        $returnUrl = $this->context->link->getModuleLink(
+        $successUrl = $this->context->link->getModuleLink(
             $this->module->name,
             ControllerName::RETURN_URL,
             [
                 'cartId' => $cartId,
                 'secureKey' => $this->context->cart->secure_key,
-                'orderId' => Order::getOrderByCartId($cartId),
+                'orderId' => $creationAfterInitialization ? 0 : Order::getOrderByCartId($cartId),
                 'moduleId' => $this->module->id,
                 'selectedCard' => $selectedCard,
                 'isBusinessLicence' => $isBusinessLicence,
@@ -103,8 +130,21 @@ class SaferPayInitialize
             [
                 'success' => 1,
                 'cartId' => $this->context->cart->id,
-                'orderId' => Order::getOrderByCartId($cartId),
+                'orderId' => $creationAfterInitialization ? 0 : Order::getOrderByCartId($cartId),
                 'secureKey' => $this->context->cart->secure_key,
+            ],
+            true
+        );
+
+        $failUrl = $this->context->link->getModuleLink(
+            $this->module->name,
+            ControllerName::FAIL_VALIDATION,
+            [
+                'cartId' => $this->context->cart->id,
+                'secureKey' => $this->context->cart->secure_key,
+                'orderId' => $creationAfterInitialization ? 0 :Order::getOrderByCartId($cartId),
+                'moduleId' => $this->module->id,
+                'isBusinessLicence' => $isBusinessLicence,
             ],
             true
         );
@@ -113,21 +153,16 @@ class SaferPayInitialize
             $this->context->cart,
             $customerEmail,
             $paymentMethod,
-            $returnUrl,
+            $successUrl,
             $notifyUrl,
+            $failUrl,
             $this->context->cart->id_address_delivery,
             $this->context->cart->id_address_invoice,
             $this->context->cart->id_customer,
-            $isBusinessLicence,
             $alias,
             $fieldToken
         );
-        try {
-            $initialize = $this->initializeService->initialize($initializeRequest, $isBusinessLicence);
-        } catch (Exception $e) {
-            throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
-        }
 
-        return $initialize;
+        return $initializeRequest;
     }
 }

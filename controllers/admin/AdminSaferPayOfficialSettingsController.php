@@ -30,6 +30,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 {
+    const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
+
     public function __construct()
     {
         parent::__construct();
@@ -267,6 +269,17 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'desc' => $this->l('If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.'),
                         'form_group_class' => 'thumbs_chose',
                     ],
+                    SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => [
+                        'type' => 'radio',
+                        'title' => $this->l('Order creation rule'),
+                        'validation' => 'isInt',
+                        'choices' => [
+                            1 => $this->l('After authorization'),
+                            0 => $this->l('Before authorization'),
+                        ],
+                        'desc' => $this->l('Select the option to determine whether the order should be created'),
+                        'form_group_class' => 'thumbs_chose',
+                    ],
                 ],
                 'buttons' => [
                     'save_and_connect' => [
@@ -316,6 +329,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                             'cast' => 'intval',
                             'type' => 'bool',
                         ],
+                        SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => [
+                            'title' => $this->l('Send an email from Saferpay on payment completion'),
+                            'desc' => $this->l('With this setting enabled an email from the Saferpay system will be sent to the customer'),
+                            'validation' => 'isBool',
+                            'cast' => 'intval',
+                            'type' => 'bool',
+                        ],
                         SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL => [
                             'title' => $this->l('Send new order mail on authorization'),
                             'desc' => $this->l('Receive a notification when an order is authorized by Saferpay (Using the Mail alert module)'),
@@ -341,6 +361,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         }
 
         $this->fields_options[] = $this->getFieldOptionsOrderState();
+        $this->fields_options[] = $this->displayConfigurationSettings();
     }
 
     private function getFieldOptionsOrderState()
@@ -366,6 +387,32 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'buttons' => [
                 'save_and_connect' => [
                     'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function displayConfigurationSettings()
+    {
+        return [
+            'title' => $this->module->l('Configuration', self::FILE_NAME),
+            'fields' => [
+                SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION => [
+                    'title' => $this->module->l('Description', self::FILE_NAME),
+                    'type' => 'text',
+                    'desc' => 'This description is visible in payment page also in payment confirmation email',
+                    'class' => 'fixed-width-xxl'
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->module->l('Save', self::FILE_NAME),
                     'icon' => 'process-icon-save',
                     'class' => 'btn btn-default pull-right',
                     'type' => 'submit',
