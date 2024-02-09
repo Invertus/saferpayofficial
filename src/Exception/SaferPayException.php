@@ -49,7 +49,7 @@ class SaferPayException extends \Exception
     public static function unknownError()
     {
         return new static(
-            'An unknown error error occurred. Please check system logs or contact Click to Pay support.',
+            'An unknown error error occurred. Please check system logs or contact support.',
             ExceptionCode::UNKNOWN_ERROR
         );
     }
