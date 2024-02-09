@@ -70,8 +70,8 @@ class InitializeRequestObjectCreator
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
 
-        $languageCode = !empty($cart->getAssociatedLanguage()->iso_code)
-            ? $cart->getAssociatedLanguage()->iso_code
+        $languageCode = !empty(\Context::getContext()->language->iso_code)
+            ? \Context::getContext()->language->iso_code
             : 'en';
 
         $payer->setLanguageCode($languageCode);
