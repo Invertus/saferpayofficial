@@ -28,14 +28,14 @@ use Invertus\SaferPay\Tests\Unit\Tools\UnitTestCase;
 class SaferPayPaymentNotationTest extends UnitTestCase
 {
     /** @dataProvider getPaymentMethodForDisplayDataProvider */
-    public function testGetForDisplay(string $paymentMethod, string $expectedResult)
+    public function testGetForDisplay($paymentMethod, $expectedResult)
     {
         $result = (new \Invertus\SaferPay\Service\SaferPayPaymentNotation)->getForDisplay($paymentMethod);
         $this->assertEquals($expectedResult, $result);
     }
 
     /** @dataProvider getPaymentMethodDataProvider */
-    public function testGetShortName(string $paymentMethod, string $expectedResult)
+    public function testGetShortName($paymentMethod, $expectedResult)
     {
         $result = (new \Invertus\SaferPay\Service\SaferPayPaymentNotation)->getShortName($paymentMethod);
         $this->assertEquals($expectedResult, $result);
