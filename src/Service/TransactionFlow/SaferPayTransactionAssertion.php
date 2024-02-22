@@ -83,6 +83,7 @@ class SaferPayTransactionAssertion
         );
 
         $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
+        $saferPayOrder->id_cart = $cartId;
         $saferPayOrder->update();
 
         return $assertBody;

@@ -215,7 +215,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
         $assertionResponse = $transactionAssert->assert($cartId);
 
-
         return $assertionResponse;
     }
 }
