@@ -179,7 +179,7 @@ class CheckoutProcessor
         );
     }
 
-    private function processAuthorizedOrder(CheckoutData $data, Cart $cart): void
+    private function processAuthorizedOrder(CheckoutData $data, Cart $cart)
     {
         try {
             $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
@@ -188,7 +188,15 @@ class CheckoutProcessor
                 $this->processCreateOrder($cart, $data->getPaymentMethod());
             }
 
-            $order = new Order(Order::getIdByCartId($cart->id));
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cart->id);
+                $order = new Order($orderId);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cart->id);
+                $order = new Order($orderId);
+            }
+
             $saferPayOrder->id_order = $order->id;
 
             if ($data->getOrderStatus() === 'AUTHORIZED') {

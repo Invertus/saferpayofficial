@@ -69,12 +69,12 @@ class InitializeRequestObjectCreator
         $totalPrice = (int) (round($totalPrice));
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
+//
+//        $languageCode = !empty($cart->getAssociatedLanguage()->iso_code)
+//            ? $cart->getAssociatedLanguage()->iso_code
+//            : 'en';
 
-        $languageCode = !empty($cart->getAssociatedLanguage()->iso_code)
-            ? $cart->getAssociatedLanguage()->iso_code
-            : 'en';
-
-        $payer->setLanguageCode($languageCode);
+//        $payer->setLanguageCode($languageCode);
         $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);
         $notification = $isBusinessLicence ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
