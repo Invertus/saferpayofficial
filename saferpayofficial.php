@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -572,7 +574,7 @@ class SaferPayOfficial extends PaymentModule
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
         if ($params['template'] === 'order_conf') {
-            return $canSendOrderConfirmationEmail->verify($order, (int) $order->current_state);
+            return $canSendOrderConfirmationEmail->verify((int) $order->current_state);
         }
 
         if ($params['template'] === 'new_order') {
@@ -615,7 +617,7 @@ class SaferPayOfficial extends PaymentModule
         /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
-        if ($canSendOrderConfirmationEmail->verify($order, (int) $orderStatus->id)) {
+        if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
             $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
         }
     }
