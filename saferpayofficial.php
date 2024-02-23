@@ -615,7 +615,7 @@ class SaferPayOfficial extends PaymentModule
         /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
-        if ($canSendOrderConfirmationEmail->verify($order, (int) $orderStatus->id)) {
+        if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
             $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
         }
     }
