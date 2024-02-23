@@ -21,9 +21,7 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Exception\Restriction;
-
-use Invertus\SaferPay\Exception\ExceptionCode;
+namespace Invertus\SaferPay\Exception;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,15 +46,10 @@ class SaferPayException extends \Exception
         return $this->context;
     }
 
-    /**
-     * @param \Exception $exception
-     *
-     * @return static
-     */
-    public static function unknownError($exception)
+    public static function unknownError()
     {
         return new static(
-            'An unknown error error occurred. Please check system logs or contact Click to Pay support.',
+            'An unknown error error occurred. Please check system logs or contact support.',
             ExceptionCode::UNKNOWN_ERROR
         );
     }
