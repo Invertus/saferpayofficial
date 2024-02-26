@@ -21,5 +21,5 @@
  *}
 
 {foreach $payments as $payment}
-	{$payment}
+	{$payment|cleanHtml nofilter}
 {/foreach}
