@@ -96,12 +96,19 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $exceptionService = $this->module->getService(SaferPayExceptionService::class);
             $this->errors[] = $exceptionService->getErrorMessageForException($exception, $exceptionService->getErrorMessages());
 
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($this->context->cart->id);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($this->context->cart->id);
+            }
+
             $redirectLink = $this->context->link->getModuleLink(
                 $this->module->name,
                 'fail',
                 [
                     'cartId' => $this->context->cart->id,
-                    'orderId' => Order::getIdByCartId($this->context->cart->id),
+                    'orderId' => $orderId,
                     'secureKey' => $this->context->cart->secure_key,
                     'moduleId' => $this->module->id,
                 ],

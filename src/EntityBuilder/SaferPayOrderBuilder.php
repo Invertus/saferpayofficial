@@ -37,7 +37,12 @@ class SaferPayOrderBuilder
     //TODO to pass $body as InitializeBody.
     public function create($body, $cartId, $customerId, $isTransaction)
     {
-        $orderId = Order::getIdByCartId($cartId);
+        if (method_exists('Order', 'getIdByCartId')) {
+            $orderId = Order::getIdByCartId($cartId);
+        } else {
+            // For PrestaShop 1.6 use the alternative method
+            $orderId = Order::getOrderByCartId($cartId);
+        }
 
         $saferPayOrder = new SaferPayOrder();
         $saferPayOrder->token = $body->Token;

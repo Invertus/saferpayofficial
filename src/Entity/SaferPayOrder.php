@@ -36,6 +36,11 @@ class SaferPayOrder extends ObjectModel
     public $id_order;
 
     /**
+     * @var Int|null
+     */
+    public $id_cart;
+
+    /**
      * @var Int
      */
     public $id_customer;

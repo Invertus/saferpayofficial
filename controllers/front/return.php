@@ -88,7 +88,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
             $checkoutProcessor->run($checkoutData);
 
-            $orderId = \Order::getIdByCartId($cartId);
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cartId);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cartId);
+            }
 
             $paymentBehaviourWithout3DS = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
@@ -175,7 +180,14 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         return $successController;
     }
 
-    private function executeTransaction(int $orderId, int $selectedCard)
+    /**
+     * @param int $orderId
+     * @param int $selectedCard
+     *
+     * @return \Invertus\SaferPay\DTO\Response\Assert\AssertBody
+     * @throws Exception
+     */
+    private function executeTransaction($orderId, $selectedCard)
     {
         /** @var SaferPayTransactionAuthorization $saferPayTransactionAuthorization */
         $saferPayTransactionAuthorization = $this->module->getService(SaferPayTransactionAuthorization::class);
@@ -189,13 +201,19 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         return $response;
     }
 
-    private function executePaymentPageAssertion(int $cartId, int $isBusinessLicence)
+    /**
+     * @param int $cartId
+     * @param int $isBusinessLicence
+     *
+     * @return \Invertus\SaferPay\DTO\Response\Assert\AssertBody|null
+     * @throws Exception
+     */
+    private function executePaymentPageAssertion($cartId, $isBusinessLicence)
     {
 
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
         $assertionResponse = $transactionAssert->assert($cartId);
-
 
         return $assertionResponse;
     }

@@ -40,7 +40,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.2.0';
+        $this->version = '1.2.1';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -615,7 +615,7 @@ class SaferPayOfficial extends PaymentModule
         /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
-        if ($canSendOrderConfirmationEmail->verify($order, (int) $orderStatus->id)) {
+        if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
             $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
         }
     }

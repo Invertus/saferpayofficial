@@ -76,8 +76,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $updateSaferPayOrderAction->run(new SaferPayOrder($saferPayOrderId), self::SAFERPAY_ORDER_AUTHORIZE_ACTION);
 
             // If order does not exist but assertion is valid that means order authorized or captured.
-            $orderId = Order::getIdByCartId($cartId);
-
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cartId);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cartId);
+            }
             if (!$orderId) {
                 /** @var CheckoutProcessor $checkoutProcessor **/
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
@@ -92,7 +96,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 $checkoutProcessor->run($checkoutData);
 
-                $orderId = Order::getIdByCartId($cart->id);
+                if (method_exists('Order', 'getIdByCartId')) {
+                    $orderId = Order::getIdByCartId($cartId);
+                } else {
+                    // For PrestaShop 1.6 or lower, use the alternative method
+                    $orderId = Order::getOrderByCartId($cartId);
+                }
             }
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
