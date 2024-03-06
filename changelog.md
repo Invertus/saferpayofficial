@@ -154,3 +154,6 @@
 
 - ## [1.2.0] - *
 - BO : Added order creation after authorization functionality
+
+- ## [1.2.1] - *
+- FO : Increased compatibility with PrestaShop 1.6

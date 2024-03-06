@@ -21,5 +21,5 @@
  *}
 
 {foreach $payments as $payment}
-	{$payment|escape:'htmlall':'UTF-8'}
+	{$payment|cleanHtml nofilter}
 {/foreach}
