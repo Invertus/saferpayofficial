@@ -40,7 +40,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.2.1';
+        $this->version = '1.2.2';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -49,7 +49,6 @@ class SaferPayOfficial extends PaymentModule
             'min' => '1.6.1.0',
             'max' => '8.0.4',
         ];
-
         parent::__construct($name);
 
         $this->autoload();
@@ -557,6 +556,7 @@ class SaferPayOfficial extends PaymentModule
             return true;
         }
         $cart = new Cart($params['cart']->id);
+
         /** @var \Order $order */
         $order = Order::getByCartId($cart->id);
 
@@ -583,7 +583,7 @@ class SaferPayOfficial extends PaymentModule
         }
     }
 
-    public function hookActionOrderStatusUpdate($params = [])
+    public function hookActionOrderStatusPostUpdate($params = [])
     {
         if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
             return;
