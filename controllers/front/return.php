@@ -68,6 +68,35 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
+        if ($cart->orderExists()) {
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cartId);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cartId);
+            }
+
+            $order = new Order($orderId);
+
+            $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+            $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+
+            if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
+                Tools::redirect($this->context->link->getModuleLink(
+                    $this->module->name,
+                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                    [
+                        'cartId' => $cartId,
+                        'orderId' => $orderId,
+                        'moduleId' => $moduleId,
+                        'secureKey' => $secureKey,
+                        'selectedCard' => $selectedCard,
+                    ],
+                    true
+                ));
+            }
+        }
+
         try {
             if ($isBusinessLicence) {
                 $response = $this->executeTransaction((int) $cartId, (int) $selectedCard);
