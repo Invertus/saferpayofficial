@@ -749,4 +749,13 @@ class SaferPayOfficial extends PaymentModule
 
         return true;
     }
+
+    public function hookDisplayHeader()
+    {
+        if (true) {
+            return  $this->context->smarty->fetch(
+                $this->getLocalPath() . 'views/templates/front/saferpay_iframe_modal.tpl'
+            );
+        }
+    }
 }

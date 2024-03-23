@@ -48,7 +48,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         parent::init();
     }
 
-    public function postProcess() // todo refactor this by the logic provided
+    public function postProcess()
     {
         $cartId = Tools::getValue('cartId');
         $orderId = Tools::getValue('orderId');

@@ -43,6 +43,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             case 'submitHostedFields':
                 $this->submitHostedFields();
                 break;
+            case 'initializeSavedCardPayment':
+                $this->initializeSavedCardPayment();
         }
     }
 
@@ -107,5 +109,12 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             ],
             true
         );
+    }
+
+
+    public function initializeSavedCardPayment()
+    {
+        $a = 2;
+        return '<div> yolo </div>';
     }
 }
