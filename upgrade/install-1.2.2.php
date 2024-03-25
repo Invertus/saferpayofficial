@@ -31,6 +31,8 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_2($module)
 {
-    return $module->registerHook('actionOrderStatusPostUpdate') && $module->unregisterHook('actionOrderStatusUpdate');
+    return $module->registerHook('displayHeader')
+        && $module->registerHook('actionOrderStatusPostUpdate')
+        && $module->unregisterHook('actionOrderStatusUpdate');
 }
 
