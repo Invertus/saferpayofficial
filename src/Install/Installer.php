@@ -89,13 +89,13 @@ class Installer extends AbstractInstaller
         $this->module->registerHook('displayAdminOrder');
         $this->module->registerHook('actionFrontControllerSetMedia');
         $this->module->registerHook('displayCustomerAccount');
-        $this->module->registerHook('displayPayment');
         $this->module->registerHook('paymentReturn');
         $this->module->registerHook('actionEmailSendBefore');
         $this->module->registerHook('displayAdminOrderTabContent');
         $this->module->registerHook('actionAdminControllerSetMedia');
         $this->module->registerHook('actionOrderStatusPostUpdate');
         $this->module->registerHook('actionObjectOrderPaymentAddAfter');
+        $this->module->registerHook('displayHeader');
     }
 
     private function installConfiguration()

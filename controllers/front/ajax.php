@@ -43,6 +43,9 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             case 'submitHostedFields':
                 $this->submitHostedFields();
                 break;
+            case 'initializeSavedCardPayment':
+                $this->initializeSavedCardPayment();
+                break;
         }
     }
 
@@ -107,5 +110,49 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             ],
             true
         );
+    }
+
+
+    public function initializeSavedCardPayment()
+    {
+        try {
+            if (Order::getOrderByCartId($this->context->cart->id)) {
+                $this->ajaxDie(json_encode([
+                    'error' => true,
+                    'message' => $this->module->l('Order already exists', self::FILE_NAME),
+                    'url' => $this->getRedirectionToControllerUrl('fail'),
+                ]));
+            }
+
+            $checkoutData = CheckoutData::create(
+                (int) $this->context->cart->id,
+                Tools::getValue('paymentMethod'),
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                Tools::getValue('selectedCard'),
+                Tools::getValue('fieldToken'),
+                ControllerName::SUCCESS_HOSTED,
+                true
+            );
+
+            /** @var CheckoutController $checkoutController */
+            $checkoutController = $this->module->getService(CheckoutController::class);
+            $redirectUrl = $checkoutController->execute($checkoutData);
+
+            if (empty($redirectUrl)) {
+                $redirectUrl = $this->getRedirectionToControllerUrl('successHosted');
+            }
+
+            $this->ajaxDie(json_encode([
+                'error' => false,
+                'url' => $redirectUrl,
+                'successUrl' => $this->getRedirectionToControllerUrl('success')
+            ]));
+        } catch (Exception $e) {
+            $this->ajaxDie(json_encode([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'url' => $this->getRedirectionToControllerUrl('fail'),
+            ]));
+        }
     }
 }
