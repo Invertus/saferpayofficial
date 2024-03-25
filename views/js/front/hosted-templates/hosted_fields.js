@@ -40,7 +40,6 @@ $(document).ready(function () {
             //todo ajax call to back and initiate in order to get redirect url
             if (true) {
 
-
                 //NOTE: not saved card chosen, continuing with normal procedures.
                 if (selectedCard <= 0) {
                     event.target.submit();
@@ -48,7 +47,6 @@ $(document).ready(function () {
                     return;
                 }
 
-                //todo spinner start
                 $.ajax(saferpay_official_ajax_url, {
                     method: 'POST',
                     data: {
@@ -60,13 +58,14 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         var data = jQuery.parseJSON(response);
-                        // toido data url
-                        //todo
-                        var iframeSrc = "https://www.google.com"; // Replace this with your iframe source URL
-                        var iframe = document.getElementById("iframeExample");
-                        iframe.src = iframeSrc;
-                        $('#exampleModal').modal('show'); // Show the modal using jQuery
 
+                        $('#savedCardModal').modal('show');
+                        document.getElementById("savedCardIframe").src = data.url;
+
+                        // Attach event handler for modal close event
+                        $('#savedCardModal').on('hidden.bs.modal', function () {
+                            window.location.href = data.successUrl;
+                        });
                     },
                 });
 
@@ -96,8 +95,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 var data = jQuery.parseJSON(response);
-                console.log(data);
-                // window.location = data.url;
+                window.location = data.url;
             },
         });
     });
