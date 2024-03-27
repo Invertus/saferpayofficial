@@ -123,6 +123,11 @@ class CheckoutProcessor
     {
         $customer = new \Customer($cart->id_customer);
 
+        // Notify and return webhooks triggers together leading into order created previously
+        if ($cart->orderExists()) {
+            return;
+        }
+
         $this->module->validateOrder(
             $cart->id,
             \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),

@@ -64,6 +64,24 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
 
+        if ($cart->orderExists()) {
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cartId);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cartId);
+            }
+
+            $order = new Order($orderId);
+
+            $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+            $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+
+            if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
+                die($this->module->l('Order already created', self::FILENAME));
+            }
+        }
+
         try {
             $assertResponseBody = $this->assertTransaction($cartId);
 
