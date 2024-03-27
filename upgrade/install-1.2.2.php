@@ -33,7 +33,9 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_1_2_2($module)
 {
-    return $module->registerHook('actionOrderHistoryAddAfter') && $module->unregisterHook('actionOrderStatusUpdate');
+    $module->registerHook('actionOrderHistoryAddAfter') && $module->unregisterHook('actionOrderStatusUpdate');
     Configuration::deleteByName(SaferPayConfig::CSS_FILE);
+
+    return true;
 }
 
