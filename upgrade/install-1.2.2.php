@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Config\SaferPayConfig;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -32,5 +34,6 @@ if (!defined('_PS_VERSION_')) {
 function upgrade_module_1_2_2($module)
 {
     return $module->registerHook('actionOrderHistoryAddAfter') && $module->unregisterHook('actionOrderStatusUpdate');
+    Configuration::deleteByName(SaferPayConfig::CSS_FILE);
 }
 
