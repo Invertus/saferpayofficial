@@ -22,7 +22,6 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Configuration;
 
 if (!defined('_PS_VERSION_')) {
     exit;
