@@ -36,7 +36,7 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
 {
     const FILE_NAME = 'AbstractSaferPayController';
 
-    /** @var \KlarnaPayment */
+    /** @var \SaferPayOfficial */
     public $module;
 
     /**
