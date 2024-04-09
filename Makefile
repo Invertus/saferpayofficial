@@ -4,142 +4,71 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 fix-lint:
 	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
-############ PS1784 ############################
+module = saferpayofficial
 
-# All the commands required to build prestashop-1784 version locally
-bps1784: build-ps-1784
-build-ps-1784:
-	# configuring your prestashop
-	docker exec -i prestashop-1784 sh -c "rm -rf /var/www/html/install"
-	# configuring base database
-	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1784_2.sql
-	# installing module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# uninstalling module
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
-	# installing the module again
-	docker exec -i prestashop-1784 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# chmod all folders
-	docker exec -i prestashop-1784 sh -c "chmod -R 777 /var/www/html"
+# Launch the PS build and E2E Cypress app automatically. Eexample: make VERSION=1785 e2eh1785_local, make VERSION=8 e2eh8_local etc.
+# Warning: .env with secrets must be imported if you wanna test locally! This checks the .env existence, ignoring if there is no such on your machine.
 
-# Preparing prestashop-1784 for e2e tests - this actually launched an app in background. You can access it already!
-e2e1784p: e2e-1784-prepare
-e2e-1784-prepare:
+ifneq ("$(wildcard .env)","")
+    include .env
+    export
+endif
+
+# Local machine docker build with PS autoinstall
+e2eh$(VERSION)_local:
+	composer install
 	# detaching containers
-	docker-compose -f docker-compose.1784.yml up -d --force-recreate
+	docker-compose -f docker-compose.$(VERSION).yml up -d --force-recreate
 	# sees what containers are running
-	docker-compose -f docker-compose.1784.yml ps
-	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1784
-	# preloads initial data
-	make bps1784
+	docker-compose -f docker-compose.$(VERSION).yml ps
+	make waiting-for-containers-local
+	make seeding-customized-sql
+	make installing-uninstalling-enabling-module
+	make chmod-app
+	make open-e2e-tests-locally
 
-# Run e2e tests in headless way.
-e2eh1784: test-e2e-headless-1784
-test-e2e-headless-1784:
-	make e2e1784p
-
-############ PS1764 ############################
-
-# All the commands required to build prestashop-1764 version locally
-bps1764: build-ps-1764
-build-ps-1764:
-	# configuring your prestashop
-	docker exec -i prestashop-1764 sh -c "rm -rf /var/www/html/install"
-	# configuring base database
-	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1764.sql
-	# installing module
-	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# uninstalling module
-	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
-	# installing the module again
-	docker exec -i prestashop-1764 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# chmod all folders
-	docker exec -i prestashop-1764 sh -c "chmod -R 777 /var/www/html"
-
-# Preparing prestashop-1764 for e2e tests - this actually launched an app in background. You can access it already!
-e2e1764p: e2e-1764-prepare
-e2e-1764-prepare:
+# For CI build with PS autoinstall
+e2eh$(VERSION):
 	# detaching containers
-	docker-compose -f docker-compose.1764.yml up -d --force-recreate
+	docker-compose -f docker-compose.$(VERSION).yml up -d --force-recreate
 	# sees what containers are running
-	docker-compose -f docker-compose.1764.yml ps
-	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1764
-	# preloads initial data
-	make bps1764
+	docker-compose -f docker-compose.$(VERSION).yml ps
+	make waiting-for-containers-CI
+	make seeding-customized-sql
+	make installing-uninstalling-enabling-module
+	make chmod-app
 
-# Run e2e tests in headless way.
-e2eh1764: test-e2e-headless-1764
-test-e2e-headless-1764:
-	make e2e1764p
+waiting-for-containers-CI:
+	# waiting for app containers to build up
+	sleep 90s
 
-############ PS1770 ############################
+waiting-for-containers-local:
+	# waiting for app containers to build up
+	/bin/bash .docker/wait-loader.sh 8002
 
-# All the commands required to build prestashop-1764 version locally
-bps1770: build-ps-1770
-build-ps-1770:
-	# configuring your prestashop
-	docker exec -i prestashop-1770 sh -c "rm -rf /var/www/html/install"
-	# configuring base database
-	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1770.sql
+seeding-customized-sql:
+	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_$(VERSION).sql
+
+installing-uninstalling-enabling-module:
 	# installing module
-	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
 	# uninstalling module
-	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall $(module)"
 	# installing the module again
-	docker exec -i prestashop-1770 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
+	# enabling the module
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module enable $(module)"
+
+chmod-app:
 	# chmod all folders
-	docker exec -i prestashop-1770 sh -c "chmod -R 777 /var/www/html"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "chmod -R 777 /var/www/html"
 
-# Preparing prestashop-1770 for e2e tests - this actually launched an app in background. You can access it already!
-e2e1770p: e2e-1770-prepare
-e2e-1770-prepare:
-	# detaching containers
-	docker-compose -f docker-compose.1770.yml up -d --force-recreate
-	# sees what containers are running
-	docker-compose -f docker-compose.1770.yml ps
-	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1770
-	# preloads initial data
-	make bps1770
+open-e2e-tests-locally:
+	npm install -D cypress
+	npm ci
+	npx cypress open --config baseUrl=$(ENV_baseUrl$(VERSION))
 
-# Run e2e tests in headless way.
-e2eh1770: test-e2e-headless-1770
-test-e2e-headless-1770:
-	make e2e1770p
-
-############ PS1786 ############################
-
-# All the commands required to build prestashop-1786 version locally
-bps1786: build-ps-1786
-build-ps-1786:
-	# configuring your prestashop
-	docker exec -i prestashop-1786 sh -c "rm -rf /var/www/html/install"
-	# configuring base database
-	mysql -h 127.0.0.1 -P 9002 --protocol=tcp -u root -pprestashop prestashop < ${PWD}/tests/seed/database/prestashop_1786.sql
-	# installing module
-	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# uninstalling module
-	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall saferpayofficial"
-	# installing the module again
-	docker exec -i prestashop-1786 sh -c "cd /var/www/html && php  bin/console prestashop:module install saferpayofficial"
-	# chmod all folders
-	docker exec -i prestashop-1786 sh -c "chmod -R 777 /var/www/html"
-
-# Preparing prestashop-1786 for e2e tests - this actually launched an app in background. You can access it already!
-e2e1786p: e2e-1786-prepare
-e2e-1786-prepare:
-	# detaching containers
-	docker-compose -f docker-compose.1786.yml up -d --force-recreate
-	# sees what containers are running
-	docker-compose -f docker-compose.1786.yml ps
-	# waits for mysql to load
-	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-1786
-	# preloads initial data
-	make bps1786
-
-# Run e2e tests in headless way.
-e2eh1786: test-e2e-headless-1786
-test-e2e-headless-1786:
-	make e2e1786p
+run-e2e-tests-locally:
+	npm install -D cypress
+	npm ci
+	npx cypress run
