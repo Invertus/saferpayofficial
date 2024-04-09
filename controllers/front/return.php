@@ -21,7 +21,6 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\Lock\Lock;
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
@@ -45,27 +44,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
-        // Get the current timestamp in seconds
-        $current_timestamp = time();
-
-// Get the current microseconds
-        $current_microseconds = microtime(true) - floor(microtime(true));
-
-// Format the current timestamp
-        $current_time = date("Y-m-d H:i:s", $current_timestamp);
-
-// Append milliseconds to the formatted time
-        $time = $current_time . sprintf(".%03d", $current_microseconds * 1000);
-
-        PrestaShopLogger::addLog(
-                'return: time = '. $time,
-            1,
-            null,
-            null,
-            null,
-            true
-        );
-
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);

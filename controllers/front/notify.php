@@ -48,27 +48,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
-        // Get the current timestamp in seconds
-        $current_timestamp = time();
-
-// Get the current microseconds
-        $current_microseconds = microtime(true) - floor(microtime(true));
-
-// Format the current timestamp
-        $current_time = date("Y-m-d H:i:s", $current_timestamp);
-
-// Append milliseconds to the formatted time
-        $time = $current_time . sprintf(".%03d", $current_microseconds * 1000);
-
-        PrestaShopLogger::addLog(
-                'notify: time = '. $time,
-            1,
-            null,
-            null,
-            null,
-            true
-        );
-
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
 
@@ -83,6 +62,16 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         if ($cart->secure_key !== $secureKey) {
             die($this->module->l('Error. Insecure cart', self::FILENAME));
+        }
+
+        $lockResult = $this->applyLock(sprintf(
+            '%s-%s',
+            $cartId,
+            $secureKey
+        ));
+
+        if (!$lockResult->isSuccessful()) {
+            die($this->module->l('Lock already exist', self::FILENAME));
         }
 
         if ($cart->orderExists()) {
@@ -101,16 +90,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
                 die($this->module->l('Order already created', self::FILENAME));
             }
-        }
-
-        $lockResult = $this->applyLock(sprintf(
-            '%s-%s',
-            $cartId,
-            $secureKey
-        ));
-
-        if (!$lockResult->isSuccessful()) {
-            die($this->module->l('Lock already exist', self::FILENAME));
         }
 
         try {
