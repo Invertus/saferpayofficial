@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\Lock\Lock;
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
@@ -44,6 +45,27 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
+        // Get the current timestamp in seconds
+        $current_timestamp = time();
+
+// Get the current microseconds
+        $current_microseconds = microtime(true) - floor(microtime(true));
+
+// Format the current timestamp
+        $current_time = date("Y-m-d H:i:s", $current_timestamp);
+
+// Append milliseconds to the formatted time
+        $time = $current_time . sprintf(".%03d", $current_microseconds * 1000);
+
+        PrestaShopLogger::addLog(
+                'return: time = '. $time,
+            1,
+            null,
+            null,
+            null,
+            true
+        );
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
@@ -59,6 +81,26 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
             ]));
+        }
+
+        $lockResult = $this->applyLock(
+            sprintf(
+                '%s-%s',
+                $cartId,
+                $secureKey
+            )
+        );
+
+        if (!$lockResult->isSuccessful()) {
+            $this->redirectWithNotifications($this->context->link->getModuleLink(
+                $this->module->name,
+                ControllerName::FAIL,
+                [
+                    'cartId' => $cartId,
+                    'secureKey' => $secureKey,
+                    'moduleId' => $moduleId,
+                ]
+            ));
         }
 
         if ($cart->secure_key !== $secureKey) {
@@ -91,8 +133,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                         'moduleId' => $moduleId,
                         'secureKey' => $secureKey,
                         'selectedCard' => $selectedCard,
-                    ],
-                    true
+                    ]
                 ));
             }
         }
@@ -160,6 +201,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->capture(new Order($orderId));
             }
 
+            $this->releaseLock();
+
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
                 $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
@@ -173,6 +216,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 true
             ));
         } catch (Exception $e) {
+            $this->releaseLock();
+
             PrestaShopLogger::addLog(
                 sprintf(
                     'Failed to assert transaction. Message: %s. File name: %s',

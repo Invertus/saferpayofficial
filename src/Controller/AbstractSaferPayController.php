@@ -23,7 +23,10 @@
 
 namespace Invertus\SaferPay\Controller;
 
+use Invertus\Lock\Lock;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Response\Response;
+use SaferPayLog;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -31,6 +34,23 @@ if (!defined('_PS_VERSION_')) {
 
 class AbstractSaferPayController extends \ModuleFrontControllerCore
 {
+    const FILE_NAME = 'AbstractSaferPayController';
+
+    /** @var \KlarnaPayment */
+    public $module;
+
+    /**
+     * @var Lock
+     */
+    private $lock;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->lock = new Lock($this->module->getLocalPath() . 'var/cache');
+    }
+
     public function redirectWithNotifications()
     {
         $notifications = json_encode([
@@ -54,5 +74,51 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
                 json_encode($this->warning);
         }
         return call_user_func_array(['Tools', 'redirect'], func_get_args());
+    }
+
+    protected function applyLock($resource)
+    {
+        try {
+            $this->lock->create($resource);
+
+            if (!$this->lock->acquire()) {
+                $logger = new SaferPayLog();
+                $logger->message = 'Lock resource conflict';
+                $logger->payload = $resource;
+                $logger->save();
+
+                return Response::respond(
+                    $this->module->l('Resource conflict', self::FILE_NAME),
+                    Response::HTTP_CONFLICT
+                );
+            }
+        } catch (\Exception $exception) {
+            $logger = new SaferPayLog();
+            $logger->message = 'Failed to lock process';
+            $logger->payload = $resource;
+            $logger->save();
+
+            return Response::respond(
+                $this->module->l('Internal error', self::FILE_NAME),
+                Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        }
+
+        return Response::respond(
+            '',
+            Response::HTTP_OK
+        );
+    }
+
+    protected function releaseLock()
+    {
+        try {
+            $this->lock->release();
+        } catch (\Exception $exception) {
+            $logger = new SaferPayLog();
+            $logger->message = 'Failed to release process';
+            $logger->payload = $exception->getMessage() . $this->lock->acquire();
+            $logger->save();
+        }
     }
 }
