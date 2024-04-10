@@ -44,6 +44,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
+        PrestaShopLogger::addLog(
+'return'
+        );
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
