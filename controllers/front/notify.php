@@ -48,6 +48,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
+        PrestaShopLogger::addLog(
+            'notify'
+                    );
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
 
