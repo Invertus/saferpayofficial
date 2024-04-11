@@ -52,6 +52,8 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+    networks:
+      - prestashop_saferpayofficial_net_1785
 
   adminer:
     image: adminer
