@@ -19,7 +19,7 @@ jobs:
         env:
           COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.COMPOSER_AUTH_TOKEN }}"} }'
         run: |
-          composer install --no-progress --prefer-dist --optimize-autoloader --no-scripts
+          composer install --no-progress --prefer-dist --optimize-autoloader --no-dev
 
       - name: build
         # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
