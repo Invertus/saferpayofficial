@@ -54,6 +54,15 @@ services:
     networks:
       - prestashop_saferpayofficial_net_8
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: saferpayofficial_mailhog
+    logging:
+      driver: 'none'
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
 networks:
   prestashop_saferpayofficial_net_8:
     name: 'prestashop_saferpayofficial_net_8'
