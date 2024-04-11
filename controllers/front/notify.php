@@ -140,8 +140,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $updateOrderStatusAction = $this->module->getService(UpdateOrderStatusAction::class);
             $updateOrderStatusAction->run((int) $orderId, (int) Configuration::get('SAFERPAY_PAYMENT_AUTHORIZED'));
 
-            $this->releaseLock();
-
             if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
                 in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
                 (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
@@ -164,8 +162,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
-            $this->releaseLock();
-
             PrestaShopLogger::addLog(
                 sprintf(
                     '%s has caught an error: %s',

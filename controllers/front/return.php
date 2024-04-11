@@ -179,8 +179,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->capture(new Order($orderId));
             }
 
-            $this->releaseLock();
-
             Tools::redirect($this->context->link->getModuleLink(
                 $this->module->name,
                 $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
@@ -194,8 +192,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 true
             ));
         } catch (Exception $e) {
-            $this->releaseLock();
-
             PrestaShopLogger::addLog(
                 sprintf(
                     'Failed to assert transaction. Message: %s. File name: %s',
