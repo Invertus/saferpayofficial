@@ -33,10 +33,6 @@ class CanSendOrderConfirmationEmail
 {
     public function verify($orderStatusId)
     {
-        if (!(int) \Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION)) {
-            return false;
-        }
-
         if (!$this->isOrderStatusValid($orderStatusId)) {
             return false;
         }

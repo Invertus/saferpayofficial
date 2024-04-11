@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Config\SaferPayConfig;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -617,9 +619,13 @@ class SaferPayOfficial extends PaymentModule
 
         if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
             try {
-                $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
+                $mailService->sendNewOrderMail($order, (int) $orderStatus->id);
             } catch (\Exception $e) {
                 // emailalert module sometimes throws error which leads into failed payment issue
+            }
+
+            if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
+               $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
             }
         }
     }

@@ -232,7 +232,7 @@ class InitializeRequest
             ];
 
             if (\Configuration::get(SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL)) {
-                $return['Notification'] = ['PayerEmail' => $this->notification->getPayerEmail()];
+                $return['Notification']['PayerEmail'] = $this->notification->getPayerEmail();
             }
         }
 
