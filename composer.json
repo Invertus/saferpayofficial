@@ -18,7 +18,7 @@
     "config": {
         "prepend-autoloader": false,
         "platform": {
-            "php": "7.2"
+            "php": "5.6"
         }
     },
     "repositories": [
@@ -37,7 +37,7 @@
         "apimatic/unirest-php": "^2.3",
         "symfony/yaml": "^3.4",
         "league/container": "2.5.0",
-        "invertus/lock": "dev-initial-creation"
+        "invertus/lock": "^1.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "*",
