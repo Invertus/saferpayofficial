@@ -160,4 +160,5 @@
 
 - ## [1.2.2] - *
 - FO : Confirmation email after order authorization fix
+- BO : Order confirmation email setting removed 
 - BO : Security improvements
