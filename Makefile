@@ -51,13 +51,13 @@ seeding-customized-sql:
 
 installing-uninstalling-enabling-module:
 	# installing module
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  app/console prestashop:module install $(module)"
 	# uninstalling module
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module uninstall $(module)"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  app/console prestashop:module uninstall $(module)"
 	# installing the module again
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module install $(module)"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  app/console prestashop:module install $(module)"
 	# enabling the module
-	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  bin/console prestashop:module enable $(module)"
+	docker exec -i prestashop-$(module)-$(VERSION) sh -c "cd /var/www/html && php  app/console prestashop:module enable $(module)"
 
 chmod-app:
 	# chmod all folders
