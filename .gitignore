@@ -4,5 +4,6 @@
 composer.lock
 .php_cs.cache
 tests/.env
-/var
 /node_modules
+var/cache/*
+!var/cache/index.php

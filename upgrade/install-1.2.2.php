@@ -21,39 +21,18 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Core\Order\Verification;
-
-use Invertus\SaferPay\Config\SaferPayConfig;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CanSendOrderConfirmationEmail
+/**
+ * @param SaferPayOfficial $module
+ * @return bool
+ */
+function upgrade_module_1_2_2($module)
 {
-    public function verify($orderStatusId)
-    {
-        if (!$this->isOrderStatusValid($orderStatusId)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function isOrderStatusValid($orderStatusId)
-    {
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatusId) {
-            return true;
-        }
-
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED) === (int) $orderStatusId) {
-            return true;
-        }
-
-        if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $orderStatusId) {
-            return true;
-        }
-
-        return false;
-    }
+    return $module->registerHook('actionOrderHistoryAddAfter')
+        && $module->unregisterHook('actionOrderStatusUpdate')
+        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
 }
+

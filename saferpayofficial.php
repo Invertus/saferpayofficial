@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Config\SaferPayConfig;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -40,7 +42,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.2.1';
+        $this->version = '1.2.2';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -49,7 +51,6 @@ class SaferPayOfficial extends PaymentModule
             'min' => '1.6.1.0',
             'max' => '8.0.4',
         ];
-
         parent::__construct($name);
 
         $this->autoload();
@@ -557,6 +558,7 @@ class SaferPayOfficial extends PaymentModule
             return true;
         }
         $cart = new Cart($params['cart']->id);
+
         /** @var \Order $order */
         $order = Order::getByCartId($cart->id);
 
@@ -576,47 +578,55 @@ class SaferPayOfficial extends PaymentModule
         }
 
         if ($params['template'] === 'new_order') {
-            if (!Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
+            if ((int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
                 return true;
             }
+
             return false;
         }
     }
 
-    public function hookActionOrderStatusUpdate($params = [])
+    public function hookActionOrderHistoryAddAfter($params = [])
     {
-        if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
+        /** @var OrderHistory $orderHistory */
+        $orderHistory = $params['order_history'];
+
+        if (!$orderHistory instanceof OrderHistory) {
             return;
         }
 
-        if ($params['newOrderStatus'] instanceof OrderState) {
-            $orderStatus = $params['newOrderStatus'];
-        } else {
-            $orderStatus = new OrderState((int) $params['newOrderStatus']);
+        $idOrder = (int) $orderHistory->id_order;
+
+        $internalOrder = new Order($idOrder);
+
+        if (!Validate::isLoadedObject($internalOrder)) {
+            return;
         }
-        $order = new Order($params['id_order']);
+
+        $order = new Order($idOrder);
+
+        $orderStatus = new OrderState((int) $order->current_state);
 
         if (!Validate::isLoadedObject($orderStatus)) {
-            return;
-        }
-
-        if (!Validate::isLoadedObject($order)) {
             return;
         }
 
         /** @var \Invertus\SaferPay\Service\SaferPayMailService $mailService */
         $mailService = $this->getService(\Invertus\SaferPay\Service\SaferPayMailService::class);
 
-        $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
-        if ($orderStatus->id === $saferPayAuthorizedStatus && Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
-            $mailService->sendNewOrderMail($order, (int) $orderStatus->id);
-        }
-
         /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
         if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
-            $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
+            try {
+                $mailService->sendNewOrderMail($order, (int) $orderStatus->id);
+            } catch (\Exception $e) {
+                // emailalert module sometimes throws error which leads into failed payment issue
+            }
+
+            if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
+               $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
+            }
         }
     }
 
