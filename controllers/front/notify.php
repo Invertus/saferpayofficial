@@ -70,6 +70,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $secureKey
         ));
 
+        //NOTE: Sleep is required to execute returned user first.
+        sleep(5);
+
         if (!$lockResult->isSuccessful()) {
             die($this->module->l('Lock already exist', self::FILENAME));
         }
