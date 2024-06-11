@@ -50,7 +50,7 @@ class SaferPayConfig
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = 1.37;
+    const API_VERSION = '1.40';
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
@@ -77,6 +77,7 @@ class SaferPayConfig
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_KLARNA,
         self::PAYMENT_WLCRYPTOPAYMENTS,
+        self::PAYMENT_WE_CHAT_PAY,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -111,6 +112,7 @@ class SaferPayConfig
     const PAYMENT_PAYCONIQ = 'PAYCONIQ';
     const PAYMENT_CARD = 'CARD';
     const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
+    const PAYMENT_WE_CHAT_PAY = 'WECHATPAY';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -141,6 +143,7 @@ class SaferPayConfig
         'Payconiq' => self::PAYMENT_PAYCONIQ,
         'Card' => self::PAYMENT_CARD,
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
+        'WeChatPay' => self::PAYMENT_WE_CHAT_PAY,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -152,6 +155,7 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
+        self::PAYMENT_WE_CHAT_PAY,
     ];
 
     const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
@@ -333,8 +337,8 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.37',
-            RequestHeader::SPEC_REFUND_VERSION => '1.37',
+            RequestHeader::SPEC_VERSION => SaferPayConfig::API_VERSION,
+            RequestHeader::SPEC_REFUND_VERSION => SaferPayConfig::API_VERSION,
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
