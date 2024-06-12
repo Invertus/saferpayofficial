@@ -177,7 +177,9 @@ class InitializeRequest
             ],
             'Payment' => [
                 'Amount' => [
-                    'Value' => $this->payment->getValue(),
+                    //@todo: don't forget this. Its for testing/debugging. https://docs.saferpay.com/home/integration-guide/testing-and-go-live#account-to-account-payments
+//                    'Value' => $this->payment->getValue(),
+                    'Value' => 4030030,
                     'CurrencyCode' => $this->payment->getCurrencyCode(),
                 ],
                 'OrderId' => $this->payment->getOrderReference(),

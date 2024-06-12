@@ -78,6 +78,7 @@ class SaferPayConfig
         self::PAYMENT_KLARNA,
         self::PAYMENT_WLCRYPTOPAYMENTS,
         self::PAYMENT_WECHATPAY,
+        self::PAYMENT_ACCOUNTTOACCOUNT,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -271,6 +272,7 @@ class SaferPayConfig
         //payments that DOES NOT SUPPORT capture
         $unsupportedCapturePayments = [
             self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
         ];
 
         return !in_array($paymentMethod, $unsupportedCapturePayments);
@@ -281,6 +283,7 @@ class SaferPayConfig
         //payments that DOES NOT SUPPORT order cancel
         $unsupportedCancelPayments = [
             self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
         ];
 
         return !in_array($paymentMethod, $unsupportedCancelPayments);

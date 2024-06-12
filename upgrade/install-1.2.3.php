@@ -27,10 +27,11 @@ use Invertus\SaferPay\DTO\Request\RequestHeader;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
+
 function upgrade_module_1_2_3(SaferPayOfficial $module)
 {
-    Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION);
-    Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION);
-
-    return true;
+    return Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_order ADD COLUMN `pending` TINYINT(1) DEFAULT 0') &&
+        $module->registerHook('displayOrderConfirmation') &&
+        Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION) &&
+        Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION);
 }

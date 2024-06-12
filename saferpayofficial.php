@@ -116,6 +116,18 @@ class SaferPayOfficial extends PaymentModule
         return $containerProvider->getService($service);
     }
 
+    public function hookDisplayOrderConfirmation($params)
+    {
+        if (empty($params['order'])) {
+            return '';
+        }
+
+        //@todo: get saferpay order, check if pending and only then show custom message
+        //@todo: translate and move to template when requirements are clear
+        return 'Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
+Thank you for your patience!';
+    }
+
     public function hookActionObjectOrderPaymentAddAfter($params)
     {
         if (!isset($params['object'])) {

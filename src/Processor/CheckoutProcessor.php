@@ -210,6 +210,10 @@ class CheckoutProcessor
             } elseif ($data->getOrderStatus() === 'CAPTURED') {
                 $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
                 $saferPayOrder->captured = 1;
+            } elseif ($data->getOrderStatus() === 'PENDING') {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+                $saferPayOrder->authorized = 1;
+                $saferPayOrder->pending = 1;
             }
 
             $saferPayOrder->update();
