@@ -172,8 +172,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     true
                 ));
             }
+            $paymentMethod = $response->getPaymentMeans()->getBrand()->getPaymentMethod();
 
-            if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+            if (SaferPayConfig::supportsOrderCapture($paymentMethod) && (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $response->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
                 $orderStatusService->capture(new Order($orderId));

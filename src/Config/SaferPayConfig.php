@@ -77,7 +77,7 @@ class SaferPayConfig
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_KLARNA,
         self::PAYMENT_WLCRYPTOPAYMENTS,
-        self::PAYMENT_WE_CHAT_PAY,
+        self::PAYMENT_WECHATPAY,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -112,7 +112,7 @@ class SaferPayConfig
     const PAYMENT_PAYCONIQ = 'PAYCONIQ';
     const PAYMENT_CARD = 'CARD';
     const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
-    const PAYMENT_WE_CHAT_PAY = 'WECHATPAY';
+    const PAYMENT_WECHATPAY = 'WECHATPAY';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -143,7 +143,7 @@ class SaferPayConfig
         'Payconiq' => self::PAYMENT_PAYCONIQ,
         'Card' => self::PAYMENT_CARD,
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
-        'WeChatPay' => self::PAYMENT_WE_CHAT_PAY,
+        'WeChatPay' => self::PAYMENT_WECHATPAY,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -155,7 +155,7 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
-        self::PAYMENT_WE_CHAT_PAY,
+        self::PAYMENT_WECHATPAY,
     ];
 
     const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
@@ -265,6 +265,27 @@ class SaferPayConfig
 
     const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
+
+    public static function supportsOrderCapture(string $paymentMethod): bool
+    {
+        //payments that DOES NOT SUPPORT capture
+        $unsupportedCapturePayments = [
+            self::PAYMENT_WECHATPAY,
+        ];
+
+        return !in_array($paymentMethod, $unsupportedCapturePayments);
+    }
+
+    public static function supportsOrderCancel(string $paymentMethod): bool
+    {
+        //payments that DOES NOT SUPPORT order cancel
+        $unsupportedCancelPayments = [
+            self::PAYMENT_WECHATPAY,
+        ];
+
+        return !in_array($paymentMethod, $unsupportedCancelPayments);
+    }
+
 
     public static function getConfigSuffix()
     {

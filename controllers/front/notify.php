@@ -153,8 +153,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             //NOTE to get latest information possible and not override new information.
             $order = new Order($orderId);
+            $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
-            if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+            if (SaferPayConfig::supportsOrderCapture($paymentMethod) && (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $assertResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
