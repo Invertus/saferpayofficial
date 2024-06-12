@@ -53,6 +53,14 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         $cart = new Cart($cartId);
 
+        $lockResult = $this->applyLock(
+            sprintf(
+                '%s-%s',
+                $cartId,
+                $secureKey
+            )
+        );
+
         if (!Validate::isLoadedObject($cart)) {
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
@@ -85,7 +93,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     break; // Exit the loop after 30 seconds
                 }
 
-                if ($this->lock->acquire()) {
+                if (!$this->lockExist()) {
                     $lockExist = false;
                 }
 

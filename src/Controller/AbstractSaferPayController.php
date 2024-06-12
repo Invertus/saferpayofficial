@@ -105,6 +105,17 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
         );
     }
 
+    protected function lockExist()
+    {
+        try {
+            if ($this->lock->acquire()) {
+                return true;
+            }
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
     protected function releaseLock()
     {
         try {
