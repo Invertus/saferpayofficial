@@ -70,16 +70,69 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         );
 
         if (!$lockResult->isSuccessful()) {
-            $this->redirectWithNotifications($this->context->link->getModuleLink(
-                $this->module->name,
-                ControllerName::FAIL,
-                [
-                    'cartId' => $cartId,
-                    'secureKey' => $secureKey,
-                    'moduleId' => $moduleId,
-                ]
-            ));
+            $lockExist = true;
+            $timeStarted = time();
+            PrestaShopLogger::addLog('lock exist');
+
+            while ($lockExist) {
+                $currentTime = time();
+                PrestaShopLogger::addLog('while loop');
+                if ($timeStarted + 30 < $currentTime) {
+                    break; // Exit the loop after 30 seconds
+                }
+
+                // Check if the lock still exists
+                $lockResult = $this->applyLock(
+                    sprintf(
+                        '%s-%s',
+                        $cartId,
+                        $secureKey
+                    )
+                );
+
+                if ($lockResult->isSuccessful()) {
+                    PrestaShopLogger::addLog('// Exit the loop if the lock no longer exists');
+
+                    $lockExist = false; // Exit the loop if the lock no longer exists
+                }
+
+                PrestaShopLogger::addLog('retry while loop');
+
+
+                sleep(1); // Add a small delay to prevent tight loop
+            }
         }
+
+        $orderId = Order::getIdByCartId($cartId);
+        if ($orderId) {
+            PrestaShopLogger::addLog('order exist');
+            $order = new Order($orderId);
+
+            $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+            $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+
+            if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
+                // Order created by saferpay notify url release the lock
+                $this->releaseLock();
+                PrestaShopLogger::addLog('order authorized or captured');
+
+                Tools::redirect($this->context->link->getModuleLink(
+                    $this->module->name,
+                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                    [
+                        'cartId' => $cartId,
+                        'orderId' => $orderId,
+                        'moduleId' => $moduleId,
+                        'secureKey' => $secureKey,
+                        'selectedCard' => $selectedCard,
+                    ],
+                    true
+                ));
+                exit; // Ensure the script stops after redirect
+            }
+        }
+
+        PrestaShopLogger::addLog('return logic started ');
 
         if ($cart->secure_key !== $secureKey) {
             $this->ajaxDie(json_encode([
@@ -94,25 +147,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             } else {
                 // For PrestaShop 1.6 use the alternative method
                 $orderId = Order::getOrderByCartId($cartId);
-            }
-
-            $order = new Order($orderId);
-
-            $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
-            $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
-
-            if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
-                Tools::redirect($this->context->link->getModuleLink(
-                    $this->module->name,
-                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
-                    [
-                        'cartId' => $cartId,
-                        'orderId' => $orderId,
-                        'moduleId' => $moduleId,
-                        'secureKey' => $secureKey,
-                        'selectedCard' => $selectedCard,
-                    ]
-                ));
             }
         }
 

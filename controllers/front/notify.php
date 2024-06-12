@@ -48,6 +48,15 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
+        PrestaShopLogger::addLog(
+            'notify url called',
+            1,
+            null,
+            null,
+            null,
+            true
+        );
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
 
@@ -69,9 +78,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $cartId,
             $secureKey
         ));
-
-        //NOTE: Sleep is required to execute returned user first.
-        sleep(5);
 
         if (!$lockResult->isSuccessful()) {
             die($this->module->l('Lock already exist', self::FILENAME));
