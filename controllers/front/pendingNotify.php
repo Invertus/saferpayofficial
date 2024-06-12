@@ -42,6 +42,8 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
      */
     public function postProcess()
     {
+        PrestaShopLogger::addLog('pending notify what i am doing here ?');
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
 

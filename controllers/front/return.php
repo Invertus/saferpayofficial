@@ -50,16 +50,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $fieldToken = Tools::getValue('fieldToken');
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
+        PrestaShopLogger::addLog('return controller init');
 
         $cart = new Cart($cartId);
-
-        $lockResult = $this->applyLock(
-            sprintf(
-                '%s-%s',
-                $cartId,
-                $secureKey
-            )
-        );
 
         if (!Validate::isLoadedObject($cart)) {
             $this->ajaxDie(json_encode([
@@ -84,32 +77,44 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         );
 
         if (!$lockResult->isSuccessful()) {
+            PrestaShopLogger::addLog('lock exist starting while loop');
+
             $lockExist = true;
             $timeStarted = time();
 
             while ($lockExist) {
                 $currentTime = time();
                 if ($timeStarted + 30 < $currentTime) {
+                    PrestaShopLogger::addLog('time finished while loop return');
+
                     break; // Exit the loop after 30 seconds
                 }
 
                 if (!$this->lockExist()) {
+                    PrestaShopLogger::addLog('lock was released return');
+
                     $lockExist = false;
                 }
+                PrestaShopLogger::addLog('still looping because lock exist');
 
                 sleep(1); // Add a small delay to prevent tight loop
             }
         }
+        PrestaShopLogger::addLog('executing return after while loop');
 
         $orderId = Order::getIdByCartId($cartId);
 
         if ($orderId) {
+            PrestaShopLogger::addLog('order exist return');
+
             $order = new Order($orderId);
 
             $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
             $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
+                PrestaShopLogger::addLog('order exist with auth or capture status return redirecting to sucecess controlelr');
+
                 Tools::redirect($this->context->link->getModuleLink(
                     $this->module->name,
                     $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
@@ -136,6 +141,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         try {
+            PrestaShopLogger::addLog('executing execute transaction');
+
             if ($isBusinessLicence) {
                 $response = $this->executeTransaction((int) $cartId, (int) $selectedCard);
             } else {
@@ -176,6 +183,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $response->getTransaction()->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CANCELED
             ) {
                 $orderStatusService->cancel($order);
+                PrestaShopLogger::addLog('order canceled return');
+                PrestaShopLogger::addLog('redirecting to fail controller return');
 
                 $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
 
@@ -195,6 +204,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $response->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
+                PrestaShopLogger::addLog('capturing return controller');
+
                 $orderStatusService->capture(new Order($orderId));
             }
 
@@ -214,6 +225,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ));
         } catch (Exception $e) {
             $this->releaseLock();
+            PrestaShopLogger::addLog('exception return controller');
 
             PrestaShopLogger::addLog(
                 sprintf(
