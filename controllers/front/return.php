@@ -60,6 +60,13 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
+        if ($cart->secure_key !== $secureKey) {
+            $this->ajaxDie(json_encode([
+                'error_type' => 'unknown_error',
+                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
+            ]));
+        }
+
         $lockResult = $this->applyLock(
             sprintf(
                 '%s-%s',
@@ -109,13 +116,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ));
                 exit; // Ensure the script stops after redirect
             }
-        }
-
-        if ($cart->secure_key !== $secureKey) {
-            $this->ajaxDie(json_encode([
-                'error_type' => 'unknown_error',
-                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
-            ]));
         }
 
         if ($cart->orderExists()) {
