@@ -50,7 +50,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $fieldToken = Tools::getValue('fieldToken');
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
-        $orderId =  Tools::getValue('orderId');
 
         $cart = new Cart($cartId);
 
@@ -72,40 +71,24 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         if (!$lockResult->isSuccessful()) {
             $lockExist = true;
             $timeStarted = time();
-            PrestaShopLogger::addLog('lock exist');
 
             while ($lockExist) {
                 $currentTime = time();
-                PrestaShopLogger::addLog('while loop');
                 if ($timeStarted + 30 < $currentTime) {
                     break; // Exit the loop after 30 seconds
                 }
 
-                // Check if the lock still exists
-                $lockResult = $this->applyLock(
-                    sprintf(
-                        '%s-%s',
-                        $cartId,
-                        $secureKey
-                    )
-                );
-
-                if ($lockResult->isSuccessful()) {
-                    PrestaShopLogger::addLog('// Exit the loop if the lock no longer exists');
-
-                    $lockExist = false; // Exit the loop if the lock no longer exists
+                if ($this->lock->acquire()) {
+                    $lockExist = false;
                 }
-
-                PrestaShopLogger::addLog('retry while loop');
-
 
                 sleep(1); // Add a small delay to prevent tight loop
             }
         }
 
         $orderId = Order::getIdByCartId($cartId);
+
         if ($orderId) {
-            PrestaShopLogger::addLog('order exist');
             $order = new Order($orderId);
 
             $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
@@ -114,7 +97,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
                 // Order created by saferpay notify url release the lock
                 $this->releaseLock();
-                PrestaShopLogger::addLog('order authorized or captured');
 
                 Tools::redirect($this->context->link->getModuleLink(
                     $this->module->name,
@@ -131,8 +113,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 exit; // Ensure the script stops after redirect
             }
         }
-
-        PrestaShopLogger::addLog('return logic started ');
 
         if ($cart->secure_key !== $secureKey) {
             $this->ajaxDie(json_encode([

@@ -48,15 +48,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
-        PrestaShopLogger::addLog(
-            'notify url called',
-            1,
-            null,
-            null,
-            null,
-            true
-        );
-
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
 
@@ -141,8 +132,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 }
             }
 
-            //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
-            //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
             /** @var UpdateOrderStatusAction $updateOrderStatusAction **/
@@ -171,6 +160,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
+            $this->releaseLock();
             PrestaShopLogger::addLog(
                 sprintf(
                     '%s has caught an error: %s',
@@ -185,6 +175,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             );
             die($this->module->l($e->getMessage(), self::FILENAME));
         }
+
+        $this->releaseLock();
 
         die($this->module->l('Success', self::FILENAME));
     }

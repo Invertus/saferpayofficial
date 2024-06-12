@@ -42,7 +42,7 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
     /**
      * @var Lock
      */
-    private $lock;
+    protected $lock;
 
     public function __construct()
     {
