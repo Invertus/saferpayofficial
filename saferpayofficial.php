@@ -133,8 +133,7 @@ class SaferPayOfficial extends PaymentModule
             return '';
         }
 
-        //@todo: translate and move to template when requirements are clear
-        //@todo: order confirmation is already shown and confirmation email is already sent (altough the payment is pending), is that ok?
+        //@todo: translate and move to template if needed when requirements are clear
         return 'Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
 Thank you for your patience!';
     }

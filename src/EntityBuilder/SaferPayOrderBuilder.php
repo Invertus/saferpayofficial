@@ -34,8 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderBuilder
 {
-    //TODO to pass $body as InitializeBody.
-    public function create($body, $cartId, $customerId, $isTransaction, $status = null)
+    public function create($body, $cartId, $customerId, $isTransaction)
     {
         if (method_exists('Order', 'getIdByCartId')) {
             $orderId = Order::getIdByCartId($cartId);
