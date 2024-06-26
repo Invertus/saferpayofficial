@@ -211,7 +211,7 @@ class CheckoutProcessor
                 $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
                 $saferPayOrder->captured = 1;
             } elseif ($data->getOrderStatus() === 'PENDING') {
-                $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+                $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
                 $saferPayOrder->authorized = 1;
                 $saferPayOrder->pending = 1;
             }

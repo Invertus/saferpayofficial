@@ -122,8 +122,19 @@ class SaferPayOfficial extends PaymentModule
             return '';
         }
 
-        //@todo: get saferpay order, check if pending and only then show custom message
+        /** @var Order $psOrder */
+        $psOrder = $params['order'];
+
+        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $repository */
+        $repository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+
+        $sfOrder = $repository->getByOrderId((int) $psOrder->id);
+        if (!$sfOrder->pending) {
+            return '';
+        }
+
         //@todo: translate and move to template when requirements are clear
+        //@todo: order confirmation is already shown and confirmation email is already sent (altough the payment is pending), is that ok?
         return 'Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
 Thank you for your patience!';
     }

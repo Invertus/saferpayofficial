@@ -30,7 +30,11 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_2_3(SaferPayOfficial $module)
 {
-    return Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_order ADD COLUMN `pending` TINYINT(1) DEFAULT 0') &&
+    $installer = new \Invertus\SaferPay\Install\Installer($module);
+
+    return
+        $installer->createPendingOrderStatus() &&
+        Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_order ADD COLUMN `pending` TINYINT(1) DEFAULT 0') &&
         $module->registerHook('displayOrderConfirmation') &&
         Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION) &&
         Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION);
