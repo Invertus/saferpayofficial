@@ -29,6 +29,7 @@ use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Exception\Api\TransactionDeclinedException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 use SaferPayOrder;
 
