@@ -150,7 +150,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             );
         }
 
-        // @todo: this place needs attention after a2a pr merged - need to check if pending status works well
         $this->ajaxDie(json_encode([
             'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->canceled || isset($saferPayOrder->pending),
             'href' => $href
