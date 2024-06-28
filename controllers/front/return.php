@@ -25,6 +25,8 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Service\SaferPayOrderStatusService;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -34,18 +36,40 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 {
     const FILENAME = 'return';
 
+    public function postProcess()
+    {
+        $cartId = Tools::getValue('cartId');
+
+        $transactionResponse = $this->assertTransaction($cartId);
+        if ($transactionResponse->getTransaction()->getStatus() === 'PENDING') {
+            $orderId = $this->getOrderId($cartId);
+            if (!$orderId) {
+                return;
+            }
+
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+            $orderStatusService->pending(new \Order($orderId));
+        }
+    }
     /**
      * @throws PrestaShopException
      */
-    public function postProcess()
+    public function initContent()
     {
+        if (Tools::getValue('ajax')) {
+            $this->processAjax();
+            exit;
+        }
+
+        parent::initContent();
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
         $fieldToken = Tools::getValue('fieldToken');
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
-
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
@@ -88,22 +112,39 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     ]
                 ));
             }
-        } else {
-            $this->context->smarty->assign(
-                'checkStatusEndpoint',
-                $this->context->link->getModuleLink(
-                    $this->module->name,
-                    'return',
-                    [
-                        'ajax' => 1,
-                        'action' => 'getStatus',
-                        'secureKey' => $secureKey,
-                        'cartId' => $cartId,
-                    ],
-                    true
-            ));
-            parent::setTemplate('saferpay_wait.tpl');
         }
+
+        $this->context->smarty->assign(
+            'checkStatusEndpoint',
+            $this->context->link->getModuleLink(
+                $this->module->name,
+                'return',
+                [
+                    'ajax' => 1,
+                    'action' => 'getStatus',
+                    'secureKey' => $secureKey,
+                    'cartId' => $cartId,
+                ],
+                true
+            )
+        );
+
+        $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_wait.tpl');
+    }
+
+    protected function processAjax()
+    {
+        if (empty($this->context->customer->id)) {
+            return;
+        }
+
+        switch (Tools::getValue('action')) {
+            case 'getStatus':
+                $this->processGetStatus();
+                break;
+        }
+
+        exit;
     }
 
     /**
@@ -115,7 +156,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         header('Content-Type: application/json;charset=UTF-8');
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
-
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
@@ -151,7 +191,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         $this->ajaxDie(json_encode([
-            'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->canceled || isset($saferPayOrder->pending),
+            'authorized' => $saferPayOrder->authorized,
+            'captured' => $saferPayOrder->captured,
+            'canceled' => $saferPayOrder->canceled,
+            'pending' => $saferPayOrder->pending,
+            'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->canceled || $saferPayOrder->pending,
             'href' => $href
         ]));
     }
@@ -169,5 +213,27 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         return $successController;
+    }
+
+    private function assertTransaction($cartId) {
+        /** @var SaferPayTransactionAssertion $transactionAssert */
+        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+
+        return $transactionAssert->assert($cartId);
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return bool|int
+     */
+    private function getOrderId($cartId)
+    {
+        if (method_exists('Order', 'getIdByCartId')) {
+            return Order::getIdByCartId($cartId);
+        } else {
+            // For PrestaShop 1.6 use the alternative method
+            return Order::getOrderByCartId($cartId);
+        }
     }
 }

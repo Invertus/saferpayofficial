@@ -111,6 +111,15 @@ class SaferPayOrderStatusService
         $this->module = $module->getModule();
     }
 
+    public function pending(Order $order)
+    {
+        $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
+        $saferPayOrder->pending = 1;
+
+        $saferPayOrder->update();
+        $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
+    }
+
     /**
      * @param Order $order
      *

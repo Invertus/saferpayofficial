@@ -112,13 +112,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $checkoutData->setOrderStatus($assertResponseBody->getTransaction()->getStatus());
 
                 $checkoutProcessor->run($checkoutData);
-
-                if (method_exists('Order', 'getIdByCartId')) {
-                    $orderId = Order::getIdByCartId($cartId);
-                } else {
-                    // For PrestaShop 1.6 or lower, use the alternative method
-                    $orderId = Order::getOrderByCartId($cartId);
-                }
+                $orderId = $this->getOrderId($cartId);
             }
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.

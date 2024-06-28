@@ -216,7 +216,6 @@ class CheckoutProcessor
             }
 
             $saferPayOrder->update();
-            $order->update();
             return;
         } catch (\Exception $exception) {
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());

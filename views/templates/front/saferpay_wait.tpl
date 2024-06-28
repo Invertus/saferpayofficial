@@ -19,7 +19,7 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  *}
-<h2>{l s='Awaiting payment status' mod='saferpay'}</h2>
+<h2>{l s='Awaiting payment status' mod='saferpayofficial'}</h2>
 <div class="saferpay-spinner">
     <div class="rect1"></div>
     <div class="rect2"></div>
@@ -97,7 +97,7 @@
             if (request.status >= 200 && request.status < 400) {
                 try {
                     var data = JSON.parse(request.responseText);
-                    if (data.success && data.isFinished) {
+                    if (data.isFinished && data.href) {
                         window.location.href = data.href;
                         return;
                     }
