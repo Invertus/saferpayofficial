@@ -42,7 +42,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.2.2';
+        $this->version = '1.2.3';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -114,6 +114,28 @@ class SaferPayOfficial extends PaymentModule
         $containerProvider = new \Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider();
 
         return $containerProvider->getService($service);
+    }
+
+    public function hookDisplayOrderConfirmation($params)
+    {
+        if (empty($params['order'])) {
+            return '';
+        }
+
+        /** @var Order $psOrder */
+        $psOrder = $params['order'];
+
+        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $repository */
+        $repository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+
+        $sfOrder = $repository->getByOrderId((int) $psOrder->id);
+        if (!$sfOrder->pending) {
+            return '';
+        }
+
+        //@todo: translate and move to template if needed when requirements are clear
+        return 'Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
+Thank you for your patience!';
     }
 
     public function hookActionObjectOrderPaymentAddAfter($params)

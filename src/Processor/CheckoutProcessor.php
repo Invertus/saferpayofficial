@@ -37,6 +37,7 @@ use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 use Order;
+use PrestaShop\PrestaShop\Adapter\Entity\PrestaShopLogger;
 use PrestaShopException;
 use SaferPayOrder;
 
@@ -203,17 +204,18 @@ class CheckoutProcessor
             }
 
             $saferPayOrder->id_order = $order->id;
-
             if ($data->getOrderStatus() === 'AUTHORIZED') {
                 $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
                 $saferPayOrder->authorized = 1;
             } elseif ($data->getOrderStatus() === 'CAPTURED') {
                 $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
                 $saferPayOrder->captured = 1;
+            } elseif ($data->getOrderStatus() === 'PENDING') {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
+                $saferPayOrder->pending = 1;
             }
 
             $saferPayOrder->update();
-            $order->update();
             return;
         } catch (\Exception $exception) {
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());

@@ -75,13 +75,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         }
 
         if ($cart->orderExists()) {
-            if (method_exists('Order', 'getIdByCartId')) {
-                $orderId = Order::getIdByCartId($cartId);
-            } else {
-                // For PrestaShop 1.6 use the alternative method
-                $orderId = Order::getOrderByCartId($cartId);
-            }
-
+            $orderId = $this->getOrderId($cartId);
             $order = new Order($orderId);
 
             $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
@@ -92,11 +86,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             }
         }
 
+        /** @var SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
+
         try {
             $assertResponseBody = $this->assertTransaction($cartId);
-
-            /** @var SaferPayOrderRepository $saferPayOrderRepository */
-            $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
             $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
 
             /** @var UpdateSaferPayOrderAction $updateSaferPayOrderAction */
@@ -104,12 +98,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $updateSaferPayOrderAction->run(new SaferPayOrder($saferPayOrderId), self::SAFERPAY_ORDER_AUTHORIZE_ACTION);
 
             // If order does not exist but assertion is valid that means order authorized or captured.
-            if (method_exists('Order', 'getIdByCartId')) {
-                $orderId = Order::getIdByCartId($cartId);
-            } else {
-                // For PrestaShop 1.6 use the alternative method
-                $orderId = Order::getOrderByCartId($cartId);
-            }
+            $orderId = $this->getOrderId($cartId);
             if (!$orderId) {
                 /** @var CheckoutProcessor $checkoutProcessor **/
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
@@ -123,13 +112,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $checkoutData->setOrderStatus($assertResponseBody->getTransaction()->getStatus());
 
                 $checkoutProcessor->run($checkoutData);
-
-                if (method_exists('Order', 'getIdByCartId')) {
-                    $orderId = Order::getIdByCartId($cartId);
-                } else {
-                    // For PrestaShop 1.6 or lower, use the alternative method
-                    $orderId = Order::getOrderByCartId($cartId);
-                }
+                $orderId = $this->getOrderId($cartId);
             }
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
@@ -153,8 +136,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             //NOTE to get latest information possible and not override new information.
             $order = new Order($orderId);
+            $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
-            if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+            if (SaferPayConfig::supportsOrderCapture($paymentMethod) && (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $assertResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
@@ -162,6 +146,24 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
+            // this might be executed after pending transaction is declined (e.g. with accountToAccount payment)
+            if (!isset($order)) {
+                $orderId = $this->getOrderId($cartId);
+                $order = new Order($orderId);
+            }
+
+            $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($order->id);
+            $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+
+            if ($order->id && $saferPayOrder->id) {
+                // assuming order transaction was declined
+                $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
+                $order->update();
+                $saferPayOrder->authorized = false;
+                $saferPayOrder->pending = false;
+                $saferPayOrder->update();
+            }
+
             PrestaShopLogger::addLog(
                 sprintf(
                     '%s has caught an error: %s',
@@ -185,6 +187,21 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
         return $transactionAssert->assert($cartId);
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return bool|int
+     */
+    private function getOrderId($cartId)
+    {
+        if (method_exists('Order', 'getIdByCartId')) {
+            return Order::getIdByCartId($cartId);
+        } else {
+            // For PrestaShop 1.6 use the alternative method
+            return Order::getOrderByCartId($cartId);
+        }
     }
 
     protected function displayMaintenancePage()
