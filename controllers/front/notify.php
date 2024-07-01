@@ -69,11 +69,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $cartId,
             $secureKey
         ));
-        PrestaShopLogger::addLog('lock added notify');
 
         if (!$lockResult->isSuccessful()) {
-            PrestaShopLogger::addLog('lock exist notify');
-
             die($this->module->l('Lock already exist', self::FILENAME));
         }
 
@@ -92,16 +89,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
                 die($this->module->l('Order already created', self::FILENAME));
-                PrestaShopLogger::addLog('order exist with auth or capture status notify ');
-
             }
         }
 
         try {
-            PrestaShopLogger::addLog('notify asserting');
-
             $assertResponseBody = $this->assertTransaction($cartId);
-            PrestaShopLogger::addLog('assertion done');
 
             /** @var SaferPayOrderRepository $saferPayOrderRepository */
             $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
@@ -153,7 +145,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->cancel($order);
-                PrestaShopLogger::addLog('notify cancel');
 
                 die($this->module->l('Liability shift is false', self::FILENAME));
             }
@@ -166,14 +157,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-                PrestaShopLogger::addLog('notify capturing');
 
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
             $this->releaseLock();
-            PrestaShopLogger::addLog('error notify');
-
             PrestaShopLogger::addLog(
                 sprintf(
                     '%s has caught an error: %s',
@@ -190,8 +178,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         }
 
         $this->releaseLock();
-        PrestaShopLogger::addLog('success notify');
-
         die($this->module->l('Success', self::FILENAME));
     }
 

@@ -50,7 +50,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $fieldToken = Tools::getValue('fieldToken');
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
-        PrestaShopLogger::addLog('return controller init');
 
         $cart = new Cart($cartId);
 
@@ -91,16 +90,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 }
 
                 if (!$this->lockExist()) {
-                    PrestaShopLogger::addLog('lock was released return');
-
                     $lockExist = false;
                 }
-                PrestaShopLogger::addLog('still looping because lock exist');
 
                 sleep(1); // Add a small delay to prevent tight loop
             }
         }
-        PrestaShopLogger::addLog('executing return after while loop');
 
         $orderId = Order::getIdByCartId($cartId);
 
@@ -127,7 +122,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     ],
                     true
                 ));
-                exit; // Ensure the script stops after redirect
             }
         }
 
@@ -183,8 +177,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $response->getTransaction()->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CANCELED
             ) {
                 $orderStatusService->cancel($order);
-                PrestaShopLogger::addLog('order canceled return');
-                PrestaShopLogger::addLog('redirecting to fail controller return');
 
                 $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
 
@@ -204,8 +196,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             if ((int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $response->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
             ) {
-                PrestaShopLogger::addLog('capturing return controller');
-
                 $orderStatusService->capture(new Order($orderId));
             }
 
@@ -225,8 +215,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ));
         } catch (Exception $e) {
             $this->releaseLock();
-            PrestaShopLogger::addLog('exception return controller');
-
             PrestaShopLogger::addLog(
                 sprintf(
                     'Failed to assert transaction. Message: %s. File name: %s',

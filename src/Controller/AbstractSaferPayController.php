@@ -108,9 +108,7 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
     protected function lockExist()
     {
         try {
-            if ($this->lock->acquire()) {
-                return true;
-            }
+            return $this->lock->acquire();
         } catch (\Exception $exception) {
             return false;
         }
