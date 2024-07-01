@@ -146,6 +146,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
+            $this->releaseLock();
             // this might be executed after pending transaction is declined (e.g. with accountToAccount payment)
             if (!isset($order)) {
                 $orderId = $this->getOrderId($cartId);
@@ -176,6 +177,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 null,
                 true
             );
+            $this->releaseLock();
             die($this->module->l($e->getMessage(), self::FILENAME));
         }
 

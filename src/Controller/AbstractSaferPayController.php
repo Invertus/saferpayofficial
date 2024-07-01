@@ -42,7 +42,7 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
     /**
      * @var Lock
      */
-    private $lock;
+    protected $lock;
 
     public function __construct()
     {
@@ -82,11 +82,6 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
             $this->lock->create($resource);
 
             if (!$this->lock->acquire()) {
-                $logger = new SaferPayLog();
-                $logger->message = 'Lock resource conflict';
-                $logger->payload = $resource;
-                $logger->save();
-
                 return Response::respond(
                     $this->module->l('Resource conflict', self::FILE_NAME),
                     Response::HTTP_CONFLICT
@@ -108,6 +103,15 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
             '',
             Response::HTTP_OK
         );
+    }
+
+    protected function lockExist()
+    {
+        try {
+            return $this->lock->acquire();
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 
     protected function releaseLock()
