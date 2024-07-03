@@ -248,11 +248,6 @@ class SaferPayConfig
     const CREDIT_CARD_OPTION_SAVE = 0;
     const CREDIT_CARD_DONT_OPTION_SAVE = -1;
 
-    const TRANSACTION_STATUS_AUTHORIZED = 'AUTHORIZED';
-    const TRANSACTION_STATUS_CAPTURED = 'CAPTURED';
-    const TRANSACTION_STATUS_PENDING = 'PENDING';
-    const TRANSACTION_STATUS_CANCELED = 'CANCELED';
-
     const FIELDS_ACCESS_TOKEN = 'SAFERPAY_FIELDS_ACCESS_TOKEN';
     const FIELDS_LIBRARY = 'SAFERPAY_FIELDS_JAVASCRIPT_LIBRARY';
     const FIELDS_LIBRARY_DEFAULT_VALUE = 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js';
@@ -268,7 +263,7 @@ class SaferPayConfig
     const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
 
-    public static function supportsOrderCapture(string $paymentMethod): bool
+    public static function supportsOrderCapture(string $paymentMethod)
     {
         //payments that DOES NOT SUPPORT capture
         $unsupportedCapturePayments = [
@@ -279,7 +274,7 @@ class SaferPayConfig
         return !in_array($paymentMethod, $unsupportedCapturePayments);
     }
 
-    public static function supportsOrderCancel(string $paymentMethod): bool
+    public static function supportsOrderCancel(string $paymentMethod)
     {
         //payments that DOES NOT SUPPORT order cancel
         $unsupportedCancelPayments = [

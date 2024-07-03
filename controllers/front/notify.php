@@ -24,8 +24,6 @@
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\Core\Order\Action\UpdateOrderStatusAction;
-use Invertus\SaferPay\Core\Order\Action\UpdateSaferPayOrderAction;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -39,7 +37,6 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
     const FILENAME = 'notify';
-    const SAFERPAY_ORDER_AUTHORIZE_ACTION = 'AUTHORIZE';
 
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
@@ -91,37 +88,23 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         try {
             $assertResponseBody = $this->assertTransaction($cartId);
-            $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
+            $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
 
-            /** @var UpdateSaferPayOrderAction $updateSaferPayOrderAction */
-            $updateSaferPayOrderAction = $this->module->getService(UpdateSaferPayOrderAction::class);
-            $updateSaferPayOrderAction->run(new SaferPayOrder($saferPayOrderId), self::SAFERPAY_ORDER_AUTHORIZE_ACTION);
+            /** @var CheckoutProcessor $checkoutProcessor **/
+            $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+            $checkoutData = CheckoutData::create(
+                (int) $cart->id,
+                $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
+                (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+            );
 
-            // If order does not exist but assertion is valid that means order authorized or captured.
+            $checkoutData->setOrderStatus($transactionStatus);
+            $checkoutProcessor->run($checkoutData);
             $orderId = $this->getOrderId($cartId);
-            if (!$orderId) {
-                /** @var CheckoutProcessor $checkoutProcessor **/
-                $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
-                $checkoutData = CheckoutData::create(
-                    (int) $cart->id,
-                    $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-                    (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
-                );
-
-                $checkoutData->setIsAuthorizedOrder(true);
-                $checkoutData->setOrderStatus($assertResponseBody->getTransaction()->getStatus());
-
-                $checkoutProcessor->run($checkoutData);
-                $orderId = $this->getOrderId($cartId);
-            }
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
-
-            /** @var UpdateOrderStatusAction $updateOrderStatusAction **/
-            $updateOrderStatusAction = $this->module->getService(UpdateOrderStatusAction::class);
-            $updateOrderStatusAction->run((int) $orderId, (int) Configuration::get('SAFERPAY_PAYMENT_AUTHORIZED'));
 
             if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
                 in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
@@ -138,8 +121,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $order = new Order($orderId);
             $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
-            if (SaferPayConfig::supportsOrderCapture($paymentMethod) && (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
-                $assertResponseBody->getTransaction()->getStatus() !== TransactionStatus::CAPTURED
+            if (SaferPayConfig::supportsOrderCapture($paymentMethod) &&
+                (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+                $transactionStatus !== TransactionStatus::CAPTURED
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
