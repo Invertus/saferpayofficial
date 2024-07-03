@@ -27,6 +27,7 @@ use Cart;
 use Customer;
 use Exception;
 use Invertus\SaferPay\Adapter\LegacyContext;
+use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Api\Request\CancelService;
 use Invertus\SaferPay\Api\Request\CaptureService;
 use Invertus\SaferPay\Api\Request\RefundService;
@@ -111,29 +112,13 @@ class SaferPayOrderStatusService
         $this->module = $module->getModule();
     }
 
-    public function pending(Order $order)
+    public function setPending(Order $order)
     {
         $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
         $saferPayOrder->pending = 1;
 
         $saferPayOrder->update();
         $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
-    }
-
-    /**
-     * @param Order $order
-     *
-     * @throws \Exception
-     */
-    public function authorize(Order $order)
-    {
-        $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-        $saferPayOrder->authorized = 1;
-        $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
-
-        $saferPayOrder->update();
-        $order->update();
     }
 
     /** TODO extract capture api code to different service like Assert for readability */
@@ -248,11 +233,11 @@ class SaferPayOrderStatusService
         $saferPayOrder->refund_id = $refundResponse->Transaction->Id;
         $saferPayOrder->update();
 
-        if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_AUTHORIZED) {
+        if ($refundResponse->Transaction->Status === TransactionStatus::AUTHORIZED) {
             $this->capture($order, $refundAmount, true);
         }
 
-        if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
+        if ($refundResponse->Transaction->Status === TransactionStatus::CAPTURED) {
             $saferPayAssert->refunded_amount += $refundAmount;
             $saferPayAssert->update();
             if ((int) $saferPayAssert->refunded_amount === (int) $saferPayAssert->amount) {
@@ -263,7 +248,7 @@ class SaferPayOrderStatusService
             }
         }
 
-        if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_PENDING) {
+        if ($refundResponse->Transaction->Status === TransactionStatus::PENDING) {
             $saferPayAssert->pending_refund_amount += $refundAmount;
             $saferPayAssert->update();
             $orderState = $order->getCurrentState();

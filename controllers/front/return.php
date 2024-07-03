@@ -21,12 +21,15 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,18 +41,25 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     public function postProcess()
     {
-        $cartId = Tools::getValue('cartId');
+        $cartId = (int) Tools::getValue('cartId');
+        $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
+        $selectedCard = (int) Tools::getValue('selectedCard');
+        $order = new Order($this->getOrderId($cartId));
 
-        $transactionResponse = $this->assertTransaction($cartId);
-        if ($transactionResponse->getTransaction()->getStatus() === 'PENDING') {
-            $orderId = $this->getOrderId($cartId);
-            if (!$orderId) {
-                return;
-            }
+        if (!$order->id) {
+            return;
+        }
 
-            /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-            $orderStatusService->pending(new \Order($orderId));
+        if ($isBusinessLicence) {
+            $response = $this->executeTransaction($cartId, $selectedCard);
+        } else {
+            $response = $this->assertTransaction($cartId);
+        }
+
+        /** @var SaferPayOrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+        if ($response->getTransaction()->getStatus() === TransactionStatus::PENDING) {
+            $orderStatusService->setPending($order);
         }
     }
     /**
@@ -96,8 +106,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
             $order = new Order($orderId);
 
-            $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
-            $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+            $saferPayAuthorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+            $saferPayCapturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
                 Tools::redirect($this->context->link->getModuleLink(
@@ -191,10 +201,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         $this->ajaxDie(json_encode([
-            'authorized' => $saferPayOrder->authorized,
-            'captured' => $saferPayOrder->captured,
-            'canceled' => $saferPayOrder->canceled,
-            'pending' => $saferPayOrder->pending,
             'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->canceled || $saferPayOrder->pending,
             'href' => $href
         ]));
@@ -213,6 +219,25 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         return $successController;
+    }
+
+    /**
+     * @param int $orderId
+     * @param int $selectedCard
+     *
+     * @return AssertBody
+     * @throws Exception
+     */
+    private function executeTransaction($orderId, $selectedCard)
+    {
+        /** @var SaferPayTransactionAuthorization $saferPayTransactionAuthorization */
+        $saferPayTransactionAuthorization = $this->module->getService(SaferPayTransactionAuthorization::class);
+
+        return $saferPayTransactionAuthorization->authorize(
+            $orderId,
+            $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
+            $selectedCard
+        );
     }
 
     private function assertTransaction($cartId) {
