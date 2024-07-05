@@ -166,6 +166,6 @@
 - ## [1.2.3] - *
 - FO : Increased API version to 1.40
 - FO : WeChat Pay payment method added
-- BO : AccountToAccount Pay payment method added
+- FO : AccountToAccount Pay payment method added
 - BO : Security improvements
 - BO : Bug fixes and improvements
