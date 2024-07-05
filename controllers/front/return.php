@@ -26,6 +26,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
@@ -50,16 +51,23 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             return;
         }
 
-        if ($isBusinessLicence) {
-            $response = $this->executeTransaction($cartId, $selectedCard);
-        } else {
-            $response = $this->assertTransaction($cartId);
-        }
+        try {
+            if ($isBusinessLicence) {
+                $response = $this->executeTransaction($cartId, $selectedCard);
+            } else {
+                $response = $this->assertTransaction($cartId);
+            }
 
-        /** @var SaferPayOrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-        if ($response->getTransaction()->getStatus() === TransactionStatus::PENDING) {
-            $orderStatusService->setPending($order);
+            \PrestaShopLogger::addLog($response->getTransaction()->getStatus());
+
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+            if ($response->getTransaction()->getStatus() === TransactionStatus::PENDING) {
+                $orderStatusService->setPending($order);
+            }
+        } catch (SaferPayApiException $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
+            // we only care if we have a response with pending status, else we skip further actions
         }
     }
     /**
@@ -175,19 +183,16 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
-        if ($saferPayOrder->canceled || !$saferPayOrder->id_order) {
-            $href = $this->context->link->getModuleLink(
-                $this->module->name,
-                ControllerName::FAIL,
-                [
-                    'cartId' => $cartId,
-                    'secureKey' => $secureKey,
-                    'moduleId' => $moduleId,
-                ],
-                true
-            );
-        } else {
-            $href = $this->context->link->getModuleLink(
+        if (!$saferPayOrder->id || $saferPayOrder->canceled) {
+            $this->ajaxDie(json_encode([
+                'isFinished' => true,
+                'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId)
+            ]));
+        }
+
+        $this->ajaxDie(json_encode([
+            'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->pending,
+            'href' => $this->context->link->getModuleLink(
                 $this->module->name,
                 $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
                 [
@@ -197,12 +202,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     'secureKey' => $secureKey,
                     'selectedCard' => $selectedCard,
                 ]
-            );
-        }
-
-        $this->ajaxDie(json_encode([
-            'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->canceled || $saferPayOrder->pending,
-            'href' => $href
+            )
         ]));
     }
 
@@ -219,6 +219,20 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         return $successController;
+    }
+
+    private function getFailControllerLink($cartId, $secureKey, $moduleId)
+    {
+        return $this->context->link->getModuleLink(
+            $this->module->name,
+            ControllerName::FAIL,
+            [
+                'cartId' => $cartId,
+                'secureKey' => $secureKey,
+                'moduleId' => $moduleId,
+            ],
+            true
+        );
     }
 
     /**
