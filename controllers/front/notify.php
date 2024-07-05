@@ -47,7 +47,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     {
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
-
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
@@ -69,18 +68,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         if (!$lockResult->isSuccessful()) {
             die($this->module->l('Lock already exist', self::FILENAME));
-        }
-
-        if ($cart->orderExists()) {
-            $orderId = $this->getOrderId($cartId);
-            $order = new Order($orderId);
-
-            $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
-            $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
-
-            if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
-                die($this->module->l('Order already created', self::FILENAME));
-            }
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -121,6 +108,18 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $order = new Order($orderId);
             $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
+            // if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
+            // so in this case if status comes back "captured" we just update the order state accordingly
+            if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
+                $transactionStatus === TransactionStatus::CAPTURED
+            ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+                $orderStatusService->setComplete($order);
+
+                return;
+            }
+
             if (SaferPayConfig::supportsOrderCapture($paymentMethod) &&
                 (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $transactionStatus !== TransactionStatus::CAPTURED
@@ -137,15 +136,20 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $order = new Order($orderId);
             }
 
-            $saferPayOrderId = $saferPayOrderRepository->getIdByOrderId($order->id);
-            $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
-            if ($order->id && $saferPayOrder->id) {
+            if ($order->id) {
                 // assuming order transaction was declined
                 $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
                 $order->update();
+                $saferPayOrder = new SaferPayOrder($saferPayOrderRepository->getIdByOrderId($order->id));
+            } else {
+                // assuming order transaction was cancelled before ps order was even made
+                $saferPayOrder = new SaferPayOrder($saferPayOrderRepository->getIdByCartId($cartId));
+            }
+
+            if ($saferPayOrder->id) {
                 $saferPayOrder->authorized = false;
                 $saferPayOrder->pending = false;
+                $saferPayOrder->canceled = true;
                 $saferPayOrder->update();
             }
 

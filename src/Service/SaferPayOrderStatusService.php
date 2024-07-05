@@ -121,6 +121,15 @@ class SaferPayOrderStatusService
         $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
     }
 
+    public function setComplete(Order $order)
+    {
+        $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
+        $saferPayOrder->captured = 1;
+
+        $saferPayOrder->update();
+        $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
+    }
+
     /** TODO extract capture api code to different service like Assert for readability */
     public function capture(Order $order, $refundedAmount = 0, $isRefund = false)
     {
