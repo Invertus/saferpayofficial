@@ -147,7 +147,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             )
         );
 
-        $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_wait.tpl');
+        if (SaferPayConfig::isVersion17()) {
+            $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_wait.tpl');
+            return;
+        }
+
+        $this->setTemplate('saferpay_wait_16.tpl');
     }
 
     protected function processAjax()
