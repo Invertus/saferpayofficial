@@ -40,6 +40,7 @@ use Invertus\SaferPay\Service\SaferPayInitialize;
 use Order;
 use PrestaShopException;
 use SaferPayOrder;
+use Validate;
 
 class CheckoutProcessor
 {
@@ -78,7 +79,12 @@ class CheckoutProcessor
             $this->processCreateOrder($cart, $data->getPaymentMethod());
         }
 
-        if ($data->getOrderStatus() === TransactionStatus::AUTHORIZED || $data->getOrderStatus() === TransactionStatus::CAPTURED) {
+        $authorizedStates = [
+            TransactionStatus::AUTHORIZED,
+            TransactionStatus::CAPTURED,
+        ];
+
+        if (in_array($data->getOrderStatus(), $authorizedStates)) {
             $this->processAuthorizedOrder($data, $cart);
             return '';
         }
@@ -183,19 +189,19 @@ class CheckoutProcessor
     private function processAuthorizedOrder(CheckoutData $data, Cart $cart)
     {
         try {
-            $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
             $this->processCreateOrder($cart, $data->getPaymentMethod());
             $order = $this->getOrder($cart->id);
+            $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
 
-            $saferPayOrder->id_order = $order->id;
             if ($data->getOrderStatus() === TransactionStatus::AUTHORIZED) {
+                $saferPayOrder->authorized = true;
                 $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
-                $saferPayOrder->authorized = 1;
-            } elseif ($data->getOrderStatus() === TransactionStatus::CAPTURED) {
+            } else {
+                $saferPayOrder->captured = true;
                 $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
-                $saferPayOrder->captured = 1;
             }
 
+            $saferPayOrder->id_order = $order->id;
             $saferPayOrder->update();
         } catch (\Exception $exception) {
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());

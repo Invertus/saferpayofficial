@@ -155,9 +155,8 @@ class SaferPayOfficial extends PaymentModule
             return '';
         }
 
-        //@todo: translate and move to template if needed when requirements are clear
-        return 'Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
-Thank you for your patience!';
+        return $this->l('Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
+Thank you for your patience!');
     }
 
     public function hookActionObjectOrderPaymentAddAfter($params)
