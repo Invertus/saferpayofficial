@@ -24,6 +24,7 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   e2e: {
     // baseUrl: 'https://jusvai.eu.ngrok.io',
+    baseUrl: process.env.NGROK_URL || 'http://localhost:8000',
     CYPRESS_RECORD_KEY: 'f2a6bd99-2483-4909-ab73-f3428ddb70ce',
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
