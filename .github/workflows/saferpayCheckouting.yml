@@ -7,9 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+    strategy:
+     fail-fast: false
+     matrix:
+       containers: [1,2,3,4]
     steps:
       - name: Checkouting
         uses: actions/checkout@v2.4.2
+
+      - name: Cypress Cloud GitHub
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+          parallel: true
+          group: 'QAAutomationLabs'
+          
       - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
         shell: bash
       - run: unzip -qq -o ngrok-stable-linux-amd64.zip
@@ -34,6 +46,8 @@ jobs:
           spec: |
             cypress/e2e/moduleConfig.cy.js
         env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}cy.contains('a','Home').should('have.attr', 'href', '/home')
           CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}
           CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}
           CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}
