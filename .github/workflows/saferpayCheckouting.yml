@@ -60,6 +60,7 @@ jobs:
           CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}
           CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
           CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+          NGROK_URL: ${{ env.NGROK_URL }}
 
       - name: Archive videos and screenshots of Cypress testing
         if: ${{ always() }}
