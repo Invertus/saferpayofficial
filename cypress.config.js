@@ -11,6 +11,7 @@ module.exports = defineConfig({
     pluginVisualRegressionImagesPath: 'cypress/screenshots',
     pluginVisualRegressionScreenshotConfig: { scale: true, capture: 'fullPage' },
     pluginVisualRegressionCreateMissingImages: true, // baseline images updating
+    CYPRESS_RECORD_KEY: 'f2a6bd99-2483-4909-ab73-f3428ddb70ce',
   },
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
