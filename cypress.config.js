@@ -11,7 +11,6 @@ module.exports = defineConfig({
     pluginVisualRegressionImagesPath: 'cypress/screenshots',
     pluginVisualRegressionScreenshotConfig: { scale: true, capture: 'fullPage' },
     pluginVisualRegressionCreateMissingImages: true, // baseline images updating
-    CYPRESS_RECORD_KEY: 'f2a6bd99-2483-4909-ab73-f3428ddb70ce',
   },
   chromeWebSecurity: false,
   experimentalMemoryManagement: true,
@@ -25,7 +24,7 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   e2e: {
     // baseUrl: 'https://jusvai.eu.ngrok.io',
-    // CYPRESS_RECORD_KEY: 'f2a6bd99-2483-4909-ab73-f3428ddb70ce',
+    CYPRESS_RECORD_KEY: 'f2a6bd99-2483-4909-ab73-f3428ddb70ce',
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     // setupNodeEvents(on, config) {
