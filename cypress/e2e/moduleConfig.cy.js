@@ -57,9 +57,9 @@ function prepareCookie()
       cy.session(SaferpayBOFOLoggingIn,() => {
       cy.visit('/admin1/')
       cy.url().should('contain', 'https').as('Check if HTTPS exists')
-      cy.PSBOlogin()
-      cy.visit('/index.php?controller=my-account')
-      cy.PSFOlogin()
+      cy.CachingBOFOPS1789()
+    //   cy.visit('/index.php?controller=my-account')
+    //   cy.PSFOlogin()
       cy.get('#history-link > .link-item').click()
       })
       }
