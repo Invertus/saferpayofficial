@@ -40,6 +40,6 @@ module.exports = defineConfig({
      },
     experimentalMemoryManagement: true,
     excludeSpecPattern: ['index.php', 'cypress/e2e'],
-    specPattern: 'cypress/e2e/*.{js,jsx,ts,tsx}',
+    specPattern: 'cypress/e2e/**/*.cy.{js,jsx,ts,tsx}',
   },
 })
