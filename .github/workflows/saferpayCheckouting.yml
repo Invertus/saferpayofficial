@@ -49,7 +49,7 @@ jobs:
       - name: PS1786 installing / Module Install and Uninstall testing...
         run: |
           make e2eh1786
-          make change-shop-url container=brasa_apache url=${{ env.NGROK_URL_NO_HTTPS }} ssl=0
+          make change-shop-url container=brasa_apache_${{ matrix.containers }} url=${{ env.NGROK_URL_NO_HTTPS }} ssl=1
 
 
       - name: Cypress E2E Tests
