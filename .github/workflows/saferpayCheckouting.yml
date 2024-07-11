@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1,2,3,4]
+        containers: [1]
     steps:
       - name: Checkouting
         uses: actions/checkout@v2.4.2
@@ -49,7 +49,7 @@ jobs:
       - name: PS1786 installing / Module Install and Uninstall testing...
         run: |
           make e2eh1786
-          make change-shop-url container=brasa_apache_${{ matrix.containers }} url=${{ env.NGROK_URL_NO_HTTPS }} ssl=1
+          make change-shop-url container=prestashop-1786 url=${{ env.NGROK_URL_NO_HTTPS }} ssl=1
 
 
       - name: Cypress E2E Tests
