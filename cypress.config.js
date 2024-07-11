@@ -23,8 +23,8 @@ module.exports = defineConfig({
   viewportHeight: 1080,
   viewportWidth: 1920,
   e2e: {
-    baseUrl: 'https://jusvai.eu.ngrok.io',
-    CYPRESS_RECORD_KEY: 'f2a6bd99-2483-4909-ab73-f3428ddb70ce',
+    // baseUrl: 'https://jusvai.eu.ngrok.io',
+    // CYPRESS_RECORD_KEY: 'f2a6bd99-2483-4909-ab73-f3428ddb70ce',
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     // setupNodeEvents(on, config) {
@@ -34,12 +34,12 @@ module.exports = defineConfig({
     //   initPlugin(on, config);
     //   return config;
     // },
-    // setupNodeEvents(on, config) {
+     setupNodeEvents(on, config) {
     //   require("cypress-fail-fast/plugin")(on, config);
     //   return config;
-    // },
+     },
     experimentalMemoryManagement: true,
-    excludeSpecPattern: ['index.php', 'cypress/e2e/ps1785'],
+    excludeSpecPattern: ['index.php', 'cypress/e2e'],
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
   },
 })
