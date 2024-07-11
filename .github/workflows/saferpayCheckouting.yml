@@ -27,6 +27,10 @@ jobs:
       - name: Extract ngrok URL
         run: |
           sleep 10  # Give ngrok some time to start up
+          echo "Checking if ngrok is running..."
+          ps aux | grep ngrok
+          echo "Contents of ngrok.log:"
+          cat ngrok.log
           NGROK_URL=$(grep -o 'url=https://[^[:space:]]*' ngrok.log | cut -d= -f2 | head -n1)
           echo "NGROK_URL=$NGROK_URL" >> $GITHUB_ENV
         shell: bash
@@ -70,3 +74,14 @@ jobs:
           path: |
             cypress/videos
             cypress/screenshots
+
+
+  Stop-ngrok:
+    runs-on: ubuntu-latest
+    needs: Cypress-E2E-1786
+    if: always()
+    steps:
+      - name: Stop ngrok process
+        run: |
+          pkill ngrok || echo "ngrok process not found"
+        shell: bash
