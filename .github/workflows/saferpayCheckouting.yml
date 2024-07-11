@@ -33,6 +33,8 @@ jobs:
           cat ngrok.log
           NGROK_URL=$(grep -o 'url=https://[^[:space:]]*' ngrok.log | cut -d= -f2 | head -n1)
           echo "NGROK_URL=$NGROK_URL" >> $GITHUB_ENV
+          NGROK_URL_NO_HTTPS=$(echo $NGROK_URL | sed 's~https://~~')
+          echo "NGROK_URL_NO_HTTPS=$NGROK_URL_NO_HTTPS" >> $GITHUB_ENV
         shell: bash
 
       - name: Use ngrok URL
@@ -46,7 +48,9 @@ jobs:
 
       - name: PS1786 installing / Module Install and Uninstall testing...
         run: |
-          make e2eh1786 
+          make e2eh1786
+          make change-shop-url container=brasa_apache url=${{ env.NGROK_URL_NO_HTTPS }} ssl=0
+
 
       - name: Cypress E2E Tests
         uses: cypress-io/github-action@v6

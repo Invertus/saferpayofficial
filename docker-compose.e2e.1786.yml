@@ -6,7 +6,7 @@ services:
     image: "cypress/included:13.13.0"
     environment:
       # pass base url to test pointing at the web application
-      - CYPRESS_baseUrl=https://jusvai.eu.ngrok.io
+      - CYPRESS_baseUrl=process.env.NGROK_URL
       - CYPRESS_EVERY_NTH_FRAME=1
     entrypoint: cypress run --spec "**/cypress/e2e/**"
     command: /bin/sh -c "--config npx browserslist@latest --update-db"
