@@ -1,44 +1,51 @@
-# This is a basic workflow that is manually triggered
+name: PS1786 + E2E Cypress
 
-name: Cypress E2E Automation
-on: [ pull_request ]
+on: [push]
 
 jobs:
-  Cypress-E2E-automation:
+  Cypress-E2E-1786:
     runs-on: ubuntu-latest
-    strategy:
-     fail-fast: false
-     matrix:
-       containers: [1,2,3,4]
+    env:
+      NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2.0.0
+      - name: Checkouting
+        uses: actions/checkout@v2.4.2
+      - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        shell: bash
+      - run: unzip -qq -o ngrok-stable-linux-amd64.zip
+        shell: bash
+      - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+        shell: bash
+      - run: ./ngrok http --domain=jusvai.eu.ngrok.io 8002 > ngrok.log &
+        shell: bash
+      - name: Installing composer
+        run: composer i
 
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+      - name: Installing NPM, NPX packages
+        run: npm ci & npx browserslist@latest --update-db
 
-      - name: Configuring the ecommerce and running the E2E tests
+      - name: PS1786 installing / Module Install and Uninstall testing...
         run: |
-          export CYPRESS_BRASA_ADMIN_URL='${{ secrets.BRASA_ADMIN_URL }}'
-          export CYPRESS_BRASA_EMAIL='${{ secrets.BRASA_EMAIL }}'
-          export CYPRESS_BRASA_PASSWORD='${{ secrets.BRASA_PASSWORD }}'
-
-      - name: Cypress Cloud GitHub
-        uses: cypress-io/github-action@v6
-        with:
-         record: true
-         parallel: true
-         group: 'Saferpay E2E'
+          make e2eh1786 
+  
+      - name: Testing with E2E Cypress on PS1786
+        uses: cypress-io/github-action@v4.2.0
+        with: 
+          spec: |
+            cypress/e2e/moduleConfig.cy.js
         env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}cy.contains('a','Home').should('have.attr', 'href', '/home')
-
-
-      - name: Archive videos and screenshots after the E2E test running
+          CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}
+          CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}
+          CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}
+          CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}
+          CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+          CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+      
+      - name: Archive videos and screenshots of Cypress testing
         if: ${{ always() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3.1.0
         with:
-          name: Cypress_Saferpay_videos_screenshots
+          name: videos_screenshots
           retention-days: 2
           path: |
             cypress/videos
