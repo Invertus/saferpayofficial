@@ -63,6 +63,101 @@ Cypress.Commands.add(
         })
     });
 
+    Cypress.Commands.add("CachingBOFOPS1789", () => {
+        //Caching the BO and FO session
+          const login = (SaferPayBOFOLoggingIn) => {
+            cy.session(SaferPayBOFOLoggingIn,() => {
+            cy.visit('/admin1/')
+            cy.url().should('contain', 'https').as('Check if HTTPS exists')
+            cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
+            cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
+            cy.get('#submit_login').click().wait(1000).as('Connection successsful')
+            cy.visit('/en/my-account')
+            cy.get('#login-form [name="email"]').eq(0).type('pub@prestashop.com')
+            cy.get('#login-form [name="password"]').eq(0).type('123456789')
+            cy.get('#login-form [type="submit"]').eq(0).click({force:true})
+            cy.get('#history-link > .link-item').click()
+            })
+            }
+            login('SaferPayBOFOLoggingIn')
+        })
+        
+        Cypress.Commands.add("OpeningModuleDashboardURL", () => {
+            cy.visit('/admin1/index.php?controller=AdminModules&configure=saferpayofficial')
+            cy.get('.btn-continue').click()
+        })
+
+        Cypress.Commands.add("navigatingToThePaymentCHF", () => {
+            cy.visit('/en/order-history')
+            cy.contains('Reorder').click()
+            cy.contains('Switzerland').click()
+            //Billing country LT, DE etc.
+            cy.get('.clearfix > .btn').click()
+            cy.get('#js-delivery > .continue').click()
+        })
+
+        Cypress.Commands.add("navigatingToThePayment", () => {
+            cy.visit('/en/order-history')
+            cy.contains('Reorder').click()
+            cy.contains('France').click()
+            //Billing country LT, DE etc.
+            cy.get('.clearfix > .btn').click()
+            cy.get('#js-delivery > .continue').click()
+        })
+
+        Cypress.Commands.add("guestCheckoutCHF", () => {
+            cy.get('.add > .btn').click()
+            cy.get('.cart-content-btn > .btn-primary').click()
+            cy.get('.text-sm-center > .btn').click()
+            // Creating random user all the time
+            cy.get(':nth-child(1) > .custom-radio > input').check()
+            cy.get('#field-firstname').type('AUT',{delay:0})
+            cy.get(':nth-child(3) > .col-md-6 > .form-control').type('AUT',{delay:0})
+            const uuid = () => Cypress._.random(0, 1e6)
+            const id = uuid()
+            const testname = `testemail${id}@testing.com`
+            cy.get('[name="email"]').first().type(testname, {delay: 0})
+            cy.contains('Customer data privacy').click()
+            cy.contains('I agree').click()
+            cy.get('#customer-form > .form-footer > .continue').click()
+            cy.get('#field-address1').type('ADDR',{delay:0}).as('address 1')
+            cy.get('#field-address2').type('ADDR2',{delay:0}).as('address2')
+            cy.get('#field-postcode').type('5446',{delay:0}).as('zip')
+            cy.get('#field-city').type('Zurich',{delay:0}).as('city')
+            cy.get('#field-id_country').select('Switzerland').as('country')
+            cy.get('#field-phone').type('+370 000',{delay:0}).as('telephone')
+            cy.get('[name="confirm-addresses"]').click();
+            cy.get('#js-delivery > .continue').click()
+        })
+
+        Cypress.Commands.add("changeCurrencyCHF", () => {
+            cy.get('[aria-label="Currency dropdown"]').click();
+            cy.contains('a', 'CHF').click();
+        })
+
+        Cypress.Commands.add("FillAmex", () => {
+            cy.get('[name="CardNumber"]').click().type('9070003150000008')
+            cy.get('[name="Expiry"]').click().type('0525')
+            cy.get('[name="VerificationCode"]').click().type('111')
+        })
+
+        Cypress.Commands.add("FillJcb", () => {
+            cy.get('[name="CardNumber"]').click().type('9060003150000000')
+            cy.get('[name="Expiry"]').click().type('0525')
+            cy.get('[name="VerificationCode"]').click().type('111')
+        })
+
+        Cypress.Commands.add("FillDiners", () => {
+            cy.get('[name="CardNumber"]').click().type('9050003150000002')
+            cy.get('[name="Expiry"]').click().type('0525')
+            cy.get('[name="VerificationCode"]').click().type('111')
+        })
+
+        Cypress.Commands.add("FillUnion", () => {
+            cy.get('[name="CardNumber"]').click().type('9100104952000008')
+            cy.get('[name="Expiry"]').click().type('0525')
+            cy.get('[name="VerificationCode"]').click().type('111')
+        })
 
 Cypress.Commands.add(
     'getInDocument',
@@ -82,16 +177,6 @@ Cypress.Commands.add('getIframe', (iframe) => {
         .then(cy.wrap);
 })
 
-Cypress.Commands.add('PSFOlogin', (email, password) => {
-    cy.get('#login-form [name="email"]').eq(0).type((Cypress.env('SAFERPAY_EMAIL')),{delay: 0, log: false})
-    cy.get('#login-form [name="password"]').eq(0).type((Cypress.env('SAFERPAY_PASSWORD')),{delay: 0, log: false})
-    cy.get('#login-form [type="submit"]').eq(0).click({force:true})
-})
-Cypress.Commands.add('PSBOlogin', (email, password) => {
-    cy.get('#email').type((Cypress.env('SAFERPAY_EMAIL')),{delay: 0, log: false})
-    cy.get('#passwd').type((Cypress.env('SAFERPAY_PASSWORD')),{delay: 0, log: false})
-    cy.get('#submit_login').click().wait(1000).as('Connection successsful')
-})
 Cypress.Commands.add('iframe', { prevSubject: 'element' }, ($iframe, selector) => {
     Cypress.log({
       name: 'iframe',
