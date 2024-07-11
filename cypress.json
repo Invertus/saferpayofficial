@@ -1,8 +1,0 @@
-{
-    "experimentalSessionAndOrigin": true,
-    "chromeWebSecurity": false,
-    "modifyObstructiveCode": false,
-    "retries": 1,
-    "defaultCommandTimeout": 7000
-}
-  
