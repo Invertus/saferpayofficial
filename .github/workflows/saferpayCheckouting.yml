@@ -59,15 +59,15 @@ jobs:
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
         run: |
-          export CYPRESS_SAFERPAY_EMAIL: ${{ secrets.SAFERPAY_EMAIL }}
-          export CYPRESS_SAFERPAY_PASSWORD: ${{ secrets.SAFERPAY_PASSWORD }}
-          export CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}
-          export CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}
-          export CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}
-          export CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}
-          export CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
-          export CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
-          export NGROK_URL: ${{ env.NGROK_URL }}
+          export CYPRESS_SAFERPAY_EMAIL='${{ secrets.SAFERPAY_EMAIL }}'
+          export CYPRESS_SAFERPAY_PASSWORD='${{ secrets.SAFERPAY_PASSWORD }}'
+          export CYPRESS_SAFERPAY_USERNAME_TEST='${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}'
+          export CYPRESS_SAFERPAY_PASSWORD_TEST='${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}'
+          export CYPRESS_SAFERPAY_CUSTOMER_ID_TEST='${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}'
+          export CYPRESS_SAFERPAY_TERMINAL_ID_TEST='${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}'
+          export CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST='${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}'
+          export CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST='${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}'
+          export NGROK_URL='${{ env.NGROK_URL }}'
           npx cypress cache prune
           npm install -D cypress
           npm ci
