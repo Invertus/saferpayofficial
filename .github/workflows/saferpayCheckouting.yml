@@ -54,7 +54,8 @@ jobs:
 
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing...
         run: |
-          ${{ matrix.make }}
+          cypress/e2e/01-moduleConfig.cy.js
+          cypress/e2e/02-authorizeAfterAuthorization.cy.js
 
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
@@ -63,7 +64,7 @@ jobs:
           record: true
           parallel: true
           group: 'SaferpayTests'
-          spec: 'cypress/e2e/01-moduleConfig.cy.js cypress/e2e/file2.cy.js'
+          spec: ${{ matrix.test_spec }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
