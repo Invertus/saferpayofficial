@@ -34,7 +34,7 @@ describe('PS1789 Tests Suite -> With auto capture payments + create order after 
 
     it('A2A guest success', () => {
         cy.clearCookies()
-        cy.visit('/en/stationery/16-28-mountain-fox-notebook.html#/22-paper_type-ruled', { headers: {"Accept-Encoding": "gzip, deflate"}})
+        cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
         // cy.changeCurrencyCHF()
         cy.guestCheckoutCHF()
         cy.contains('Accounttoaccount').should('be.visible')

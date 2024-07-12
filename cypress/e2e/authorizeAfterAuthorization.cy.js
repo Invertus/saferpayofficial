@@ -33,22 +33,34 @@ describe('PS1789 Tests Suite -> Authorization + After order creation', {
 
     it('A2A guest success', () => {
         cy.clearCookies()
-        cy.visit('/en/stationery/16-28-mountain-fox-notebook.html#/22-paper_type-ruled', { headers: {"Accept-Encoding": "gzip, deflate"}})
+        cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
         // cy.changeCurrencyCHF()
         cy.guestCheckoutCHF()
         cy.contains('Accounttoaccount').should('be.visible')
-
     })
-    it('TWINT Checkouting', () => {
-        cy.visit('/en/order-history')
+
+    it('Twint guest success', () => {
+        cy.clearCookies()
+        cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
         cy.changeCurrencyCHF()
-        cy.navigatingToThePaymentCHF()
+        cy.guestCheckout()
         cy.contains('Twint').click({ force: true })
         cy.get('.condition-label > .js-terms').click({ force: true })
         cy.contains('Place order').click()
         cy.get('.saferpay-paymentpage').should('be.visible')
         cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
-    });
+    })
+
+    // it('TWINT Checkouting', () => {
+    //     cy.visit('/en/order-history')
+    //     cy.changeCurrencyCHF()
+    //     cy.navigatingToThePaymentCHF()
+    //     cy.contains('Twint').click({ force: true })
+    //     cy.get('.condition-label > .js-terms').click({ force: true })
+    //     cy.contains('Place order').click()
+    //     cy.get('.saferpay-paymentpage').should('be.visible')
+    //     cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+    // });
 
     it('Wechatpay Checkouting', () => {
         cy.navigatingToThePayment()
