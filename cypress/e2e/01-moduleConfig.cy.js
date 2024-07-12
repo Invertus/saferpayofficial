@@ -48,7 +48,7 @@ describe('PS1786 Module Configuration', {
         cy.get('#configuration_form_submit_btn').click()
         cy.get('[class="alert alert-success"]').should('be.visible')
     })
-    it('04 Fields and Logs tabs are shown OK', () => {
+    it('04 Fields and Logs tabs are shown', () => {
         cy.visit('/admin1/')
         cy.OpeningModuleDashboardURL()
         cy.get('#subtab-AdminSaferPayOfficialFields').click()
