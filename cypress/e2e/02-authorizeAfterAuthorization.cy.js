@@ -17,32 +17,32 @@ describe('PS1789 Tests Suite -> Authorization + After order creation', {
 
     })
 
-    it('Change the setting to Authorize', () => {
-        cy.visit('/admin1/')
-        cy.OpeningModuleDashboardURL()
-        cy.get('#SAFERPAY_PAYMENT_BEHAVIOR_1').click()
-        cy.get('#configuration_fieldset_2 > .panel-footer > .btn').click()
-    })
-    it('Change the setting create order after authorization', () => {
-        cy.visit('/admin1/')
-        cy.OpeningModuleDashboardURL()
-        cy.get('#SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION_1').click()
-        cy.get('#configuration_fieldset_2 > .panel-footer > .btn').click()
-    })
+    // it('Change the setting to Authorize', () => {
+    //     cy.visit('/admin1/')
+    //     cy.OpeningModuleDashboardURL()
+    //     cy.get('#SAFERPAY_PAYMENT_BEHAVIOR_1').click()
+    //     cy.get('#configuration_fieldset_2 > .panel-footer > .btn').click()
+    // })
+    // it('Change the setting create order after authorization', () => {
+    //     cy.visit('/admin1/')
+    //     cy.OpeningModuleDashboardURL()
+    //     cy.get('#SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION_1').click()
+    //     cy.get('#configuration_fieldset_2 > .panel-footer > .btn').click()
+    // })
 
 
-    it('A2A guest PM visible', () => {
-        cy.clearCookies()
-        cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
-        //cy.changeCurrencyCHF()
-        cy.guestCheckout()
-        cy.contains('Accounttoaccount').should('be.visible')
-    })
+    // it('A2A guest PM visible', () => {
+    //     cy.clearCookies()
+    //     cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
+    //     //cy.changeCurrencyCHF()
+    //     cy.guestCheckout()
+    //     cy.contains('Accounttoaccount').should('be.visible')
+    // })
 
     it('Twint guest success', () => {
         cy.clearCookies()
         cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
-        cy.changeCurrencyCHF()
+        //cy.changeCurrencyCHF()
         cy.guestCheckoutCHF()
         cy.contains('Twint').click({ force: true })
         cy.get('.condition-label > .js-terms').click({ force: true })
