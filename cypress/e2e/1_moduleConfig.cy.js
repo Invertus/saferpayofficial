@@ -35,11 +35,7 @@ describe('PS1786 Module Configuration', {
     })
     it('03 Enabling All payments in Module BO', () => {
         cy.visit('/admin1/')
-        cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
-        cy.get('#subtab-AdminModulesSf > .link').click()
-        cy.get('.pstaggerAddTagInput').type('saferpay')
-        cy.get('#module-search-button').click()
-        cy.get('.btn-group > .btn-primary-reverse').click()  //clicking the Congifure
+        cy.OpeningModuleDashboardURL()
         cy.get('#subtab-AdminSaferPayOfficialPayment').click()
         //todo update selectors
         cy.get('.saferpay-group.all-payments > .col-lg-8 > .form-group > :nth-child(1) > .checkbox > .container-checkbox > .checkmark').click()
@@ -54,11 +50,7 @@ describe('PS1786 Module Configuration', {
     })
     it('04 Fields and Logs tabs are shown OK', () => {
         cy.visit('/admin1/')
-        cy.get('#subtab-AdminParentModulesSf > :nth-child(1)').click()
-        cy.get('#subtab-AdminModulesSf > .link').click()
-        cy.get('.pstaggerAddTagInput').type('saferpay')
-        cy.get('#module-search-button').click()
-        cy.get('.btn-group > .btn-primary-reverse').click()  //clicking the Congifure
+        cy.OpeningModuleDashboardURL()
         cy.get('#subtab-AdminSaferPayOfficialFields').click()
         cy.get('[id="configuration_form"]').should('be.visible')
         cy.get('.field-container > :nth-child(1) > img').click()
