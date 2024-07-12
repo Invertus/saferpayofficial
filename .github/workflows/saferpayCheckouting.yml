@@ -17,10 +17,7 @@ jobs:
             port: '8002'
             yml: 'docker-compose.8.yml'
             url: 'https://sp1786.eu.ngrok.io'
-            test_spec: [
-                  'cypress/e2e/01-moduleConfig.cy.js',
-                  'cypress/e2e/02-authorizeAfterAuthorization.cy.js'
-            ]
+            test_spec: 'cypress/e2e/**'
     steps:
       - name: Checkouting
         uses: actions/checkout@v2.4.2
@@ -57,7 +54,8 @@ jobs:
 
       - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing...
         run: |
-          ${{ matrix.make }}
+          cypress/e2e/01-moduleConfig.cy.js
+          cypress/e2e/02-authorizeAfterAuthorization.cy.js
 
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
