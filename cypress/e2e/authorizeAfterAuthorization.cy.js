@@ -31,7 +31,7 @@ describe('PS1789 Tests Suite -> Authorization + After order creation', {
     })
 
 
-    it('A2A guest success', () => {
+    it('A2A guest PM visible', () => {
         cy.clearCookies()
         cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
         // cy.changeCurrencyCHF()
