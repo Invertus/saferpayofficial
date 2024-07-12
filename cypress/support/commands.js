@@ -118,7 +118,7 @@ Cypress.Commands.add(
             const testname = `testemail${id}@testing.com`
             cy.get('[name="email"]').first().type(testname, {delay: 0})
             cy.contains('Customer data privacy').click()
-            cy.contains('I agree').click()
+            //cy.contains('I agree').click()
             cy.get('#customer-form > .form-footer > .continue').click()
             cy.get('#field-address1').type('ADDR',{delay:0}).as('address 1')
             cy.get('#field-address2').type('ADDR2',{delay:0}).as('address2')
