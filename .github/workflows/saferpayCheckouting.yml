@@ -17,9 +17,7 @@ jobs:
             port: '8002'
             yml: 'docker-compose.8.yml'
             url: 'https://sp1786.eu.ngrok.io'
-            test_spec: 
-              - cypress/e2e/01-moduleConfig.cy.js
-              - cypress/e2e/02-authorizeAfterAuthorization.cy.js
+            test_spec: 'cypress/e2e/**'
     steps:
       - name: Checkouting
         uses: actions/checkout@v2.4.2
@@ -60,24 +58,42 @@ jobs:
 
 
       - name: Running ${{ matrix.prestashop }} Cypress E2E tests
-        uses: cypress-io/github-action@v6
-        with:
-          record: true
-          parallel: true
-          group: 'SaferpayTests'
-          spec: ${{ matrix.test_spec }}
-        env:
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CYPRESS_SAFERPAY_EMAIL: ${{ secrets.SAFERPAY_EMAIL }}
-          CYPRESS_SAFERPAY_PASSWORD: ${{ secrets.SAFERPAY_PASSWORD }}
-          CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}
-          CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}
-          CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}
-          CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}
-          CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
-          CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
-          NGROK_URL: ${{ env.NGROK_URL }}
+        run: |
+          export GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          export CYPRESS_SAFERPAY_EMAIL: ${{ secrets.SAFERPAY_EMAIL }}
+          export CYPRESS_SAFERPAY_PASSWORD: ${{ secrets.SAFERPAY_PASSWORD }}
+          export CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}
+          export CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}
+          export CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}
+          export CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}
+          export CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+          export CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+          export NGROK_URL: ${{ env.NGROK_URL }}
+          npx cypress cache prune
+          npm install -D cypress
+          npm ci
+          npx cypress run --spec "${{ matrix.test_spec }}" --record ${{ secrets.CYPRESS_RECORD_KEY }}
+
+
+      # - name: Running ${{ matrix.prestashop }} Cypress E2E tests
+      #   uses: cypress-io/github-action@v6
+      #   with:
+      #     record: true
+      #     parallel: true
+      #     group: 'SaferpayTests'
+      #     spec: ${{ matrix.test_spec }}
+      #   env:
+      #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     CYPRESS_SAFERPAY_EMAIL: ${{ secrets.SAFERPAY_EMAIL }}
+      #     CYPRESS_SAFERPAY_PASSWORD: ${{ secrets.SAFERPAY_PASSWORD }}
+      #     CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}
+      #     CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}
+      #     CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}
+      #     CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}
+      #     CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+      #     CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+      #     NGROK_URL: ${{ env.NGROK_URL }}
 
       - name: Archive videos and screenshots of Cypress testing
         if: ${{ always() }}
