@@ -69,8 +69,8 @@ Cypress.Commands.add(
             cy.session(SaferPayBOFOLoggingIn,() => {
             cy.visit('/admin1/')
             cy.url().should('contain', 'https').as('Check if HTTPS exists')
-            cy.get('#email').type('demo@prestashop.com',{delay: 0, log: false})
-            cy.get('#passwd').type('prestashop_demo',{delay: 0, log: false})
+            cy.get('#email').type('demo@demo.com',{delay: 0, log: false})
+            cy.get('#passwd').type('demodemo',{delay: 0, log: false})
             cy.get('#submit_login').click().wait(1000).as('Connection successsful')
             cy.visit('/en/my-account')
             cy.get('#login-form [name="email"]').eq(0).type((Cypress.env('SAFERPAY_EMAIL')),{delay: 0, log: false})
