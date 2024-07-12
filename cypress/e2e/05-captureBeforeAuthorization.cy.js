@@ -36,7 +36,7 @@ describe('PS1789 Tests Suite -> With auto capture payments and order creation be
         cy.clearCookies()
         cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
         // cy.changeCurrencyCHF()
-        cy.guestCheckoutCHF()
+        cy.guestCheckout()
         cy.contains('Accounttoaccount').should('be.visible')
 
     })

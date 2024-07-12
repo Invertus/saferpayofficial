@@ -34,8 +34,8 @@ describe('PS1789 Tests Suite -> Authorization + After order creation', {
     it('A2A guest PM visible', () => {
         cy.clearCookies()
         cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
-        cy.changeCurrencyCHF()
-        cy.guestCheckoutCHF()
+        //cy.changeCurrencyCHF()
+        cy.guestCheckout()
         cy.contains('Accounttoaccount').should('be.visible')
     })
 
@@ -43,7 +43,7 @@ describe('PS1789 Tests Suite -> Authorization + After order creation', {
         cy.clearCookies()
         cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
         cy.changeCurrencyCHF()
-        cy.guestCheckout()
+        cy.guestCheckoutCHF()
         cy.contains('Twint').click({ force: true })
         cy.get('.condition-label > .js-terms').click({ force: true })
         cy.contains('Place order').click()

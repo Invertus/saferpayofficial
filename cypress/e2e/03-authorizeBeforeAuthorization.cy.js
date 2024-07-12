@@ -36,7 +36,7 @@ describe('PS1789 Tests Suite -> Authorization + order creation before authorizat
         cy.clearCookies()
         cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
         // cy.changeCurrencyCHF()
-        cy.guestCheckoutCHF()
+        cy.guestCheckout()
         cy.contains('Accounttoaccount').should('be.visible')
 
     })
