@@ -10,7 +10,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        containers: [1]
+        include:
+          - prestashop: 'PS1786'
+            make: 'make e2eh1786'
+            subdomain: 'sp1786'
+            port: '8002'
+            yml: 'docker-compose.8.yml'
+            url: 'https://sp1786.eu.ngrok.io'
+            test_spec: 'cypress/e2e/**'
     steps:
       - name: Checkouting
         uses: actions/checkout@v2.4.2
@@ -45,18 +52,18 @@ jobs:
       - name: Installing NPM, NPX packages
         run: npm ci & npx browserslist@latest --update-db
 
-      - name: PS1786 installing / Module Install and Uninstall testing...
+      - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing...
         run: |
-          make e2eh1786
+          ${{ matrix.make }}
 
 
-      - name: Cypress E2E Tests
+      - name: Running ${{ matrix.prestashop }} Cypress E2E tests
         uses: cypress-io/github-action@v6
         with:
           record: true
           parallel: true
           group: 'SaferpayTests'
-          spec: cypress/e2e/moduleConfig.cy.js
+          spec: ${{ matrix.test_spec }}
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
