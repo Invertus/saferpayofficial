@@ -102,34 +102,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             $checkoutData->setOrderStatus($transactionStatus);
 
-            PrestaShopLogger::addLog(
-                sprintf(
-                    'Order %s has been updated to status %s',
-                    $cart->id,
-                    $transactionStatus
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
-
-            $checkoutProcessor->run($checkoutData);
-
-
-            PrestaShopLogger::addLog(
-                sprintf(
-                    'Order %s has been updated to status %s',
-                    $cart->id,
-                    $transactionStatus
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
             $orderId = $this->getOrderId($cartId);
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
@@ -218,19 +190,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             die($this->module->l($e->getMessage(), self::FILENAME));
         }
-
-        PrestaShopLogger::addLog(
-            sprintf(
-                'Order %s has been updated to status %s',
-                $order->reference,
-                $transactionStatus
-            ),
-            1,
-            null,
-            null,
-            null,
-            true
-        );
 
         die($this->module->l('Success', self::FILENAME));
     }
