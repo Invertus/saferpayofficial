@@ -645,7 +645,7 @@ Thank you for your patience!');
                 // emailalert module sometimes throws error which leads into failed payment issue
             }
 
-            if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
+            if ((int) \Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
                 $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
             }
         }
