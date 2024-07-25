@@ -60,21 +60,21 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
 
-//        $lockResult = $this->applyLock(sprintf(
-//            '%s-%s',
-//            $cartId,
-//            $secureKey
-//        ));
+        $lockResult = $this->applyLock(sprintf(
+            '%s-%s',
+            $cartId,
+            $secureKey
+        ));
 
-//        if (!SaferPayConfig::isVersion17()) {
-//            if ($lockResult > 200) {
-//                die($this->module->l('Lock already exists', self::FILENAME));
-//            }
-//        } else {
-//            if (!$lockResult->isSuccessful()) {
-//                die($this->module->l('Lock already exists', self::FILENAME));
-//            }
-//        }
+        if (!SaferPayConfig::isVersion17()) {
+            if ($lockResult > 200) {
+                die($this->module->l('Lock already exists', self::FILENAME));
+            }
+        } else {
+            if (!$lockResult->isSuccessful()) {
+                die($this->module->l('Lock already exists', self::FILENAME));
+            }
+        }
 
         if ($cart->orderExists()) {
             $order = new Order($this->getOrderId($cartId));
