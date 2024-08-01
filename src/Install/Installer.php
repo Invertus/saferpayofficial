@@ -241,7 +241,8 @@ class Installer extends AbstractInstaller
             `captured` tinyint(1) DEFAULT 0,
             `refunded` tinyint(1) DEFAULT 0,
             `canceled` tinyint(1) DEFAULT 0,
-            `authorized` tinyint(1) DEFAULT 0
+            `authorized` tinyint(1) DEFAULT 0,
+            `pending` tinyint(1) DEFAULT 0
                 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );
     }
