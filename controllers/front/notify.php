@@ -66,8 +66,23 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $secureKey
         ));
 
-        if (!$lockResult->isSuccessful()) {
-            die($this->module->l('Lock already exist', self::FILENAME));
+        if (!SaferPayConfig::isVersion17()) {
+            if ($lockResult > 200) {
+                die($this->module->l('Lock already exists', self::FILENAME));
+            }
+        } else {
+            if (!$lockResult->isSuccessful()) {
+                die($this->module->l('Lock already exists', self::FILENAME));
+            }
+        }
+
+        if ($cart->orderExists()) {
+            $order = new Order($this->getOrderId($cartId));
+            $completed = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+
+            if ((int) $order->current_state === $completed) {
+                die($this->module->l('Order already complete', self::FILENAME));
+            }
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -87,6 +102,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             $checkoutData->setOrderStatus($transactionStatus);
             $checkoutProcessor->run($checkoutData);
+
             $orderId = $this->getOrderId($cartId);
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
@@ -129,28 +145,40 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
-            $this->releaseLock();
             // this might be executed after pending transaction is declined (e.g. with accountToAccount payment)
             if (!isset($order)) {
-                $orderId = $this->getOrderId($cartId);
-                $order = new Order($orderId);
+                $order = new Order($this->getOrderId($cartId));
             }
 
-            if ($order->id) {
+            $orderId = (int) $order->id;
+
+            if ($orderId) {
+                $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+
+                if ((int) $order->current_state === $saferPayCapturedStatus) {
+                    die($this->module->l('Order already created', self::FILENAME));
+                }
+
                 // assuming order transaction was declined
                 $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
-                $order->update();
-                $saferPayOrder = new SaferPayOrder($saferPayOrderRepository->getIdByOrderId($order->id));
-            } else {
-                // assuming order transaction was cancelled before ps order was even made
-                $saferPayOrder = new SaferPayOrder($saferPayOrderRepository->getIdByCartId($cartId));
             }
+
+            // using cartId, because ps order might not be assigned yet
+            $saferPayOrder = new SaferPayOrder($saferPayOrderRepository->getIdByCartId($cartId));
 
             if ($saferPayOrder->id) {
                 $saferPayOrder->authorized = false;
                 $saferPayOrder->pending = false;
                 $saferPayOrder->canceled = true;
+
+                if ($orderId) {
+                    // assign ps order to saferpay order id in case it was not assigned previously
+                    $saferPayOrder->id_order = $orderId;
+                }
+
                 $saferPayOrder->update();
+                $this->releaseLock();
+                die('canceled');
             }
 
             PrestaShopLogger::addLog(
@@ -166,6 +194,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 true
             );
             $this->releaseLock();
+
             die($this->module->l($e->getMessage(), self::FILENAME));
         }
 
