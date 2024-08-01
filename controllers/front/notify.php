@@ -153,6 +153,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $orderId = (int) $order->id;
 
             if ($orderId) {
+                $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+
+                if ((int) $order->current_state === $saferPayCapturedStatus) {
+                    die($this->module->l('Order already created', self::FILENAME));
+                }
+
                 // assuming order transaction was declined
                 $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
             }
