@@ -30,7 +30,7 @@ describe('PS817 Module Configuration', {
     it('02 Enabling Saferpay carriers and countries successfully', () => {
         cy.visit('/admin1/')
         cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({ force: true })
-        cy.get('[class="js-multiple-choice-table-select-column"]').eq(11).click()
+        cy.get('[class="js-multiple-choice-table-select-column"]').eq(2).click()
         cy.get('[class="btn btn-primary"]').eq(3).click()
     })
     it('03 Enabling All payments in Module BO', () => {

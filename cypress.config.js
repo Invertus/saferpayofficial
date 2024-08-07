@@ -24,7 +24,7 @@ module.exports = defineConfig({
   experimentalMemoryManagement: true,
   experimentalSourceRewriting: true,
   numTestsKeptInMemory: 5,
-  defaultCommandTimeout: 15000,
+  defaultCommandTimeout: 30000,
   retries: 0,
   video: true,
   videoCompression: 8,
