@@ -2,7 +2,7 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # target: fix-lint			- Launch php cs fixer
 fix-lint:
-	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
+	docker compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
 
 ############ PS 817 ############################
 
@@ -26,9 +26,9 @@ build-ps-817:
 e2e817p: e2e-817-prepare
 e2e-817-prepare:
 	# detaching containers
-	docker-compose -f docker-compose.817.yml up -d --force-recreate
+	docker compose -f docker-compose.817.yml up -d --force-recreate
 	# sees what containers are running
-	docker-compose -f docker-compose.817.yml ps
+	docker compose -f docker-compose.817.yml ps
 	# waits for mysql to load
 	/bin/bash .docker/wait-for-container.sh saferpayofficial-mysql-817
 	# preloads initial data
