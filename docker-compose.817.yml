@@ -11,7 +11,7 @@ services:
 
   mysql:
     #platform: linux/amd64
-    container_name: saferpayofficial-mysql-1764
+    container_name: saferpayofficial-mysql-817
     image: mysql:5.7
     ports:
       - "9002:3306"
@@ -23,19 +23,19 @@ services:
       test: "mysqladmin ping -h127.0.0.1 -uroot -pprestashop --silent"
       interval: 10s
     networks:
-      - prestashop_saferpayofficial_net_1764
+      - prestashop_saferpayofficial_net_817
   prestashop-17:
     #platform: linux/amd64
-    container_name: prestashop-1764
+    container_name: prestashop-817
     build:
       context: .
-      dockerfile: .docker/Dockerfile.1764
+      dockerfile: .docker/Dockerfile.817
     environment:
       PS_INSTALL_AUTO: 0
       DB_PASSWD: prestashop
       DB_NAME: prestashop
       DB_SERVER: mysql
-      PS_DOMAIN: sp1764.eu.ngrok.io:8002
+      PS_DOMAIN: jusvai.eu.ngrok.io
       PS_FOLDER_INSTALL: install
       PS_FOLDER_ADMIN: admin1
     depends_on:
@@ -44,15 +44,15 @@ services:
       - "8002:80"
     volumes:
       - ./:/var/www/html/modules/saferpayofficial:cached
-      - ./tests/seed/settings1764/defines.inc.php:/var/www/html/config/defines.inc.php
-      - ./tests/seed/settings1764/parameters.php:/var/www/html/app/config/parameters.php
-      - ./.docker/.htaccess1764:/var/www/html/.htaccess
+      - ./tests/seed/settings817/defines.inc.php:/var/www/html/config/defines.inc.php
+      - ./tests/seed/settings817/parameters.php:/var/www/html/app/config/parameters.php
+      - ./.docker/.htaccess817:/var/www/html/.htaccess
     networks:
-      - prestashop_saferpayofficial_net_1764
+      - prestashop_saferpayofficial_net_817
     healthcheck:
       test: "wget --no-verbose --tries=1 --spider http://localhost:80 || exit 1"
       interval: 10s
 
 networks:
-  prestashop_saferpayofficial_net_1764:
-    name: 'prestashop_saferpayofficial_net_1764'
+  prestashop_saferpayofficial_net_817:
+    name: 'prestashop_saferpayofficial_net_817'

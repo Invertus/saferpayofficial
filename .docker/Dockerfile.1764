@@ -1,4 +1,0 @@
-FROM prestashop/prestashop:1.7.6.4
-
-RUN pecl install -f xdebug-2.9.3
-
