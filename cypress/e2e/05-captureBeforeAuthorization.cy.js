@@ -6,7 +6,7 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
     expect(windowConsoleError).to.not.be.called;
 })
-describe('PS817 Tests Suite -> Authorization + After auth', {
+describe('PS817 Tests Suite -> Capture + Before auth', {
     failFast: {
         enabled: false,
     },
@@ -17,16 +17,16 @@ describe('PS817 Tests Suite -> Authorization + After auth', {
 
     })
 
-    it('Change the setting to Authorize', () => {
+    it('Change the setting to Capture', () => {
         cy.visit('/admin1/')
         cy.OpeningModuleDashboardURL()
-        cy.get('#SAFERPAY_PAYMENT_BEHAVIOR_1').click()
+        cy.get('#SAFERPAY_PAYMENT_BEHAVIOR_0').click()
         cy.get('#configuration_fieldset_2 > .panel-footer > .btn').click()
     })
-    it('Change the setting create order after authorization', () => {
+    it('Change the setting create order before authorization', () => {
         cy.visit('/admin1/')
         cy.OpeningModuleDashboardURL()
-        cy.get('#SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION_1').click()
+        cy.get('#SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION_0').click()
         cy.get('#configuration_fieldset_2 > .panel-footer > .btn').click()
     })
 
