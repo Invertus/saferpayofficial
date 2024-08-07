@@ -1,9 +1,9 @@
-name: PS1786 + E2E Cypress
+name: PS817 + E2E Cypress
 
 on: [push]
 
 jobs:
-  Cypress-E2E-1786:
+  Cypress-E2E-817:
     runs-on: ubuntu-latest
     env:
       NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
@@ -11,12 +11,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - prestashop: 'PS1786'
-            make: 'make e2eh1786'
-            subdomain: 'sp1786'
+          - prestashop: 'PS817'
+            make: 'make e2eh817'
+            subdomain: 'sp817'
             port: '8002'
-            yml: 'docker-compose.8.yml'
-            url: 'https://sp1786.eu.ngrok.io'
+            yml: 'docker-compose.817.yml'
+            url: 'https://sp817.eu.ngrok.io'
             test_spec: 'cypress/e2e/**'
     steps:
       - name: Checkouting
@@ -28,7 +28,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http --region=eu --log=stdout --subdomain=sp1786 8002 > ngrok.log &
+      - run: ./ngrok http --region=eu --log=stdout --subdomain=sp817 8002 > ngrok.log &
         shell: bash
 
       - name: Extract ngrok URL
@@ -107,7 +107,7 @@ jobs:
 
   Stop-ngrok:
     runs-on: ubuntu-latest
-    needs: Cypress-E2E-1786
+    needs: Cypress-E2E-817
     if: always()
     steps:
       - name: Stop ngrok process
