@@ -39,6 +39,6 @@ e2eh1786: test-e2e-headless-1786
 test-e2e-headless-1786:
 	make e2e1786p
 
-change-shop-url:
-	docker exec $(container) sh -c "php bin/console command:change-shop-url $(url) $(ssl)"
-# sample: make change-shop-url container=brasa_apache url=localhost:8420 ssl=1
+dump-db-local:
+	mysqldump -h 127.0.0.1 -P $(port) --protocol=tcp -u root -pprestashop prestashop > ${PWD}/.docker/dump.sql
+# sample: make dump-db-local port=9420
