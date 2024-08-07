@@ -6,14 +6,14 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
     expect(windowConsoleError).to.not.be.called;
 })
-describe('PS1786 Module Configuration', {
+describe('PS817 Module Configuration', {
     failFast: {
         enabled: false,
     },
 }, () => {
     beforeEach(() => {
         cy.viewport(1920, 1080)
-        cy.CachingBOFOPS1789()
+        cy.CachingBOFO()
     })
     it('01 Connecting the Test API information to module', () => {
         cy.visit('/admin1/')
@@ -25,12 +25,12 @@ describe('PS1786 Module Configuration', {
         cy.get('[name="SAFERPAY_MERCHANT_EMAILS_TEST"]').type((Cypress.env('SAFERPAY_MERCHANT_EMAILS_TEST')), { delay: 0, log: false })
         cy.get('[name="SAFERPAY_FIELDS_ACCESS_TOKEN_TEST"]').type((Cypress.env('SAFERPAY_FIELDS_ACCESS_TOKEN_TEST')), { delay: 0, log: false })
         cy.get('#configuration_fieldset_1 > .panel-footer > .btn').click()
-        cy.get(':nth-child(4) > .alert').should('exist')
+        cy.get(':nth-child(1) > .alert').should('exist')
     })
     it('02 Enabling Saferpay carriers and countries successfully', () => {
         cy.visit('/admin1/')
         cy.get('[id="subtab-AdminPaymentPreferences"]').find('[href]').eq(0).click({ force: true })
-        cy.get('[class="js-multiple-choice-table-select-column"]').eq(7).click()
+        cy.get('[class="js-multiple-choice-table-select-column"]').eq(11).click()
         cy.get('[class="btn btn-primary"]').eq(3).click()
     })
     it('03 Enabling All payments in Module BO', () => {

@@ -63,7 +63,7 @@ Cypress.Commands.add(
         })
     });
 
-    Cypress.Commands.add("CachingBOFOPS1789", () => {
+    Cypress.Commands.add("CachingBOFO", () => {
         //Caching the BO and FO session
           const login = (SaferPayBOFOLoggingIn) => {
             cy.session(SaferPayBOFOLoggingIn,() => {
@@ -76,7 +76,6 @@ Cypress.Commands.add(
             cy.get('#login-form [name="email"]').eq(0).type((Cypress.env('SAFERPAY_EMAIL')),{delay: 0, log: false})
             cy.get('#login-form [name="password"]').eq(0).type((Cypress.env('SAFERPAY_PASSWORD')),{delay: 0, log: false})
             cy.get('#login-form [type="submit"]').eq(0).click({force:true})
-            cy.get('#history-link > .link-item').click()
             })
             }
             login('SaferPayBOFOLoggingIn')
@@ -108,6 +107,7 @@ Cypress.Commands.add(
         Cypress.Commands.add("guestCheckoutCHF", () => {
             cy.get('.add > .btn').click()
             cy.get('.cart-content-btn > .btn-primary').click()
+            cy.changeCurrencyCHF()
             cy.get('.text-sm-center > .btn').click()
             // Creating random user all the time
             cy.get(':nth-child(1) > .custom-radio > input').check()
@@ -118,7 +118,7 @@ Cypress.Commands.add(
             const testname = `testemail${id}@testing.com`
             cy.get('[name="email"]').first().type(testname, {delay: 0})
             cy.contains('Customer data privacy').click()
-            //cy.contains('I agree').click()
+            cy.contains('I agree').click()
             cy.get('#customer-form > .form-footer > .continue').click()
             cy.get('#field-address1').type('ADDR',{delay:0}).as('address 1')
             cy.get('#field-address2').type('ADDR2',{delay:0}).as('address2')
@@ -143,7 +143,7 @@ Cypress.Commands.add(
             const testname = `testemail${id}@testing.com`
             cy.get('[name="email"]').first().type(testname, {delay: 0})
             cy.contains('Customer data privacy').click()
-            //cy.contains('I agree').click()
+            cy.contains('I agree').click()
             cy.get('#customer-form > .form-footer > .continue').click()
             cy.get('#field-address1').type('ADDR',{delay:0}).as('address 1')
             cy.get('#field-address2').type('ADDR2',{delay:0}).as('address2')

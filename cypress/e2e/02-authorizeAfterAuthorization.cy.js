@@ -6,14 +6,14 @@ Cypress.on('window:before:load', (win) => {
 afterEach(() => {
     expect(windowConsoleError).to.not.be.called;
 })
-describe('PS1789 Tests Suite -> Authorization + After order creation', {
+describe('PS817 Tests Suite -> Authorization + After order creation', {
     failFast: {
         enabled: false,
     },
 }, () => {
     beforeEach(() => {
         cy.viewport(1920, 1080)
-        cy.CachingBOFOPS1789()
+        cy.CachingBOFO()
 
     })
 
@@ -41,8 +41,7 @@ describe('PS1789 Tests Suite -> Authorization + After order creation', {
 
     it('Twint guest success', () => {
         cy.clearCookies()
-        cy.visit('/en/home/1-spproduct.html', { headers: {"Accept-Encoding": "gzip, deflate"}})
-        //cy.changeCurrencyCHF()
+        cy.visit('/en/women/2-9-brown-bear-printed-sweater.html#/1-size-s')
         cy.guestCheckoutCHF()
         cy.contains('Twint').click({ force: true })
         cy.get('.condition-label > .js-terms').click({ force: true })
