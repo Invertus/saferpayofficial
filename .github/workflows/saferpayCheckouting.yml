@@ -1,0 +1,116 @@
+name: PS817 + E2E Cypress
+
+on: [push]
+
+jobs:
+  Cypress-E2E-817:
+    runs-on: ubuntu-latest
+    env:
+      NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - prestashop: 'PS817'
+            make: 'make e2eh817'
+            subdomain: 'safer817'
+            port: '8002'
+            yml: 'docker-compose.817.yml'
+            url: 'https://safer817.eu.ngrok.io'
+            test_spec: 'cypress/e2e/**'
+    steps:
+      - name: Checkouting
+        uses: actions/checkout@v2.4.2
+
+      - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+        shell: bash
+      - run: unzip -qq -o ngrok-stable-linux-amd64.zip
+        shell: bash
+      - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
+        shell: bash
+      - run: ./ngrok http --region=eu --log=stdout --subdomain=safer817 8002 > ngrok.log &
+        shell: bash
+
+      - name: Extract ngrok URL
+        run: |
+          sleep 10  # Give ngrok some time to start up
+          echo "Checking if ngrok is running..."
+          ps aux | grep ngrok
+          echo "Contents of ngrok.log:"
+          cat ngrok.log
+          NGROK_URL=$(grep -o 'url=https://[^[:space:]]*' ngrok.log | cut -d= -f2 | head -n1)
+          echo "NGROK_URL=$NGROK_URL" >> $GITHUB_ENV
+          
+        shell: bash
+
+      - name: Use ngrok URL
+        run: echo "The ngrok URL is ${{ env.NGROK_URL }}"
+
+      - name: Installing composer
+        run: composer i
+
+      - name: Installing NPM, NPX packages
+        run: npm ci & npx browserslist@latest --update-db
+
+      - name: ${{ matrix.prestashop }} installing / Module Install and Uninstall testing...
+        run: |
+          ${{ matrix.make }}
+
+
+      - name: Running ${{ matrix.prestashop }} Cypress E2E tests
+        run: |
+          export CYPRESS_SAFERPAY_EMAIL='${{ secrets.SAFERPAY_EMAIL }}'
+          export CYPRESS_SAFERPAY_PASSWORD='${{ secrets.SAFERPAY_PASSWORD }}'
+          export CYPRESS_SAFERPAY_USERNAME_TEST='${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}'
+          export CYPRESS_SAFERPAY_PASSWORD_TEST='${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}'
+          export CYPRESS_SAFERPAY_CUSTOMER_ID_TEST='${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}'
+          export CYPRESS_SAFERPAY_TERMINAL_ID_TEST='${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}'
+          export CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST='${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}'
+          export CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST='${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}'
+          export NGROK_URL='${{ env.NGROK_URL }}'
+          npx cypress cache prune
+          npm install -D cypress
+          npm ci
+          npx cypress run --spec "${{ matrix.test_spec }}"
+
+
+      # - name: Running ${{ matrix.prestashop }} Cypress E2E tests
+      #   uses: cypress-io/github-action@v6
+      #   with:
+      #     record: true
+      #     parallel: true
+      #     group: 'SaferpayTests'
+      #     spec: ${{ matrix.test_spec }}
+      #   env:
+      #     CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     CYPRESS_SAFERPAY_EMAIL: ${{ secrets.SAFERPAY_EMAIL }}
+      #     CYPRESS_SAFERPAY_PASSWORD: ${{ secrets.SAFERPAY_PASSWORD }}
+      #     CYPRESS_SAFERPAY_USERNAME_TEST: ${{ secrets.PS1786_SAFERPAY_USERNAME_TEST }}
+      #     CYPRESS_SAFERPAY_PASSWORD_TEST: ${{ secrets.PS1786_SAFERPAY_PASSWORD_TEST }}
+      #     CYPRESS_SAFERPAY_CUSTOMER_ID_TEST: ${{ secrets.PS1786_SAFERPAY_CUSTOMER_ID_TEST }}
+      #     CYPRESS_SAFERPAY_TERMINAL_ID_TEST: ${{ secrets.PS1786_SAFERPAY_TERMINAL_ID_TEST }}
+      #     CYPRESS_SAFERPAY_MERCHANT_EMAILS_TEST: ${{ secrets.SAFERPAY_MERCHANT_EMAILS_TEST }}
+      #     CYPRESS_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST: ${{ secrets.PS1786_SAFERPAY_FIELDS_ACCESS_TOKEN_TEST }}
+      #     NGROK_URL: ${{ env.NGROK_URL }}
+
+      - name: Archive videos and screenshots of Cypress testing
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: videos_screenshots
+          retention-days: 2
+          path: |
+            cypress/videos
+            cypress/screenshots
+
+
+  Stop-ngrok:
+    runs-on: ubuntu-latest
+    needs: Cypress-E2E-817
+    if: always()
+    steps:
+      - name: Stop ngrok process
+        run: |
+          pkill ngrok || echo "ngrok process not found"
+        shell: bash
