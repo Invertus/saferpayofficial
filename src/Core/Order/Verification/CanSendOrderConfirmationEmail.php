@@ -46,10 +46,6 @@ class CanSendOrderConfirmationEmail
             return true;
         }
 
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED) === (int) $orderStatusId) {
-            return true;
-        }
-
         if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $orderStatusId) {
             return true;
         }

@@ -639,12 +639,6 @@ Thank you for your patience!');
         $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
 
         if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
-            try {
-                $mailService->sendNewOrderMail($order, (int) $orderStatus->id);
-            } catch (Exception $e) {
-                // emailalert module sometimes throws error which leads into failed payment issue
-            }
-
             if ((int) \Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
                 $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
             }
