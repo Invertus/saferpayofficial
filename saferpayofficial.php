@@ -591,63 +591,12 @@ Thank you for your patience!');
             return true;
         }
 
-        /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
-        $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
-
-        if ($params['template'] === 'order_conf') {
-            return $canSendOrderConfirmationEmail->verify((int) $order->current_state);
-        }
-
         if ($params['template'] === 'new_order') {
             if ((int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
                 return true;
             }
 
             return false;
-        }
-    }
-
-    public function hookActionOrderHistoryAddAfter($params = [])
-    {
-        /** @var OrderHistory $orderHistory */
-        $orderHistory = $params['order_history'];
-
-        if (!$orderHistory instanceof OrderHistory) {
-            return;
-        }
-
-        $idOrder = (int) $orderHistory->id_order;
-
-        $internalOrder = new Order($idOrder);
-
-        if (!Validate::isLoadedObject($internalOrder)) {
-            return;
-        }
-
-        $order = new Order($idOrder);
-
-        $orderStatus = new OrderState((int) $order->current_state);
-
-        if (!Validate::isLoadedObject($orderStatus)) {
-            return;
-        }
-
-        /** @var \Invertus\SaferPay\Service\SaferPayMailService $mailService */
-        $mailService = $this->getService(\Invertus\SaferPay\Service\SaferPayMailService::class);
-
-        /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
-        $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
-
-        if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
-            try {
-                $mailService->sendNewOrderMail($order, (int) $orderStatus->id);
-            } catch (Exception $e) {
-                // emailalert module sometimes throws error which leads into failed payment issue
-            }
-
-            if ((int) \Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
-                $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
-            }
         }
     }
 
