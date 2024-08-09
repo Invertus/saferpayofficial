@@ -151,7 +151,7 @@ prepare-zip:
 	rm -rf .git .github tests cypress .docker && \
 	mkdir saferpayofficial && \
 	rsync -Rr ./ ./saferpayofficial && \
-	bash -c 'shopt -s extglob; rm -r !(saferpayofficial)' && \
+	find . -maxdepth 1 ! -name saferpayofficial -exec mv {} saferpayofficial/ \; && \
 	find . -maxdepth 1 -type f -exec rm "{}" \; && \
 	cd saferpayofficial && rm -rf saferpayofficial && \
 	cd ../ && zip -r saferpayofficial.zip saferpayofficial/
