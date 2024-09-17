@@ -54,6 +54,7 @@ class ApiRequest
                 json_encode($params)
             );
 
+
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);

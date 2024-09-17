@@ -143,3 +143,15 @@ e2e-1786-prepare:
 e2eh1786: test-e2e-headless-1786
 test-e2e-headless-1786:
 	make e2e1786p
+
+prepare-zip:
+	rm -rf vendor && \
+	composer install --no-dev --optimize-autoloader && \
+	cp .github/.htaccess vendor/.htaccess && \
+	rm -rf .git .github tests cypress .docker && \
+	mkdir saferpayofficial && \
+	rsync -Rr ./ ./saferpayofficial && \
+	find . -maxdepth 1 ! -name saferpayofficial -exec mv {} saferpayofficial/ \; && \
+	find . -maxdepth 1 -type f -exec rm "{}" \; && \
+	cd saferpayofficial && rm -rf saferpayofficial && \
+	cd ../ && zip -r saferpayofficial.zip saferpayofficial/
