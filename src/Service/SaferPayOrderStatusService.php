@@ -189,14 +189,21 @@ class SaferPayOrderStatusService
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
         $cancelRequest = $this->cancelRequestObjectCreator->create($saferPayOrder->transaction_id);
         try {
-            $this->cancelService->cancel($cancelRequest);
+            $cancelResponse = $this->cancelService->cancel($cancelRequest);
         } catch (Exception $e) {
             throw new SaferPayApiException('Cancel API failed', SaferPayApiException::CANCEL);
         }
         $order->setCurrentState(_SAFERPAY_PAYMENT_CANCELED_);
         $order->update();
         $saferPayOrder->canceled = 1;
+
         $saferPayOrder->update();
+
+        $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
+        $saferPayAssert = new SaferPayAssert($assertId);
+        $saferPayAssert->status = 'CANCELED';
+
+        $saferPayAssert->update();
     }
 
     public function refund(Order $order, $refundedAmount)
