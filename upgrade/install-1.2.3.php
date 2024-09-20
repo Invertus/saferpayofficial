@@ -21,35 +21,22 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Core\Order\Verification;
-
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CanSendOrderConfirmationEmail
+function upgrade_module_1_2_3(SaferPayOfficial $module)
 {
-    public function verify($orderStatusId)
-    {
-        if (!$this->isOrderStatusValid($orderStatusId)) {
-            return false;
-        }
+    $installer = new \Invertus\SaferPay\Install\Installer($module);
 
-        return true;
-    }
-
-    private function isOrderStatusValid($orderStatusId)
-    {
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatusId) {
-            return true;
-        }
-
-        if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $orderStatusId) {
-            return true;
-        }
-
-        return false;
-    }
+    return
+        $installer->createPendingOrderStatus() &&
+        Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_order ADD COLUMN `pending` TINYINT(1) DEFAULT 0') &&
+        $module->registerHook('displayOrderConfirmation') &&
+        $module->unregisterHook('actionOrderHistoryAddAfter') &&
+        Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION) &&
+        Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION);
 }

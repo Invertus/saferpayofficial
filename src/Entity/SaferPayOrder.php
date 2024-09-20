@@ -91,6 +91,11 @@ class SaferPayOrder extends ObjectModel
     public $authorized;
 
     /**
+     * @var bool
+     */
+    public $pending;
+
+    /**
      * @var array
      */
     public static $definition = [
@@ -109,6 +114,7 @@ class SaferPayOrder extends ObjectModel
             'canceled' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'refunded' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
             'authorized' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
+            'pending' => ['type' => self::TYPE_BOOL, 'validate' => 'isBool'],
         ],
     ];
 }

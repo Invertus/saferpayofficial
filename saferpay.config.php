@@ -35,6 +35,10 @@ if (!defined('_SAFERPAY_PAYMENT_AUTHORIZED_')) {
     /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_AUTHORIZED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED));
 }
+if (!defined('_SAFERPAY_PAYMENT_PENDING_')) {
+    /** @var URL to module IMG files directory */
+    define('_SAFERPAY_PAYMENT_PENDING_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_PENDING));
+}
 if (!defined('_SAFERPAY_PAYMENT_REJECTED_')) {
     /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_REJECTED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_REJECTED));

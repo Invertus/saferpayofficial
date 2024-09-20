@@ -49,7 +49,7 @@ class SaferPayConfig
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = 1.37;
+    const API_VERSION = '1.40';
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
@@ -76,6 +76,8 @@ class SaferPayConfig
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_KLARNA,
         self::PAYMENT_WLCRYPTOPAYMENTS,
+        self::PAYMENT_WECHATPAY,
+        self::PAYMENT_ACCOUNTTOACCOUNT,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -110,6 +112,7 @@ class SaferPayConfig
     const PAYMENT_PAYCONIQ = 'PAYCONIQ';
     const PAYMENT_CARD = 'CARD';
     const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
+    const PAYMENT_WECHATPAY = 'WECHATPAY';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -140,6 +143,7 @@ class SaferPayConfig
         'Payconiq' => self::PAYMENT_PAYCONIQ,
         'Card' => self::PAYMENT_CARD,
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
+        'WeChatPay' => self::PAYMENT_WECHATPAY,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -151,6 +155,7 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
+        self::PAYMENT_WECHATPAY,
     ];
 
     const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
@@ -213,6 +218,7 @@ class SaferPayConfig
 
     const SAFERPAY_PAYMENT_COMPLETED = 'SAFERPAY_PAYMENT_COMPLETED';
     const SAFERPAY_PAYMENT_AUTHORIZED = 'SAFERPAY_PAYMENT_AUTHORIZED';
+    const SAFERPAY_PAYMENT_PENDING = 'SAFERPAY_PAYMENT_PENDING';
     const SAFERPAY_PAYMENT_REJECTED = 'SAFERPAY_PAYMENT_REJECTED';
     const SAFERPAY_PAYMENT_AWAITING = 'SAFERPAY_PAYMENT_AWAITING';
     const SAFERPAY_PAYMENT_REFUNDED = 'SAFERPAY_PAYMENT_REFUNDED';
@@ -241,11 +247,6 @@ class SaferPayConfig
     const CREDIT_CARD_OPTION_SAVE = 0;
     const CREDIT_CARD_DONT_OPTION_SAVE = -1;
 
-    const TRANSACTION_STATUS_AUTHORIZED = 'AUTHORIZED';
-    const TRANSACTION_STATUS_CAPTURED = 'CAPTURED';
-    const TRANSACTION_STATUS_PENDING = 'PENDING';
-    const TRANSACTION_STATUS_CANCELED = 'CANCELED';
-
     const FIELDS_ACCESS_TOKEN = 'SAFERPAY_FIELDS_ACCESS_TOKEN';
     const FIELDS_LIBRARY = 'SAFERPAY_FIELDS_JAVASCRIPT_LIBRARY';
     const FIELDS_LIBRARY_DEFAULT_VALUE = 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js';
@@ -260,6 +261,29 @@ class SaferPayConfig
 
     const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
+
+    public static function supportsOrderCapture(string $paymentMethod)
+    {
+        //payments that DOES NOT SUPPORT capture
+        $unsupportedCapturePayments = [
+            self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
+        ];
+
+        return !in_array($paymentMethod, $unsupportedCapturePayments);
+    }
+
+    public static function supportsOrderCancel(string $paymentMethod)
+    {
+        //payments that DOES NOT SUPPORT order cancel
+        $unsupportedCancelPayments = [
+            self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
+        ];
+
+        return !in_array($paymentMethod, $unsupportedCancelPayments);
+    }
+
 
     public static function getConfigSuffix()
     {
@@ -332,8 +356,8 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => '1.37',
-            RequestHeader::SPEC_REFUND_VERSION => '1.37',
+            RequestHeader::SPEC_VERSION => SaferPayConfig::API_VERSION,
+            RequestHeader::SPEC_REFUND_VERSION => SaferPayConfig::API_VERSION,
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
