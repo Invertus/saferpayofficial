@@ -21,39 +21,26 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Core\Order\Verification;
+namespace Invertus\SaferPay\Response;
 
-use Invertus\SaferPay\Config\SaferPayConfig;
+use Symfony\Component\HttpFoundation\Response as BaseResponse;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class CanSendOrderConfirmationEmail
+class Response extends BaseResponse
 {
-    public function verify($orderStatusId)
+    /**
+     * @param mixed $data
+     */
+    public function __construct($data = null, int $status = 200, array $headers = [])
     {
-        if (!$this->isOrderStatusValid($orderStatusId)) {
-            return false;
-        }
-
-        return true;
+        parent::__construct($data, $status, $headers);
     }
 
-    private function isOrderStatusValid($orderStatusId)
+    public static function respond(string $message, int $status = 200): self
     {
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatusId) {
-            return true;
-        }
-
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED) === (int) $orderStatusId) {
-            return true;
-        }
-
-        if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $orderStatusId) {
-            return true;
-        }
-
-        return false;
+        return new self($message, $status);
     }
 }

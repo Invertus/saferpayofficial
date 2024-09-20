@@ -61,6 +61,26 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
+        $lockResult = $this->applyLock(
+            sprintf(
+                '%s-%s',
+                $cartId,
+                $secureKey
+            )
+        );
+
+        if (!$lockResult->isSuccessful()) {
+            $this->redirectWithNotifications($this->context->link->getModuleLink(
+                $this->module->name,
+                ControllerName::FAIL,
+                [
+                    'cartId' => $cartId,
+                    'secureKey' => $secureKey,
+                    'moduleId' => $moduleId,
+                ]
+            ));
+        }
+
         if ($cart->secure_key !== $secureKey) {
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
@@ -91,8 +111,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                         'moduleId' => $moduleId,
                         'secureKey' => $secureKey,
                         'selectedCard' => $selectedCard,
-                    ],
-                    true
+                    ]
                 ));
             }
         }
