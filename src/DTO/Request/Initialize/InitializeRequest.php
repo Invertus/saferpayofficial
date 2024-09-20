@@ -222,6 +222,9 @@ class InitializeRequest
                 'AddressSource' => $this->deliveryAddressForm->getAddressSource(),
                 'MandatoryFields' => $this->deliveryAddressForm->getMandatoryFields(),
             ],
+            'CardForm' => [
+                'HolderName' => SaferPayConfig::SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE,
+            ],
         ];
 
         if ($this->notification !== null) {

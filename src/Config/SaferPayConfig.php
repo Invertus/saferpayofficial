@@ -263,6 +263,8 @@ class SaferPayConfig
     const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
 
+    const SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE = 'MANDATORY';
+
     public static function supportsOrderCapture(string $paymentMethod)
     {
         //payments that DOES NOT SUPPORT capture
