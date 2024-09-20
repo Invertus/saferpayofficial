@@ -366,12 +366,12 @@ Thank you for your patience!');
         }
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
             return $this->context->smarty->fetch(
-                $this->getLocalPath() . 'views/templates/hook/front/MyAccount.tpl'
+                'module:saferpayofficial/views/templates/hook/front/MyAccount.tpl'
             );
         }
 
         return $this->context->smarty->fetch(
-            $this->getLocalPath() . 'views/templates/hook/front/MyAccount_16.tpl'
+             'module:saferpayofficial/views/templates/hook/front/MyAccount_16.tpl'
         );
     }
 
