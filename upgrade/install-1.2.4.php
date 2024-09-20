@@ -39,5 +39,5 @@ function upgrade_module_1_2_3(SaferPayOfficial $module)
         && $module->unregisterHook('actionOrderHistoryAddAfter')
         && Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION)
         && Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION)
-        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
+        && Configuration::deleteByName('SAFERPAY_CSS_FILE');
 }
