@@ -62,6 +62,16 @@ class SaferPayPaymentRepository
         return Db::getInstance()->getValue($query);
     }
 
+    public function getAllLogosEnabled()
+    {
+        $query = new DbQuery();
+        $query->select('name');
+        $query->from('saferpay_logo');
+        $query->where('active = "1"');
+
+        return Db::getInstance()->executeS($query);
+    }
+
     public function getActivePaymentMethods()
     {
         $query = new DbQuery();

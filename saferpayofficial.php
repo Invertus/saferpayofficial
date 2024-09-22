@@ -206,6 +206,9 @@ Thank you for your patience!');
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
+        $logosEnabled = $paymentRepository->getAllLogosEnabled();
+        $logosEnabled = array_column($logosEnabled, 'name');
+
 
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
@@ -214,7 +217,7 @@ Thank you for your patience!');
                 continue;
             }
 
-            $imageUrl = ($paymentRepository->isLogoEnabledByName($paymentMethod['paymentMethod']))
+            $imageUrl = (in_array($paymentMethod['paymentMethod'], $logosEnabled))
                 ? $paymentMethod['logoUrl'] : '';
 
             $isCreditCard = in_array(
