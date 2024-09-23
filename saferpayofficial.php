@@ -371,7 +371,7 @@ Thank you for your patience!');
         }
 
         return $this->context->smarty->fetch(
-             'module:saferpayofficial/views/templates/hook/front/MyAccount_16.tpl'
+            _PS_THEME_DIR_ . 'modules/saferpayofficial/views/templates/hook/front/MyAccount.tpl'
         );
     }
 
