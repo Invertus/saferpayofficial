@@ -76,10 +76,6 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
             return false;
         }
 
-//        if (!$this->isCurrencySupportedByPaymentName($paymentName)) {
-//            return false;
-//        }
-
         return true;
     }
 
@@ -131,42 +127,4 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
 
         return $isCountryInList || $isAllCountries;
     }
-
-    /**
-     * @param string $paymentName
-     *
-     * @return bool
-     */
-
-    // bottleneck
-    private function isCurrencySupportedByPaymentName($paymentName)
-    {
-        $enabledCurrencies = $this->getEnabledCurrenciesByPaymentName($paymentName);
-
-        if (in_array('0', $enabledCurrencies)) {
-            $enabledCurrencies = [];
-            $currencyOptions = $this->obtainPaymentMethods->obtainPaymentMethods()[$paymentName]['currencies'];
-//            foreach ($currencyOptions as $isoCode) {
-//                $enabledCurrencies[$isoCode] = $isoCode;
-//            }
-            $enabledCurrencies = array_values($currencyOptions);
-
-            return in_array($this->legacyContext->getCurrencyIsoCode(), $enabledCurrencies);
-        }
-
-        return in_array($this->legacyContext->getCurrencyId(), $enabledCurrencies);
-    }
-
-//    private function isCurrencySupportedByPaymentName($paymentName)
-//    {
-//        $enabledCurrencies = $this->getEnabledCurrenciesByPaymentName($paymentName);
-//
-//        // If '0' is in the list, it means all currencies are supported
-//        if (in_array('0', $enabledCurrencies, false)) {
-//            return true;
-//        }
-//
-//        // Check if the current currency is in the list of enabled currencies
-//        return in_array($this->legacyContext->getCurrencyId(), $enabledCurrencies, false);
-//    }
 }
