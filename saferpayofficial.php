@@ -370,9 +370,7 @@ Thank you for your patience!');
             );
         }
 
-        return $this->context->smarty->fetch(
-            _PS_THEME_DIR_ . 'modules/saferpayofficial/views/templates/hook/front/MyAccount.tpl'
-        );
+        return $this->display(__FILE__, 'front/MyAccount_16.tpl');
     }
 
     public function displayNavigationTop()
