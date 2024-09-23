@@ -72,10 +72,6 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
      */
     public function isValid($paymentName)
     {
-        if (!$this->paymentRepository->isActiveByName($paymentName)) {
-            return false;
-        }
-
         if (!$this->isCountrySupportedByPaymentName($paymentName)) {
             return false;
         }

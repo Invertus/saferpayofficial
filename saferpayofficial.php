@@ -182,7 +182,7 @@ Thank you for your patience!');
         /** @var Invertus\SaferPay\Service\SaferPayCartService $assertService */
         $cartService = $this->getService(\Invertus\SaferPay\Service\SaferPayCartService::class);
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
-            return;
+            return [];
         }
 
         /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
@@ -209,9 +209,16 @@ Thank you for your patience!');
         $logosEnabled = $paymentRepository->getAllLogosEnabled();
         $logosEnabled = array_column($logosEnabled, 'name');
 
+        $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();
+        $activePaymentMethods = array_column($activePaymentMethods, 'name');
+
 
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
+
+            if(!in_array($paymentMethod['paymentMethod'], $activePaymentMethods)) {
+                continue;
+            }
 
             if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
                 continue;
