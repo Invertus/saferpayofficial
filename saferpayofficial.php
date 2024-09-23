@@ -220,6 +220,10 @@ Thank you for your patience!');
                 continue;
             }
 
+            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])) {
+                continue;
+            }
+
             if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
                 continue;
             }
