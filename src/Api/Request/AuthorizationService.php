@@ -31,6 +31,7 @@ use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 
 if (!defined('_PS_VERSION_')) {
@@ -61,16 +62,20 @@ class AuthorizationService
      */
     private $aliasBuilder;
 
+    private $aliasRepository;
+
     public function __construct(
         ApiRequest $apiRequest,
         AssertResponseObjectCreator $assertResponseObjectCreator,
         SaferPayAssertBuilder $assertBuilder,
-        SaferPayCardAliasBuilder $aliasBuilder
+        SaferPayCardAliasBuilder $aliasBuilder,
+        SaferPayCardAliasRepository $aliasRepository
     ) {
         $this->apiRequest = $apiRequest;
         $this->assertResponseObjectCreator = $assertResponseObjectCreator;
         $this->assertBuilder = $assertBuilder;
         $this->aliasBuilder = $aliasBuilder;
+        $this->aliasRepository = $aliasRepository;
     }
 
     public function authorize(AuthorizationRequest $authorizationRequest)
@@ -103,6 +108,12 @@ class AuthorizationService
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
         $isPaymentSafe = $assertBody->getLiability()->getLiabilityShift();
+        $allSavedCards = $this->aliasRepository->getSavedCardsNumbersByCustomerId($customerId);
+        $allSavedCards = array_column($allSavedCards, 'card_number');
+
+        if (in_array($assertBody->getPaymentMeans()->getDisplayText(), $allSavedCards)) {
+            return $assertBody;
+        }
         if ((int) $selectedCardOption === SaferPayConfig::CREDIT_CARD_OPTION_SAVE && $isPaymentSafe) {
             $this->aliasBuilder->createCardAlias($assertBody, $customerId);
         }

@@ -74,4 +74,14 @@ class SaferPayCardAliasRepository
 
         return Db::getInstance()->executeS($query);
     }
+
+    public function getSavedCardsNumbersByCustomerId($customerId)
+    {
+        $query = new DbQuery();
+        $query->select('`card_number`');
+        $query->from('saferpay_card_alias');
+        $query->where('id_customer = "' . (int) $customerId . '"');
+
+        return Db::getInstance()->executeS($query);
+    }
 }
