@@ -67,7 +67,15 @@ class PaymentTypeProvider
      */
     private function isIframeRedirect($paymentMethod)
     {
-        return false;
+        if (!in_array($paymentMethod, SaferPayConfig::TRANSACTION_METHODS)) {
+            return false;
+        }
+
+        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
