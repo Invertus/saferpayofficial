@@ -67,7 +67,7 @@ class PaymentTypeProvider
      */
     private function isIframeRedirect($paymentMethod)
     {
-        return true;
+        return false;
     }
 
     /**
