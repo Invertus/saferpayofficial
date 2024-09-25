@@ -22,6 +22,9 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\Front\CheckoutController;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Enum\ControllerName;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
 if (!defined('_PS_VERSION_')) {
@@ -38,8 +41,37 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
 
         $paymentMethod = Tools::getValue('saved_card_method');
         $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");
+
         if (!SaferPayConfig::isVersion17()) {
             $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
+        }
+
+        try {
+            /** @var CheckoutController $checkoutController */
+            $checkoutController = $this->module->getService(CheckoutController::class);
+
+            // refactor it to create checkout data from validator request
+            $checkoutData = CheckoutData::create(
+                (int) $this->context->cart->id,
+                $paymentMethod,
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                $selectedCard
+            );
+
+            $redirectUrl = $checkoutController->execute($checkoutData);
+        } catch (Exception $e) {
+            $redirectUrl = $this->context->link->getModuleLink(
+                $this->module->name,
+                ControllerName::FAIL,
+                [
+                    'cartId' => $this->context->cart->id,
+                    'orderId' => Order::getOrderByCartId($this->context->cart->id),
+                    'secureKey' => $this->context->cart->secure_key,
+                    'moduleId' => $this->module->id,
+                ],
+                true
+            );
+            $this->redirectWithNotifications($redirectUrl);
         }
 
         $this->context->smarty->assign([
@@ -47,6 +79,7 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             'credit_card_back_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-back.png",
             'tos_cms' => SaferPayConfig::isVersionAbove177() ? $this->getDefaultTermsAndConditions() : null,
             'saferpay_selected_card' => $selectedCard,
+            'redirect' => $redirectUrl,
         ]);
 
         if (SaferPayConfig::isVersion17()) {

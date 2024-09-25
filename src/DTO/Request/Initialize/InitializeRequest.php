@@ -249,9 +249,9 @@ class InitializeRequest
             ];
         }
 
-        if ($this->alias || $this->fieldToken) {
-            unset($return['PaymentMethods']);
-        }
+//        if ($this->alias || $this->fieldToken) {
+//            unset($return['PaymentMethods']);
+//        }
 
         //Wallet related, payment method must be empty, instead used "Wallets" argument in request.
         if (in_array(\Tools::strtoupper($this->paymentMethod), SaferPayConfig::WALLET_PAYMENT_METHODS)) {

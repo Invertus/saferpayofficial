@@ -146,7 +146,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
             /** @var CheckoutController $checkoutController */
             $checkoutController = $this->module->getService(CheckoutController::class);
-            $redirectUrl = $checkoutController->execute($checkoutData);
+//            $redirectUrl = $checkoutController->execute($checkoutData);
 
             $saferPayOrder = new SaferPayOrder();
             $saferPayOrder->is_transaction = 1;
