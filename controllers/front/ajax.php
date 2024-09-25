@@ -86,7 +86,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                     'orderId' => $saferPayOrder->id_order,
                     'moduleId' => $moduleId,
                     'secureKey' => $secureKey,
-                    'selectedCard' => $selectedCard ?? '-1',
+                    'selectedCard' => $selectedCard,
                 ]
             )
         ]));
