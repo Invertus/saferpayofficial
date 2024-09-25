@@ -136,6 +136,21 @@ class SaferPayOrderStatusService
         $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
     }
 
+    public function setAuthorized(Order $order)
+    {
+        $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
+        $saferPayOrder->authorized = 1;
+
+        $saferPayOrder->update();
+
+        //NOTE: Older PS versions does not handle same state change, so we need to check if state is already set
+        if ($order->getCurrentState() === _SAFERPAY_PAYMENT_AUTHORIZED_) {
+            return;
+        }
+
+        $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+    }
+
     /** TODO extract capture api code to different service like Assert for readability */
     public function capture(Order $order, $refundedAmount = 0, $isRefund = false)
     {

@@ -54,6 +54,10 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
         $secureKey = Tools::getValue('secureKey');
         $moduleId = Tools::getValue('moduleId');
 
+        $order = new Order($orderId);
+        $statusService = $this->module->getService(SaferPayOrderStatusService::class);
+        $statusService->setAuthorized($order);
+
         $cart = new Cart($cartId);
         if ($cart->secure_key !== $secureKey) {
             $this->errors[] = $this->module->l('Failed to validate cart.', self::FILE_NAME);
