@@ -77,7 +77,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
         $this->ajaxDie(json_encode([
             'saferpayOrder' => json_encode($saferPayOrder),
-            'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->pending,
+            'isFinished' => true,
             'href' => $this->context->link->getModuleLink(
                 $this->module->name,
                 $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
@@ -86,7 +86,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                     'orderId' => $saferPayOrder->id_order,
                     'moduleId' => $moduleId,
                     'secureKey' => $secureKey,
-                    'selectedCard' => $selectedCard,
+                    'selectedCard' => $selectedCard ?? '-1',
                 ]
             )
         ]));
