@@ -147,7 +147,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             $checkoutController = $this->module->getService(CheckoutController::class);
             $redirectUrl = $checkoutController->execute($checkoutData);
 
-            if (empty($redirectUrl)) {
+            if (empty($redirectUrl) || Tools::getValue('action') === 'submitHostedFields') {
                 $redirectUrl = $this->getRedirectionToControllerUrl('successHosted');
             }
 

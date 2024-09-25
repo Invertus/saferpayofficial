@@ -184,7 +184,6 @@ class InitializeRequest
                 'PayerNote' => $this->payment->getPayerNote(),
                 'Description' => $this->payment->getDescription(),
             ],
-            'PaymentMeans' => $this->getPaymentMeansField() ?: null,
             'Payer' => [
                 'IpAddress' => $this->payer->getIpAddress(),
                 'LanguageCode' => $this->payer->getLanguageCode(),
