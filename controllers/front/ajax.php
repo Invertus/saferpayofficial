@@ -26,6 +26,7 @@ use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -146,6 +147,16 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             /** @var CheckoutController $checkoutController */
             $checkoutController = $this->module->getService(CheckoutController::class);
             $redirectUrl = $checkoutController->execute($checkoutData);
+
+            $saferPayOrder = new SaferPayOrder();
+            $saferPayOrder->is_transaction = 1;
+            $saferPayOrder->update();
+
+            $cart = new Cart($this->context->cart->id);
+
+            /** @var SaferPayTransactionAssertion $assertService */
+            $assertService = $this->module->getService(SaferPayTransactionAssertion::class);
+            $assertService->assert($this->context->cart->id, false);
 
             if (empty($redirectUrl) || Tools::getValue('action') === 'submitHostedFields') {
                 $redirectUrl = $this->getRedirectionToControllerUrl('successHosted');
