@@ -108,12 +108,13 @@ class AuthorizationService
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
         $isPaymentSafe = $assertBody->getLiability()->getLiabilityShift();
-        $allSavedCards = $this->aliasRepository->getSavedCardsNumbersByCustomerId($customerId);
-        $allSavedCards = array_column($allSavedCards, 'card_number');
+        $allSavedCards = array_column($this->aliasRepository->getSavedCardsNumbersByCustomerId($customerId), 'card_number');
+        $currentCard = $assertBody->getPaymentMeans()->getDisplayText();
 
-        if (in_array($assertBody->getPaymentMeans()->getDisplayText(), $allSavedCards)) {
+        if (in_array($currentCard, $allSavedCards)) {
             return $assertBody;
         }
+
         if ((int) $selectedCardOption === SaferPayConfig::CREDIT_CARD_OPTION_SAVE && $isPaymentSafe) {
             $this->aliasBuilder->createCardAlias($assertBody, $customerId);
         }
