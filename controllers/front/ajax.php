@@ -152,8 +152,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             $saferPayOrder->is_transaction = 1;
             $saferPayOrder->update();
 
-            $cart = new Cart($this->context->cart->id);
-
             /** @var SaferPayTransactionAssertion $assertService */
             $assertService = $this->module->getService(SaferPayTransactionAssertion::class);
             $assertService->assert($this->context->cart->id, false);
