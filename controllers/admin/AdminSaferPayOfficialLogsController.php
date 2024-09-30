@@ -67,7 +67,7 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
                 'callback' => 'printSeverityLevel',
             ],
             'request' => [
-                'title' => $this->module->l('Payload', self::FILE_NAME),
+                'title' => $this->module->l('Request', self::FILE_NAME),
                 'align' => 'center',
                 'class' => 'saferpay-text-break',
             ],
