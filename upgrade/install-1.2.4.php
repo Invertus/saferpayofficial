@@ -32,11 +32,12 @@ function upgrade_module_1_2_3(SaferPayOfficial $module)
 {
     $installer = new \Invertus\SaferPay\Install\Installer($module);
 
-    return
-        $installer->createPendingOrderStatus() &&
-        Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_order ADD COLUMN `pending` TINYINT(1) DEFAULT 0') &&
-        $module->registerHook('displayOrderConfirmation') &&
-        $module->unregisterHook('actionOrderHistoryAddAfter') &&
-        Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION) &&
-        Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION);
+    return Db::getInstance()->execute(
+        'ALTER TABLE ' . _DB_PREFIX_ . SaferPayLog::$definition['table'] . ' 
+            ADD COLUMN `id_log` INTEGER(10) DEFAULT 0,
+            ADD COLUMN `id_shop` INTEGER(10) DEFAULT 0,
+            CHANGE `payload` `request` TEXT,
+            ADD COLUMN `response` TEXT,
+            ADD COLUMN `context` TEXT;'
+    );
 }
