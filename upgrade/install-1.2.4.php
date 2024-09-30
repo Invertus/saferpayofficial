@@ -28,10 +28,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_3(SaferPayOfficial $module)
+function upgrade_module_1_2_4(SaferPayOfficial $module)
 {
-    $installer = new \Invertus\SaferPay\Install\Installer($module);
-
     return Db::getInstance()->execute(
         'ALTER TABLE ' . _DB_PREFIX_ . SaferPayLog::$definition['table'] . ' 
             ADD COLUMN `id_log` INTEGER(10) DEFAULT 0,
