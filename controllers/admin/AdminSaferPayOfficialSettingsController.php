@@ -402,6 +402,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'desc' => 'This description is visible in payment page also in payment confirmation email',
                     'class' => 'fixed-width-xxl'
                 ],
+                SaferPayConfig::SAFERPAY_DEBUG_MODE => [
+                    'title' => $this->module->l('Debug mode', self::FILE_NAME),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                    'desc' => 'Enable debug mode to see more information in logs',
+                ],
             ],
             'buttons' => [
                 'save_and_connect' => [
