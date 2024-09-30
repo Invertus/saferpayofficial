@@ -322,13 +322,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('Email sending'),
                     'icon' => 'icon-settings',
                     'fields' => [
-                        SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION => [
-                            'title' => $this->l('Send order confirmation email'),
-                            'desc' => $this->l('Send order confirmation email before payment is executed'),
-                            'validation' => 'isBool',
-                            'cast' => 'intval',
-                            'type' => 'bool',
-                        ],
                         SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => [
                             'title' => $this->l('Send an email from Saferpay on payment completion'),
                             'desc' => $this->l('With this setting enabled an email from the Saferpay system will be sent to the customer'),

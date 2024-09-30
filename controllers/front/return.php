@@ -61,11 +61,59 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
+        $lockResult = $this->applyLock(
+            sprintf(
+                '%s-%s',
+                $cartId,
+                $secureKey
+            )
+        );
+
+        if (!$lockResult->isSuccessful()) {
+            $this->redirectWithNotifications($this->context->link->getModuleLink(
+                $this->module->name,
+                ControllerName::FAIL,
+                [
+                    'cartId' => $cartId,
+                    'secureKey' => $secureKey,
+                    'moduleId' => $moduleId,
+                ]
+            ));
+        }
+
         if ($cart->secure_key !== $secureKey) {
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
             ]));
+        }
+
+        if ($cart->orderExists()) {
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cartId);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cartId);
+            }
+
+            $order = new Order($orderId);
+
+            $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+            $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+
+            if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
+                Tools::redirect($this->context->link->getModuleLink(
+                    $this->module->name,
+                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                    [
+                        'cartId' => $cartId,
+                        'orderId' => $orderId,
+                        'moduleId' => $moduleId,
+                        'secureKey' => $secureKey,
+                        'selectedCard' => $selectedCard,
+                    ]
+                ));
+            }
         }
 
         try {

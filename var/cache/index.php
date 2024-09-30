@@ -20,20 +20,12 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-/**
- * @param SaferPayOfficial $module
- * @return bool
- */
-function upgrade_module_1_2_2($module)
-{
-    return $module->registerHook('displayHeader')
-        && $module->registerHook('actionOrderStatusPostUpdate')
-        && $module->unregisterHook('actionOrderStatusUpdate')
-        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
-}
-
+header('Location: ../');
+exit;
