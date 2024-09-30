@@ -27,6 +27,8 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialLogsController extends ModuleAdminController
 {
+    const FILE_NAME = 'AdminSaferPayOfficialLogsController';
+
     public function __construct()
     {
         parent::__construct();
@@ -34,6 +36,9 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
         $this->table = SaferPayLog::$definition['table'];
         $this->bootstrap = true;
         $this->list_no_link = true;
+        $this->lang = false;
+        $this->noLink = true;
+        $this->allow_export = true;
         $this->initList();
     }
 
@@ -42,6 +47,9 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
         if ($this->module instanceof SaferPayOfficial) {
             $this->content .= $this->module->displayNavigationTop();
         }
+
+        $this->content .= $this->displaySeverityInformation();
+        
         parent::initContent();
     }
 
@@ -49,21 +57,32 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
     {
         $this->fields_list = [
             'id_saferpay_log' => [
-                'title' => $this->l('ID'),
+                'title' => $this->module->l('ID', self::FILE_NAME),
                 'align' => 'center',
             ],
-            'payload' => [
-                'title' => $this->l('Payload'),
+            'severity' => [
+                'title' => $this->module->l('Severity (1-4)', self::FILE_NAME),
+                'align' => 'text-center',
+                'class' => 'fixed-width-xs',
+                'callback' => 'printSeverityLevel',
+            ],
+            'request' => [
+                'title' => $this->module->l('Payload', self::FILE_NAME),
+                'align' => 'center',
+                'class' => 'saferpay-text-break',
+            ],
+            'response' => [
+                'title' => $this->module->l('Response', self::FILE_NAME),
                 'align' => 'center',
                 'class' => 'saferpay-text-break',
             ],
             'message' => [
                 'align' => 'center',
-                'title' => $this->l('Message'),
+                'title' => $this->module->l('Message', self::FILE_NAME),
                 'class' => 'saferpay-text-break',
             ],
             'date_add' => [
-                'title' => $this->l('Date'),
+                'title' => $this->module->l('Date', self::FILE_NAME),
                 'type' => 'datetime',
             ],
         ];
@@ -84,5 +103,12 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
     {
         $this->addCSS("{$this->module->getPathUri()}views/css/admin/logs_tab.css");
         parent::setMedia($isNewTheme);
+    }
+
+    public function displaySeverityInformation()
+    {
+        return $this->context->smarty->fetch(
+            "{$this->module->getLocalPath()}views/templates/admin/logs/severity_levels.tpl"
+        );
     }
 }
