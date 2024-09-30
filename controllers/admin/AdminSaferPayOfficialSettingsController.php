@@ -407,7 +407,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'validation' => 'isBool',
                     'cast' => 'intval',
                     'type' => 'bool',
-                    'desc' => 'Enable debug mode to see more information in logs',
+                    'desc' => $this->module->l('Enable debug mode to see more information in logs', self::FILE_NAME),
                 ],
             ],
             'buttons' => [
