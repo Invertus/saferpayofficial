@@ -69,7 +69,13 @@ class SaferPayPaymentRepository
         $query->from('saferpay_logo');
         $query->where('active = "1"');
 
-        return Db::getInstance()->executeS($query);
+        $result = Db::getInstance()->executeS($query);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result;
     }
 
     public function getActivePaymentMethods()
@@ -79,7 +85,13 @@ class SaferPayPaymentRepository
         $query->from('saferpay_payment');
         $query->where('active = "1"');
 
-        return Db::getInstance()->executeS($query);
+        $result = Db::getInstance()->executeS($query);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result;
     }
 
     public function getActivePaymentMethodsNames()
@@ -89,7 +101,13 @@ class SaferPayPaymentRepository
         $query->from('saferpay_payment');
         $query->where('active = "1"');
 
-        return Db::getInstance()->executeS($query);
+        $result = Db::getInstance()->executeS($query);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result;
     }
 
     public function truncateTable()
