@@ -206,7 +206,7 @@ Thank you for your patience!');
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
-        $logosEnabled = $paymentRepository->getAllLogosEnabled();
+        $logosEnabled = $paymentRepository->getAllActiveLogosNames();
         $logosEnabled = array_column($logosEnabled, 'name');
 
         $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();

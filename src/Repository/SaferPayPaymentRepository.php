@@ -62,7 +62,7 @@ class SaferPayPaymentRepository
         return Db::getInstance()->getValue($query);
     }
 
-    public function getAllLogosEnabled()
+    public function getAllActiveLogosNames()
     {
         $query = new DbQuery();
         $query->select('name');
