@@ -33,9 +33,10 @@ function upgrade_module_1_2_4(SaferPayOfficial $module)
     return Db::getInstance()->execute(
         'ALTER TABLE ' . _DB_PREFIX_ . SaferPayLog::$definition['table'] . ' 
             ADD COLUMN `id_log` INTEGER(10) DEFAULT 0,
-            ADD COLUMN `id_shop` INTEGER(10) DEFAULT 0,
+            ADD COLUMN `id_shop` INTEGER(10) DEFAULT 1,
             CHANGE `payload` `request` TEXT,
-            ADD COLUMN `response` TEXT,
-            ADD COLUMN `context` TEXT;'
+            ADD COLUMN `response` TEXT DEFAULT "",
+            ADD COLUMN `context` TEXT DEFAULT "",
+            ADD PRIMARY KEY (`id_log`, `id_shop`);'
     );
 }
