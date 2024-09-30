@@ -21,13 +21,17 @@
             "php": "5.6"
         }
     },
-    "repositories": [
-        {
+    "repositories": {
+        "knapsack": {
+            "type": "vcs",
+            "url": "https://github.com/Invertus/Knapsack.git"
+        },
+        "0": {
             "type": "vcs",
             "url": "https://github.com/Invertus/lock.git",
             "no-api": true
         }
-    ],
+    },
     "require": {
         "vlucas/phpdotenv": "^3.6",
         "symfony/expression-language": "^3.4",
