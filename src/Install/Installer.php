@@ -299,10 +299,14 @@ class Installer extends AbstractInstaller
     private function installSaferPayLog()
     {
         return Db::getInstance()->execute(
-            'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_log' . '(
+            'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '(
             `id_saferpay_log` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            `id_log` INTEGER(10) DEFAULT 0,
+            `id_shop` INTEGER(10) DEFAULT 0,
             `message` TEXT NOT NULL,
-            `payload` TEXT NOT NULL,
+            `request` TEXT NOT NULL,
+            `response` TEXT NOT NULL,
+            `context` TEXT NOT NULL,
             `date_add` datetime NOT NULL
                 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );
