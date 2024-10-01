@@ -365,9 +365,7 @@ Thank you for your patience!');
             return;
         }
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-            return $this->context->smarty->fetch(
-                'module:saferpayofficial/views/templates/hook/front/MyAccount.tpl'
-            );
+            return $this->display(__FILE__, 'front/MyAccount.tpl');
         }
 
         return $this->display(__FILE__, 'front/MyAccount_16.tpl');
