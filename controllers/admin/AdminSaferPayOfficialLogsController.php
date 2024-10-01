@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Logger\Formatter\LogFormatter;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Logger\Logger;
 
@@ -45,13 +46,18 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
         parent::__construct();
         $this->initList();
 
+        $this->_select .= '
+            REPLACE(a.`message`, "' . LogFormatter::SAFERPAY_LOG_PREFIX . '", "") as message,
+            spl.request, spl.response, spl.context
+        ';
+
         $shopIdCheck = '';
 
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.8.0')) {
-            $shopIdCheck = ' AND kpl.id_shop = a.id_shop';
+            $shopIdCheck = ' AND spl.id_shop = a.id_shop';
         }
 
-        $this->_join .= ' JOIN ' . _DB_PREFIX_ . 'saferpay_log kpl ON (kpl.id_log = a.id_log' . $shopIdCheck . ' AND a.object_type = "' . pSQL(Logger::LOG_OBJECT_TYPE) . '")';
+        $this->_join .= ' JOIN ' . _DB_PREFIX_ . SaferPayLog::$definition['table'] . ' spl ON (spl.id_log = a.id_log' . $shopIdCheck . ' AND a.object_type = "' . pSQL(Logger::LOG_OBJECT_TYPE) . '")';
         $this->_use_found_rows = false;
         $this->list_no_link = true;
     }
