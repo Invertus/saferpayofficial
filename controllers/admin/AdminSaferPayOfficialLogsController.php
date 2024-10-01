@@ -27,6 +27,7 @@ use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Logger\Logger;
+use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -232,8 +233,8 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         /** @var \Invertus\SaferPay\Adapter\Tools $tools */
         $tools = $this->module->getService(\Invertus\SaferPay\Adapter\Tools::class);
 
-        /** @var \Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface $logRepository */
-        $logRepository = $this->module->getService(\Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface::class);
+//        /** @var \Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface $logRepository */
+//        $logRepository = $this->module->getService(\Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface::class);
 
         /** @var GlobalShopContextInterface $globalShopContext */
         $globalShopContext = $this->module->getService(GlobalShopContextInterface::class);
