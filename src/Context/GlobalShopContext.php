@@ -13,17 +13,17 @@
 
 namespace Invertus\Saferpay\Context;
 
-use Invertus\SaferPay\Adapter\LegacyContext as Context;
+use Invertus\SaferPay\Adapter\LegacyContext;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-final class GlobalShopContext implements GlobalShopContextInterface
+class GlobalShopContext
 {
     private $context;
 
-    public function __construct(Context $context)
+    public function __construct(LegacyContext $context)
     {
         $this->context = $context;
     }

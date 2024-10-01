@@ -46,5 +46,4 @@ interface GlobalShopContextInterface
 
     public function getShopName();
 
-    public function isShopSingleShopContext();
 }
