@@ -32,6 +32,9 @@ if (!defined('_PS_VERSION_')) {
 class AdminSaferPayOfficialLogsController extends ModuleAdminController
 {
     const FILE_NAME = 'AdminSaferPayOfficialLogsController';
+    const LOG_INFORMATION_TYPE_REQUEST = 'request';
+    const LOG_INFORMATION_TYPE_RESPONSE = 'response';
+    const LOG_INFORMATION_TYPE_CONTEXT = 'context';
 
     public function __construct()
     {
@@ -137,8 +140,16 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
 
     public function setMedia($isNewTheme = false)
     {
-        $this->addCSS("{$this->module->getPathUri()}views/css/admin/logs_tab.css");
         parent::setMedia($isNewTheme);
+
+        Media::addJsDef([
+            'klarnapayment' => [
+                'logsUrl' => $context->getAdminLink(ModuleTabs::LOGS_MODULE_TAB_CONTROLLER_NAME),
+            ],
+        ]);
+
+        $this->addCSS("{$this->module->getPathUri()}views/css/admin/logs_tab.css");
+        $this->addJS($this->module->getPathUri() . 'views/js/admin/log.js', false);
     }
 
     public function displaySeverityInformation()
@@ -169,5 +180,41 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
         return $this->context->smarty->fetch(
             "{$this->module->getLocalPath()}views/templates/admin/logs/severity_level_column.tpl"
         );
+    }
+
+    public function getDisplayButton(int $logId, string $data, string $logInformationType)
+    {
+        $unserializedData = json_decode($data);
+
+        if (empty($unserializedData)) {
+            return '--';
+        }
+
+        $this->context->smarty->assign([
+            'log_id' => $logId,
+            'log_information_type' => $logInformationType,
+        ]);
+
+        return $this->context->smarty->fetch(
+            "{$this->module->getLocalPath()}views/templates/admin/logs/log_modal.tpl"
+        );
+    }
+
+    /**
+     * @param string $request
+     * @param array $data
+     *
+     * @return false|string
+     *
+     * @throws SmartyException
+     */
+    public function printRequestButton(string $request, array $data)
+    {
+        return $this->getDisplayButton($data['id_log'], $request, self::LOG_INFORMATION_TYPE_REQUEST);
+    }
+
+    public function printResponseButton(string $response, array $data)
+    {
+        return $this->getDisplayButton($data['id_log'], $response, self::LOG_INFORMATION_TYPE_RESPONSE);
     }
 }
