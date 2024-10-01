@@ -21,6 +21,9 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\Saferpay\Context\GlobalShopContextInterface;
+use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
+use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Logger\Logger;
@@ -29,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AdminSaferPayOfficialLogsController extends ModuleAdminController
+class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayController
 {
     const FILE_NAME = 'AdminSaferPayOfficialLogsController';
     const LOG_INFORMATION_TYPE_REQUEST = 'request';
@@ -218,5 +221,72 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
     public function printResponseButton(string $response, array $data)
     {
         return $this->getDisplayButton($data['id_log'], $response, self::LOG_INFORMATION_TYPE_RESPONSE);
+    }
+
+    public function displayAjaxGetLog()
+    {
+        if (!$this->ensureHasPermissions([PermissionType::EDIT, PermissionType::VIEW], true)) {
+            return;
+        }
+
+        /** @var \Invertus\SaferPay\Adapter\Tools $tools */
+        $tools = $this->module->getService(\Invertus\SaferPay\Adapter\Tools::class);
+
+        /** @var \Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface $logRepository */
+        $logRepository = $this->module->getService(\Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface::class);
+
+        /** @var GlobalShopContextInterface $globalShopContext */
+        $globalShopContext = $this->module->getService(GlobalShopContextInterface::class);
+
+        $logId = $tools->getValueAsInt('log_id');
+
+//        /** @var LoggerInterface $logger */
+//        $logger = $this->module->getService(LoggerInterface::class);
+
+        try {
+            /** @var \SaferPayLog|null $log */
+            $log = $logRepository->findOneBy([
+                'id_log' => $logId,
+                'id_shop' => $globalShopContext->getShopId(),
+            ]);
+        } catch (Exception $exception) {
+//            $logger->error('Failed to find log', [
+//                'context' => [
+//                    'id_log' => $logId,
+//                    'id_shop' => $globalShopContext->getShopId(),
+//                ],
+//                'exceptions' => ExceptionUtility::getExceptions($exception),
+//            ]);
+
+            $this->ajaxResponse(json_encode([
+                'error' => true,
+                'message' => $this->module->l('Failed to find log.', self::FILE_NAME),
+            ]));
+        }
+
+        if (!isset($log)) {
+//            $logger->error('No log information found.', [
+//                'context' => [
+//                    'id_log' => $logId,
+//                    'id_shop' => $globalShopContext->getShopId(),
+//                ],
+//                'exceptions' => [],
+//            ]);
+
+            $this->ajaxRender(json_encode([
+                'error' => true,
+                'message' => $this->module->l('No log information found.', self::FILE_NAME),
+            ]));
+        }
+        $this->ajaxRender($log);
+
+        $this->ajaxResponse(json_encode([
+            'error' => false,
+            'log' => [
+                self::LOG_INFORMATION_TYPE_REQUEST => $log->request,
+                self::LOG_INFORMATION_TYPE_RESPONSE => $log->response,
+                self::LOG_INFORMATION_TYPE_CONTEXT => $log->context,
+            ],
+        ]));
     }
 }

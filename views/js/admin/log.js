@@ -53,14 +53,13 @@ $(document).ready(function () {
             .then(data => {
                 $('.log-modal-content-spinner').addClass('hidden')
 
-                $('#log-modal-' + logId + '-request .log-modal-content-data').removeClass('hidden').html(prettyJson(data.log.request));
-                $('#log-modal-' + logId + '-response .log-modal-content-data').removeClass('hidden').html(prettyJson(data.log.response));
-                $('#log-modal-' + logId + '-context .log-modal-content-data').removeClass('hidden').html(prettyJson(data.log.context));
+                $('#log-modal-' + logId + '-request .log-modal-content-data').removeClass('hidden').html(data.log.request);
+                $('#log-modal-' + logId + '-response .log-modal-content-data').removeClass('hidden').html(data.log.response);
+                $('#log-modal-' + logId + '-context .log-modal-content-data').removeClass('hidden').html(data.log.context);
             })
     });
 });
 
-function prettyJson(json) {
-    var parsed = jQuery.parseJSON(json);  // Using older jQuery to parse JSON
-    return JSON.stringify(parsed, null, 2);
-}
+// function prettyJson(json) {
+//     return JSON.stringify(JSON.parse(json), null, 2)
+// }
