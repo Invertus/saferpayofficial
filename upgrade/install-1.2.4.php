@@ -35,8 +35,8 @@ function upgrade_module_1_2_4(SaferPayOfficial $module)
         ADD COLUMN `id_log` INT(10) DEFAULT 0,
         ADD COLUMN `id_shop` INT(10) DEFAULT ' . Configuration::get('PS_SHOP_DEFAULT') . ',
         CHANGE `payload` `request` TEXT,
-        ADD COLUMN `response` TEXT DEFAULT "",
-        ADD COLUMN `context` TEXT DEFAULT "",
+        ADD COLUMN `response` MEDIUMTEXT DEFAULT NULL,
+        ADD COLUMN `context` MEDIUMTEXT DEFAULT NULL,
         DROP PRIMARY KEY,
         ADD PRIMARY KEY (`id_log`, `id_shop`),
         ADD INDEX (`id_log`),'
