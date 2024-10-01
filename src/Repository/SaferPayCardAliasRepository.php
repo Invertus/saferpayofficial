@@ -32,6 +32,13 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayCardAliasRepository
 {
+    /**
+     * @param $userId
+     * @param $paymentMethod
+     * @param $currentDate
+     *
+     * @return array
+     */
     public function getSavedValidCardsByUserIdAndPaymentMethod($userId, $paymentMethod, $currentDate)
     {
         $query = new DbQuery();
@@ -41,9 +48,13 @@ class SaferPayCardAliasRepository
         $query->where('payment_method = "' . pSQL($paymentMethod) . '"');
         $query->where('valid_till > "' . pSQL($currentDate) . '"');
 
-        return Db::getInstance()->executeS($query);
+        return (array) Db::getInstance()->executeS($query) ?? [];
     }
 
+    /**
+     * @param $id
+     * @return false|string
+     */
     public function getSavedCardAliasFromId($id)
     {
         $query = new DbQuery();
@@ -54,6 +65,11 @@ class SaferPayCardAliasRepository
         return Db::getInstance()->getValue($query);
     }
 
+    /**
+     * @param $customerId
+     * @param $aliasId
+     * @return false|string
+     */
     public function getSavedCardIdByCustomerIdAndAliasId($customerId, $aliasId)
     {
         $query = new DbQuery();
@@ -65,6 +81,10 @@ class SaferPayCardAliasRepository
         return Db::getInstance()->getValue($query);
     }
 
+    /**
+     * @param $customerId
+     * @return array
+     */
     public function getSavedCardsByCustomerId($customerId)
     {
         $query = new DbQuery();
@@ -72,9 +92,13 @@ class SaferPayCardAliasRepository
         $query->from('saferpay_card_alias');
         $query->where('id_customer = "' . (int) $customerId . '"');
 
-        return Db::getInstance()->executeS($query);
+        return Db::getInstance()->executeS($query) ?? [];
     }
 
+    /**
+     * @param $customerId
+     * @return array
+     */
     public function getSavedCardsNumbersByCustomerId($customerId)
     {
         $query = new DbQuery();
@@ -82,6 +106,6 @@ class SaferPayCardAliasRepository
         $query->from('saferpay_card_alias');
         $query->where('id_customer = "' . (int) $customerId . '"');
 
-        return Db::getInstance()->executeS($query);
+        return Db::getInstance()->executeS($query) ?? [];
     }
 }
