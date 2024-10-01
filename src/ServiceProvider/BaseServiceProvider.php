@@ -23,9 +23,6 @@
 
 namespace Invertus\SaferPay\ServiceProvider;
 
-use Invertus\SaferPay\Adapter\LegacyContext;
-use Invertus\SaferPay\Context\GlobalShopContext;
-use Invertus\SaferPay\Context\GlobalShopContextInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepository;
@@ -52,10 +49,6 @@ final class BaseServiceProvider
 
     public function register(Container $container)
     {
-        $container->add(GlobalShopContext::class, function() {
-            return new GlobalShopContext($this->getService(LegacyContext::class, new LegacyContext()));
-        });
-        $this->addService($container, GlobalShopContextInterface::class, $container->get(GlobalShopContext::class));
         $this->addService($container, IdempotencyProviderInterface::class, $container->get(BasicIdempotencyProvider::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
         $this->addService($container, SaferPayLogRepositoryInterface::class, $container->get(SaferPayLogRepository::class));
