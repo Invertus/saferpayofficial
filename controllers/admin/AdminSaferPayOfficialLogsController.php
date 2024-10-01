@@ -142,9 +142,11 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
 
+        $context = $this->module->getService(\Invertus\SaferPay\Adapter\LegacyContext::class);
+
         Media::addJsDef([
-            'klarnapayment' => [
-                'logsUrl' => $context->getAdminLink(ModuleTabs::LOGS_MODULE_TAB_CONTROLLER_NAME),
+            'saferpayofficial' => [
+                'logsUrl' => $context->getAdminLink(SaferPayOfficial::ADMIN_LOGS_CONTROLLER),
             ],
         ]);
 
