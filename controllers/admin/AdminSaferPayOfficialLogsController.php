@@ -226,6 +226,11 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         return $this->getDisplayButton($data['id_log'], $response, self::LOG_INFORMATION_TYPE_RESPONSE);
     }
 
+    public function printContextButton(string $context, array $data)
+    {
+        return $this->getDisplayButton($data['id_log'], $context, self::LOG_INFORMATION_TYPE_CONTEXT);
+    }
+
     public function displayAjaxGetLog()
     {
         if (!$this->ensureHasPermissions([PermissionType::EDIT, PermissionType::VIEW], true)) {
@@ -237,8 +242,6 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
         /** @var SaferPayLogRepository $logRepository */
         $logRepository = $this->module->getService(SaferPayLogRepositoryInterface::class);
-
-        /* GlobalShopContext service */
 
         $logId = $tools->getValueAsInt('log_id');
 
