@@ -38,12 +38,13 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
         $this->table = 'log';
         $this->className = 'PrestaShopLogger';
         $this->bootstrap = true;
-        $this->list_no_link = true;
         $this->lang = false;
         $this->noLink = true;
         $this->allow_export = true;
-        $this->toolbar_btn = [];
+
         parent::__construct();
+
+        $this->toolbar_btn = [];
         $this->initList();
 
         $this->_select .= '
@@ -76,9 +77,10 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
     public function initList()
     {
         $this->fields_list = [
-            'id_saferpay_log' => [
+            'id_log' => [
                 'title' => $this->module->l('ID', self::FILE_NAME),
-                'align' => 'center',
+                'align' => 'text-center',
+                'class' => 'fixed-width-xs',
             ],
             'severity' => [
                 'title' => $this->module->l('Severity (1-4)', self::FILE_NAME),
@@ -88,22 +90,36 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
             ],
             'request' => [
                 'title' => $this->module->l('Request', self::FILE_NAME),
-                'align' => 'center',
-                'class' => 'saferpay-text-break',
+                'align' => 'text-center',
+                'callback' => 'printRequestButton',
+                'orderby' => false,
+                'search' => false,
+                'remove_onclick' => true,
             ],
             'response' => [
                 'title' => $this->module->l('Response', self::FILE_NAME),
-                'align' => 'center',
-                'class' => 'saferpay-text-break',
+                'align' => 'text-center',
+                'callback' => 'printResponseButton',
+                'orderby' => false,
+                'search' => false,
+                'remove_onclick' => true,
             ],
             'message' => [
-                'align' => 'center',
                 'title' => $this->module->l('Message', self::FILE_NAME),
-                'class' => 'saferpay-text-break',
+            ],
+            'context' => [
+                'title' => $this->module->l('Context', self::FILE_NAME),
+                'align' => 'text-center',
+                'callback' => 'printContextButton',
+                'orderby' => false,
+                'search' => false,
+                'remove_onclick' => true,
             ],
             'date_add' => [
                 'title' => $this->module->l('Date', self::FILE_NAME),
+                'align' => 'right',
                 'type' => 'datetime',
+                'filter_key' => 'a!date_add',
             ],
         ];
 
