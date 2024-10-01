@@ -131,4 +131,27 @@ class AdminSaferPayOfficialLogsController extends ModuleAdminController
             "{$this->module->getLocalPath()}views/templates/admin/logs/severity_levels.tpl"
         );
     }
+
+    public function printSeverityLevel(int $level)
+    {
+        $this->context->smarty->assign([
+            'log_severity_level' => $level,
+            'log_severity_level_informative' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_INFORMATIVE') ?
+                PrestaShopLogger::LOG_SEVERITY_LEVEL_INFORMATIVE :
+                Config::LOG_SEVERITY_LEVEL_INFORMATIVE,
+            'log_severity_level_warning' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_WARNING') ?
+                PrestaShopLogger::LOG_SEVERITY_LEVEL_WARNING :
+                Config::LOG_SEVERITY_LEVEL_WARNING,
+            'log_severity_level_error' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR') ?
+                PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR :
+                Config::LOG_SEVERITY_LEVEL_ERROR,
+            'log_severity_level_major' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_MAJOR') ?
+                PrestaShopLogger::LOG_SEVERITY_LEVEL_MAJOR :
+                Config::LOG_SEVERITY_LEVEL_MAJOR,
+        ]);
+
+        return $this->context->smarty->fetch(
+            "{$this->module->getLocalPath()}views/templates/admin/logs/severity_level_column.tpl"
+        );
+    }
 }
