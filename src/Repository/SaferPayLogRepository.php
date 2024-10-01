@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+namespace Invertus\SaferPay\Repository;
+
 use Invertus\Knapsack\Collection;
 use Invertus\SaferPay\Repository\CollectionRepository;
 use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
