@@ -300,15 +300,17 @@ class Installer extends AbstractInstaller
     {
         return Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '(
-                `id_saferpay_log` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                `id_log` INTEGER(10) DEFAULT 0,
-                `id_shop` INTEGER(10) DEFAULT 1,
+                `id_saferpay_log` INTEGER(10) UNSIGNED AUTO_INCREMENT,
+                `id_log` INT(10) DEFAULT 0,
+                `id_shop` INT(10) DEFAULT ' . Configuration::get('PS_SHOP_DEFAULT') . ',
                 `message` TEXT NOT NULL DEFAULT "",
                 `request` TEXT NOT NULL DEFAULT "",
                 `response` TEXT NOT NULL DEFAULT "",
                 `context` TEXT NOT NULL DEFAULT "",
-                `date_add` datetime NOT NULL DEFAULT NOW()
-                    ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
+                `date_add` datetime NOT NULL DEFAULT NOW(),
+                PRIMARY KEY (`id_saferpay_log`, `id_log`, `id_shop`),
+                INDEX (`id_log`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );
     }
 
