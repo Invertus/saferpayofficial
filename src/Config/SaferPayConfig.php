@@ -266,6 +266,14 @@ class SaferPayConfig
     const SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE = 'MANDATORY';
     const SAFERPAY_DEBUG_MODE = 'SAFERPAY_DEBUG_MODE';
 
+    public const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
+
+    public const LOG_SEVERITY_LEVEL_WARNING = 2;
+
+    public const LOG_SEVERITY_LEVEL_ERROR = 3;
+
+    public const LOG_SEVERITY_LEVEL_MAJOR = 4;
+
     public static function supportsOrderCapture(string $paymentMethod)
     {
         //payments that DOES NOT SUPPORT capture

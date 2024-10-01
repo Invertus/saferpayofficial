@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\Saferpay\Context\GlobalShopContext;
 use Invertus\Saferpay\Context\GlobalShopContextInterface;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
@@ -173,16 +174,16 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             'log_severity_level' => $level,
             'log_severity_level_informative' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_INFORMATIVE') ?
                 PrestaShopLogger::LOG_SEVERITY_LEVEL_INFORMATIVE :
-                Config::LOG_SEVERITY_LEVEL_INFORMATIVE,
+                SaferPayConfig::LOG_SEVERITY_LEVEL_INFORMATIVE,
             'log_severity_level_warning' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_WARNING') ?
                 PrestaShopLogger::LOG_SEVERITY_LEVEL_WARNING :
-                Config::LOG_SEVERITY_LEVEL_WARNING,
+                SaferPayConfig::LOG_SEVERITY_LEVEL_WARNING,
             'log_severity_level_error' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR') ?
                 PrestaShopLogger::LOG_SEVERITY_LEVEL_ERROR :
-                Config::LOG_SEVERITY_LEVEL_ERROR,
+                SaferPayConfig::LOG_SEVERITY_LEVEL_ERROR,
             'log_severity_level_major' => defined('\PrestaShopLogger::LOG_SEVERITY_LEVEL_MAJOR') ?
                 PrestaShopLogger::LOG_SEVERITY_LEVEL_MAJOR :
-                Config::LOG_SEVERITY_LEVEL_MAJOR,
+                SaferPayConfig::LOG_SEVERITY_LEVEL_MAJOR,
         ]);
 
         return $this->context->smarty->fetch(
@@ -242,6 +243,9 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
         /** @var SaferPayLogRepository $logRepository */
         $logRepository = $this->module->getService(SaferPayLogRepositoryInterface::class);
+
+        /** @var GlobalShopContext $shopContext */
+        $shopContext = $this->module->getService(GlobalShopContext::class);
 
         $logId = $tools->getValueAsInt('log_id');
 

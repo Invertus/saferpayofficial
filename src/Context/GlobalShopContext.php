@@ -18,7 +18,10 @@ use Invertus\SaferPay\Adapter\LegacyContext;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
+/**
+ * Gets shop context data
+ * NOTE: Done without interface because throwing error in the module
+ */
 class GlobalShopContext
 {
     private $context;
