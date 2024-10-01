@@ -18,7 +18,7 @@ class CollectionRepository implements ReadOnlyCollectionRepositoryInterface
         $this->fullyClassifiedClassName = $fullyClassifiedClassName;
     }
 
-    public function findAllInCollection($langId = null): \PrestaShopCollection
+    public function findAllInCollection($langId = null)
     {
         return new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
     }
@@ -31,7 +31,7 @@ class CollectionRepository implements ReadOnlyCollectionRepositoryInterface
      *
      * @throws \PrestaShopException
      */
-    public function findOneBy(array $keyValueCriteria, $langId = null): ?\ObjectModel
+    public function findOneBy(array $keyValueCriteria, $langId = null)
     {
         $psCollection = new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
 

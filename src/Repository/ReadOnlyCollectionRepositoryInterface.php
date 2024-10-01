@@ -17,7 +17,7 @@ interface ReadOnlyCollectionRepositoryInterface
      *
      * @return \PrestaShopCollection
      */
-    public function findAllInCollection($langId = null): \PrestaShopCollection;
+    public function findAllInCollection($langId = null);
 
     /**
      * @param array $keyValueCriteria - e.g [ 'id_cart' => 5 ]
@@ -25,5 +25,5 @@ interface ReadOnlyCollectionRepositoryInterface
      *
      * @return \ObjectModel|null
      */
-    public function findOneBy(array $keyValueCriteria, $langId = null): ?\ObjectModel;
+    public function findOneBy(array $keyValueCriteria, $langId = null);
 }
