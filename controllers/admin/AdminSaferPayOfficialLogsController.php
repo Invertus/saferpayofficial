@@ -21,6 +21,9 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Utility\VersionUtility;
+use Invertus\SaferPay\Logger\Logger;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
