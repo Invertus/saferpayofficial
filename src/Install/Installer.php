@@ -93,9 +93,10 @@ class Installer extends AbstractInstaller
         $this->module->registerHook('actionEmailSendBefore');
         $this->module->registerHook('displayAdminOrderTabContent');
         $this->module->registerHook('actionAdminControllerSetMedia');
-        $this->module->registerHook('actionOrderStatusPostUpdate');
+        $this->module->registerHook('actionOrderHistoryAddAfter');
         $this->module->registerHook('actionObjectOrderPaymentAddAfter');
         $this->module->registerHook('displayHeader');
+        $this->module->registerHook('displayOrderConfirmation');
     }
 
     private function installConfiguration()
@@ -240,7 +241,8 @@ class Installer extends AbstractInstaller
             `captured` tinyint(1) DEFAULT 0,
             `refunded` tinyint(1) DEFAULT 0,
             `canceled` tinyint(1) DEFAULT 0,
-            `authorized` tinyint(1) DEFAULT 0
+            `authorized` tinyint(1) DEFAULT 0,
+            `pending` tinyint(1) DEFAULT 0
                 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );
     }
@@ -321,6 +323,20 @@ class Installer extends AbstractInstaller
         );
     }
 
+    public function createPendingOrderStatus()
+    {
+        return $this->createOrderStatus(
+            SaferPayConfig::SAFERPAY_PAYMENT_PENDING,
+            'Payment pending by Saferpay',
+            '#ec730a',
+            false,
+            true,
+            false,
+            false,
+            true
+        );
+    }
+
     public function createAllOrderStatus()
     {
         $success = true;
@@ -343,6 +359,7 @@ class Installer extends AbstractInstaller
             true,
             true
         );
+        $success &= $this->createPendingOrderStatus();
         $success &= $this->createOrderStatus(
             SaferPayConfig::SAFERPAY_PAYMENT_REJECTED,
             'Payment rejected by Saferpay',

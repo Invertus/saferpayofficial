@@ -54,10 +54,14 @@
                     </div>
                 {/if}
             {elseif $transactionPaid == 'AUTHORIZED'}
-                <button class="btn btn-primary ml-4 mb-2" type="submit"
-                        name="submitCaptureOrder">{l s='Capture' mod='saferpayofficial'}</button>
-                <button class="btn btn-primary mb-2" type="submit"
-                        name="submitCancelOrder">{l s='Cancel this order' mod='saferpayofficial'}</button>
+                {if $supportsOrderCapture}
+                    <button class="btn btn-primary ml-4 mb-2" type="submit"
+                            name="submitCaptureOrder">{l s='Capture' mod='saferpayofficial'}</button>
+                {/if}
+                {if $supportsOrderCancel}
+                    <button class="btn btn-primary mb-2" type="submit"
+                            name="submitCancelOrder">{l s='Cancel this order' mod='saferpayofficial'}</button>
+                {/if}
             {/if}
         </form>
         <div>

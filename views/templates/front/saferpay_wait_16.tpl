@@ -1,5 +1,4 @@
-<?php
-/**
+{**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -19,37 +18,15 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- */
+ *}
+{block name='header'}
+{/block}
+{block name='head'}
+{/block}
 
-namespace Invertus\SaferPay\Core\Order\Verification;
+{block name='content'}
+    {include file="./saferpay_wait.tpl"}
+{/block}
 
-use Invertus\SaferPay\Config\SaferPayConfig;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class CanSendOrderConfirmationEmail
-{
-    public function verify($orderStatusId)
-    {
-        if (!$this->isOrderStatusValid($orderStatusId)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function isOrderStatusValid($orderStatusId)
-    {
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatusId) {
-            return true;
-        }
-
-        if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $orderStatusId) {
-            return true;
-        }
-
-        return false;
-    }
-}
+{block name='footer'}
+{/block}

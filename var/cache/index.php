@@ -20,36 +20,12 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-namespace Invertus\SaferPay\Core\Order\Verification;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-use Invertus\SaferPay\Config\SaferPayConfig;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class CanSendOrderConfirmationEmail
-{
-    public function verify($orderStatusId)
-    {
-        if (!$this->isOrderStatusValid($orderStatusId)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function isOrderStatusValid($orderStatusId)
-    {
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatusId) {
-            return true;
-        }
-
-        if ((int) \Configuration::get(SaferPayConfig::STATUS_PS_OS_OUTOFSTOCK_PAID) === (int) $orderStatusId) {
-            return true;
-        }
-
-        return false;
-    }
-}
+header('Location: ../');
+exit;

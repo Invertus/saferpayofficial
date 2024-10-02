@@ -33,6 +33,8 @@ function upgrade_module_1_2_2($module)
 {
     return $module->registerHook('displayHeader')
         && $module->registerHook('actionOrderStatusPostUpdate')
-        && $module->unregisterHook('actionOrderStatusUpdate');
+        && $module->unregisterHook('actionOrderStatusUpdate')
+        && $module->registerHook('actionOrderHistoryAddAfter')
+        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
 }
 

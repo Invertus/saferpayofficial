@@ -157,3 +157,15 @@
 
 - ## [1.2.1] - *
 - FO : Increased compatibility with PrestaShop 1.6
+
+- ## [1.2.2] - *
+- FO : Confirmation email after order authorization fix
+- BO : Order confirmation email setting removed 
+- BO : Security improvements
+
+- ## [1.2.3] - *
+- FO : Increased API version to 1.40
+- FO : WeChat Pay payment method added
+- FO : AccountToAccount Pay payment method added
+- BO : Security improvements
+- BO : Bug fixes and improvements
