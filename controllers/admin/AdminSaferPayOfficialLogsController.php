@@ -293,4 +293,101 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             ],
         ]));
     }
+
+    public function processExport($textDelimiter = '"')
+    {
+        // clean buffer
+        if (ob_get_level() && ob_get_length() > 0) {
+            ob_clean();
+        }
+
+        header('Content-type: text/csv');
+        header('Content-Type: application/force-download; charset=UTF-8');
+        header('Cache-Control: no-store, no-cache');
+        header('Content-disposition: attachment; filename="' . $this->table . '_' . date('Y-m-d_His') . '.csv"');
+
+        $fd = fopen('php://output', 'wb');
+
+        /** @var Configuration $configuration */
+        $configuration = $this->module->getService(Configuration::class);
+
+        /** @var \Invertus\SaferPay\Adapter\LegacyContext $context */
+        $context = $this->module->getService(\Invertus\SaferPay\Adapter\LegacyContext::class);
+
+        $storeInfo = [
+            'PrestaShop Version' => _PS_VERSION_,
+            'PHP Version' => phpversion(),
+            'Module Version' => $this->module->version,
+            'MySQL Version' => \Db::getInstance()->getVersion(),
+            'Shop URL' => $context->getShopDomain(),
+            'Shop Name' => $context->getShopName(),
+        ];
+
+        $moduleConfigurations = [
+            'Test mode' => SaferPayConfig::isTestMode() ? 'Yes' : 'No',
+        ];
+
+        $psSettings = [
+            'Default country' => $configuration->get('PS_COUNTRY_DEFAULT'),
+            'Default currency' => $configuration->get('PS_CURRENCY_DEFAULT'),
+            'Default language' => $configuration->get('PS_LANG_DEFAULT'),
+            'Round mode' => $configuration->get('PS_PRICE_ROUND_MODE'),
+            'Round type' => $configuration->get('PS_ROUND_TYPE'),
+            'Current theme name' => $context->getShopThemeName(),
+            'PHP memory limit' => ini_get('memory_limit'),
+        ];
+
+        $moduleConfigurationsInfo = "**Module configurations:**\n";
+        foreach ($moduleConfigurations as $key => $value) {
+            $moduleConfigurationsInfo .= "- $key: $value\n";
+        }
+
+        $psSettingsInfo = "**Prestashop settings:**\n";
+        foreach ($psSettings as $key => $value) {
+            $psSettingsInfo .= "- $key: $value\n";
+        }
+
+        fputcsv($fd, array_keys($storeInfo), ';', $textDelimiter);
+        fputcsv($fd, $storeInfo, ';', $textDelimiter);
+        fputcsv($fd, [], ';', $textDelimiter);
+
+        fputcsv($fd, [$moduleConfigurationsInfo], ';', $textDelimiter);
+        fputcsv($fd, [$psSettingsInfo], ';', $textDelimiter);
+
+        $query = new \DbQuery();
+
+        $query
+            ->select('spl.id_log, l.severity, l.message, spl.request, spl.response, spl.context, spl.date_add')
+            ->from('saferpay_log', 'spl')
+            ->leftJoin('log', 'l', 'spl.id_log = l.id_log')
+            ->orderBy('spl.id_log DESC')
+            ->limit(1000);
+
+        $result = \Db::getInstance()->executeS($query);
+
+        $firstRow = $result[0];
+        $headers = [];
+
+        foreach ($firstRow as $key => $value) {
+            $headers[] = strtoupper($key);
+        }
+
+        $fd = fopen('php://output', 'wb');
+
+        fputcsv($fd, $headers, ';', $textDelimiter);
+
+        $content = !empty($result) ? $result : [];
+
+        foreach ($content as $row) {
+            $rowValues = [];
+            foreach ($row as $key => $value) {
+                $rowValues[] = $value;
+            }
+
+            fputcsv($fd, $rowValues, ';', $textDelimiter);
+        }
+
+        @fclose($fd);
+        die;
+    }
 }

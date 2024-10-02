@@ -159,4 +159,62 @@ class LegacyContext
     {
         return (string) $this->getContext()->shop->name;
     }
+
+    public function getController()
+    {
+        return $this->getContext()->controller;
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function setCurrentCart(\Cart $cart)
+    {
+        $this->getContext()->cart = $cart;
+        $this->getContext()->cart->update();
+
+        $this->getContext()->cookie->__set('id_cart', (int) $cart->id);
+        $this->getContext()->cookie->write();
+    }
+
+    public function setCountry(\Country $country)
+    {
+        $this->getContext()->country = $country;
+    }
+
+    public function setCurrency(\Currency $currency)
+    {
+        $this->getContext()->currency = $currency;
+    }
+
+    public function getBaseLink(int $shopId = null, bool $ssl = null)
+    {
+        return (string) $this->getContext()->link->getBaseLink($shopId, $ssl);
+    }
+
+    public function getCartProducts()
+    {
+        $cart = $this->getContext()->cart;
+
+        if (!$cart) {
+            return [];
+        }
+
+        return $cart->getProducts();
+    }
+
+    public function getCart()
+    {
+        return $this->getContext()->cart ?? null;
+    }
+
+    public function getShopThemeName()
+    {
+        return $this->getContext()->shop->theme_name;
+    }
+
+    public function updateCustomer(\Customer $customer)
+    {
+        $this->getContext()->updateCustomer($customer);
+    }
 }
