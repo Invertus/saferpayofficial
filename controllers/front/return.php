@@ -54,9 +54,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
             \PrestaShopLogger::addLog($e->getMessage());
-            // redirect with notifiation
             $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILENAME);
-            $this->redirectWithNotifications($this->context->link->getPageLink('index', true, null));
+            $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
         }
 
         /**
@@ -116,6 +115,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 }
             } catch (Exception $e) {
                 \PrestaShopLogger::addLog($e->getMessage());
+                $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILENAME);
+                $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
             }
         }
 
@@ -251,5 +252,25 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             // For PrestaShop 1.6 use the alternative method
             return Order::getOrderByCartId($cartId);
         }
+    }
+
+    /**
+     * @param string $controllerName
+     *
+     * @return string
+     */
+    private function getRedirectionToControllerUrl($controllerName)
+    {
+        return $this->context->link->getModuleLink(
+            $this->module->name,
+            $controllerName,
+            [
+                'cartId' => $this->context->cart->id,
+                'orderId' => Order::getOrderByCartId($this->context->cart->id),
+                'secureKey' => $this->context->cart->secure_key,
+                'moduleId' => $this->module->id,
+            ],
+            true
+        );
     }
 }
