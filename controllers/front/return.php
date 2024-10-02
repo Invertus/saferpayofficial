@@ -112,6 +112,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     /** @var SaferPayOrderStatusService $orderStatusService */
                     $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                     $orderStatusService->capture($order);
+
+                    return;
                 }
             } catch (Exception $e) {
                 \PrestaShopLogger::addLog($e->getMessage());
