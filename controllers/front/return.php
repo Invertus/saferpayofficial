@@ -108,24 +108,13 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
             }
-
-            return;
         }
 
-        try {
-            /** @var SaferPayTransactionAssertion $transactionAssert */
-            $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
-            $transactionResponse = $transactionAssert->assert($cartId, false);
+        /** @var SaferPayOrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
 
-            /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-
-            if ($transactionResponse->getTransaction()->getStatus() === TransactionStatus::PENDING) {
-                $orderStatusService->setPending($order);
-            }
-        } catch (SaferPayApiException $e) {
-            \PrestaShopLogger::addLog($e->getMessage());
-            // we only care if we have a response with pending status, else we skip further actions
+        if ($assertResponseBody->getTransaction()->getStatus() === TransactionStatus::PENDING) {
+            $orderStatusService->setPending($order);
         }
     }
     /**
