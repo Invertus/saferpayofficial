@@ -302,7 +302,7 @@ class Installer extends AbstractInstaller
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '(
                 `id_saferpay_log` INTEGER(10) UNSIGNED AUTO_INCREMENT,
                 `id_log` INT(10) DEFAULT 0,
-                `id_shop` INT(10) DEFAULT ' . Configuration::get('PS_SHOP_DEFAULT') . ',
+                `id_shop` INT(10) DEFAULT ' . (int) Configuration::get('PS_SHOP_DEFAULT') . ',
                 `message` TEXT DEFAULT NULL,
                 `request` MEDIUMTEXT DEFAULT NULL,
                 `response` MEDIUMTEXT DEFAULT NULL,
