@@ -25,7 +25,6 @@ namespace Invertus\SaferPay\Repository;
 
 use Db;
 use DbQuery;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,17 +32,6 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderRepository
 {
-
-    /**
-     * @param int $orderId
-     *
-     * @return SaferPayOrder
-     */
-    public function getByOrderId($orderId)
-    {
-        return new SaferPayOrder($this->getIdByOrderId($orderId));
-    }
-
     public function getIdByOrderId($orderId)
     {
         $query = new DbQuery();
@@ -69,7 +57,6 @@ class SaferPayOrderRepository
         $query->select('`id_saferpay_assert`');
         $query->from('saferpay_assert');
         $query->where('id_saferPay_order = "' . (int) $saferPayOrderId . '"');
-        $query->orderBy('id_saferpay_assert DESC');
 
         return Db::getInstance()->getValue($query);
     }

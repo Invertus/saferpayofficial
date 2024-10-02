@@ -34,6 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderBuilder
 {
+    //TODO to pass $body as InitializeBody.
     public function create($body, $cartId, $customerId, $isTransaction)
     {
         if (method_exists('Order', 'getIdByCartId')) {
@@ -50,7 +51,6 @@ class SaferPayOrderBuilder
         $saferPayOrder->id_customer = $customerId;
         $saferPayOrder->redirect_url = $this->getRedirectionUrl($body);
         $saferPayOrder->is_transaction = $isTransaction;
-
         $saferPayOrder->add();
 
         return $saferPayOrder;

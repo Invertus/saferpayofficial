@@ -66,10 +66,9 @@ class SaferPayTransactionAssertion
      * @return AssertBody
      * @throws \Exception
      */
-    public function assert($cartId, $update = true)
+    public function assert($cartId)
     {
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
-        \PrestaShopLogger::addLog('saferpayOrderId:' . $saferPayOrder->id);
 
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
         $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
@@ -83,12 +82,9 @@ class SaferPayTransactionAssertion
             $saferPayOrder->id
         );
 
-        // assertion shouldn't update, this is quickfix for what seems to be a general flaw in structure
-        if ($update) {
-            $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
-            $saferPayOrder->id_cart = $cartId;
-            $saferPayOrder->update();
-        }
+        $saferPayOrder->transaction_id = $assertBody->getTransaction()->getId();
+        $saferPayOrder->id_cart = $cartId;
+        $saferPayOrder->update();
 
         return $assertBody;
     }

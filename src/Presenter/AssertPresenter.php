@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Presenter;
 
-use Invertus\SaferPay\Config\SaferPayConfig;
 use SaferPayAssert;
 use SaferPayOfficial;
 
@@ -47,8 +46,6 @@ class AssertPresenter
 
     public function present(SaferPayAssert $assert)
     {
-        $paymentMethod = $assert->payment_method;
-
         return [
             'authAmount' => $assert->amount,
             'transactionAuth' => $assert->authorized ?
@@ -61,12 +58,10 @@ class AssertPresenter
             'currency' => $assert->currency_code,
             'transactionUncertain' => $assert->uncertain,
             'brand' => $assert->brand,
-            'paymentMethod' => $paymentMethod,
+            'paymentMethod' => $assert->payment_method,
             'transactionPaid' => $assert->status,
             'merchantReference' => $assert->merchant_reference,
             'paymentId' => $assert->payment_id,
-            'supportsOrderCapture' => SaferPayConfig::supportsOrderCapture($paymentMethod),
-            'supportsOrderCancel' => SaferPayConfig::supportsOrderCancel($paymentMethod),
             'acceptance' => '????',
             'liability_entity' => $assert->liability_entity,
             'cardNumber' => $assert->card_number,

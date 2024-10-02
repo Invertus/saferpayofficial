@@ -81,7 +81,6 @@ class LegacyTranslator implements TranslatorInterface
             SaferPayConfig::PAYMENT_PAYCONIQ => $this->module->l('Payconiq', self::FILE_NAME),
             SaferPayConfig::PAYMENT_CARD => $this->module->l('Card', self::FILE_NAME),
             SaferPayConfig::PAYMENT_POSTFINANCE_PAY => $this->module->l('PostFinancePay', self::FILE_NAME),
-            SaferPayConfig::PAYMENT_WECHATPAY => $this->module->l('WeChatPay', self::FILE_NAME),
         ];
     }
 }

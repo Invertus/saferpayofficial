@@ -55,7 +55,7 @@ class SaferPayAssert extends ObjectModel
         'primary' => 'id_saferpay_assert',
         'fields' => [
             'id_saferpay_order' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'amount' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'amount' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'status' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'exp_year' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'exp_month' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],

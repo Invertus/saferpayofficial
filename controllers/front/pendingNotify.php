@@ -21,7 +21,7 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Api\Enum\TransactionStatus;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -57,12 +57,12 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
 
         $orderRefunds = $saferPayOrderRepository->getOrderRefunds($saferPayOrderId);
         foreach ($orderRefunds as $orderRefund) {
-            if ($orderRefund['status'] === TransactionStatus::CAPTURED) {
+            if ($orderRefund['status'] === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
                 continue;
             }
 
             $assertRefundResponse = $this->assertRefundTransaction($orderRefund['transaction_id']);
-            if ($assertRefundResponse->getStatus() === TransactionStatus::CAPTURED) {
+            if ($assertRefundResponse->getStatus() === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
                 $this->handleCapturedRefund($orderRefund['id_saferpay_order_refund']);
             }
         }
@@ -90,7 +90,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
 
         $orderRefund = new SaferPayOrderRefund($orderRefundId);
-        $orderRefund->status = TransactionStatus::CAPTURED;
+        $orderRefund->status = SaferPayConfig::TRANSACTION_STATUS_CAPTURED;
         $orderRefund->update();
 
         $orderAssertId = $saferPayOrderRepository->getAssertIdBySaferPayOrderId($orderRefund->id_saferpay_order);

@@ -45,7 +45,7 @@ class UpdateOrderStatusAction
             /** @var \Order|null $order */
             $order = new Order($orderId);
         } catch (\Exception $exception) {
-            throw CouldNotChangeOrderStatus::unknownError();
+            throw CouldNotChangeOrderStatus::unknownError($exception);
         }
 
         if (!$order) {
@@ -58,7 +58,7 @@ class UpdateOrderStatusAction
                 $order->update();
             }
         } catch (\Exception $exception) {
-            throw CouldNotChangeOrderStatus::unknownError();
+            throw CouldNotChangeOrderStatus::unknownError($exception);
         }
 
     }

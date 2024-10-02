@@ -60,8 +60,8 @@ class CheckoutData
         $this->fieldToken = $fieldToken;
         $this->successController = $successController;
         $this->isTransaction = $isTransaction;
+        $this->createAfterAuthorization = Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION);
         $this->isAuthorizedOrder = false;
-        $this->setCreateAfterAuthorization($paymentMethod);
     }
 
     public static function create(
@@ -183,25 +183,5 @@ class CheckoutData
     public function setOrderStatus($status)
     {
         $this->status = $status;
-    }
-
-    /**
-     * @param string $paymentMethod
-     *
-     * @return void
-     */
-    private function setCreateAfterAuthorization($paymentMethod)
-    {
-        $methodsToForceBeforeAuthorization = [
-            SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT,
-        ];
-
-        if (in_array($paymentMethod, $methodsToForceBeforeAuthorization, true)) {
-            $this->createAfterAuthorization = false;
-
-            return;
-        }
-
-        $this->createAfterAuthorization = Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION);
     }
 }

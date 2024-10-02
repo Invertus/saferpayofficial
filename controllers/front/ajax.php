@@ -25,7 +25,6 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,81 +45,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 break;
             case 'initializeSavedCardPayment':
                 $this->initializeSavedCardPayment();
-            case 'getStatus':
-                $this->processGetStatus();
                 break;
         }
-    }
-
-    /**
-     * @throws PrestaShopDatabaseException
-     * @throws PrestaShopException
-     */
-    protected function processGetStatus()
-    {
-        header('Content-Type: application/json;charset=UTF-8');
-        /** @var SaferPayOrderRepository $saferPayOrderRepository */
-        $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
-        $cartId = Tools::getValue('cartId');
-        $secureKey = Tools::getValue('secureKey');
-        $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
-        $fieldToken = Tools::getValue('fieldToken');
-        $moduleId = $this->module->id;
-        $selectedCard = Tools::getValue('selectedCard');
-        $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
-        if (!$saferPayOrder->id || $saferPayOrder->canceled) {
-            $this->ajaxDie(json_encode([
-                'isFinished' => true,
-                'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId)
-            ]));
-        }
-
-        $this->ajaxDie(json_encode([
-            'saferpayOrder' => json_encode($saferPayOrder),
-            'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->pending,
-            'href' => $this->context->link->getModuleLink(
-                $this->module->name,
-                $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
-                [
-                    'cartId' => $cartId,
-                    'orderId' => $saferPayOrder->id_order,
-                    'moduleId' => $moduleId,
-                    'secureKey' => $secureKey,
-                    'selectedCard' => $selectedCard,
-                ]
-            )
-        ]));
-    }
-
-    private function getFailControllerLink($cartId, $secureKey, $moduleId)
-    {
-        return $this->context->link->getModuleLink(
-            $this->module->name,
-            ControllerName::FAIL,
-            [
-                'cartId' => $cartId,
-                'secureKey' => $secureKey,
-                'moduleId' => $moduleId,
-            ],
-            true
-        );
-    }
-
-    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
-    {
-        $successController = ControllerName::SUCCESS;
-
-        if ($isBusinessLicence) {
-            $successController = ControllerName::SUCCESS_IFRAME;
-        }
-
-        if ($fieldToken) {
-            $successController = ControllerName::SUCCESS_HOSTED;
-        }
-
-        return $successController;
     }
 
     private function submitHostedFields()

@@ -27,7 +27,6 @@ use Cart;
 use Customer;
 use Exception;
 use Invertus\SaferPay\Adapter\LegacyContext;
-use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Api\Request\CancelService;
 use Invertus\SaferPay\Api\Request\CaptureService;
 use Invertus\SaferPay\Api\Request\RefundService;
@@ -112,28 +111,20 @@ class SaferPayOrderStatusService
         $this->module = $module->getModule();
     }
 
-    public function setPending(Order $order)
+    /**
+     * @param Order $order
+     *
+     * @throws \Exception
+     */
+    public function authorize(Order $order)
     {
-        $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
-        $saferPayOrder->pending = 1;
+        $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
+        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder->authorized = 1;
+        $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
 
         $saferPayOrder->update();
-        $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
-    }
-
-    public function setComplete(Order $order)
-    {
-        $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
-        $saferPayOrder->captured = 1;
-
-        $saferPayOrder->update();
-
-        //NOTE: Older PS versions does not handle same state change, so we need to check if state is already set
-        if ($order->getCurrentState() === _SAFERPAY_PAYMENT_COMPLETED_) {
-            return;
-        }
-
-        $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
+        $order->update();
     }
 
     /** TODO extract capture api code to different service like Assert for readability */
@@ -197,11 +188,6 @@ class SaferPayOrderStatusService
         $order->update();
         $saferPayOrder->canceled = 1;
         $saferPayOrder->update();
-
-        $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
-        $saferPayAssert = new SaferPayAssert($assertId);
-        $saferPayAssert->status = TransactionStatus::CANCELED;
-        $saferPayAssert->update();
     }
 
     public function refund(Order $order, $refundedAmount)
@@ -253,11 +239,11 @@ class SaferPayOrderStatusService
         $saferPayOrder->refund_id = $refundResponse->Transaction->Id;
         $saferPayOrder->update();
 
-        if ($refundResponse->Transaction->Status === TransactionStatus::AUTHORIZED) {
+        if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_AUTHORIZED) {
             $this->capture($order, $refundAmount, true);
         }
 
-        if ($refundResponse->Transaction->Status === TransactionStatus::CAPTURED) {
+        if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_CAPTURED) {
             $saferPayAssert->refunded_amount += $refundAmount;
             $saferPayAssert->update();
             if ((int) $saferPayAssert->refunded_amount === (int) $saferPayAssert->amount) {
@@ -268,7 +254,7 @@ class SaferPayOrderStatusService
             }
         }
 
-        if ($refundResponse->Transaction->Status === TransactionStatus::PENDING) {
+        if ($refundResponse->Transaction->Status === SaferPayConfig::TRANSACTION_STATUS_PENDING) {
             $saferPayAssert->pending_refund_amount += $refundAmount;
             $saferPayAssert->update();
             $orderState = $order->getCurrentState();

@@ -28,7 +28,6 @@ if (!defined('_PS_VERSION_')) {
 }
 
 use Cart;
-use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
@@ -40,7 +39,6 @@ use Invertus\SaferPay\Service\SaferPayInitialize;
 use Order;
 use PrestaShopException;
 use SaferPayOrder;
-use Validate;
 
 class CheckoutProcessor
 {
@@ -69,24 +67,24 @@ class CheckoutProcessor
     }
 
     public function run(CheckoutData $data) {
+
         $cart = new Cart($data->getCartId());
 
         if (!$cart) {
             throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
         }
 
-        if (!$data->getCreateAfterAuthorization()) {
-            $this->processCreateOrder($cart, $data->getPaymentMethod());
-        }
-
-        $authorizedStates = [
-            TransactionStatus::AUTHORIZED,
-            TransactionStatus::CAPTURED,
-        ];
-
-        if (in_array($data->getOrderStatus(), $authorizedStates)) {
+        if ($data->getIsAuthorizedOrder()) {
             $this->processAuthorizedOrder($data, $cart);
             return '';
+        }
+
+        try {
+            if (!$data->getCreateAfterAuthorization()) {
+                $this->processCreateOrder($cart, $data->getPaymentMethod());
+            }
+        } catch (\Exception $exception) {
+            throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
         }
 
         try {
@@ -123,11 +121,6 @@ class CheckoutProcessor
      */
     private function processCreateOrder(Cart $cart, $paymentMethod)
     {
-        // Notify and return webhooks triggers together leading into order created previously
-        if ($cart->orderExists()) {
-            return;
-        }
-
         $customer = new \Customer($cart->id_customer);
 
         $this->module->validateOrder(
@@ -189,37 +182,36 @@ class CheckoutProcessor
     private function processAuthorizedOrder(CheckoutData $data, Cart $cart)
     {
         try {
-            $this->processCreateOrder($cart, $data->getPaymentMethod());
-            $order = $this->getOrder($cart->id);
             $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
 
-            if ($data->getOrderStatus() === TransactionStatus::AUTHORIZED) {
-                $saferPayOrder->authorized = true;
-                $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+            if (!$saferPayOrder->id_order) {
+                $this->processCreateOrder($cart, $data->getPaymentMethod());
+            }
+
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cart->id);
+                $order = new Order($orderId);
             } else {
-                $saferPayOrder->captured = true;
-                $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cart->id);
+                $order = new Order($orderId);
             }
 
             $saferPayOrder->id_order = $order->id;
+
+            if ($data->getOrderStatus() === 'AUTHORIZED') {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
+                $saferPayOrder->authorized = 1;
+            } elseif ($data->getOrderStatus() === 'CAPTURED') {
+                $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
+                $saferPayOrder->captured = 1;
+            }
+
             $saferPayOrder->update();
+            $order->update();
+            return;
         } catch (\Exception $exception) {
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
-        }
-    }
-
-    /**
-     * @param int $cartId
-     *
-     * @return Order
-     */
-    private function getOrder($cartId)
-    {
-        if (method_exists('Order', 'getIdByCartId')) {
-            return new Order(Order::getIdByCartId($cartId));
-        } else {
-            // For PrestaShop 1.6 use the alternative method
-            return new Order(Order::getOrderByCartId($cartId));
         }
     }
 }

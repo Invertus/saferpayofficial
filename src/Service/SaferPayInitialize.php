@@ -106,6 +106,7 @@ class SaferPayInitialize
     ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
+        $creationAfterInitialization = $this->configuration->getAsBoolean(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION);
         $alias = $this->saferPayCardAliasRepository->getSavedCardAliasFromId($selectedCard);
 
         $returnUrl = $this->context->link->getModuleLink(
@@ -114,6 +115,7 @@ class SaferPayInitialize
             [
                 'cartId' => $cartId,
                 'secureKey' => $this->context->cart->secure_key,
+                'orderId' => $creationAfterInitialization ? 0 : Order::getOrderByCartId($cartId),
                 'moduleId' => $this->module->id,
                 'selectedCard' => $selectedCard,
                 'isBusinessLicence' => $isBusinessLicence,
@@ -128,6 +130,7 @@ class SaferPayInitialize
             [
                 'success' => 1,
                 'cartId' => $this->context->cart->id,
+                'orderId' => $creationAfterInitialization ? 0 : Order::getOrderByCartId($cartId),
                 'secureKey' => $this->context->cart->secure_key,
             ],
             true

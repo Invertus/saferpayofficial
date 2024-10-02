@@ -40,14 +40,14 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.2.3';
+        $this->version = '1.2.2';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
         $this->tab = 'payments_gateways';
         $this->ps_versions_compliancy = [
             'min' => '1.6.1.0',
-            'max' => _PS_VERSION_,
+            'max' => '8.0.4',
         ];
         parent::__construct($name);
 
@@ -114,28 +114,6 @@ class SaferPayOfficial extends PaymentModule
         return $containerProvider->getService($service);
     }
 
-    public function hookDisplayOrderConfirmation($params)
-    {
-        if (empty($params['order'])) {
-            return '';
-        }
-
-        /** @var Order $psOrder */
-        $psOrder = $params['order'];
-
-        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $repository */
-        $repository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
-
-
-        $sfOrder = $repository->getByOrderId((int) $psOrder->id);
-        if (!$sfOrder->pending) {
-            return '';
-        }
-
-        return $this->l('Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
-Thank you for your patience!');
-    }
-
     public function hookActionObjectOrderPaymentAddAfter($params)
     {
         if (!isset($params['object'])) {
@@ -182,7 +160,7 @@ Thank you for your patience!');
         /** @var Invertus\SaferPay\Service\SaferPayCartService $assertService */
         $cartService = $this->getService(\Invertus\SaferPay\Service\SaferPayCartService::class);
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
-            return [];
+            return;
         }
 
         /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
@@ -206,29 +184,14 @@ Thank you for your patience!');
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
-        $logosEnabled = $paymentRepository->getAllActiveLogosNames();
-        $logosEnabled = array_column($logosEnabled, 'name');
-
-        $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();
-        $activePaymentMethods = array_column($activePaymentMethods, 'name');
-
-
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
-
-            if(!in_array($paymentMethod['paymentMethod'], $activePaymentMethods)) {
-                continue;
-            }
-
-            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])) {
-                continue;
-            }
 
             if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
                 continue;
             }
 
-            $imageUrl = (in_array($paymentMethod['paymentMethod'], $logosEnabled))
+            $imageUrl = ($paymentRepository->isLogoEnabledByName($paymentMethod['paymentMethod']))
                 ? $paymentMethod['logoUrl'] : '';
 
             $isCreditCard = in_array(
@@ -277,7 +240,7 @@ Thank you for your patience!');
                     'value' => $selectedCard,
                 ],
             ];
-
+            
             if ($isCreditCardSavingEnabled && $isCreditCard && $isBusinessLicenseEnabled) {
                 $currentDate = date('Y-m-d h:i:s');
 
@@ -379,10 +342,14 @@ Thank you for your patience!');
             return;
         }
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-            return $this->display(__FILE__, 'front/MyAccount.tpl');
+            return $this->context->smarty->fetch(
+                $this->getLocalPath() . 'views/templates/hook/front/MyAccount.tpl'
+            );
         }
 
-        return $this->display(__FILE__, 'front/MyAccount_16.tpl');
+        return $this->context->smarty->fetch(
+            $this->getLocalPath() . 'views/templates/hook/front/MyAccount_16.tpl'
+        );
     }
 
     public function displayNavigationTop()
@@ -601,12 +568,55 @@ Thank you for your patience!');
             return true;
         }
 
+        /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
+        $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
+
+        if ($params['template'] === 'order_conf') {
+            return $canSendOrderConfirmationEmail->verify((int) $order->current_state);
+        }
+
         if ($params['template'] === 'new_order') {
-            if ((int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
+            if (!Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
                 return true;
             }
-
             return false;
+        }
+    }
+
+    public function hookActionOrderStatusPostUpdate($params = [])
+    {
+        if (!isset($params['newOrderStatus']) || !isset($params['id_order'])) {
+            return;
+        }
+
+        if ($params['newOrderStatus'] instanceof OrderState) {
+            $orderStatus = $params['newOrderStatus'];
+        } else {
+            $orderStatus = new OrderState((int) $params['newOrderStatus']);
+        }
+        $order = new Order($params['id_order']);
+
+        if (!Validate::isLoadedObject($orderStatus)) {
+            return;
+        }
+
+        if (!Validate::isLoadedObject($order)) {
+            return;
+        }
+
+        /** @var \Invertus\SaferPay\Service\SaferPayMailService $mailService */
+        $mailService = $this->getService(\Invertus\SaferPay\Service\SaferPayMailService::class);
+
+        $saferPayAuthorizedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+        if ($orderStatus->id === $saferPayAuthorizedStatus && Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
+            $mailService->sendNewOrderMail($order, (int) $orderStatus->id);
+        }
+
+        /** @var \Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail $canSendOrderConfirmationEmail */
+        $canSendOrderConfirmationEmail = $this->getService(\Invertus\SaferPay\Core\Order\Verification\CanSendOrderConfirmationEmail::class);
+
+        if ($canSendOrderConfirmationEmail->verify((int) $orderStatus->id)) {
+            $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
         }
     }
 
@@ -622,7 +632,6 @@ Thank you for your patience!');
 
             /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $orderRepo */
             $orderRepo = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
-
             $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
             $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
@@ -667,17 +676,16 @@ Thank you for your patience!');
     {
         $orderId = $params['id_order'];
         $order = new Order($orderId);
-        /** @var SaferPayOrderRepository $orderRepo */
         $orderRepo = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
         $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
         if ($order->module !== $this->name) {
-            return '';
+            return;
         }
 
-        if (!$saferPayOrder->authorized && !$saferPayOrder->captured) {
-            return '';
+        if (!$saferPayOrder->authorized) {
+            return;
         }
 
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersionAbove177()) {
@@ -689,9 +697,10 @@ Thank you for your patience!');
             );
         } else {
             $action = $this->context->link->getAdminLink(
-                    self::ADMIN_ORDER_CONTROLLER
-                ) . '&id_order=' . (int) $orderId;
+                self::ADMIN_ORDER_CONTROLLER
+            ) . '&id_order=' . (int) $orderId;
         }
+
 
         $assertId = $orderRepo->getAssertIdBySaferPayOrderId($saferPayOrderId);
         $assertData = new SaferPayAssert($assertId);
