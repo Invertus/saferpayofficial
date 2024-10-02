@@ -35,8 +35,11 @@ if (!defined('_PS_VERSION_')) {
 class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayController
 {
     const FILE_NAME = 'AdminSaferPayOfficialLogsController';
+
     const LOG_INFORMATION_TYPE_REQUEST = 'request';
+
     const LOG_INFORMATION_TYPE_RESPONSE = 'response';
+
     const LOG_INFORMATION_TYPE_CONTEXT = 'context';
 
     public function __construct()
@@ -51,6 +54,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         parent::__construct();
 
         $this->toolbar_btn = [];
+
         $this->initList();
 
         $this->_select .= '
@@ -138,6 +142,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
     public function renderList()
     {
         unset($this->toolbar_btn['new']);
+
         return parent::renderList();
     }
 
