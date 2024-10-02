@@ -307,7 +307,7 @@ class Installer extends AbstractInstaller
                 `request` MEDIUMTEXT DEFAULT NULL,
                 `response` MEDIUMTEXT DEFAULT NULL,
                 `context` TEXT DEFAULT NULL,
-                `date_add` datetime NOT NULL DEFAULT NOW(),
+                `date_add` datetime NOT NULL,
                 PRIMARY KEY (`id_saferpay_log`, `id_log`, `id_shop`),
                 INDEX (`id_log`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
