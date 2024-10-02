@@ -63,7 +63,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
          * NOTE: This flow is for hosted iframe payment method
          */
         if (Tools::getValue('isBusinessLicence')) {
-
             try {
                 /** @var CheckoutProcessor $checkoutProcessor * */
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
