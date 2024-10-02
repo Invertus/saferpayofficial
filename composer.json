@@ -26,7 +26,7 @@
             "type": "vcs",
             "url": "https://github.com/Invertus/Knapsack.git"
         },
-        "0": {
+        "lock": {
             "type": "vcs",
             "url": "https://github.com/Invertus/lock.git",
             "no-api": true
