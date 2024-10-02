@@ -379,14 +379,10 @@ Thank you for your patience!');
             return;
         }
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-            return $this->context->smarty->fetch(
-                $this->getLocalPath() . 'views/templates/hook/front/MyAccount.tpl'
-            );
+            return $this->display(__FILE__, 'front/MyAccount.tpl');
         }
 
-        return $this->context->smarty->fetch(
-            $this->getLocalPath() . 'views/templates/hook/front/MyAccount_16.tpl'
-        );
+        return $this->display(__FILE__, 'front/MyAccount_16.tpl');
     }
 
     public function displayNavigationTop()
