@@ -49,8 +49,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
-        $assertResponseBody = $transactionAssert->assert($cartId);
-        $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
+        try {
+            $assertResponseBody = $transactionAssert->assert($cartId);
+            $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
+        } catch (Exception $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
+        }
 
         if (Tools::getValue('isBusinessLicence')) {
             /** @var CheckoutProcessor $checkoutProcessor **/
