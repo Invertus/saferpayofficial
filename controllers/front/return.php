@@ -56,6 +56,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             \PrestaShopLogger::addLog($e->getMessage());
         }
 
+        /**
+         * NOTE: This flow is for hosted iframe payment method
+         */
         if (Tools::getValue('isBusinessLicence')) {
             /** @var CheckoutProcessor $checkoutProcessor **/
             $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
