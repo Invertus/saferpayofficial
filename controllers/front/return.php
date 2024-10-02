@@ -45,6 +45,18 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     {
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
+        $secureKey = Tools::getValue('secureKey');
+        $cart = new Cart($cartId);
+
+        if (!Validate::isLoadedObject($cart)) {
+            $this->warning[] = $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME);
+            $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+        }
+
+        if ($cart->secure_key !== $secureKey) {
+            $this->warning[] = $this->module->l('Error. Insecure cart', self::FILENAME);
+            $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+        }
 
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
@@ -120,11 +132,15 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             }
         }
 
-        /** @var SaferPayOrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-
-        if ($assertResponseBody->getTransaction()->getStatus() === TransactionStatus::PENDING) {
-            $orderStatusService->setPending($order);
+        try {
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+            if ($assertResponseBody->getTransaction()->getStatus() === TransactionStatus::PENDING) {
+                $orderStatusService->setPending($order);
+            }
+        } catch (Exception $e) {
+            \PrestaShopLogger::addLog($e->getMessage());
+            // if we can't set order status to pending, we don't want to stop the process
         }
     }
     /**
