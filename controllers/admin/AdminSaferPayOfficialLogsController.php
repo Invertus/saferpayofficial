@@ -164,7 +164,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         );
     }
 
-    public function printSeverityLevel(int $level)
+    public function printSeverityLevel($level)
     {
         $this->context->smarty->assign([
             'log_severity_level' => $level,
@@ -187,7 +187,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         );
     }
 
-    public function getDisplayButton(int $logId, string $data, string $logInformationType)
+    public function getDisplayButton($logId, $data, $logInformationType)
     {
         $unserializedData = json_decode($data);
 
@@ -213,17 +213,17 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
      *
      * @throws SmartyException
      */
-    public function printRequestButton(string $request, array $data)
+    public function printRequestButton($request, $data)
     {
         return $this->getDisplayButton($data['id_log'], $request, self::LOG_INFORMATION_TYPE_REQUEST);
     }
 
-    public function printResponseButton(string $response, array $data)
+    public function printResponseButton($response, $data)
     {
         return $this->getDisplayButton($data['id_log'], $response, self::LOG_INFORMATION_TYPE_RESPONSE);
     }
 
-    public function printContextButton(string $context, array $data)
+    public function printContextButton($context, $data)
     {
         return $this->getDisplayButton($data['id_log'], $context, self::LOG_INFORMATION_TYPE_CONTEXT);
     }
