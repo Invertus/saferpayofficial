@@ -24,9 +24,11 @@
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
@@ -44,7 +46,62 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
 
-        if (!$order->id) {
+        /** @var SaferPayTransactionAssertion $transactionAssert */
+        $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+
+        $assertResponseBody = $transactionAssert->assert($cartId);
+        $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
+
+        if (Tools::getValue('isBusinessLicence')) {
+            /** @var CheckoutProcessor $checkoutProcessor **/
+            $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+            $checkoutData = CheckoutData::create(
+                (int) $cartId,
+                $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
+                (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+            );
+
+            $checkoutData->setOrderStatus($transactionStatus);
+            $checkoutProcessor->run($checkoutData);
+
+            $orderId = $this->getOrderId($cartId);
+
+            $order = new Order($orderId);
+
+            if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
+                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
+                (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+            ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+                $orderStatusService->cancel($order);
+            }
+
+            //NOTE to get latest information possible and not override new information.
+            $order = new Order($orderId);
+            $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
+
+            // if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
+            // so in this case if status comes back "captured" we just update the order state accordingly
+            if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
+                $transactionStatus === TransactionStatus::CAPTURED
+            ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+                $orderStatusService->setComplete($order);
+
+                return;
+            }
+
+            if (SaferPayConfig::supportsOrderCapture($paymentMethod) &&
+                (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+                $transactionStatus !== TransactionStatus::CAPTURED
+            ) {
+                /** @var SaferPayOrderStatusService $orderStatusService */
+                $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+                $orderStatusService->capture($order);
+            }
+
             return;
         }
 
@@ -55,6 +112,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
             /** @var SaferPayOrderStatusService $orderStatusService */
             $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+
             if ($transactionResponse->getTransaction()->getStatus() === TransactionStatus::PENDING) {
                 $orderStatusService->setPending($order);
             }
