@@ -35,7 +35,9 @@ class SaferPayLog extends ObjectModel
 
     public $message;
 
-    public $payload;
+    public $request;
+
+    public $response;
 
     public $context;
 

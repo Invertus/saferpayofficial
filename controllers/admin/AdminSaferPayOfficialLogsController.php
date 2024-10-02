@@ -244,9 +244,6 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         /** @var SaferPayLogRepository $logRepository */
         $logRepository = $this->module->getService(SaferPayLogRepositoryInterface::class);
 
-        /** @var GlobalShopContext $shopContext */
-        $shopContext = $this->module->getService(GlobalShopContext::class);
-
         $logId = $tools->getValueAsInt('log_id');
 
 //        /** @var LoggerInterface $logger */
@@ -287,7 +284,6 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
                 'message' => $this->module->l('No log information found.', self::FILE_NAME),
             ]));
         }
-        $this->ajaxRender($log);
 
         $this->ajaxResponse(json_encode([
             'error' => false,
