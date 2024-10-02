@@ -23,12 +23,14 @@
 
 namespace Invertus\SaferPay\ServiceProvider;
 
+use Invertus\Saferpay\Context\GlobalShopContextInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepository;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;
 use Invertus\SaferPay\Repository\SaferPayLogRepository;
 use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
+use KlarnaPayment\Module\Infrastructure\Context\GlobalShopContext;
 use League\Container\Container;
 
 if (!defined('_PS_VERSION_')) {

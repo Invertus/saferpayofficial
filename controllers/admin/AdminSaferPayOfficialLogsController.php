@@ -22,15 +22,11 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\Saferpay\Context\GlobalShopContext;
-use Invertus\Saferpay\Context\GlobalShopContextInterface;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
 use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
-use Invertus\SaferPay\Repository\SaferPayLogRepository;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Logger\Logger;
-use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -241,8 +237,11 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         /** @var \Invertus\SaferPay\Adapter\Tools $tools */
         $tools = $this->module->getService(\Invertus\SaferPay\Adapter\Tools::class);
 
-        /** @var SaferPayLogRepository $logRepository */
-        $logRepository = $this->module->getService(SaferPayLogRepositoryInterface::class);
+        /** @var \Invertus\SaferPay\Repository\SaferPayLogRepository $logRepository */
+        $logRepository = $this->module->getService(\Invertus\SaferPay\Repository\SaferPayLogRepository::class);
+
+        /** @var \Invertus\SaferPay\Context\GlobalShopContext $shopContext */
+        $globalShopContext = $this->module->getService(\Invertus\SaferPay\Context\GlobalShopContext::class);
 
         $logId = $tools->getValueAsInt('log_id');
 
@@ -253,7 +252,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             /** @var \SaferPayLog|null $log */
             $log = $logRepository->findOneBy([
                 'id_log' => $logId,
-                'id_shop' => Context::getContext()->shop->id,
+                'id_shop' => $globalShopContext->getShopId(),
             ]);
         } catch (Exception $exception) {
 //            $logger->error('Failed to find log', [
