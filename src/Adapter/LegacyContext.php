@@ -89,7 +89,7 @@ class LegacyContext
         return (int) $this->getContext()->getDevice();
     }
 
-    public function getAdminLink($controllerName, $params = [])
+    public function getAdminLink($controllerName, array $params = [])
     {
         /* @noinspection PhpMethodParametersCountMismatchInspection - its valid for PS1.7 */
         return (string) Context::getContext()->link->getAdminLink($controllerName, true, [], $params);

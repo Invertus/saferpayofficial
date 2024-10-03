@@ -38,7 +38,7 @@ class ExceptionUtility
         return [self::toArray($exception)];
     }
 
-    public static function toArray( $exception)
+    public static function toArray($exception)
     {
         if (method_exists($exception, 'getContext')) {
             $context = $exception->getContext();

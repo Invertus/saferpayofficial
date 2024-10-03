@@ -52,7 +52,7 @@ class CollectionRepository implements ReadOnlyCollectionRepositoryInterface
      *
      * @throws \PrestaShopException
      */
-    public function findOneBy($keyValueCriteria, $langId = null)
+    public function findOneBy(array $keyValueCriteria, $langId = null)
     {
         $psCollection = new \PrestaShopCollection($this->fullyClassifiedClassName, $langId);
 

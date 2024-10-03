@@ -34,7 +34,7 @@ class JsonResponse extends BaseJsonResponse
     /**
      * @param mixed $data
      */
-    public function __construct($data = null, $status = 200, $headers = [])
+    public function __construct($data = null, $status = 200, array $headers = [])
     {
         parent::__construct($data, $status, $headers);
     }
