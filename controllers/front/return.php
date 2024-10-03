@@ -284,8 +284,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 'orderId' => Order::getOrderByCartId($this->context->cart->id),
                 'secureKey' => $this->context->cart->secure_key,
                 'moduleId' => $this->module->id,
-            ],
-            true
+            ]
         );
     }
 }
