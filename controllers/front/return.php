@@ -138,9 +138,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             if ($assertResponseBody->getTransaction()->getStatus() === TransactionStatus::PENDING) {
                 $orderStatusService->setPending($order);
             }
-        } catch (Exception $e) {
+        } catch (SaferPayApiException $e) {
             \PrestaShopLogger::addLog($e->getMessage());
-            // if we can't set order status to pending, we don't want to stop the process
+            // we only care if we have a response with pending status, else we skip further actions
         }
     }
     /**
