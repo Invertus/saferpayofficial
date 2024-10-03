@@ -156,14 +156,6 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         /** @var LegacyContext $context */
         $context = $this->module->getService(LegacyContext::class);
 
-        /** @var LoggerInterface $logger */
-        $logger = $this->module->getService(LoggerInterface::class);
-        $logger->info('AdminSaferPayOfficialLogsController setMedia', [
-            'context' => [
-                'admin_link' => $context->getAdminLink(SaferPayOfficial::ADMIN_LOGS_CONTROLLER),
-            ],
-        ]);
-
         Media::addJsDef([
             'saferpayofficial' => [
                 'logsUrl' => $context->getAdminLink(SaferPayOfficial::ADMIN_LOGS_CONTROLLER),
