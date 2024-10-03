@@ -216,7 +216,7 @@ Thank you for your patience!');
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
-            if(!in_array($paymentMethod['paymentMethod'], $activePaymentMethods)) {
+            if (!in_array($paymentMethod['paymentMethod'], $activePaymentMethods)) {
                 continue;
             }
 
@@ -689,8 +689,8 @@ Thank you for your patience!');
             );
         } else {
             $action = $this->context->link->getAdminLink(
-                    self::ADMIN_ORDER_CONTROLLER
-                ) . '&id_order=' . (int) $orderId;
+                self::ADMIN_ORDER_CONTROLLER
+            ) . '&id_order=' . (int) $orderId;
         }
 
         $assertId = $orderRepo->getAssertIdBySaferPayOrderId($saferPayOrderId);

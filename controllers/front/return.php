@@ -79,9 +79,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
 
                 $checkoutData = CheckoutData::create(
-                    (int)$cartId,
+                    (int) $cartId,
                     $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-                    (int)Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+                    (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
                 );
                 $checkoutData->setOrderStatus($transactionStatus);
 
@@ -92,7 +92,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $order = new Order($orderId);
                 if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
                     in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                    (int)Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+                    (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
                 ) {
                     /** @var SaferPayOrderStatusService $orderStatusService */
                     $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
@@ -115,7 +115,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 }
 
                 if (SaferPayConfig::supportsOrderCapture($paymentMethod) &&
-                    (int)Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+                    (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                     $transactionStatus !== TransactionStatus::CAPTURED
                 ) {
                     /** @var SaferPayOrderStatusService $orderStatusService */
@@ -263,10 +263,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     {
         if (method_exists('Order', 'getIdByCartId')) {
             return Order::getIdByCartId($cartId);
-        } else {
-            // For PrestaShop 1.6 use the alternative method
-            return Order::getOrderByCartId($cartId);
         }
+        // For PrestaShop 1.6 use the alternative method
+        return Order::getOrderByCartId($cartId);
     }
 
     /**

@@ -71,7 +71,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
         if (!$saferPayOrder->id || $saferPayOrder->canceled) {
             $this->ajaxDie(json_encode([
                 'isFinished' => true,
-                'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId)
+                'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId),
             ]));
         }
 
@@ -88,7 +88,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                     'secureKey' => $secureKey,
                     'selectedCard' => $selectedCard,
                 ]
-            )
+            ),
         ]));
     }
 

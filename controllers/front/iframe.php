@@ -98,7 +98,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             );
 
             $redirectUrl = $checkoutController->execute($checkoutData);
-
         } catch (\Exception $exception) {
             $redirectUrl = $this->context->link->getModuleLink(
                 $this->module->name,
