@@ -51,7 +51,11 @@
             </tr>
             </thead>
             {foreach $rows as $row}
+<<<<<<< HEAD
                 {$row|cleanHtml nofilter}
+=======
+                {$row nofilter|escape:'htmlall':'UTF-8'}
+>>>>>>> parent of 7e197ab (Merge pull request #190 from Invertus/SL-234/my-account-override)
             {/foreach}
         </table>
     </div>
