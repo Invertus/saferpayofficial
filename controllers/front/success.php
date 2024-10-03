@@ -22,6 +22,7 @@
  */
 
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\Saferpay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,6 +34,11 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = Tools::getValue('cartId');
         $moduleId = Tools::getValue('moduleId');
         $orderId = Tools::getValue('orderId');
@@ -64,5 +70,7 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
                 'key' => $secureKey,
             ]
         ));
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 }

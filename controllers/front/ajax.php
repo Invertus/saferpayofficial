@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -40,6 +41,11 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         switch (Tools::getValue('action')) {
             case 'submitHostedFields':
                 $this->submitHostedFields();
@@ -90,6 +96,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 ]
             ),
         ]));
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     private function getFailControllerLink($cartId, $secureKey, $moduleId)
@@ -162,6 +170,11 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
         }
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**

@@ -27,6 +27,7 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
@@ -41,6 +42,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
 
@@ -62,6 +68,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             \PrestaShopLogger::addLog($e->getMessage());
             // we only care if we have a response with pending status, else we skip further actions
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
     /**
      * @throws PrestaShopException

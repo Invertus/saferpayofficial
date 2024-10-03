@@ -25,6 +25,7 @@ use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
@@ -45,6 +46,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $cart = new Cart($cartId);
@@ -197,6 +203,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             die($this->module->l($e->getMessage(), self::FILENAME));
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         die($this->module->l('Success', self::FILENAME));
     }

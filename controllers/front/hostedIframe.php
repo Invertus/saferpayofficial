@@ -22,6 +22,7 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
 if (!defined('_PS_VERSION_')) {
@@ -34,6 +35,11 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
 
     public function initContent()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILENAME));
+
         parent::initContent();
 
         $paymentMethod = Tools::getValue('saved_card_method');
@@ -63,6 +69,8 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
                 '_16.tpl'
             );
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILENAME));
     }
 
     public function setMedia()

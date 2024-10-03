@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Service\CartDuplicationService;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 if (!defined('_PS_VERSION_')) {
@@ -93,6 +94,11 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
     {
         parent::initContent();
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $orderLink = $this->context->link->getPageLink(
             'order',
             true,
@@ -117,5 +123,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
                 false
             )
         );
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 }
