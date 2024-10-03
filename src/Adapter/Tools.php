@@ -32,42 +32,42 @@ if (!defined('_PS_VERSION_')) {
 
 class Tools
 {
-    public function linkRewrite(string $str): string
+    public function linkRewrite($str)
     {
         return PrestashopTools::str2url($str);
     }
 
-    public function redirectAdmin(string $controller): void
+    public function redirectAdmin($controller)
     {
         PrestashopTools::redirectAdmin($controller);
     }
 
-    public function redirect(string $url): void
+    public function redirect($url)
     {
         PrestashopTools::redirect($url);
     }
 
-    public function isSubmit(string $form): bool
+    public function isSubmit($form)
     {
         return PrestashopTools::isSubmit($form);
     }
 
-    public function strtoupper(string $string): string
+    public function strtoupper($string)
     {
         return PrestashopTools::strtoupper($string);
     }
 
-    public function strtolower(string $string): string
+    public function strtolower($string)
     {
         return PrestashopTools::strtolower($string);
     }
 
-    public function encrypt(string $string): string
+    public function encrypt($string)
     {
         return PrestashopTools::encrypt($string);
     }
 
-    public function passwdGen(int $length = 8, string $flag = 'ALPHANUMERIC'): string
+    public function passwdGen($length = 8, $flag = 'ALPHANUMERIC')
     {
         return PrestashopTools::passwdGen($length, $flag);
     }
