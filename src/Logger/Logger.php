@@ -28,12 +28,13 @@ use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\Saferpay\Context\GlobalShopContext;
 use Invertus\SaferPay\EntityManager\EntityManagerInterface;
+use Invertus\SaferPay\EntityManager\ObjectModelEntityManager;
 use Invertus\SaferPay\EntityManager\ObjectModelUnitOfWork;
 use Invertus\SaferPay\Logger\Formatter\LogFormatterInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
-use KlarnaPayment\Module\Infrastructure\Logger\Repository\PrestashopLoggerRepositoryInterface;
+use Invertus\SaferPay\Repository\PrestashopLoggerRepositoryInterface;
 
-class Logger
+class Logger implements LoggerInterface
 {
     const FILE_NAME = 'Logger';
 
@@ -56,7 +57,7 @@ class Logger
         GlobalShopContext $globalShopContext,
         Configuration $configuration,
         LegacyContext $context,
-        EntityManagerInterface $entityManager,
+        ObjectModelEntityManager $entityManager,
         BasicIdempotencyProvider $idempotencyProvider,
         PrestashopLoggerRepositoryInterface $prestashopLoggerRepository
     ) {

@@ -21,10 +21,13 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\Saferpay\Context\GlobalShopContext;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
 use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Logger\Logger;
 
@@ -150,7 +153,16 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
     {
         parent::setMedia($isNewTheme);
 
-        $context = $this->module->getService(\Invertus\SaferPay\Adapter\LegacyContext::class);
+        /** @var LegacyContext $context */
+        $context = $this->module->getService(LegacyContext::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->info('AdminSaferPayOfficialLogsController setMedia', [
+            'context' => [
+                'admin_link' => $context->getAdminLink(SaferPayOfficial::ADMIN_LOGS_CONTROLLER),
+            ],
+        ]);
 
         Media::addJsDef([
             'saferpayofficial' => [
@@ -245,8 +257,8 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         /** @var \Invertus\SaferPay\Repository\SaferPayLogRepository $logRepository */
         $logRepository = $this->module->getService(\Invertus\SaferPay\Repository\SaferPayLogRepository::class);
 
-        /** @var \Invertus\SaferPay\Context\GlobalShopContext $shopContext */
-        $globalShopContext = $this->module->getService(\Invertus\SaferPay\Context\GlobalShopContext::class);
+        /** @var Invertus\Saferpay\Context\GlobalShopContext $shopContext */
+        $globalShopContext = $this->module->getService(GlobalShopContext::class);
 
         $logId = $tools->getValueAsInt('log_id');
 
