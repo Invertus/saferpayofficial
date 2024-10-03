@@ -35,6 +35,7 @@ use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Exception\CouldNotProcessCheckout;
 use Invertus\SaferPay\Factory\ModuleFactory;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 use Order;
@@ -43,6 +44,8 @@ use SaferPayOrder;
 
 class CheckoutProcessor
 {
+    const FILE_NAME = 'CheckoutProcessor';
+
     /** @var \SaferPayOfficial */
     private $module;
 
@@ -71,7 +74,14 @@ class CheckoutProcessor
     {
         $cart = new Cart($data->getCartId());
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         if (!$cart) {
+            $logger->debug(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'cartId' => $data->getCartId(),
+            ]);
+
             throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
         }
 
@@ -109,6 +119,10 @@ class CheckoutProcessor
                 $data->getIsTransaction()
             );
         } catch (\Exception $exception) {
+            $logger->debug(sprintf('%s - Failed to create SaferPay order', self::FILE_NAME), [
+                'cartId' => $data->getCartId(),
+            ]);
+
             throw CouldNotProcessCheckout::failedToCreateSaferPayOrder($data->getCartId());
         }
 
