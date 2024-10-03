@@ -96,6 +96,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 ]
             ),
         ]));
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
