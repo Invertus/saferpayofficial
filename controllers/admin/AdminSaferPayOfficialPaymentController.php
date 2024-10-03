@@ -64,6 +64,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         // Refresh payments.
         /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
         $refreshPaymentsService = $this->module->getService(SaferPayRefreshPaymentsService::class);
+
         try {
             $refreshPaymentsService->refreshPayments();
         } catch (SaferPayApiException $exception) {

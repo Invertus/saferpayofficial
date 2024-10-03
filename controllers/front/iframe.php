@@ -89,7 +89,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             /** @var CheckoutController $checkoutController */
             $checkoutController = $this->module->getService(CheckoutController::class);
 
-            // refactor it to create checkout data from validator request
             $checkoutData = CheckoutData::create(
                 (int) $this->context->cart->id,
                 $paymentMethod,
@@ -98,7 +97,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             );
 
             $redirectUrl = $checkoutController->execute($checkoutData);
-
         } catch (\Exception $exception) {
             $redirectUrl = $this->context->link->getModuleLink(
                 $this->module->name,

@@ -27,10 +27,8 @@ use Cart;
 use Configuration;
 use Customer;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
-use PrestaShop\PrestaShop\Adapter\Shop\Context;
 
 if (!defined('_PS_VERSION_')) {
     exit;

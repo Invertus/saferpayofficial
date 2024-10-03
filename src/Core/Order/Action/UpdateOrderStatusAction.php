@@ -60,6 +60,5 @@ class UpdateOrderStatusAction
         } catch (\Exception $exception) {
             throw CouldNotChangeOrderStatus::unknownError($exception);
         }
-
     }
 }

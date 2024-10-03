@@ -625,7 +625,7 @@ class SaferPayOfficial extends PaymentModule
             }
 
             if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
-               $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
+                $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
             }
         }
     }
@@ -758,5 +758,14 @@ class SaferPayOfficial extends PaymentModule
         }
 
         return true;
+    }
+
+    public function hookDisplayHeader()
+    {
+        if (true) {
+            return  $this->context->smarty->fetch(
+                $this->getLocalPath() . 'views/templates/front/saferpay_iframe_modal.tpl'
+            );
+        }
     }
 }

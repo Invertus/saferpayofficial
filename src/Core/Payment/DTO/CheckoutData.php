@@ -44,15 +44,14 @@ class CheckoutData
     private $status;
 
     public function __construct(
-          $cartId,
-          $paymentMethod,
-          $isBusinessLicense,
-          $selectedCard = -1,
-          $fieldToken = null,
-          $successController = null,
-          $isTransaction = false
-    )
-    {
+        $cartId,
+        $paymentMethod,
+        $isBusinessLicense,
+        $selectedCard = -1,
+        $fieldToken = null,
+        $successController = null,
+        $isTransaction = false
+    ) {
         $this->cartId = $cartId;
         $this->paymentMethod = $paymentMethod;
         $this->isBusinessLicense = $isBusinessLicense;
@@ -65,15 +64,14 @@ class CheckoutData
     }
 
     public static function create(
-          $cartId,
-          $paymentMethod,
-          $isBusinessLicense,
-          $selectedCard = -1,
-          $fieldToken = null,
-          $successController = null,
-          $isTransaction = false
-    )
-    {
+        $cartId,
+        $paymentMethod,
+        $isBusinessLicense,
+        $selectedCard = -1,
+        $fieldToken = null,
+        $successController = null,
+        $isTransaction = false
+    ) {
         return new self(
             $cartId,
             $paymentMethod,

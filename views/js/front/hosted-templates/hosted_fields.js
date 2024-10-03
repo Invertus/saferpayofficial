@@ -32,16 +32,48 @@ $(document).ready(function () {
 
         var paymentType = $(this).find("[name=saferpayPaymentType]").val();
 
+        var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
+        var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
+
         //NOTE: if it's not a hosted iframe then we don't need to submitHostedFields.
         if (paymentType !== saferpay_payment_types.hosted_iframe) {
-            event.target.submit();
+                //NOTE: not saved card chosen, continuing with normal procedures.
+                if (selectedCard <= 0) {
+                    event.target.submit();
+
+                    return;
+                }
+
+                $.ajax(saferpay_official_ajax_url, {
+                    method: 'POST',
+                    data: {
+                        action: 'initializeSavedCardPayment',
+                        paymentMethod: selectedCardMethod,
+                        selectedCard: selectedCard,
+                        isBusinessLicence: 1,
+                        ajax: 1
+                    },
+                    success: function (response) {
+                        var data = jQuery.parseJSON(response);
+
+                        if(data.error) {
+                            window.location.href = data.url;
+
+                            return
+                        }
+
+                        $('#savedCardModal').modal('show');
+                        document.getElementById("savedCardIframe").src = data.url;
+
+                        // Attach event handler for modal close event
+                        $('#savedCardModal').on('hidden.bs.modal', function () {
+                            window.location.href = data.successUrl;
+                        });
+                    },
+                });
 
             return;
         }
-
-        var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
-
-        var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
 
         //NOTE: not saved card chosen, continuing with normal procedures.
         if (selectedCard <= 0) {
@@ -61,7 +93,6 @@ $(document).ready(function () {
             },
             success: function (response) {
                 var data = jQuery.parseJSON(response);
-
                 window.location = data.url;
             },
         });
