@@ -23,8 +23,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use Invertus\SaferPay\Repository\ReadOnlyCollectionRepositoryInterface;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

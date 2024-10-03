@@ -201,7 +201,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         die($this->module->l('Success', self::FILENAME));
     }
 
-    private function assertTransaction($cartId) {
+    private function assertTransaction($cartId)
+    {
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
@@ -217,10 +218,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
     {
         if (method_exists('Order', 'getIdByCartId')) {
             return Order::getIdByCartId($cartId);
-        } else {
-            // For PrestaShop 1.6 use the alternative method
-            return Order::getOrderByCartId($cartId);
         }
+        // For PrestaShop 1.6 use the alternative method
+        return Order::getOrderByCartId($cartId);
     }
 
     protected function displayMaintenancePage()

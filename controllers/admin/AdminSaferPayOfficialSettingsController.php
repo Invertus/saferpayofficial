@@ -400,7 +400,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('Description', self::FILE_NAME),
                     'type' => 'text',
                     'desc' => 'This description is visible in payment page also in payment confirmation email',
-                    'class' => 'fixed-width-xxl'
+                    'class' => 'fixed-width-xxl',
                 ],
                 SaferPayConfig::SAFERPAY_DEBUG_MODE => [
                     'title' => $this->module->l('Debug mode', self::FILE_NAME),
