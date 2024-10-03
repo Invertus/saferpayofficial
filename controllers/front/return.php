@@ -100,7 +100,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 }
 
                 //NOTE to get latest information possible and not override new information.
-                $order = new Order($orderId);
 
                 $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();// if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
 
