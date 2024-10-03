@@ -34,8 +34,6 @@ use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
-use Invertus\SaferPay\Config\SaferPayConfig;
-use Order;
 use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {

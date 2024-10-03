@@ -29,7 +29,6 @@ use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Exception\Api\TransactionDeclinedException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 use SaferPayOrder;
 
@@ -84,7 +83,7 @@ class AssertService
         // also we call authorize method in some of the success controllers, so if we leave the logic here,
         // we get an error with TRANSACTION_IN_WRONG_STATE
         if ($saferPayOrder->is_transaction) {
-          $assertApi = self::ASSERT_API_TRANSACTION;
+            $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
         try {
