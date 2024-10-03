@@ -35,13 +35,13 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
 //        $logger = $this->module->getService(LoggerInterface::class);
 
         if ($value instanceof JsonResponse) {
-            if ($value->getStatusCode() === JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
+//            if ($value->getStatusCode() === JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
 //                $logger->error('Failed to return valid response', [
 //                    'context' => [
 //                        'response' => $value->getContent(),
 //                    ],
 //                ]);
-            }
+//            }
 
             http_response_code($value->getStatusCode());
 
