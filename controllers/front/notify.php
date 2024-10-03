@@ -187,18 +187,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 die('canceled');
             }
 
-            PrestaShopLogger::addLog(
-                sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - caught an error: %s', self::FILENAME, $e->getMessage()), [
+                'exception' => $e,
+            ]);
+
             $this->releaseLock();
 
             die($this->module->l($e->getMessage(), self::FILENAME));
