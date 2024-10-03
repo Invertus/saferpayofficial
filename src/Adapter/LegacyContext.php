@@ -89,7 +89,7 @@ class LegacyContext
         return (int) $this->getContext()->getDevice();
     }
 
-    public function getAdminLink($controllerName, array $params = [])
+    public function getAdminLink($controllerName, $params = [])
     {
         /* @noinspection PhpMethodParametersCountMismatchInspection - its valid for PS1.7 */
         return (string) Context::getContext()->link->getAdminLink($controllerName, true, [], $params);
@@ -187,7 +187,7 @@ class LegacyContext
         $this->getContext()->currency = $currency;
     }
 
-    public function getBaseLink(int $shopId = null, bool $ssl = null)
+    public function getBaseLink($shopId = null, $ssl = null)
     {
         return (string) $this->getContext()->link->getBaseLink($shopId, $ssl);
     }
@@ -205,7 +205,7 @@ class LegacyContext
 
     public function getCart()
     {
-        return $this->getContext()->cart ?? null;
+        return isset($this->getContext()->cart) ? $this->getContext()->cart : null;
     }
 
     public function getShopThemeName()
