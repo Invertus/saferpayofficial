@@ -34,5 +34,5 @@ interface LogFormatterInterface
      *
      * @return string
      */
-    public function getMessage(string $message): string;
+    public function getMessage($message);
 }

@@ -31,5 +31,5 @@ if (!defined('_PS_VERSION_')) {
 
 interface SaferPayLogRepositoryInterface extends ReadOnlyCollectionRepositoryInterface
 {
-    public function prune(int $daysToKeep);
+    public function prune($daysToKeep);
 }

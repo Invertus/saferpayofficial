@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ExceptionUtility
 {
-    public static function getExceptions(\Throwable $exception)
+    public static function getExceptions($exception)
     {
         if (method_exists($exception, 'getExceptions')) {
             return $exception->getExceptions();
@@ -38,7 +38,7 @@ class ExceptionUtility
         return [self::toArray($exception)];
     }
 
-    public static function toArray(\Throwable $exception): array
+    public static function toArray( $exception)
     {
         if (method_exists($exception, 'getContext')) {
             $context = $exception->getContext();

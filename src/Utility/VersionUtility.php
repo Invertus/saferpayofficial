@@ -29,32 +29,32 @@ if (!defined('_PS_VERSION_')) {
 
 class VersionUtility
 {
-    public static function isPsVersionLessThan($version): ?int
+    public static function isPsVersionLessThan($version)
     {
         return version_compare(_PS_VERSION_, $version, '<');
     }
 
-    public static function isPsVersionGreaterThan($version): ?int
+    public static function isPsVersionGreaterThan($version)
     {
         return version_compare(_PS_VERSION_, $version, '>');
     }
 
-    public static function isPsVersionGreaterOrEqualTo($version): ?int
+    public static function isPsVersionGreaterOrEqualTo($version)
     {
         return version_compare(_PS_VERSION_, $version, '>=');
     }
 
-    public static function isPsVersionLessThanOrEqualTo($version): ?int
+    public static function isPsVersionLessThanOrEqualTo($version)
     {
         return version_compare(_PS_VERSION_, $version, '<=');
     }
 
-    public static function isPsVersionEqualTo($version): ?int
+    public static function isPsVersionEqualTo($version)
     {
         return version_compare(_PS_VERSION_, $version, '=');
     }
 
-    public static function current(): string
+    public static function current()
     {
         return _PS_VERSION_;
     }

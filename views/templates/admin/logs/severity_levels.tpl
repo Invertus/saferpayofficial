@@ -22,13 +22,13 @@
 <div class="panel col-lg-12">
     <h3>
         <i class="icon-warning-sign"></i>
-        {l s='Severity levels:' mod='klarnapayment'}
+        {l s='Severity levels:' mod='saferpayofficial'}
     </h3>
-    <p>{l s='Meaning of severity levels:' mod='klarnapayment'}</p>
+    <p>{l s='Meaning of severity levels:' mod='saferpayofficial'}</p>
     <ol>
-        <li><span class="badge badge-pill badge-success" style="margin-bottom: 5px">{l s='Info' mod='klarnapayment'}</span></li>
-        <li><span class="badge badge-pill badge-warning" style="margin-bottom: 5px">{l s='Warning' mod='klarnapayment'}</span></li>
-        <li><span class="badge badge-pill badge-danger" style="margin-bottom: 5px">{l s='Error' mod='klarnapayment'}</span></li>
-        <li><span class="badge badge-pill badge-critical" style="margin-bottom: 5px"> {l s='Fatal' mod='klarnapayment'}</span></li>
+        <li><span class="badge badge-pill badge-success" style="margin-bottom: 5px">{l s='Info' mod='saferpayofficial'}</span></li>
+        <li><span class="badge badge-pill badge-warning" style="margin-bottom: 5px">{l s='Warning' mod='saferpayofficial'}</span></li>
+        <li><span class="badge badge-pill badge-danger" style="margin-bottom: 5px">{l s='Error' mod='saferpayofficial'}</span></li>
+        <li><span class="badge badge-pill badge-critical" style="margin-bottom: 5px"> {l s='Fatal' mod='saferpayofficial'}</span></li>
     </ol>
 </div>

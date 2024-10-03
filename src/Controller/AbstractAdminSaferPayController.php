@@ -1,14 +1,24 @@
 <?php
 /**
- * NOTICE OF LICENSE
+ *NOTICE OF LICENSE
  *
- * @author    Klarna Bank AB www.klarna.com
- * @copyright Copyright (c) permanent, Klarna Bank AB
- * @license   ISC
+ *This source file is subject to the Open Software License (OSL 3.0)
+ *that is bundled with this package in the file LICENSE.txt.
+ *It is also available through the world-wide-web at this URL:
+ *http://opensource.org/licenses/osl-3.0.php
+ *If you did not receive a copy of the license and are unable to
+ *obtain it through the world-wide-web, please send an email
+ *to license@prestashop.com so we can send you a copy immediately.
  *
- * @see       /LICENSE
+ *DISCLAIMER
  *
- * International Registered Trademark & Property of Klarna Bank AB
+ * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
+ *versions in the future. If you wish to customize PrestaShop for your
+ *needs please refer to http://www.prestashop.com for more information.
+ *
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
  */
 
 namespace Invertus\SaferPay\Controller;
@@ -19,7 +29,7 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
 {
     const FILE_NAME = 'AbstractAdminSaferPayController';
 
-    protected function ajaxResponse($value = null, $controller = null, $method = null): void
+    protected function ajaxResponse($value = null, $controller = null, $method = null)
     {
 //        /** @var LoggerInterface $logger */
 //        $logger = $this->module->getService(LoggerInterface::class);
@@ -58,7 +68,7 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
         exit;
     }
 
-    public function ensureHasPermissions(array $permissions, bool $ajax = false): bool
+    public function ensureHasPermissions($permissions, $ajax = false)
     {
         foreach ($permissions as $permission) {
             if (!$this->access($permission)) {

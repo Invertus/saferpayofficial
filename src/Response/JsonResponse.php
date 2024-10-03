@@ -34,12 +34,12 @@ class JsonResponse extends BaseJsonResponse
     /**
      * @param mixed $data
      */
-    public function __construct($data = null, int $status = 200, array $headers = [])
+    public function __construct($data = null, $status = 200, $headers = [])
     {
         parent::__construct($data, $status, $headers);
     }
 
-    public static function success(array $data, int $status = 200): self
+    public static function success($data, $status = 200)
     {
         return new self([
             'success' => true,
@@ -54,7 +54,7 @@ class JsonResponse extends BaseJsonResponse
      *
      * @return static
      */
-    public static function error($error, int $status = 400): self
+    public static function error($error, $status = 400)
     {
         if ($status === JsonResponse::HTTP_UNPROCESSABLE_ENTITY) {
             // NOTE: removing rule name. ['required' => 'message'] becomes [0 => 'message']

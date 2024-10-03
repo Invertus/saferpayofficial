@@ -46,5 +46,5 @@ interface ReadOnlyCollectionRepositoryInterface
      *
      * @return \ObjectModel|null
      */
-    public function findOneBy(array $keyValueCriteria, $langId = null);
+    public function findOneBy($keyValueCriteria, $langId = null);
 }

@@ -31,7 +31,7 @@ class LogFormatter implements LogFormatterInterface
 {
     const SAFERPAY_LOG_PREFIX = 'SAFERPAY_MODULE_LOG:';
 
-    public function getMessage(string $message): string
+    public function getMessage($message)
     {
         return self::SAFERPAY_LOG_PREFIX . ' ' . $message;
     }

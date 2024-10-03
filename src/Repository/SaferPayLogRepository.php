@@ -24,8 +24,6 @@
 namespace Invertus\SaferPay\Repository;
 
 use Invertus\Knapsack\Collection;
-use Invertus\SaferPay\Repository\CollectionRepository;
-use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -38,7 +36,7 @@ class SaferPayLogRepository extends CollectionRepository implements SaferPayLogR
         parent::__construct(\SaferPayLog::class);
     }
 
-    public function prune(int $daysToKeep)
+    public function prune($daysToKeep)
     {
         Collection::from(
             $this->findAllInCollection()
