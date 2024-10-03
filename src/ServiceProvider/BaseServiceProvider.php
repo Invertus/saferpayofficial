@@ -23,6 +23,8 @@
 
 namespace Invertus\SaferPay\ServiceProvider;
 
+use Invertus\SaferPay\Logger\Logger;
+use Invertus\Saferpay\Logger\LoggerInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepository;
@@ -52,6 +54,7 @@ final class BaseServiceProvider
         $this->addService($container, IdempotencyProviderInterface::class, $container->get(BasicIdempotencyProvider::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
         $this->addService($container, SaferPayLogRepositoryInterface::class, $container->get(SaferPayLogRepository::class));
+        $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
     }
 
     private function addService(Container $container, $className, $service)
