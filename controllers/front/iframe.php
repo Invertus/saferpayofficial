@@ -90,14 +90,13 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             $checkoutController = $this->module->getService(CheckoutController::class);
 
             $checkoutData = CheckoutData::create(
-                (int)$this->context->cart->id,
+                (int) $this->context->cart->id,
                 $paymentMethod,
-                (int)Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
                 $selectedCard
             );
 
             $redirectUrl = $checkoutController->execute($checkoutData);
-
         } catch (\Exception $exception) {
             $redirectUrl = $this->context->link->getModuleLink(
                 $this->module->name,

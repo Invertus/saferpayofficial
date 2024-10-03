@@ -331,7 +331,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     {
         $filteredValues = [];
 
-        $filteredValues = array_filter(Tools::getAllValues(), function($key) {
+        $filteredValues = array_filter(Tools::getAllValues(), function ($key) {
             return substr($key, -6) === '_field';
         }, ARRAY_FILTER_USE_KEY);
 

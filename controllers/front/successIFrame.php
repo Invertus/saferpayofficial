@@ -21,13 +21,8 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\Enum\ControllerName;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Service\SaferPayOrderStatusService;
-use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
 if (!defined('_PS_VERSION_')) {
     exit;
