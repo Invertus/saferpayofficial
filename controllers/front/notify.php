@@ -56,6 +56,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
+            $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'cart_id' => $cartId,
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
@@ -63,6 +67,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         }
 
         if ($cart->secure_key !== $secureKey) {
+            $logger->error(sprintf('%s - Insecure cart', self::FILE_NAME), [
+                'cart_id' => $cartId,
+            ]);
+
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
 

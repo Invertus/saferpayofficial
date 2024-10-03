@@ -67,18 +67,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
         try {
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
-            PrestaShopLogger::addLog(
-                sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
+            $logger->error(sprintf('%s - %s', self::FILE_NAME, $e->getMessage()));
 
             Tools::redirect(
                 $this->context->link->getModuleLink(

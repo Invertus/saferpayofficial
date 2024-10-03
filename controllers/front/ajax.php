@@ -166,6 +166,13 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'url' => $redirectUrl,
             ]));
         } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - Exception occurred', self::FILE_NAME), [
+                'message' => $e->getMessage(),
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error' => true,
                 'message' => $e->getMessage(),
