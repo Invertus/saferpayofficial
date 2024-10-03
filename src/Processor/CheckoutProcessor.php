@@ -40,7 +40,6 @@ use Invertus\SaferPay\Service\SaferPayInitialize;
 use Order;
 use PrestaShopException;
 use SaferPayOrder;
-use Validate;
 
 class CheckoutProcessor
 {
@@ -68,7 +67,8 @@ class CheckoutProcessor
         $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function run(CheckoutData $data) {
+    public function run(CheckoutData $data)
+    {
         $cart = new Cart($data->getCartId());
 
         if (!$cart) {
@@ -217,9 +217,8 @@ class CheckoutProcessor
     {
         if (method_exists('Order', 'getIdByCartId')) {
             return new Order(Order::getIdByCartId($cartId));
-        } else {
-            // For PrestaShop 1.6 use the alternative method
-            return new Order(Order::getOrderByCartId($cartId));
         }
+        // For PrestaShop 1.6 use the alternative method
+        return new Order(Order::getOrderByCartId($cartId));
     }
 }

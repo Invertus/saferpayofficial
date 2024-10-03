@@ -1,5 +1,4 @@
-<?php
-/**
+{**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -19,19 +18,17 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- */
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * @param SaferPayOfficial $module
- * @return bool
- */
-function upgrade_module_1_2_2($module)
-{
-    return $module->registerHook('actionOrderHistoryAddAfter')
-        && $module->unregisterHook('actionOrderStatusUpdate')
-        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
-}
+ *}
+<div class="panel col-lg-12">
+    <h3>
+        <i class="icon-warning-sign"></i>
+        {l s='Severity levels:' mod='saferpayofficial'}
+    </h3>
+    <p>{l s='Meaning of severity levels:' mod='saferpayofficial'}</p>
+    <ol>
+        <li><span class="badge badge-pill badge-success" style="margin-bottom: 5px">{l s='Info' mod='saferpayofficial'}</span></li>
+        <li><span class="badge badge-pill badge-warning" style="margin-bottom: 5px">{l s='Warning' mod='saferpayofficial'}</span></li>
+        <li><span class="badge badge-pill badge-danger" style="margin-bottom: 5px">{l s='Error' mod='saferpayofficial'}</span></li>
+        <li><span class="badge badge-pill badge-critical" style="margin-bottom: 5px"> {l s='Fatal' mod='saferpayofficial'}</span></li>
+    </ol>
+</div>

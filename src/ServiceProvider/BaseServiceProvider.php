@@ -27,6 +27,8 @@ use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepository;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;
+use Invertus\SaferPay\Repository\SaferPayLogRepository;
+use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
 use League\Container\Container;
 
 if (!defined('_PS_VERSION_')) {
@@ -49,6 +51,7 @@ final class BaseServiceProvider
     {
         $this->addService($container, IdempotencyProviderInterface::class, $container->get(BasicIdempotencyProvider::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
+        $this->addService($container, SaferPayLogRepositoryInterface::class, $container->get(SaferPayLogRepository::class));
     }
 
     private function addService(Container $container, $className, $service)

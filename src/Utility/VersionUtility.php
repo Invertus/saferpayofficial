@@ -21,17 +21,41 @@
  *@license   SIX Payment Services
  */
 
+namespace Invertus\SaferPay\Utility;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @param SaferPayOfficial $module
- * @return bool
- */
-function upgrade_module_1_2_2($module)
+class VersionUtility
 {
-    return $module->registerHook('actionOrderHistoryAddAfter')
-        && $module->unregisterHook('actionOrderStatusUpdate')
-        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
+    public static function isPsVersionLessThan($version)
+    {
+        return version_compare(_PS_VERSION_, $version, '<');
+    }
+
+    public static function isPsVersionGreaterThan($version)
+    {
+        return version_compare(_PS_VERSION_, $version, '>');
+    }
+
+    public static function isPsVersionGreaterOrEqualTo($version)
+    {
+        return version_compare(_PS_VERSION_, $version, '>=');
+    }
+
+    public static function isPsVersionLessThanOrEqualTo($version)
+    {
+        return version_compare(_PS_VERSION_, $version, '<=');
+    }
+
+    public static function isPsVersionEqualTo($version)
+    {
+        return version_compare(_PS_VERSION_, $version, '=');
+    }
+
+    public static function current()
+    {
+        return _PS_VERSION_;
+    }
 }

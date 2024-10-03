@@ -21,17 +21,30 @@
  *@license   SIX Payment Services
  */
 
+namespace Invertus\SaferPay\Repository;
+
+use Invertus\Knapsack\Collection;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @param SaferPayOfficial $module
- * @return bool
- */
-function upgrade_module_1_2_2($module)
+class SaferPayLogRepository extends CollectionRepository implements SaferPayLogRepositoryInterface
 {
-    return $module->registerHook('actionOrderHistoryAddAfter')
-        && $module->unregisterHook('actionOrderStatusUpdate')
-        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
+    public function __construct()
+    {
+        parent::__construct(\SaferPayLog::class);
+    }
+
+    public function prune($daysToKeep)
+    {
+        Collection::from(
+            $this->findAllInCollection()
+                ->sqlWhere('DATEDIFF(NOW(),date_add) >= ' . $daysToKeep)
+        )
+            ->each(function (\KlarnaPaymentLog $log) {
+                $log->delete();
+            })
+            ->realize();
+    }
 }

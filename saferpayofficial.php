@@ -679,8 +679,8 @@ Thank you for your patience!');
             );
         } else {
             $action = $this->context->link->getAdminLink(
-                    self::ADMIN_ORDER_CONTROLLER
-                ) . '&id_order=' . (int) $orderId;
+                self::ADMIN_ORDER_CONTROLLER
+            ) . '&id_order=' . (int) $orderId;
         }
 
         $assertId = $orderRepo->getAssertIdBySaferPayOrderId($saferPayOrderId);

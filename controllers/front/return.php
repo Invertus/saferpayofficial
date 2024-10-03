@@ -184,9 +184,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     {
         if (method_exists('Order', 'getIdByCartId')) {
             return Order::getIdByCartId($cartId);
-        } else {
-            // For PrestaShop 1.6 use the alternative method
-            return Order::getOrderByCartId($cartId);
         }
+        // For PrestaShop 1.6 use the alternative method
+        return Order::getOrderByCartId($cartId);
     }
 }

@@ -21,17 +21,18 @@
  *@license   SIX Payment Services
  */
 
+namespace Invertus\SaferPay\Logger\Formatter;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-/**
- * @param SaferPayOfficial $module
- * @return bool
- */
-function upgrade_module_1_2_2($module)
+interface LogFormatterInterface
 {
-    return $module->registerHook('actionOrderHistoryAddAfter')
-        && $module->unregisterHook('actionOrderStatusUpdate')
-        && Configuration::deleteByName('SAFERPAY_SEND_ORDER_CONFIRMATION');
+    /**
+     * @param string $message - an actual error message
+     *
+     * @return string
+     */
+    public function getMessage($message);
 }

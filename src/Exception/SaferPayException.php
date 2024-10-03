@@ -35,8 +35,7 @@ class SaferPayException extends \Exception
         $internalMessage,
         $code,
         array  $context = []
-    )
-    {
+    ) {
         parent::__construct($internalMessage, $code);
         $this->context = $context;
     }
