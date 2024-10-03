@@ -66,8 +66,8 @@ class CheckoutProcessor
         $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
-    public function run(CheckoutData $data) {
-
+    public function run(CheckoutData $data)
+    {
         $cart = new Cart($data->getCartId());
 
         if (!$cart) {

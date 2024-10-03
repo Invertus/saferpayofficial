@@ -625,7 +625,7 @@ class SaferPayOfficial extends PaymentModule
             }
 
             if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED) === (int) $orderStatus->id) {
-               $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
+                $mailService->sendOrderConfMail($order, (int) $orderStatus->id);
             }
         }
     }

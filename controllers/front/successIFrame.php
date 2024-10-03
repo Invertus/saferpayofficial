@@ -21,13 +21,8 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\SaferPay\Enum\ControllerName;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Service\SaferPayOrderStatusService;
-use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -61,37 +56,6 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $this->errors[] = $this->module->l('Failed to validate cart.', self::FILE_NAME);
 
             $this->redirectWithNotifications($this->getOrderLink());
-        }
-
-        try {
-            Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
-        } catch (Exception $e) {
-            PrestaShopLogger::addLog(
-                sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
-
-            Tools::redirect(
-                $this->context->link->getModuleLink(
-                    $this->module->name,
-                    ControllerName::FAIL_IFRAME,
-                    [
-                        'cartId' => $cartId,
-                        'secureKey' => $secureKey,
-                        'orderId' => $orderId,
-                        \Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
-                    ],
-                    true
-                )
-            );
         }
     }
 

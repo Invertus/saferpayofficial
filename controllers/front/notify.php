@@ -180,7 +180,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         die($this->module->l('Success', self::FILENAME));
     }
 
-    private function assertTransaction($cartId) {
+    private function assertTransaction($cartId)
+    {
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
