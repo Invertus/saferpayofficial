@@ -64,6 +64,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         // Refresh payments.
         /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
         $refreshPaymentsService = $this->module->getService(SaferPayRefreshPaymentsService::class);
+
         try {
             $refreshPaymentsService->refreshPayments();
         } catch (SaferPayApiException $exception) {
@@ -91,6 +92,14 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             return;
         }
 
+        $businessLicence = Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
+
+        $enalbedFields = $this->getEnalbedFieldsAsArray();
+
+        if (!empty($enalbedFields) && !$businessLicence) {
+            $this->errors[] = $this->module->l('You need to have a business license to enable custom forms.');
+        }
+
         $success = true;
         foreach ($paymentMethods as $paymentMethod) {
             $isActive = Tools::getValue($paymentMethod . '_enable');
@@ -100,6 +109,11 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             $success &= $logoCreation->updateLogo($paymentMethod, $isActive);
 
             $isActive = Tools::getValue($paymentMethod . '_field');
+
+            if (!empty($enalbedFields) && !$businessLicence) {
+                $isActive = 0;
+            }
+
             $success &= $fieldCreation->updateField($paymentMethod, $isActive);
 
             try {
@@ -311,5 +325,16 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
             return null;
         }
+    }
+
+    private function getEnalbedFieldsAsArray()
+    {
+        $filteredValues = [];
+
+        $filteredValues = array_filter(Tools::getAllValues(), function($key) {
+            return substr($key, -6) === '_field';
+        }, ARRAY_FILTER_USE_KEY);
+
+        return $filteredValues;
     }
 }
