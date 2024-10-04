@@ -74,8 +74,6 @@ class SaferPayTransactionAssertion
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
         \PrestaShopLogger::addLog('saferpayOrderId:' . $saferPayOrder->id);
 
-        $businessLicence = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
-
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token, $saveCard);
         $assertResponse = $this->assertionService->assert($assertRequest);
 
