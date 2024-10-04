@@ -76,14 +76,8 @@ class SaferPayTransactionAssertion
 
         $businessLicence = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
 
-        if($businessLicence) {
-            $saferPayOrder = new SaferPayOrder($saferPayOrder->id);
-            $saferPayOrder->is_transaction = 1;
-            $saferPayOrder->update();
-        }
-
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token, $saveCard);
-        $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
+        $assertResponse = $this->assertionService->assert($assertRequest);
 
         if (empty($assertResponse)) {
             return null;

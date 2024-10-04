@@ -60,7 +60,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         }
 
         /** Purchase is made by already saved card */
-        if (Tools::getValue('selectedCard') > 0) {
+        if (Tools::getValue('selectedCard') >= 0) {
             return;
         }
 

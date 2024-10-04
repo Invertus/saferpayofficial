@@ -78,13 +78,11 @@ class AssertService
      * @return object|null
      * @throws \Exception
      */
-    public function assert(AssertRequest $assertRequest, $saferPayOrderId)
+    public function assert(AssertRequest $assertRequest)
     {
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
         $assertApi = self::ASSERT_API_PAYMENT;
 
-        $isBusinessLicense = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . Configuration::getConfigSuffix());
+        $isBusinessLicense = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
 
         if ($isBusinessLicense) {
             $assertApi = self::ASSERT_API_TRANSACTION;
