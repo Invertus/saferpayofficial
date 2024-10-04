@@ -82,7 +82,7 @@ class SaferPayTransactionAssertion
             $saferPayOrder->update();
         }
 
-        $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
+        $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token, $saveCard);
         $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
 
         if (empty($assertResponse)) {
