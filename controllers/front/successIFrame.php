@@ -58,6 +58,42 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
 
             $this->redirectWithNotifications($this->getOrderLink());
         }
+
+        /** Purchase is made by already saved card */
+        if (Tools::getValue('selectedCard') > 0) {
+            return;
+        }
+
+        try {
+            Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
+                sprintf(
+                    '%s has caught an error: %s',
+                    __CLASS__,
+                    $e->getMessage()
+                ),
+                1,
+                null,
+                null,
+                null,
+                true
+            );
+
+            Tools::redirect(
+                $this->context->link->getModuleLink(
+                    $this->module->name,
+                    ControllerName::FAIL_IFRAME,
+                    [
+                        'cartId' => $cartId,
+                        'secureKey' => $secureKey,
+                        'orderId' => $orderId,
+                        \Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
+                    ],
+                    true
+                )
+            );
+        }
     }
 
     public function initContent()
