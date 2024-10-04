@@ -46,6 +46,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
+        $selectedCard = Tools::getValue('selectedCard');
+
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
@@ -62,7 +64,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
         try {
-            $assertResponseBody = $transactionAssert->assert($cartId);
+            $assertResponseBody = $transactionAssert->assert(
+                $cartId,
+                $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
+                $selectedCard
+            );
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
             \PrestaShopLogger::addLog($e->getMessage());

@@ -25,9 +25,11 @@ namespace Invertus\SaferPay\Api\Request;
 
 use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
+use Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 use SaferPayOrder;
@@ -54,15 +56,18 @@ class AssertService
      * @var SaferPayAssertBuilder
      */
     private $assertBuilder;
+    private $aliasBuilder;
 
     public function __construct(
         ApiRequest $apiRequest,
         AssertResponseObjectCreator $assertResponseObjectCreator,
-        SaferPayAssertBuilder $assertBuilder
+        SaferPayAssertBuilder $assertBuilder,
+        SaferPayCardAliasBuilder $aliasBuilder
     ) {
         $this->apiRequest = $apiRequest;
         $this->assertResponseObjectCreator = $assertResponseObjectCreator;
         $this->assertBuilder = $assertBuilder;
+        $this->aliasBuilder = $aliasBuilder;
     }
 
     /**
@@ -99,10 +104,15 @@ class AssertService
      * @return AssertBody
      * @throws Exception
      */
-    public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId)
+    public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId, $customerId, $selectedCardOption)
     {
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
+        $isPaymentSafe = $assertBody->getLiability()->getLiabilityShift();
+
+        if ((int) $selectedCardOption === SaferPayConfig::CREDIT_CARD_OPTION_SAVE && $isPaymentSafe) {
+            $this->aliasBuilder->createCardAlias($assertBody, $customerId);
+        }
 
         return $assertBody;
     }
