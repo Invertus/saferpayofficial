@@ -29,7 +29,7 @@ use Invertus\SaferPay\EntityManager\ObjectModelEntityManager;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
 use Invertus\SaferPay\Logger\Formatter\LogFormatterInterface;
 use Invertus\SaferPay\Logger\Logger;
-use Invertus\Saferpay\Logger\LoggerInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepository;
