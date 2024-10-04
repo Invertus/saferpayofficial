@@ -78,10 +78,6 @@ class AssertService
 
         $assertApi = self::ASSERT_API_PAYMENT;
 
-        //TODO: refactor this to use authorize request.
-        // naming is weird. With transaction, we do a request to an authorize endpoint but name it assert ?
-        // also we call authorize method in some of the success controllers, so if we leave the logic here,
-        // we get an error with TRANSACTION_IN_WRONG_STATE
         if ($saferPayOrder->is_transaction) {
             $assertApi = self::ASSERT_API_TRANSACTION;
         }

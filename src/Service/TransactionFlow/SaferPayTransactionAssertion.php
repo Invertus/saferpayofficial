@@ -24,6 +24,7 @@
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
 use Invertus\SaferPay\Api\Request\AssertService;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
@@ -70,6 +71,14 @@ class SaferPayTransactionAssertion
     {
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
         \PrestaShopLogger::addLog('saferpayOrderId:' . $saferPayOrder->id);
+
+        $businessLicence = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
+
+        if($businessLicence) {
+            $saferPayOrder = new SaferPayOrder($saferPayOrder->id);
+            $saferPayOrder->is_transaction = 1;
+            $saferPayOrder->update();
+        }
 
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
         $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
