@@ -66,7 +66,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         try {
             $assertResponseBody = $transactionAssert->assert(
                 $cartId,
-                $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
+                (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
                 $selectedCard
             );
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
