@@ -22,7 +22,7 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\Saferpay\Logger\LoggerInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
 if (!defined('_PS_VERSION_')) {

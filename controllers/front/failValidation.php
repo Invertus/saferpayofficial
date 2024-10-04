@@ -22,7 +22,7 @@
  */
 
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
-use Invertus\Saferpay\Logger\LoggerInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\CartDuplicationService;
 

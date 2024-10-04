@@ -27,6 +27,7 @@ use Configuration;
 use Exception;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use SaferPayLog;
 use Unirest\Request;
 use Unirest\Response;
@@ -37,6 +38,15 @@ if (!defined('_PS_VERSION_')) {
 
 class ApiRequest
 {
+    const FILE_NAME = 'ApiRequest';
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * API Request Post Method.
      *
@@ -59,10 +69,13 @@ class ApiRequest
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $logs = new SaferPayLog();
-            $logs->message = $exception->getMessage() ?: "missing response";
-            $logs->payload = json_encode($params);
-            $logs->add();
+            $this->logger->error(sprintf('%s - POST request failed', self::FILE_NAME), [
+                'message' => $exception->getMessage(),
+                'url' => $url,
+                'headers' => json_encode($this->getHeaders()),
+                'params' => json_encode($params),
+            ]);
+
             throw $exception;
         }
     }
@@ -88,10 +101,13 @@ class ApiRequest
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $logs = new SaferPayLog();
-            $logs->message = $exception->getMessage() ?: "missing response";
-            $logs->payload = json_encode($params);
-            $logs->add();
+            $this->logger->error(sprintf('%s - GET request failed', self::FILE_NAME), [
+                'message' => $exception->getMessage(),
+                'url' => $url,
+                'headers' => json_encode($this->getHeaders()),
+                'params' => json_encode($params),
+            ]);
+
             throw $exception;
         }
     }
@@ -119,6 +135,11 @@ class ApiRequest
     private function isValidResponse(Response $response)
     {
         if ($response->code >= 300) {
+            $this->logger->error(sprintf('%s - API response failed', self::FILE_NAME), [
+                'response' => $response->raw_body,
+                'code' => $response->code,
+            ]);
+
             throw new SaferPayApiException(sprintf('Initialize API failed: %s', $response->raw_body), SaferPayApiException::INITIALIZE);
         }
     }

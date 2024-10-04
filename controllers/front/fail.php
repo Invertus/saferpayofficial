@@ -24,7 +24,7 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Service\CartDuplicationService;
-use Invertus\Saferpay\Logger\LoggerInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 if (!defined('_PS_VERSION_')) {
