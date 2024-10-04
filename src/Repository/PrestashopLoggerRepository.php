@@ -26,7 +26,6 @@ namespace Invertus\SaferPay\Repository;
 use Invertus\Knapsack\Collection;
 use Invertus\SaferPay\Logger\Logger;
 use Invertus\SaferPay\Utility\VersionUtility;
-use Invertus\SaferPay\Repository\CollectionRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
