@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Context;
 
 use Invertus\SaferPay\Adapter\LegacyContext;
-use Invertus\SaferPay\Context\GlobalShopContextInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;

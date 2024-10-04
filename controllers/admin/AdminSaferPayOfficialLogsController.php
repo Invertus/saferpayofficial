@@ -27,7 +27,7 @@ use Invertus\Saferpay\Context\GlobalShopContext;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
 use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
-use Invertus\Saferpay\Logger\LoggerInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayLogRepository;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 use Invertus\SaferPay\Utility\VersionUtility;
@@ -246,13 +246,13 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             return;
         }
 
-        /** @var Invertus\SaferPay\Adapter\Tools $tools */
+        /** @var Tools $tools */
         $tools = $this->module->getService(Tools::class);
 
-        /** @var Invertus\SaferPay\Repository\SaferPayLogRepository $logRepository */
+        /** @var SaferPayLogRepository $logRepository */
         $logRepository = $this->module->getService(SaferPayLogRepository::class);
 
-        /** @var Invertus\SaferPay\Context\GlobalShopContext $shopContext */
+        /** @var GlobalShopContext $shopContext */
         $globalShopContext = $this->module->getService(GlobalShopContext::class);
 
         $logId = $tools->getValueAsInt('log_id');
@@ -323,8 +323,8 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         /** @var Configuration $configuration */
         $configuration = $this->module->getService(Configuration::class);
 
-        /** @var \Invertus\SaferPay\Adapter\LegacyContext $context */
-        $context = $this->module->getService(\Invertus\SaferPay\Adapter\LegacyContext::class);
+        /** @var LegacyContext $context */
+        $context = $this->module->getService(LegacyContext::class);
 
         $storeInfo = [
             'PrestaShop Version' => _PS_VERSION_,
