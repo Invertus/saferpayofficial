@@ -24,6 +24,7 @@
 namespace Invertus\SaferPay\Api\Request;
 
 use Exception;
+use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
@@ -83,7 +84,9 @@ class AssertService
 
         $assertApi = self::ASSERT_API_PAYMENT;
 
-        if ($saferPayOrder->is_transaction) {
+        $isBusinessLicense = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . Configuration::getConfigSuffix());
+
+        if ($isBusinessLicense) {
             $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
