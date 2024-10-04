@@ -27,7 +27,7 @@ use Invertus\Saferpay\Context\GlobalShopContext;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
 use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
-use Invertus\Saferpay\Logger\LoggerInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayLogRepository;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 use Invertus\SaferPay\Utility\VersionUtility;
