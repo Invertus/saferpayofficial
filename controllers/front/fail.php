@@ -110,6 +110,8 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             $this->redirectWithNotifications($orderLink);
         }
 
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         $this->redirectWithNotifications(
             $this->context->link->getPageLink(
                 'cart',
@@ -124,6 +126,5 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             )
         );
 
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 }

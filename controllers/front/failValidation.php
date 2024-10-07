@@ -92,8 +92,8 @@ class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferP
             true
         );
 
-        Tools::redirect($failUrl);
-
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
+        Tools::redirect($failUrl);
     }
 }

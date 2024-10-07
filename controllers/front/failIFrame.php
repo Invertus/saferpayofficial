@@ -64,6 +64,9 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
             $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/loading.tpl');
             return;
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         $this->context->smarty->assign([
             'cssUrl' => "{$this->module->getPathUri()}views/css/front/loading.css",
             'jsUrl' => "{$this->module->getPathUri()}views/js/front/saferpay_iframe.js",
@@ -71,7 +74,6 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
         ]);
         $this->setTemplate('loading_16.tpl');
 
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     public function setMedia()

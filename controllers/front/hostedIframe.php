@@ -55,6 +55,8 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             'saferpay_selected_card' => $selectedCard,
         ]);
 
+        $logger->debug(sprintf('%s - Controller action ended', self::FILENAME));
+
         if (SaferPayConfig::isVersion17()) {
             $this->setTemplate(
                 SaferPayConfig::SAFERPAY_HOSTED_TEMPLATE_LOCATION .
@@ -70,7 +72,6 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             );
         }
 
-        $logger->debug(sprintf('%s - Controller action ended', self::FILENAME));
     }
 
     public function setMedia()

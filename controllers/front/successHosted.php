@@ -82,9 +82,8 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                     true
                 )
             );
-
-            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
         }
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**

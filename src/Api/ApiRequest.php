@@ -28,6 +28,7 @@ use Exception;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use SaferPayLog;
 use Unirest\Request;
 use Unirest\Response;
@@ -70,11 +71,7 @@ class ApiRequest
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - POST request failed', self::FILE_NAME), [
-                'message' => json_decode($exception->getMessage()),
-                'url' => $url,
-                'headers' => $this->getHeaders(),
-                'request' => $params,
-                'response' => $response->body,
+                'exceptions' => ExceptionUtility::getExceptions($exception)
             ]);
 
             throw $exception;
@@ -103,11 +100,7 @@ class ApiRequest
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - GET request failed', self::FILE_NAME), [
-                'message' => json_decode($exception->getMessage()),
-                'url' => $url,
-                'headers' => $this->getHeaders(),
-                'request' => $params,
-                'response' => $response->body,
+                'exceptions' => ExceptionUtility::getExceptions($exception)
             ]);
 
             throw $exception;
