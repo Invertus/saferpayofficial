@@ -70,7 +70,7 @@ class ApiRequest
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - POST request failed', self::FILE_NAME), [
-                'message' => $exception->getMessage(),
+                'message' => json_decode($exception->getMessage()),
                 'url' => $url,
                 'headers' => $this->getHeaders(),
                 'request' => $params,
@@ -103,7 +103,7 @@ class ApiRequest
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - GET request failed', self::FILE_NAME), [
-                'message' => $exception->getMessage(),
+                'message' => json_decode($exception->getMessage()),
                 'url' => $url,
                 'headers' => $this->getHeaders(),
                 'request' => $params,
