@@ -188,10 +188,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $saferPayAuthorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
             $saferPayCapturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
+            $usingSavedCard = $selectedCard > 0;
+
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
                 Tools::redirect($this->context->link->getModuleLink(
                     $this->module->name,
-                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard),
                     [
                         'cartId' => $cartId,
                         'orderId' => $orderId,
@@ -226,7 +228,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $this->setTemplate('saferpay_wait_16.tpl');
     }
 
-    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
+    private function getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard)
     {
         $successController = ControllerName::SUCCESS;
 
@@ -235,6 +237,10 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         if ($fieldToken) {
+            $successController = ControllerName::SUCCESS_HOSTED;
+        }
+
+        if($usingSavedCard) {
             $successController = ControllerName::SUCCESS_HOSTED;
         }
 
