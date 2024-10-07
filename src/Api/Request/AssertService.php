@@ -78,7 +78,7 @@ class AssertService
      * @return object|null
      * @throws \Exception
      */
-    public function assert(AssertRequest $assertRequest)
+    public function assert(AssertRequest $assertRequest, $isAccount = null)
     {
         $assertApi = self::ASSERT_API_PAYMENT;
 
@@ -86,6 +86,10 @@ class AssertService
 
         if ($isBusinessLicense) {
             $assertApi = self::ASSERT_API_TRANSACTION;
+        }
+
+        if ($isAccount) {
+            $assertApi = self::ASSERT_API_PAYMENT;
         }
 
         try {

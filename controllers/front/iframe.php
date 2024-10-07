@@ -94,7 +94,9 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 (int) $this->context->cart->id,
                 $paymentMethod,
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
-                $selectedCard
+                $selectedCard,
+                null,
+                ControllerName::SUCCESS_IFRAME
             );
 
             $redirectUrl = $checkoutController->execute($checkoutData);

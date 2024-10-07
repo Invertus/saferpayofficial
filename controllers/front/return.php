@@ -79,7 +79,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /**
          * NOTE: This flow is for hosted iframe payment method
          */
-        if (Tools::getValue('isBusinessLicence')) {
+        if (Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
             try {
                 /** @var CheckoutProcessor $checkoutProcessor * */
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
@@ -161,6 +161,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             : Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix());
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
+        $isIframe = Tools::getValue('successController') === ControllerName::SUCCESS_IFRAME;
+
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
@@ -193,7 +195,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
                 Tools::redirect($this->context->link->getModuleLink(
                     $this->module->name,
-                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken, $isIframe),
                     [
                         'cartId' => $cartId,
                         'orderId' => $orderId,
@@ -228,7 +230,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $this->setTemplate('saferpay_wait_16.tpl');
     }
 
-    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
+    private function getSuccessControllerName($isBusinessLicence, $fieldToken, $isIframe = false)
     {
         $successController = ControllerName::SUCCESS;
 
@@ -238,6 +240,10 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         if ($fieldToken) {
             $successController = ControllerName::SUCCESS_HOSTED;
+        }
+
+        if ($isIframe) {
+            $successController = ControllerName::SUCCESS_IFRAME;
         }
 
         return $successController;

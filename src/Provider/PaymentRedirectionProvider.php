@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Provider;
 
+use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
@@ -41,11 +42,16 @@ class PaymentRedirectionProvider
 
     /** @var PaymentTypeProvider */
     private $paymentTypeProvider;
+    /**
+     * @var Configuration
+     */
+    private $configuration;
 
-    public function __construct(LegacyContext $context, PaymentTypeProvider $paymentTypeProvider)
+    public function __construct(LegacyContext $context, PaymentTypeProvider $paymentTypeProvider, Configuration $configuration)
     {
         $this->context = $context;
         $this->paymentTypeProvider = $paymentTypeProvider;
+        $this->configuration = $configuration;
     }
 
     /**
@@ -56,12 +62,15 @@ class PaymentRedirectionProvider
     public function provideRedirectionLinkByPaymentMethod($paymentMethod)
     {
         $paymentType = $this->paymentTypeProvider->get($paymentMethod);
-
+        $isBusiness = $this->configuration->getAsInteger(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
         if ($paymentType === PaymentType::HOSTED_IFRAME) {
             return $this->context->getLink()->getModuleLink(
                 'saferpayofficial',
                 ControllerName::HOSTED_IFRAME,
-                ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
+                [
+                    'saved_card_method' => $paymentMethod,
+                    SaferPayConfig::IS_BUSINESS_LICENCE => $isBusiness,
+                ],
                 true
             );
         }
@@ -70,7 +79,10 @@ class PaymentRedirectionProvider
             return $this->context->getLink()->getModuleLink(
                 'saferpayofficial',
                 ControllerName::IFRAME,
-                ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
+                [
+                    'saved_card_method' => $paymentMethod,
+                    SaferPayConfig::IS_BUSINESS_LICENCE => $isBusiness
+                ],
                 true
             );
         }
@@ -78,7 +90,10 @@ class PaymentRedirectionProvider
         return $this->context->getLink()->getModuleLink(
             'saferpayofficial',
             ControllerName::VALIDATION,
-            ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => false],
+            [
+                'saved_card_method' => $paymentMethod,
+                SaferPayConfig::IS_BUSINESS_LICENCE => $isBusiness
+            ],
             true
         );
     }

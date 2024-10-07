@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Service\TransactionFlow;
 
 use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\Order;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
@@ -71,11 +72,19 @@ class SaferPayTransactionAssertion
     {
         $cart = new \Cart($cartId);
 
+        if (version_compare(_PS_VERSION_, '1.7.1.0', '>=')) {
+            $orderId = \Order::getIdByCartId($cartId);
+        } else {
+            $orderId = \Order::getOrderByCartId($cartId);
+        }
+        $order = new \Order($orderId);
+
+        $isAccount = $order->payment === 'ACCOUNTTOACCOUNT' ? true : null;
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
         \PrestaShopLogger::addLog('saferpayOrderId:' . $saferPayOrder->id);
 
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token, $saveCard);
-        $assertResponse = $this->assertionService->assert($assertRequest);
+        $assertResponse = $this->assertionService->assert($assertRequest, $isAccount);
 
         if (empty($assertResponse)) {
             return null;

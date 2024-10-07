@@ -44,6 +44,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
     public function postProcess()
     {
         $paymentMethod = Tools::getValue('saved_card_method');
+        $isBusiness = $paymentMethod === 'ACCOUNTTOACCOUNT' ? false : (bool) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
         $cart = $this->context->cart;
         $redirectLink = $this->context->link->getPageLink(
             'order',
@@ -85,7 +86,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $checkoutData = CheckoutData::create(
                 (int) $this->context->cart->id,
                 $paymentMethod,
-                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
+                (int) $isBusiness
             );
 
             $redirectLink = $checkoutController->execute($checkoutData);

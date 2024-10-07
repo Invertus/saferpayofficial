@@ -56,6 +56,7 @@ class InitializeService
         if ($isBusinessLicence) {
             $initializeApi = self::INITIALIZE_API_TRANSACTION;
         }
+
         return $this->apiRequest->post(
             $initializeApi,
             $initializeRequest->getAsArray()
