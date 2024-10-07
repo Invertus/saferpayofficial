@@ -26,7 +26,9 @@ namespace Invertus\SaferPay\Service;
 use Exception;
 use Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator;
+use function Invertus\Knapsack\toArray;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -34,18 +36,22 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayObtainPaymentMethods
 {
+    const FILE_NAME = 'SaferPayObtainPaymentMethods';
     private $obtainPaymentMethodsService;
     private $obtainPaymentMethodsObjectCreator;
     private $saferPayPaymentNotation;
+    private $logger;
 
     public function __construct(
         ObtainPaymentMethodsService $obtainPaymentMethodsService,
         ObtainPaymentMethodsObjectCreator $obtainPaymentMethodsObjectCreator,
-        SaferPayPaymentNotation $saferPayPaymentNotation
+        SaferPayPaymentNotation $saferPayPaymentNotation,
+        LoggerInterface $logger
     ) {
         $this->obtainPaymentMethodsService = $obtainPaymentMethodsService;
         $this->obtainPaymentMethodsObjectCreator = $obtainPaymentMethodsObjectCreator;
         $this->saferPayPaymentNotation = $saferPayPaymentNotation;
+        $this->logger = $logger;
     }
 
     public function obtainPaymentMethods()
@@ -57,6 +63,10 @@ class SaferPayObtainPaymentMethods
                 $this->obtainPaymentMethodsObjectCreator->create()
             );
         } catch (Exception $e) {
+            $this->logger->debug(sprintf('%s - failed to get payment methods list', self::FILE_NAME), [
+                'exception' => $e
+            ]);
+
             throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
         }
 
