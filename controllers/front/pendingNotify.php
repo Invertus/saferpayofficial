@@ -97,6 +97,13 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->debug(sprintf('%s - Capture refund', self::FILE_NAME), [
+            'order_refund_id' => $orderRefundId,
+            'method' => __METHOD__,
+        ]);
+
         $orderRefund = new SaferPayOrderRefund($orderRefundId);
         $orderRefund->status = TransactionStatus::CAPTURED;
         $orderRefund->update();
