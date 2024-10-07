@@ -59,8 +59,8 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $this->redirectWithNotifications($this->getOrderLink());
         }
 
-        /** Purchase is made by already saved card */
-        if (Tools::getValue('selectedCard') >= 0) {
+        /** Purchase is made with card that needs to be saved */
+        if (Tools::getValue('selectedCard') == 0) {
             return;
         }
 
