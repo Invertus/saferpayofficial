@@ -31,6 +31,7 @@ use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -66,7 +67,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             }
         } catch (SaferPayApiException $e) {
             $logger->debug(sprintf('%s - safe exception %s', self::FILE_NAME, $e->getMessage()), [
-                'exception' => $e,
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
             // we only care if we have a response with pending status, else we skip further actions
         }
@@ -78,6 +80,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
      */
     public function initContent()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
@@ -87,6 +92,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
+            $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                ],
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
@@ -94,6 +105,13 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         if ($cart->secure_key !== $secureKey) {
+            $logger->error(sprintf('%s - Secure key does not match', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                    'secureKey' => $secureKey,
+                ],
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
