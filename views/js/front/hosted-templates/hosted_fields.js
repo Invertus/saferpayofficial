@@ -33,11 +33,11 @@ $(document).ready(function () {
         var paymentType = $(this).find("[name=saferpayPaymentType]").val();
 
         //NOTE: if it's not a hosted iframe then we don't need to submitHostedFields.
-        if (paymentType !== saferpay_payment_types.hosted_iframe) {
-            event.target.submit();
-
-            return;
-        }
+        // if (paymentType !== saferpay_payment_types.hosted_iframe) {
+        //     event.target.submit();
+        //
+        //     return;
+        // }
 
         var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
 
