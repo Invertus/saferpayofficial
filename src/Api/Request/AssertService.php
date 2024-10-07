@@ -78,7 +78,7 @@ class AssertService
      * @return object|null
      * @throws \Exception
      */
-    public function assert(AssertRequest $assertRequest, $isAccount = null)
+    public function assert(AssertRequest $assertRequest, $isAccount = null, $isWeChatPay = null)
     {
         $assertApi = self::ASSERT_API_PAYMENT;
 
@@ -88,7 +88,7 @@ class AssertService
             $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
-        if ($isAccount) {
+        if ($isAccount || $isWeChatPay) {
             $assertApi = self::ASSERT_API_PAYMENT;
         }
 

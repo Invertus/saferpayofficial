@@ -117,6 +117,7 @@ class SaferPayInitialize
                 'isBusinessLicence' => $isBusinessLicence,
                 'fieldToken' => $fieldToken,
                 'successController' => $successController,
+                'paymentMethod' => $paymentMethod,
             ],
             true
         );

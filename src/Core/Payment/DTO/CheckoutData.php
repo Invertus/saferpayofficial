@@ -192,6 +192,7 @@ class CheckoutData
     {
         $methodsToForceBeforeAuthorization = [
             SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT,
+            SaferPayConfig::PAYMENT_WECHATPAY,
         ];
 
         if (in_array($paymentMethod, $methodsToForceBeforeAuthorization, true)) {

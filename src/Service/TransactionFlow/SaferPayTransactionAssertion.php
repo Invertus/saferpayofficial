@@ -79,12 +79,13 @@ class SaferPayTransactionAssertion
         }
         $order = new \Order($orderId);
 
-        $isAccount = $order->payment === 'ACCOUNTTOACCOUNT' ? true : null;
+        $isAccount = $order->payment === SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT ? true : null;
+        $isWeChatPay = $order->payment === SaferPayConfig::PAYMENT_WECHATPAY ? true : null;
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
         \PrestaShopLogger::addLog('saferpayOrderId:' . $saferPayOrder->id);
 
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token, $saveCard);
-        $assertResponse = $this->assertionService->assert($assertRequest, $isAccount);
+        $assertResponse = $this->assertionService->assert($assertRequest, $isAccount, $isWeChatPay);
 
         if (empty($assertResponse)) {
             return null;
