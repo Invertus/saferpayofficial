@@ -72,8 +72,9 @@ class ApiRequest
             $this->logger->error(sprintf('%s - POST request failed', self::FILE_NAME), [
                 'message' => $exception->getMessage(),
                 'url' => $url,
-                'headers' => json_encode($this->getHeaders()),
-                'params' => json_encode($params),
+                'headers' => $this->getHeaders(),
+                'request' => $params,
+                'response' => $response->body,
             ]);
 
             throw $exception;
@@ -94,7 +95,7 @@ class ApiRequest
             $response = Request::get(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
-                json_encode($params)
+                $params
             );
 
             $this->isValidResponse($response);
@@ -104,8 +105,9 @@ class ApiRequest
             $this->logger->error(sprintf('%s - GET request failed', self::FILE_NAME), [
                 'message' => $exception->getMessage(),
                 'url' => $url,
-                'headers' => json_encode($this->getHeaders()),
-                'params' => json_encode($params),
+                'headers' => $this->getHeaders(),
+                'request' => $params,
+                'response' => $response->body,
             ]);
 
             throw $exception;
@@ -136,7 +138,7 @@ class ApiRequest
     {
         if ($response->code >= 300) {
             $this->logger->error(sprintf('%s - API response failed', self::FILE_NAME), [
-                'response' => $response->raw_body,
+                'response' => $response->body,
                 'code' => $response->code,
             ]);
 
