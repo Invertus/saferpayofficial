@@ -156,7 +156,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
-        $fieldToken = Tools::getValue('fieldToken');
+        $fieldToken = Tools::getValue('fieldToken')
+            ? Tools::getValue('fieldToken')
+            : Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix());
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
         $cart = new Cart($cartId);
