@@ -36,6 +36,7 @@ use Invertus\SaferPay\DTO\Request\PendingNotification;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Factory\ModuleFactory;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\CancelRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\CaptureRequestObjectCreator;
@@ -51,6 +52,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderStatusService
 {
+    const FILE_NAME = 'SaferPayOrderStatusService';
     /**
      * @var CaptureService
      */
@@ -89,6 +91,10 @@ class SaferPayOrderStatusService
      * @var SaferPayOfficial
      */
     private $module;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         CaptureService $captureService,
@@ -99,7 +105,8 @@ class SaferPayOrderStatusService
         RefundService $refundService,
         RefundRequestObjectCreator $refundRequestObjectCreator,
         LegacyContext $context,
-        ModuleFactory $module
+        ModuleFactory $module,
+        LoggerInterface $logger
     ) {
         $this->captureService = $captureService;
         $this->captureRequestObjectCreator = $captureRequestObjectCreator;
@@ -110,6 +117,7 @@ class SaferPayOrderStatusService
         $this->refundRequestObjectCreator = $refundRequestObjectCreator;
         $this->context = $context;
         $this->module = $module->getModule();
+        $this->logger = $logger;
     }
 
     public function setPending(Order $order)
@@ -155,6 +163,10 @@ class SaferPayOrderStatusService
         try {
             $captureResponse = $this->captureService->capture($captureRequest);
         } catch (Exception $e) {
+            $this->logger->error(sprintf('%s - Capture API failed', self::FILE_NAME), [
+                'exception' => $e,
+            ]);
+
             throw new SaferPayApiException('Capture API failed', SaferPayApiException::CAPTURE);
         }
 
@@ -191,6 +203,10 @@ class SaferPayOrderStatusService
         try {
             $this->cancelService->cancel($cancelRequest);
         } catch (Exception $e) {
+            $this->logger->error(sprintf('%s - Cancel API failed', self::FILE_NAME), [
+                'exception' => $e,
+            ]);
+
             throw new SaferPayApiException('Cancel API failed', SaferPayApiException::CANCEL);
         }
         $order->setCurrentState(_SAFERPAY_PAYMENT_CANCELED_);
@@ -243,6 +259,10 @@ class SaferPayOrderStatusService
         try {
             $refundResponse = $this->refundService->refund($refundRequest);
         } catch (Exception $e) {
+            $this->logger->error(sprintf('%s - Refund API failed', self::FILE_NAME), [
+                'exception' => $e,
+            ]);
+
             throw new SaferPayApiException('Refund API failed', SaferPayApiException::REFUND);
         }
         $saferPayOrder->refund_id = $refundResponse->Transaction->Id;
