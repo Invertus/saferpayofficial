@@ -67,7 +67,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $assertResponseBody = $transactionAssert->assert(
                 $cartId,
                 (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
-                $selectedCard
+                $selectedCard,
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                true
             );
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
@@ -79,7 +81,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /**
          * NOTE: This flow is for hosted iframe payment method
          */
-        if (Tools::getValue('isBusinessLicence')) {
+        if (Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
             try {
                 /** @var CheckoutProcessor $checkoutProcessor * */
                 $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);

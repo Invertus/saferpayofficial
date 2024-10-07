@@ -67,7 +67,7 @@ class SaferPayTransactionAssertion
      * @return AssertBody
      * @throws \Exception
      */
-    public function assert($cartId, $saveCard, $selectedCard, $update = true)
+    public function assert($cartId, $saveCard = null, $selectedCard = null, $isBusiness = 0, $update = true)
     {
         $cart = new \Cart($cartId);
 
@@ -75,7 +75,7 @@ class SaferPayTransactionAssertion
         \PrestaShopLogger::addLog('saferpayOrderId:' . $saferPayOrder->id);
 
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token, $saveCard);
-        $assertResponse = $this->assertionService->assert($assertRequest);
+        $assertResponse = $this->assertionService->assert($assertRequest, $isBusiness);
 
         if (empty($assertResponse)) {
             return null;

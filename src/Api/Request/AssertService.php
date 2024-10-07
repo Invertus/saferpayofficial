@@ -27,6 +27,7 @@ use Exception;
 use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
@@ -78,13 +79,13 @@ class AssertService
      * @return object|null
      * @throws \Exception
      */
-    public function assert(AssertRequest $assertRequest)
+    public function assert(AssertRequest $assertRequest, $isBusiness)
     {
         $assertApi = self::ASSERT_API_PAYMENT;
 
         $isBusinessLicense = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
 
-        if ($isBusinessLicense) {
+        if ($isBusiness) {
             $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
