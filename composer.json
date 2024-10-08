@@ -49,8 +49,7 @@
         "phpunit/phpunit": "*",
         "behat/behat": "*",
         "symfony/translation": "*",
-        "prestashop/php-dev-tools": "^3.16",
-        "invertus/knapsack": "^10.0"
+        "prestashop/php-dev-tools": "^3.16"
     },
     "scripts": {
         "test-integration": "./vendor/bin/phpunit --configuration ./tests/Integration/phpunit.xml",

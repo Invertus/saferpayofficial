@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Service\TransactionFlow;
 
 use Invertus\SaferPay\Api\Request\AssertService;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
 use SaferPayOrder;
@@ -35,6 +36,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayTransactionAssertion
 {
+    const FILE_NAME = 'SaferPayTransactionAssertion';
     /**
      * @var AssertRequestObjectCreator
      */
@@ -49,15 +51,21 @@ class SaferPayTransactionAssertion
      * @var AssertService
      */
     private $assertionService;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     public function __construct(
         AssertRequestObjectCreator $assertRequestCreator,
         SaferPayOrderRepository $orderRepository,
-        AssertService $assertionService
+        AssertService $assertionService,
+        LoggerInterface $logger
     ) {
         $this->assertRequestCreator = $assertRequestCreator;
         $this->orderRepository = $orderRepository;
         $this->assertionService = $assertionService;
+        $this->logger = $logger;
     }
 
     /**
@@ -69,7 +77,13 @@ class SaferPayTransactionAssertion
     public function assert($cartId, $update = true)
     {
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
-        \PrestaShopLogger::addLog('saferpayOrderId:' . $saferPayOrder->id);
+
+        $this->logger->debug(sprintf('%s - assert service called',self::FILE_NAME), [
+            'context' => [
+                'cart_id' => $cartId,
+                'saferpay_order_id' => $saferPayOrder->id,
+            ],
+        ]);
 
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
         $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
@@ -89,6 +103,13 @@ class SaferPayTransactionAssertion
             $saferPayOrder->id_cart = $cartId;
             $saferPayOrder->update();
         }
+
+        $this->logger->debug(sprintf('%s - assert service ended',self::FILE_NAME), [
+            'context' => [
+                'cart_id' => $cartId,
+                'saferpay_order_id' => $saferPayOrder->id,
+            ],
+        ]);
 
         return $assertBody;
     }

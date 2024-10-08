@@ -21,7 +21,7 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\Saferpay\Context;
+namespace Invertus\SaferPay\Context;
 
 use Invertus\SaferPay\Adapter\LegacyContext;
 
@@ -32,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
  * Gets shop context data
  * NOTE: Done without interface because throwing error in the module
  */
-class GlobalShopContext
+class GlobalShopContext implements GlobalShopContextInterface
 {
     private $context;
 

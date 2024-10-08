@@ -21,12 +21,18 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\Saferpay\Context\GlobalShopContext;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
 use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
+use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\Repository\SaferPayLogRepository;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Logger\Logger;
+use Invertus\SaferPay\Adapter\Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -150,7 +156,8 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
     {
         parent::setMedia($isNewTheme);
 
-        $context = $this->module->getService(\Invertus\SaferPay\Adapter\LegacyContext::class);
+        /** @var LegacyContext $context */
+        $context = $this->module->getService(LegacyContext::class);
 
         Media::addJsDef([
             'saferpayofficial' => [
@@ -239,19 +246,19 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             return;
         }
 
-        /** @var \Invertus\SaferPay\Adapter\Tools $tools */
-        $tools = $this->module->getService(\Invertus\SaferPay\Adapter\Tools::class);
+        /** @var Invertus\SaferPay\Adapter\Tools $tools */
+        $tools = $this->module->getService(Tools::class);
 
-        /** @var \Invertus\SaferPay\Repository\SaferPayLogRepository $logRepository */
-        $logRepository = $this->module->getService(\Invertus\SaferPay\Repository\SaferPayLogRepository::class);
+        /** @var Invertus\SaferPay\Repository\SaferPayLogRepository $logRepository */
+        $logRepository = $this->module->getService(SaferPayLogRepository::class);
 
-        /** @var \Invertus\SaferPay\Context\GlobalShopContext $shopContext */
-        $globalShopContext = $this->module->getService(\Invertus\SaferPay\Context\GlobalShopContext::class);
+        /** @var Invertus\SaferPay\Context\GlobalShopContext $shopContext */
+        $globalShopContext = $this->module->getService(GlobalShopContext::class);
 
         $logId = $tools->getValueAsInt('log_id');
 
-//        /** @var LoggerInterface $logger */
-//        $logger = $this->module->getService(LoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         try {
             /** @var \SaferPayLog|null $log */
@@ -260,13 +267,13 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
                 'id_shop' => $globalShopContext->getShopId(),
             ]);
         } catch (Exception $exception) {
-//            $logger->error('Failed to find log', [
-//                'context' => [
-//                    'id_log' => $logId,
-//                    'id_shop' => $globalShopContext->getShopId(),
-//                ],
-//                'exceptions' => ExceptionUtility::getExceptions($exception),
-//            ]);
+            $logger->error($exception->getMessage(), [
+                'context' => [
+                    'id_log' => $logId,
+                    'id_shop' => $globalShopContext->getShopId(),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
 
             $this->ajaxResponse(json_encode([
                 'error' => true,
@@ -275,13 +282,13 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         }
 
         if (!isset($log)) {
-//            $logger->error('No log information found.', [
-//                'context' => [
-//                    'id_log' => $logId,
-//                    'id_shop' => $globalShopContext->getShopId(),
-//                ],
-//                'exceptions' => [],
-//            ]);
+            $logger->error('No log information found.', [
+                'context' => [
+                    'id_log' => $logId,
+                    'id_shop' => $globalShopContext->getShopId(),
+                ],
+                'exceptions' => [],
+            ]);
 
             $this->ajaxRender(json_encode([
                 'error' => true,
@@ -316,8 +323,8 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         /** @var Configuration $configuration */
         $configuration = $this->module->getService(Configuration::class);
 
-        /** @var \Invertus\SaferPay\Adapter\LegacyContext $context */
-        $context = $this->module->getService(\Invertus\SaferPay\Adapter\LegacyContext::class);
+        /** @var LegacyContext $context */
+        $context = $this->module->getService(LegacyContext::class);
 
         $storeInfo = [
             'PrestaShop Version' => _PS_VERSION_,

@@ -23,6 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -91,6 +92,11 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPa
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $selectedCard = Tools::getValue('saved_card_id');
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
@@ -100,6 +106,9 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPa
             }
             $this->errors[] = $this->module->l('Failed to removed credit card', self::FILENAME);
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         parent::postProcess();
     }
 

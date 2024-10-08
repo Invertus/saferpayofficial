@@ -20,12 +20,31 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
+namespace Invertus\SaferPay\Context;
 
-header('Location: ../');
-exit;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+/**
+ * Gets shop context data
+ */
+interface GlobalShopContextInterface
+{
+    public function getShopId();
+
+    public function getLanguageId();
+
+    public function getLanguageIso();
+
+    public function getCurrencyIso();
+
+    public function getCurrency();
+
+    public function getShopDomain();
+
+    public function getShopName();
+
+    public function isShopSingleShopContext();
+}

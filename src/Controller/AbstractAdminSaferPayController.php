@@ -23,7 +23,9 @@
 
 namespace Invertus\SaferPay\Controller;
 
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Response\JsonResponse;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 class AbstractAdminSaferPayController extends \ModuleAdminController
 {
@@ -31,17 +33,17 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
 
     protected function ajaxResponse($value = null, $controller = null, $method = null)
     {
-//        /** @var LoggerInterface $logger */
-//        $logger = $this->module->getService(LoggerInterface::class);
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         if ($value instanceof JsonResponse) {
-//            if ($value->getStatusCode() === JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
-//                $logger->error('Failed to return valid response', [
-//                    'context' => [
-//                        'response' => $value->getContent(),
-//                    ],
-//                ]);
-//            }
+            if ($value->getStatusCode() === JsonResponse::HTTP_INTERNAL_SERVER_ERROR) {
+                $logger->error('Failed to return valid response', [
+                    'context' => [
+                        'response' => $value->getContent(),
+                    ],
+                ]);
+            }
 
             http_response_code($value->getStatusCode());
 
@@ -57,12 +59,11 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
 
             $this->ajaxDie($value, $controller, $method);
         } catch (\Exception $exception) {
-//            $logger->error('Could not return ajax response', [
-//                'context' => [
-//                    'response' => json_encode($value ?: []),
-//                    'exceptions' => ExceptionUtility::getExceptions($exception),
-//                ],
-//            ]);
+            $logger->error($exception->getMessage(), [
+                'context' => [],
+                'response' => json_encode($value ?: []),
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
         }
 
         exit;

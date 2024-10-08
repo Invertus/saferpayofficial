@@ -26,6 +26,7 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,6 +40,11 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cart = $this->context->cart;
         $redirectLink = $this->context->link->getPageLink(
             'order',
@@ -70,8 +76,15 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         }
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer)) {
+            $logger->error(sprintf('%s - Customer not found', self::FILE_NAME), [
+                'context' => [],
+                'exceptions' => [],
+            ]);
+
             Tools::redirect($redirectLink);
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     public function initContent()
