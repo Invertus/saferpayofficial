@@ -30,8 +30,6 @@ $(document).ready(function () {
     $('[id="payment-form"]').on('submit', function (event) {
         event.preventDefault();
 
-        var paymentType = $(this).find("[name=saferpayPaymentType]").val();
-
         var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
 
         var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
