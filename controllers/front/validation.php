@@ -96,6 +96,8 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
 
             $redirectLink = $checkoutController->execute($checkoutData);
 
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
             Tools::redirect($redirectLink);
         } catch (\Exception $exception) {
             /** @var SaferPayExceptionService $exceptionService */
@@ -122,7 +124,5 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             );
             $this->redirectWithNotifications($redirectLink);
         }
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 }
