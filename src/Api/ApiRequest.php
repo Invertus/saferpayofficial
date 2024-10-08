@@ -65,8 +65,15 @@ class ApiRequest
                 json_encode($params)
             );
 
-
             $this->isValidResponse($response);
+
+            $this->logger->debug(sprintf('%s - API response: %d', self::FILE_NAME, $response->code), [
+                'context' => [
+                    'headers' => $this->getHeaders(),
+                ],
+                'request' => $params,
+                'response' => $response->body,
+            ]);
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
@@ -97,6 +104,14 @@ class ApiRequest
             );
 
             $this->isValidResponse($response);
+
+            $this->logger->debug(sprintf('%s - API response: %d', self::FILE_NAME, $response->code), [
+                'context' => [
+                    'headers' => $this->getHeaders(),
+                ],
+                'request' => $params,
+                'response' => $response->body,
+            ]);
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
