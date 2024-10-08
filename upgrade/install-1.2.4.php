@@ -36,6 +36,6 @@ function upgrade_module_1_2_4(SaferPayOfficial $module)
         ADD COLUMN `context` MEDIUMTEXT DEFAULT NULL,
         DROP PRIMARY KEY,
         ADD PRIMARY KEY (`id_saferpay_log`, `id_log`, `id_shop`),
-        ADD INDEX (`id_log`),'
+        ADD INDEX (`id_log`);'
     );
 }
