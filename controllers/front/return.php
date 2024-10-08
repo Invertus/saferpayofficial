@@ -68,8 +68,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $cartId,
                 (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
                 $selectedCard,
-                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
-                true
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
             );
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
