@@ -30,6 +30,7 @@ use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -57,7 +58,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         if (!Validate::isLoadedObject($cart)) {
             $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
-                'cart_id' => $cartId,
+                'context' => [
+                    'cart_id' => $cartId,
+                ],
+                'exceptions' => [],
             ]);
 
             $this->ajaxDie(json_encode([
@@ -68,7 +72,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         if ($cart->secure_key !== $secureKey) {
             $logger->error(sprintf('%s - Insecure cart', self::FILE_NAME), [
-                'cart_id' => $cartId,
+                'context' => [
+                    'cart_id' => $cartId,
+                ],
             ]);
 
             die($this->module->l('Error. Insecure cart', self::FILENAME));
@@ -130,6 +136,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->cancel($order);
+
+                $logger->debug(sprintf('%s - Liability shift is false', self::FILE_NAME), [
+                    'context' => [
+                        'order' => $order,
+                    ],
+                ]);
 
                 die($this->module->l('Liability shift is false', self::FILENAME));
             }
@@ -197,8 +209,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
-            $logger->error(sprintf('%s - caught an error: %s', self::FILENAME, $e->getMessage()), [
-                'exception' => $e,
+            $logger->error(sprintf('%s - AccountToAccount order is declined', self::FILENAME), [
+                'context' => [
+                    'orderId' => $orderId,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
             $this->releaseLock();

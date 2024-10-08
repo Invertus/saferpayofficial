@@ -47,7 +47,11 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
         $cart = new Cart($cartId);
 
         if ($cart->secure_key !== $secureKey) {
-            $logger->error(sprintf('%s - Secure key does not match', self::FILE_NAME));
+            $logger->error(sprintf('%s - Secure key does not match', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                ]
+            ]);
 
             $redirectLink = $this->context->link->getPageLink(
                 'order',

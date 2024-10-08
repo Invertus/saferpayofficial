@@ -79,9 +79,10 @@ class SaferPayTransactionAssertion
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
 
         $this->logger->debug(sprintf('%s - assert service called',self::FILE_NAME), [
-            'cart_id' => $cartId,
-            'saferpay_order_id' => $saferPayOrder->id,
-            'method' => __METHOD__,
+            'context' => [
+                'cart_id' => $cartId,
+                'saferpay_order_id' => $saferPayOrder->id,
+            ],
         ]);
 
         $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);

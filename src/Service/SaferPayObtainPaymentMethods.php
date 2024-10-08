@@ -64,6 +64,7 @@ class SaferPayObtainPaymentMethods
             );
         } catch (Exception $e) {
             $this->logger->debug(sprintf('%s - failed to get payment methods list', self::FILE_NAME), [
+                'context' => [],
                 'exception' => $e
             ]);
 

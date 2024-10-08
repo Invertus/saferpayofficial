@@ -100,8 +100,9 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
         $logger->debug(sprintf('%s - Capture refund', self::FILE_NAME), [
-            'order_refund_id' => $orderRefundId,
-            'method' => __METHOD__,
+            'context' => [
+                'order_refund_id' => $orderRefundId,
+            ],
         ]);
 
         $orderRefund = new SaferPayOrderRefund($orderRefundId);

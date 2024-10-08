@@ -66,7 +66,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->setPending($order);
             }
         } catch (SaferPayApiException $e) {
-            $logger->debug(sprintf('%s - safe exception %s', self::FILE_NAME, $e->getMessage()), [
+            $logger->debug(sprintf('%s - safe exception', self::FILE_NAME), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
@@ -96,6 +96,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 'context' => [
                     'cartId' => $cartId,
                 ],
+                'exceptions' => [],
             ]);
 
             $this->ajaxDie(json_encode([

@@ -71,6 +71,7 @@ class ApiRequest
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - POST request failed', self::FILE_NAME), [
+                'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($exception)
             ]);
 
@@ -100,6 +101,11 @@ class ApiRequest
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
             $this->logger->error(sprintf('%s - GET request failed', self::FILE_NAME), [
+                'context' => [
+                    'headers' => $this->getHeaders(),
+                ],
+                'request' => $params,
+                'response' => json_decode($response->raw_body),
                 'exceptions' => ExceptionUtility::getExceptions($exception)
             ]);
 
@@ -130,9 +136,11 @@ class ApiRequest
     private function isValidResponse(Response $response)
     {
         if ($response->code >= 300) {
-            $this->logger->error(sprintf('%s - API response failed', self::FILE_NAME), [
+            $this->logger->error(sprintf('%s - API thrown code: %d', self::FILE_NAME, $response->code), [
+                'context' => [
+                    'code' => $response->code,
+                ],
                 'response' => $response->body,
-                'code' => $response->code,
             ]);
 
             throw new SaferPayApiException(sprintf('Initialize API failed: %s', $response->raw_body), SaferPayApiException::INITIALIZE);

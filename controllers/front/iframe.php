@@ -77,7 +77,10 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         $customer = new Customer($cart->id_customer);
         if (!Validate::isLoadedObject($customer)) {
             $logger->error(sprintf('%s - Customer not found', self::FILE_NAME), [
-                'customer' => $customer,
+                'context' => [
+                    'customer' => $customer,
+                ],
+                'exceptions' => [],
             ]);
 
             Tools::redirect($redirectLink);

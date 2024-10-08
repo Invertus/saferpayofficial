@@ -38,6 +38,7 @@ use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use Order;
 use PrestaShopException;
 use SaferPayOrder;
@@ -79,7 +80,9 @@ class CheckoutProcessor
 
         if (!$cart) {
             $logger->debug(sprintf('%s - Cart not found', self::FILE_NAME), [
-                'cartId' => $data->getCartId(),
+                'context' => [
+                    'cartId' => $data->getCartId(),
+                ],
             ]);
 
             throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
@@ -120,7 +123,10 @@ class CheckoutProcessor
             );
         } catch (\Exception $exception) {
             $logger->error(sprintf('%s - Failed to create SaferPay order', self::FILE_NAME), [
-                'cartId' => $data->getCartId(),
+                'context' => [
+                    'cartId' => $data->getCartId(),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception)
             ]);
 
             throw CouldNotProcessCheckout::failedToCreateSaferPayOrder($data->getCartId());
@@ -221,6 +227,7 @@ class CheckoutProcessor
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
             $logger->error(sprintf('%s - Failed to create order', self::FILE_NAME), [
+                'context' => [],
                 'cartId' => $data->getCartId(),
             ]);
 

@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -68,7 +69,10 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         try {
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
-            $logger->error(sprintf('%s - %s', self::FILE_NAME, $e->getMessage()));
+            $logger->error(sprintf('%s - Failed to validate security token', self::FILE_NAME), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
 
             Tools::redirect(
                 $this->context->link->getModuleLink(

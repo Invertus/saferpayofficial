@@ -27,6 +27,7 @@ use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -170,7 +171,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             $logger = $this->module->getService(LoggerInterface::class);
 
             $logger->error(sprintf('%s - Exception occurred', self::FILE_NAME), [
-                'message' => $e->getMessage(),
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
             $this->ajaxDie(json_encode([

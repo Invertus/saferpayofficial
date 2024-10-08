@@ -41,6 +41,7 @@ use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\CancelRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\CaptureRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\RefundRequestObjectCreator;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use Order;
 use SaferPayAssert;
 use SaferPayOfficial;
@@ -164,7 +165,8 @@ class SaferPayOrderStatusService
             $captureResponse = $this->captureService->capture($captureRequest);
         } catch (Exception $e) {
             $this->logger->error(sprintf('%s - Capture API failed', self::FILE_NAME), [
-                'exception' => $e,
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
             throw new SaferPayApiException('Capture API failed', SaferPayApiException::CAPTURE);
@@ -204,7 +206,10 @@ class SaferPayOrderStatusService
             $this->cancelService->cancel($cancelRequest);
         } catch (Exception $e) {
             $this->logger->error(sprintf('%s - Cancel API failed', self::FILE_NAME), [
-                'exception' => $e,
+                'context' => [
+                    'orderId' => $order->id,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
             throw new SaferPayApiException('Cancel API failed', SaferPayApiException::CANCEL);
@@ -260,7 +265,7 @@ class SaferPayOrderStatusService
             $refundResponse = $this->refundService->refund($refundRequest);
         } catch (Exception $e) {
             $this->logger->error(sprintf('%s - Refund API failed', self::FILE_NAME), [
-                'exception' => $e,
+                'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
             throw new SaferPayApiException('Refund API failed', SaferPayApiException::REFUND);
