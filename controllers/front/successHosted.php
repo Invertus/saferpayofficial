@@ -66,6 +66,8 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
         }
 
         try {
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
             $logger->error($e->getMessage(), [
@@ -75,8 +77,6 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 ],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
-
-            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
             Tools::redirect(
                 $this->context->link->getModuleLink(
