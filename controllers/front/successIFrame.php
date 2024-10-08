@@ -67,6 +67,8 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         }
 
         try {
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
             $logger->error($e->getMessage(), [
@@ -88,8 +90,6 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
                 )
             );
         }
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     public function initContent()

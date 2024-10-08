@@ -106,11 +106,11 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
         );
         $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
 
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         if (!SaferPayConfig::isVersion17()) {
             $this->redirectWithNotifications($orderLink);
         }
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         $this->redirectWithNotifications(
             $this->context->link->getPageLink(

@@ -65,6 +65,8 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
             Tools::redirect($redirectLink);
         }
 
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         Tools::redirect($this->context->link->getPageLink(
             'order-confirmation',
             true,
@@ -76,7 +78,5 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
                 'key' => $secureKey,
             ]
         ));
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 }

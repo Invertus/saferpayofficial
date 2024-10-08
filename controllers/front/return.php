@@ -66,7 +66,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->setPending($order);
             }
         } catch (SaferPayApiException $e) {
-            $logger->debug(sprintf('%s - safe exception', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Safe exception', self::FILE_NAME), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
