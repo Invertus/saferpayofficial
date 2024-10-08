@@ -53,6 +53,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
+        $selectedCard = Tools::getValue('selectedCard');
+
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
@@ -69,7 +71,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
         try {
-            $assertResponseBody = $transactionAssert->assert($cartId);
+            $assertResponseBody = $transactionAssert->assert(
+                $cartId,
+                (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
+                $selectedCard,
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
+            );
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
             \PrestaShopLogger::addLog($e->getMessage());
@@ -80,57 +87,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /**
          * NOTE: This flow is for hosted iframe payment method
          */
-        if (Tools::getValue('isBusinessLicence')) {
+        if (
+            Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())
+            || Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix())
+        ) {
             try {
-                /** @var CheckoutProcessor $checkoutProcessor * */
-                $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
-
-                $checkoutData = CheckoutData::create(
-                    (int) $cartId,
-                    $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-                    (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
-                );
-                $checkoutData->setOrderStatus($transactionStatus);
-
-                $checkoutProcessor->run($checkoutData);
-
-                $orderId = $this->getOrderId($cartId);
-
-                $order = new Order($orderId);
-                if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
-                    in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                    (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
-                ) {
-                    /** @var SaferPayOrderStatusService $orderStatusService */
-                    $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-                    $orderStatusService->cancel($order);
-                }
-
-                //NOTE to get latest information possible and not override new information.
-
-                $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();// if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
-
-                // so in this case if status comes back "captured" we just update the order state accordingly
-                if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
-                    $transactionStatus === TransactionStatus::CAPTURED
-                ) {
-                    /** @var SaferPayOrderStatusService $orderStatusService */
-                    $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-                    $orderStatusService->setComplete($order);
-
-                    return;
-                }
-
-                if (SaferPayConfig::supportsOrderCapture($paymentMethod) &&
-                    (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
-                    $transactionStatus !== TransactionStatus::CAPTURED
-                ) {
-                    /** @var SaferPayOrderStatusService $orderStatusService */
-                    $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-                    $orderStatusService->capture($order);
-
-                    return;
-                }
+                $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId);
             } catch (Exception $e) {
                 \PrestaShopLogger::addLog($e->getMessage());
                 $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILENAME);
@@ -208,10 +170,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $saferPayAuthorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
             $saferPayCapturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
+            $usingSavedCard = $selectedCard > 0;
+
             if ((int) $order->current_state === $saferPayAuthorizedStatus || (int) $order->current_state === $saferPayCapturedStatus) {
                 Tools::redirect($this->context->link->getModuleLink(
                     $this->module->name,
-                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                    $this->getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard),
                     [
                         'cartId' => $cartId,
                         'orderId' => $orderId,
@@ -246,7 +210,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $this->setTemplate('saferpay_wait_16.tpl');
     }
 
-    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
+    private function getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard)
     {
         $successController = ControllerName::SUCCESS;
 
@@ -254,7 +218,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $successController = ControllerName::SUCCESS_IFRAME;
         }
 
-        if ($fieldToken) {
+        if ($fieldToken || $usingSavedCard) {
             $successController = ControllerName::SUCCESS_HOSTED;
         }
 
@@ -311,5 +275,58 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 'moduleId' => $this->module->id,
             ]
         );
+    }
+
+    private function createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId)
+    {
+        /** @var CheckoutProcessor $checkoutProcessor * */
+        $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+
+        $checkoutData = CheckoutData::create(
+            (int) $cartId,
+            $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
+            (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+        );
+        $checkoutData->setOrderStatus($transactionStatus);
+
+        $checkoutProcessor->run($checkoutData);
+
+        $orderId = $this->getOrderId($cartId);
+
+        $order = new Order($orderId);
+        if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
+            in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
+            (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+        ) {
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+            $orderStatusService->cancel($order);
+        }
+
+        //NOTE to get latest information possible and not override new information.
+
+        $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();// if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
+
+        // so in this case if status comes back "captured" we just update the order state accordingly
+        if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
+            $transactionStatus === TransactionStatus::CAPTURED
+        ) {
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+            $orderStatusService->setComplete($order);
+
+            return;
+        }
+
+        if (SaferPayConfig::supportsOrderCapture($paymentMethod) &&
+            (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
+            $transactionStatus !== TransactionStatus::CAPTURED
+        ) {
+            /** @var SaferPayOrderStatusService $orderStatusService */
+            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+            $orderStatusService->capture($order);
+
+            return;
+        }
     }
 }

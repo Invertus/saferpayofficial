@@ -66,6 +66,11 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $this->redirectWithNotifications($this->getOrderLink());
         }
 
+        /** Purchase is made with card that needs to be saved */
+        if (Tools::getValue('selectedCard') <= 0) {
+            return;
+        }
+
         try {
             $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 

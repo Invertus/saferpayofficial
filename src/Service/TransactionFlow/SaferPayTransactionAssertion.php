@@ -24,6 +24,7 @@
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
 use Invertus\SaferPay\Api\Request\AssertService;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -74,8 +75,10 @@ class SaferPayTransactionAssertion
      * @return AssertBody
      * @throws \Exception
      */
-    public function assert($cartId, $update = true)
+    public function assert($cartId, $saveCard = null, $selectedCard = null, $isBusiness = 0, $update = true)
     {
+        $cart = new \Cart($cartId);
+
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
 
         $this->logger->debug(sprintf('%s - assert service called',self::FILE_NAME), [
@@ -85,8 +88,8 @@ class SaferPayTransactionAssertion
             ],
         ]);
 
-        $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token);
-        $assertResponse = $this->assertionService->assert($assertRequest, $saferPayOrder->id);
+        $assertRequest = $this->assertRequestCreator->create($saferPayOrder->token, $saveCard);
+        $assertResponse = $this->assertionService->assert($assertRequest, $isBusiness);
 
         if (empty($assertResponse)) {
             return null;
@@ -94,7 +97,9 @@ class SaferPayTransactionAssertion
 
         $assertBody = $this->assertionService->createObjectsFromAssertResponse(
             $assertResponse,
-            $saferPayOrder->id
+            $saferPayOrder->id,
+            $cart->id_customer,
+            $selectedCard
         );
 
         // assertion shouldn't update, this is quickfix for what seems to be a general flaw in structure
