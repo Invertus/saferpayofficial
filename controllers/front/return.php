@@ -239,11 +239,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $successController = ControllerName::SUCCESS_IFRAME;
         }
 
-        if ($fieldToken) {
-            $successController = ControllerName::SUCCESS_HOSTED;
-        }
-
-        if($usingSavedCard) {
+        if ($fieldToken || $usingSavedCard) {
             $successController = ControllerName::SUCCESS_HOSTED;
         }
 
