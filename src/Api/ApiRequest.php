@@ -67,8 +67,9 @@ class ApiRequest
 
             $this->isValidResponse($response);
 
-            $this->logger->debug(sprintf('%s - API response: %d', self::FILE_NAME, $response->code), [
+            $this->logger->debug(sprintf('%s - POST response: %d', self::FILE_NAME, $response->code), [
                 'context' => [
+                    'uri' => $this->getBaseUrl() . $url,
                     'headers' => $this->getHeaders(),
                 ],
                 'request' => $params,
@@ -105,8 +106,9 @@ class ApiRequest
 
             $this->isValidResponse($response);
 
-            $this->logger->debug(sprintf('%s - API response: %d', self::FILE_NAME, $response->code), [
+            $this->logger->debug(sprintf('%s - GET response: %d', self::FILE_NAME, $response->code), [
                 'context' => [
+                    'uri' => $this->getBaseUrl() . $url,
                     'headers' => $this->getHeaders(),
                 ],
                 'request' => $params,
