@@ -69,7 +69,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
         try {
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
-            $logger->error(sprintf('%s - Failed to validate security token', self::FILE_NAME), [
+            $logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);

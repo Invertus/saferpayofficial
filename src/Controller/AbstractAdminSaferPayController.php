@@ -59,7 +59,7 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
 
             $this->ajaxDie($value, $controller, $method);
         } catch (\Exception $exception) {
-            $logger->error('Could not return ajax response', [
+            $logger->error($exception->getMessage(), [
                 'context' => [],
                 'response' => json_encode($value ?: []),
                 'exceptions' => ExceptionUtility::getExceptions($exception),

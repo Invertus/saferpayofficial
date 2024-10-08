@@ -82,6 +82,10 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             ]));
         }
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         $this->ajaxDie(json_encode([
             'saferpayOrder' => json_encode($saferPayOrder),
             'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->pending,
@@ -97,10 +101,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 ]
             ),
         ]));
-        /** @var LoggerInterface $logger */
-        $logger = $this->module->getService(LoggerInterface::class);
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     private function getFailControllerLink($cartId, $secureKey, $moduleId)
@@ -170,7 +170,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
 
-            $logger->error(sprintf('%s - Exception occurred', self::FILE_NAME), [
+            $logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);

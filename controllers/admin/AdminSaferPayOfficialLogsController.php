@@ -267,7 +267,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
                 'id_shop' => $globalShopContext->getShopId(),
             ]);
         } catch (Exception $exception) {
-            $logger->error('Failed to find log', [
+            $logger->error($exception->getMessage(), [
                 'context' => [
                     'id_log' => $logId,
                     'id_shop' => $globalShopContext->getShopId(),

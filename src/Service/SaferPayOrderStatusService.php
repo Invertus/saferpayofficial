@@ -164,7 +164,7 @@ class SaferPayOrderStatusService
         try {
             $captureResponse = $this->captureService->capture($captureRequest);
         } catch (Exception $e) {
-            $this->logger->error(sprintf('%s - Capture API failed', self::FILE_NAME), [
+            $this->logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
@@ -205,7 +205,7 @@ class SaferPayOrderStatusService
         try {
             $this->cancelService->cancel($cancelRequest);
         } catch (Exception $e) {
-            $this->logger->error(sprintf('%s - Cancel API failed', self::FILE_NAME), [
+            $this->logger->error($e->getMessage(), [
                 'context' => [
                     'orderId' => $order->id,
                 ],
@@ -264,7 +264,7 @@ class SaferPayOrderStatusService
         try {
             $refundResponse = $this->refundService->refund($refundRequest);
         } catch (Exception $e) {
-            $this->logger->error(sprintf('%s - Refund API failed', self::FILE_NAME), [
+            $this->logger->error($e->getMessage(), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 

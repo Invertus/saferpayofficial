@@ -68,7 +68,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
         try {
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
-            $logger->error(sprintf('%s - failed to redirect customer', self::FILE_NAME), [
+            $logger->error($e->getMessage(), [
                 'context' => [
                     'cartId' => $cartId,
                     'orderId' => $orderId,

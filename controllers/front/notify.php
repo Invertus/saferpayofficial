@@ -58,9 +58,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         if (!Validate::isLoadedObject($cart)) {
             $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
-                'context' => [
-                    'cart_id' => $cartId,
-                ],
+                'context' => [],
                 'exceptions' => [],
             ]);
 
@@ -75,6 +73,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 'context' => [
                     'cart_id' => $cartId,
                 ],
+                'exceptions' => [],
             ]);
 
             die($this->module->l('Error. Insecure cart', self::FILENAME));

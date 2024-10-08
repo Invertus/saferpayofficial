@@ -94,7 +94,7 @@ class SaferPayInitialize
         } catch (Exception $e) {
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
-            $logger->error(sprintf('%s - Initialize API failed', self::FILE_NAME), [
+            $logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);

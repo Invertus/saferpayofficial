@@ -125,6 +125,5 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
                 false
             )
         );
-
     }
 }

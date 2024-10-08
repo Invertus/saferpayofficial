@@ -122,7 +122,7 @@ class CheckoutProcessor
                 $data->getIsTransaction()
             );
         } catch (\Exception $exception) {
-            $logger->error(sprintf('%s - Failed to create SaferPay order', self::FILE_NAME), [
+            $logger->error($exception->getMessage(), [
                 'context' => [
                     'cartId' => $data->getCartId(),
                 ],
@@ -226,7 +226,7 @@ class CheckoutProcessor
         } catch (\Exception $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
-            $logger->error(sprintf('%s - Failed to create order', self::FILE_NAME), [
+            $logger->error($exception->getMessage(), [
                 'context' => [],
                 'cartId' => $data->getCartId(),
             ]);
