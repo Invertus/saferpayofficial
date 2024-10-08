@@ -91,8 +91,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())
             || Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix())
         ) {
+            $order = new Order($this->getOrderId($cartId));
+            $orderPayment = $order->payment;
+
             try {
-                $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId);
+                $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
             } catch (Exception $e) {
                 \PrestaShopLogger::addLog($e->getMessage());
                 $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILENAME);
@@ -277,19 +280,25 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         );
     }
 
-    private function createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId)
+    private function createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment)
     {
         /** @var CheckoutProcessor $checkoutProcessor * */
         $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
 
         $checkoutData = CheckoutData::create(
-            (int) $cartId,
+            (int)$cartId,
             $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-            (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+            (int)Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
         );
         $checkoutData->setOrderStatus($transactionStatus);
 
-        $checkoutProcessor->run($checkoutData);
+        /**
+         * NOTE: This check is needed because ACCOUNTTOACCOUNT payment method
+         * is always being created before initialize API request
+         */
+        if ($orderPayment !== SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT) {
+            $checkoutProcessor->run($checkoutData);
+        }
 
         $orderId = $this->getOrderId($cartId);
 
