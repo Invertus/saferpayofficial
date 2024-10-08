@@ -109,7 +109,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $logger->error(sprintf('%s - Secure key does not match', self::FILE_NAME), [
                 'context' => [
                     'cartId' => $cartId,
-                    'secureKey' => $secureKey,
                 ],
             ]);
 

@@ -72,10 +72,11 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 'context' => [
                     'cartId' => $cartId,
                     'orderId' => $orderId,
-                    'secureKey' => $secureKey,
                 ],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
+
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
             Tools::redirect(
                 $this->context->link->getModuleLink(
@@ -91,7 +92,6 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                 )
             );
         }
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**

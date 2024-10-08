@@ -105,9 +105,10 @@ class SaferPayTransactionAssertion
         }
 
         $this->logger->debug(sprintf('%s - assert service ended',self::FILE_NAME), [
-            'cart_id' => $cartId,
-            'saferpay_order_id' => $saferPayOrder->id,
-            'method' => __METHOD__,
+            'context' => [
+                'cart_id' => $cartId,
+                'saferpay_order_id' => $saferPayOrder->id,
+            ],
         ]);
 
         return $assertBody;

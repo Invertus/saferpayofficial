@@ -138,7 +138,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 $logger->debug(sprintf('%s - Liability shift is false', self::FILE_NAME), [
                     'context' => [
-                        'order' => $order,
+                        'id_order' => $order->id,
                     ],
                 ]);
 

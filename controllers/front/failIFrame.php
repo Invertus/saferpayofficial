@@ -60,12 +60,12 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
             null
         );
 
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         if (SaferPayConfig::isVersion17()) {
             $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/loading.tpl');
             return;
         }
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         $this->context->smarty->assign([
             'cssUrl' => "{$this->module->getPathUri()}views/css/front/loading.css",
