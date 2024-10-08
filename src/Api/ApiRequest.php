@@ -27,6 +27,8 @@ use Configuration;
 use Exception;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use SaferPayLog;
 use Unirest\Request;
 use Unirest\Response;
@@ -37,6 +39,15 @@ if (!defined('_PS_VERSION_')) {
 
 class ApiRequest
 {
+    const FILE_NAME = 'ApiRequest';
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * API Request Post Method.
      *
@@ -59,10 +70,11 @@ class ApiRequest
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $logs = new SaferPayLog();
-            $logs->message = $exception->getMessage() ?: "missing response";
-            $logs->payload = json_encode($params);
-            $logs->add();
+            $this->logger->error($exception->getMessage(), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($exception)
+            ]);
+
             throw $exception;
         }
     }
@@ -81,17 +93,22 @@ class ApiRequest
             $response = Request::get(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
-                json_encode($params)
+                $params
             );
 
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $logs = new SaferPayLog();
-            $logs->message = $exception->getMessage() ?: "missing response";
-            $logs->payload = json_encode($params);
-            $logs->add();
+            $this->logger->error($exception->getMessage(), [
+                'context' => [
+                    'headers' => $this->getHeaders(),
+                    'request' => $params,
+                    'response' => json_decode($response->raw_body),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception)
+            ]);
+
             throw $exception;
         }
     }
@@ -119,6 +136,11 @@ class ApiRequest
     private function isValidResponse(Response $response)
     {
         if ($response->code >= 300) {
+            $this->logger->error(sprintf('%s - API thrown code: %d', self::FILE_NAME, $response->code), [
+                'context' => [],
+                'response' => $response->body,
+            ]);
+
             throw new SaferPayApiException(sprintf('Initialize API failed: %s', $response->raw_body), SaferPayApiException::INITIALIZE);
         }
     }

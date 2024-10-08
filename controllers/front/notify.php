@@ -25,10 +25,12 @@ use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,11 +47,21 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
+            $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'context' => [],
+                'exceptions' => [],
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
@@ -57,6 +69,13 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         }
 
         if ($cart->secure_key !== $secureKey) {
+            $logger->error(sprintf('%s - Insecure cart', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $cartId,
+                ],
+                'exceptions' => [],
+            ]);
+
             die($this->module->l('Error. Insecure cart', self::FILENAME));
         }
 
@@ -116,6 +135,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->cancel($order);
+
+                $logger->debug(sprintf('%s - Liability shift is false', self::FILE_NAME), [
+                    'context' => [
+                        'id_order' => $order->id,
+                    ],
+                ]);
 
                 die($this->module->l('Liability shift is false', self::FILENAME));
             }
@@ -181,22 +206,21 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 die('canceled');
             }
 
-            PrestaShopLogger::addLog(
-                sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - AccountToAccount order is declined', self::FILENAME), [
+                'context' => [
+                    'orderId' => $orderId,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             $this->releaseLock();
 
             die($this->module->l($e->getMessage(), self::FILENAME));
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         die($this->module->l('Success', self::FILENAME));
     }

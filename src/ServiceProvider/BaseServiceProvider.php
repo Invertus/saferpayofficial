@@ -23,10 +23,22 @@
 
 namespace Invertus\SaferPay\ServiceProvider;
 
+use Invertus\SaferPay\Context\GlobalShopContext;
+use Invertus\SaferPay\EntityManager\EntityManagerInterface;
+use Invertus\SaferPay\EntityManager\ObjectModelEntityManager;
+use Invertus\SaferPay\Logger\Formatter\LogFormatter;
+use Invertus\SaferPay\Logger\Formatter\LogFormatterInterface;
+use Invertus\SaferPay\Logger\Logger;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepository;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;
+use Invertus\SaferPay\Repository\PrestashopLoggerRepository;
+use Invertus\SaferPay\Repository\PrestashopLoggerRepositoryInterface;
+use Invertus\SaferPay\Repository\SaferPayLogRepository;
+use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
+use Invertus\SaferPay\Context\GlobalShopContextInterface;
 use League\Container\Container;
 
 if (!defined('_PS_VERSION_')) {
@@ -48,7 +60,13 @@ final class BaseServiceProvider
     public function register(Container $container)
     {
         $this->addService($container, IdempotencyProviderInterface::class, $container->get(BasicIdempotencyProvider::class));
+        $this->addService($container, LogFormatterInterface::class, $container->get(LogFormatter::class));
+        $this->addService($container, GlobalShopContextInterface::class, $container->get(GlobalShopContext::class));
         $this->addService($container, OrderRepositoryInterface::class, $container->get(OrderRepository::class));
+        $this->addService($container, SaferPayLogRepositoryInterface::class, $container->get(SaferPayLogRepository::class));
+        $this->addService($container, PrestashopLoggerRepositoryInterface::class, $container->get(PrestashopLoggerRepository::class));
+        $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
+        $this->addService($container, EntityManagerInterface::class, $container->get(ObjectModelEntityManager::class));
     }
 
     private function addService(Container $container, $className, $service)

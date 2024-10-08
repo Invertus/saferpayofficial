@@ -28,10 +28,12 @@ use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,6 +45,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
@@ -138,15 +145,23 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->setPending($order);
             }
         } catch (SaferPayApiException $e) {
-            \PrestaShopLogger::addLog($e->getMessage());
+            $logger->debug($e->getMessage(), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
             // we only care if we have a response with pending status, else we skip further actions
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
     /**
      * @throws PrestaShopException
      */
     public function initContent()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
@@ -156,6 +171,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
+            $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'context' => [],
+                'exceptions' => [],
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
@@ -163,6 +183,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         if ($cart->secure_key !== $secureKey) {
+            $logger->error(sprintf('%s - Secure key does not match', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                ],
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
