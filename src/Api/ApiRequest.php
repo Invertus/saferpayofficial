@@ -137,9 +137,7 @@ class ApiRequest
     {
         if ($response->code >= 300) {
             $this->logger->error(sprintf('%s - API thrown code: %d', self::FILE_NAME, $response->code), [
-                'context' => [
-                    'code' => $response->code,
-                ],
+                'context' => [],
                 'response' => $response->body,
             ]);
 
