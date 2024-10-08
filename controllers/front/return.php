@@ -93,9 +93,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         if (!Validate::isLoadedObject($cart)) {
             $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
-                'context' => [
-                    'cartId' => $cartId,
-                ],
+                'context' => [],
                 'exceptions' => [],
             ]);
 
