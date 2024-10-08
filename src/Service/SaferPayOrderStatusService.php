@@ -218,6 +218,11 @@ class SaferPayOrderStatusService
         $order->update();
         $saferPayOrder->canceled = 1;
         $saferPayOrder->update();
+
+        $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
+        $saferPayAssert = new SaferPayAssert($assertId);
+        $saferPayAssert->status = TransactionStatus::CANCELED;
+        $saferPayAssert->update();
     }
 
     public function refund(Order $order, $refundedAmount)
