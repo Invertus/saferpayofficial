@@ -173,3 +173,4 @@
 ## [1.2.4]
 - Fixed credit card saving
 - Implemented code logging for debugging purposes
+- Requiring card holder name when entering card details
