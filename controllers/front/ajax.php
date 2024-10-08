@@ -134,6 +134,9 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
     private function submitHostedFields()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             if (Order::getOrderByCartId($this->context->cart->id)) {
                 $this->ajaxDie(json_encode([
@@ -162,14 +165,13 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 $redirectUrl = $this->getRedirectionToControllerUrl('successHosted');
             }
 
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
             $this->ajaxDie(json_encode([
                 'error' => false,
                 'url' => $redirectUrl,
             ]));
         } catch (Exception $e) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->module->getService(LoggerInterface::class);
-
             $logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
@@ -181,11 +183,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
         }
-
-        /** @var LoggerInterface $logger */
-        $logger = $this->module->getService(LoggerInterface::class);
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
 
     /**

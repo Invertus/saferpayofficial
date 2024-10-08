@@ -246,13 +246,13 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             return;
         }
 
-        /** @var Tools $tools */
+        /** @var Invertus\SaferPay\Adapter\Tools $tools */
         $tools = $this->module->getService(Tools::class);
 
-        /** @var SaferPayLogRepository $logRepository */
+        /** @var Invertus\SaferPay\Repository\SaferPayLogRepository $logRepository */
         $logRepository = $this->module->getService(SaferPayLogRepository::class);
 
-        /** @var GlobalShopContext $shopContext */
+        /** @var Invertus\SaferPay\Context\GlobalShopContext $shopContext */
         $globalShopContext = $this->module->getService(GlobalShopContext::class);
 
         $logId = $tools->getValueAsInt('log_id');
