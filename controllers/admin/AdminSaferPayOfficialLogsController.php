@@ -34,6 +34,8 @@ use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Logger\Logger;
 use Invertus\SaferPay\Adapter\Tools;
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
