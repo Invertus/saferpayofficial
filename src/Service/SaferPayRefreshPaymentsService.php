@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Exception;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
@@ -42,24 +43,33 @@ class SaferPayRefreshPaymentsService
     private $obtainPayments;
     private $restrictionRepository;
     private $fieldRepository;
+    private $logger;
 
     public function __construct(
         SaferPayPaymentRepository $paymentRepository,
         SaferPayObtainPaymentMethods $obtainPaymentMethods,
         SaferPayRestrictionRepository $restrictionRepository,
-        SaferPayFieldRepository $fieldRepository
+        SaferPayFieldRepository $fieldRepository,
+        LoggerInterface $logger
     ) {
         $this->paymentRepository = $paymentRepository;
         $this->obtainPayments = $obtainPaymentMethods;
         $this->restrictionRepository = $restrictionRepository;
         $this->fieldRepository = $fieldRepository;
+        $this->logger = $logger;
     }
 
     public function refreshPayments()
     {
+
         // Get enabled payments.
         $activePayments = $this->paymentRepository->getActivePaymentMethods();
+
         if (empty($activePayments)) {
+            $this->logger->info('No active payment options found', [
+                'context' => [],
+            ]);
+
             return;
         }
 
