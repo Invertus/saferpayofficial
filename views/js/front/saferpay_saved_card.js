@@ -20,12 +20,29 @@
  *@license   SIX Payment Services
  */
 
+// $(document).ready(function () {
+//         var $savedCards = $("input[name^='saved_card_']");
+//         $savedCards.on('change', function () {
+//             var $selectedCard = $(this);
+//             var method = $selectedCard.closest('div.saved_cards').find('.saved_card_method').val();
+//             $("input[name='selectedCreditCard_" + method + "']").val($selectedCard.val());
+//         });
+//     }
+// );
+
 $(document).ready(function () {
-        var $savedCards = $("input[name^='saved_card_']");
-        $savedCards.on('change', function () {
-            var $selectedCard = $(this);
-            var method = $selectedCard.closest('div.saved_cards').find('.saved_card_method').val();
-            $("input[name='selectedCreditCard_" + method + "']").val($selectedCard.val());
-        });
-    }
-);
+    $(document).on('change', 'input[name^="saved_card_"]', function () {
+        var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+        $("input[name='selectedCreditCard_" + method + "']").val(getCheckedCardValue());
+    })
+});
+
+function getCheckedCardValue() {
+    var checkedValue = null;
+    $('input[name^="saved_card_"]:checked').each(function() {
+        if ($(this).is(':visible')) {
+            checkedValue = $(this).val();
+        }
+    });
+    return checkedValue;
+}

@@ -20,9 +20,10 @@
  *@license   SIX Payment Services
  */
 
+let selectedCard = null;
+
 $(document).ready(function () {
     var savedCardMethod = $('input[name="saved_card_method"]');
-    var selectedCard = null;
 
     $(document).on('change', 'input[name^="saved_card_"]', function() {
         if (saferpay_is_opc) {
@@ -34,22 +35,22 @@ $(document).ready(function () {
         return;
     }
 
-    $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
-        handleSubmit(e, selectedCard);
-    });
-});
-
-window.onload = function () {
-    if ($('input[name^="saved_card_"]').length > 0) {
-        console.log(true);
+    if (saferpay_is_opc) {
+        $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
+            handleOpcSubmit(e);
+        });
+    } else {
+        $('[id="payment-form"]').on('submit', function (e) {
+            handleSubmit(e);
+        });
     }
-}
+
+});
 
 function handleSubmit(event, selectedCardOpc) {
     event.preventDefault();
 
     var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
-
     var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
 
     if (saferpay_is_opc) {
@@ -89,4 +90,33 @@ function getCheckedCardValue() {
         }
     });
     return checkedValue;
+}
+
+function handleOpcSubmit(event) {
+    event.preventDefault();
+
+    var selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    var form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
+
+    if (selectedCard <= 0) {
+        form[0].submit();
+
+        return;
+    }
+
+    $.ajax(saferpay_official_ajax_url, {
+        method: 'POST',
+        data: {
+            action: 'submitHostedFields',
+            paymentMethod: selectedCardMethod,
+            selectedCard: selectedCard,
+            isBusinessLicence: 1,
+            ajax: 1
+        },
+        success: function (response) {
+            var data = jQuery.parseJSON(response);
+
+            window.location = data.url;
+        },
+    });
 }
