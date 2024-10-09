@@ -17,4 +17,20 @@ class ValidateOpcModuleCompatibilityAction
 
         return false;
     }
+
+    /**
+     * Get only first enabled OPC module
+     *
+     * @return string
+     */
+    public function getEnabledOpcModule()
+    {
+        foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule) {
+            if (Module::isEnabled($opcModule)) {
+                return $opcModule;
+            }
+        }
+
+        return '';
+    }
 }

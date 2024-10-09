@@ -29,11 +29,19 @@
 //         });
 //     }
 // );
-
+let formSubmitted = false;
 $(document).ready(function () {
+    $("#confirm_order").on('click', function () {
+        formSubmitted = true;
+    });
+
     $(document).on('change', 'input[name^="saved_card_"]', function () {
+
         var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-        $("input[name='selectedCreditCard_" + method + "']").val(getCheckedCardValue());
+
+        if(!formSubmitted) {
+            $("input[name='selectedCreditCard_" + method + "']").val(getCheckedCardValue());
+        }
     })
 });
 
