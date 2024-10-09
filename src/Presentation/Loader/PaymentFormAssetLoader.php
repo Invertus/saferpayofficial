@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Presentation\Loader;
 
+use Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
@@ -50,6 +51,47 @@ class PaymentFormAssetLoader
 
     public function register($controller)
     {
+        /** @var ValidateOpcModuleCompatibilityAction $opcValidator */
+        $opcValidator = $this->module->getService(ValidateOpcModuleCompatibilityAction::class);
+
+        if ($opcValidator->run()) {
+            Media::addJsDef([
+                'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
+                'saferpay_payment_types' => [
+                    'hosted_iframe' => PaymentType::HOSTED_IFRAME,
+                    'iframe' => PaymentType::IFRAME,
+                    'basic' => PaymentType::BASIC,
+                ],
+                'saferpay_is_opc' => true,
+            ]);
+
+            if (method_exists($controller, 'registerJavascript')) {
+                if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                    $controller->registerJavascript(
+                        'saved_card_hosted_fields',
+                        "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields.js"
+                    );
+                } else {
+                    $controller->registerJavascript(
+                        'saved_card_hosted_fields',
+                        "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields_16.js"
+                    );
+                }
+            } else {
+                if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                    $controller->addJs(
+                        $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields.js',
+                        false
+                    );
+                } else {
+                    $controller->addJs(
+                        $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields_16.js',
+                        false
+                    );
+                }
+            }
+        }
+
         if (!$controller instanceof OrderControllerCore) {
             return;
         }

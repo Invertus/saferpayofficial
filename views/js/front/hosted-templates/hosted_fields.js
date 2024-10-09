@@ -22,39 +22,71 @@
 
 $(document).ready(function () {
     var savedCardMethod = $('input[name="saved_card_method"]');
+    var selectedCard = null;
 
-    if (!savedCardMethod.length) {
+    $(document).on('change', 'input[name^="saved_card_"]', function() {
+        if (saferpay_is_opc) {
+            selectedCard = getCheckedCardValue();
+        }
+    });
+
+    if (!savedCardMethod.length && !saferpay_is_opc) {
         return;
     }
 
-    $('[id="payment-form"]').on('submit', function (event) {
-        event.preventDefault();
-
-        var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
-
-        var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
-
-        //NOTE: not saved card chosen, continuing with normal procedures.
-        if (selectedCard <= 0) {
-            event.target.submit();
-
-            return;
-        }
-
-        $.ajax(saferpay_official_ajax_url, {
-            method: 'POST',
-            data: {
-                action: 'submitHostedFields',
-                paymentMethod: selectedCardMethod,
-                selectedCard: selectedCard,
-                isBusinessLicence: 1,
-                ajax: 1
-            },
-            success: function (response) {
-                var data = jQuery.parseJSON(response);
-
-                window.location = data.url;
-            },
-        });
+    $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
+        handleSubmit(e, selectedCard);
     });
 });
+
+window.onload = function () {
+    if ($('input[name^="saved_card_"]').length > 0) {
+        console.log(true);
+    }
+}
+
+function handleSubmit(event, selectedCardOpc) {
+    event.preventDefault();
+
+    var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
+
+    var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
+
+    if (saferpay_is_opc) {
+        selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+        selectedCard = selectedCardOpc;
+    }
+
+    //NOTE: not saved card chosen, continuing with normal procedures.
+    if (selectedCard <= 0) {
+        event.target.submit();
+
+        return;
+    }
+
+    $.ajax(saferpay_official_ajax_url, {
+        method: 'POST',
+        data: {
+            action: 'submitHostedFields',
+            paymentMethod: selectedCardMethod,
+            selectedCard: selectedCard,
+            isBusinessLicence: 1,
+            ajax: 1
+        },
+        success: function (response) {
+            var data = jQuery.parseJSON(response);
+
+            window.location = data.url;
+        },
+    });
+}
+
+function getCheckedCardValue() {
+    var checkedValue = null;
+    $('input[name^="saved_card_"]:checked').each(function() {
+        if ($(this).is(':visible')) {
+            checkedValue = $(this).val();
+        }
+    });
+    return checkedValue;
+}
