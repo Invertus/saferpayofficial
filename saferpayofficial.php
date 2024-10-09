@@ -347,7 +347,14 @@ Thank you for your patience!');
         /** @var \Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader $paymentFormAssetsLoader */
         $paymentFormAssetsLoader = $this->getService(\Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader::class);
 
+        /** @var \Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction $opcValidator */
+        $opcValidator = $this->getService(\Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction::class);
+
         $paymentFormAssetsLoader->register($this->context->controller);
+
+        if ($opcValidator->run()) {
+            $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/saferpay_opc.css');
+        }
 
         if ($this->context->controller instanceof OrderController) {
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
