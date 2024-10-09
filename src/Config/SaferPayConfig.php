@@ -273,6 +273,11 @@ class SaferPayConfig
     const LOG_SEVERITY_LEVEL_ERROR = 3;
 
     const LOG_SEVERITY_LEVEL_MAJOR = 4;
+    const OPC_MODULE_LIST = [
+        'onepagecheckoutps',
+        'thecheckout',
+        'supercheckout',
+    ];
 
     public static function supportsOrderCapture($paymentMethod)
     {
