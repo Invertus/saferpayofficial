@@ -61,7 +61,6 @@ class SaferPayRefreshPaymentsService
 
     public function refreshPayments()
     {
-
         // Get enabled payments.
         $activePayments = $this->paymentRepository->getActivePaymentMethods();
 
