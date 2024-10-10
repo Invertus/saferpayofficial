@@ -64,12 +64,7 @@ $(document).ready(function () {
                 window.location = data.url;
             },
         });
-    } else {
-        $('[id="payment-form"]').on('submit', function (e) {
-            handleSubmit(e);
-        });
-    }
-
+    });
 });
 
 function handleSubmit(event, selectedCardOpc) {
