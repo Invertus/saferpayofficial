@@ -35,13 +35,13 @@ $(document).ready(function () {
         return;
     }
 
-    $('body').on('submit', 'form.payment-form', function (e) {
-        handleOpcSubmit(e);
+    $('body').on('submit', 'form.payment-form', function (event) {
+        handleSubmit(event);
     });
 
 });
 
-function handleOpcSubmit(event) {
+function handleSubmit(event) {
     event.preventDefault();
 
     let selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
