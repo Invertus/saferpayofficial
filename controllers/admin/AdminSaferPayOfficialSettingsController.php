@@ -24,6 +24,8 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -401,6 +403,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'type' => 'text',
                     'desc' => 'This description is visible in payment page also in payment confirmation email',
                     'class' => 'fixed-width-xxl',
+                ],
+                SaferPayConfig::SAFERPAY_DEBUG_MODE => [
+                    'title' => $this->module->l('Debug mode', self::FILE_NAME),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                    'desc' => $this->module->l('Enable debug mode to see more information in logs', self::FILE_NAME),
                 ],
             ],
             'buttons' => [

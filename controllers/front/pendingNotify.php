@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionRefundAssertion;
 
@@ -33,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'pendingNotify';
+    const FILE_NAME = 'pendingNotify';
 
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
@@ -42,13 +43,18 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
      */
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
 
         $cart = new Cart($cartId);
 
         if ($cart->secure_key !== $secureKey) {
-            die($this->module->l('Error. Insecure cart', self::FILENAME));
+            die($this->module->l('Error. Insecure cart', self::FILE_NAME));
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -67,7 +73,9 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
             }
         }
 
-        die($this->module->l('Success', self::FILENAME));
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
+        die($this->module->l('Success', self::FILE_NAME));
     }
 
     /**
@@ -88,6 +96,14 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
     {
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->debug(sprintf('%s - Capture refund', self::FILE_NAME), [
+            'context' => [
+                'order_refund_id' => $orderRefundId,
+            ],
+        ]);
 
         $orderRefund = new SaferPayOrderRefund($orderRefundId);
         $orderRefund->status = TransactionStatus::CAPTURED;

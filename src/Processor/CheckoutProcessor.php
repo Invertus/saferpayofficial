@@ -35,14 +35,18 @@ use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Exception\CouldNotProcessCheckout;
 use Invertus\SaferPay\Factory\ModuleFactory;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use Order;
 use PrestaShopException;
 use SaferPayOrder;
 
 class CheckoutProcessor
 {
+    const FILE_NAME = 'CheckoutProcessor';
+
     /** @var \SaferPayOfficial */
     private $module;
 
@@ -71,7 +75,16 @@ class CheckoutProcessor
     {
         $cart = new Cart($data->getCartId());
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         if (!$cart) {
+            $logger->debug(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $data->getCartId(),
+                ],
+            ]);
+
             throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
         }
 
@@ -109,6 +122,13 @@ class CheckoutProcessor
                 $data->getIsTransaction()
             );
         } catch (\Exception $exception) {
+            $logger->error($exception->getMessage(), [
+                'context' => [
+                    'cartId' => $data->getCartId(),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception)
+            ]);
+
             throw CouldNotProcessCheckout::failedToCreateSaferPayOrder($data->getCartId());
         }
 
@@ -204,6 +224,13 @@ class CheckoutProcessor
             $saferPayOrder->id_order = $order->id;
             $saferPayOrder->update();
         } catch (\Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error($exception->getMessage(), [
+                'context' => [],
+                'cartId' => $data->getCartId(),
+            ]);
+
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
         }
     }

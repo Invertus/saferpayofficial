@@ -25,10 +25,12 @@ use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,7 +38,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'notify';
+    const FILE_NAME = 'notify';
 
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
@@ -45,19 +47,36 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
      */
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
+            $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'context' => [],
+                'exceptions' => [],
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
-                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
+                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
             ]));
         }
 
         if ($cart->secure_key !== $secureKey) {
-            die($this->module->l('Error. Insecure cart', self::FILENAME));
+            $logger->error(sprintf('%s - Insecure cart', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $cartId,
+                ],
+                'exceptions' => [],
+            ]);
+
+            die($this->module->l('Error. Insecure cart', self::FILE_NAME));
         }
 
         $lockResult = $this->applyLock(sprintf(
@@ -68,11 +87,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         if (!SaferPayConfig::isVersion17()) {
             if ($lockResult > 200) {
-                die($this->module->l('Lock already exists', self::FILENAME));
+                die($this->module->l('Lock already exists', self::FILE_NAME));
             }
         } else {
             if (!$lockResult->isSuccessful()) {
-                die($this->module->l('Lock already exists', self::FILENAME));
+                die($this->module->l('Lock already exists', self::FILE_NAME));
             }
         }
 
@@ -81,7 +100,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $completed = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
             if ((int) $order->current_state === $completed) {
-                die($this->module->l('Order already complete', self::FILENAME));
+                die($this->module->l('Order already complete', self::FILE_NAME));
             }
         }
 
@@ -117,7 +136,13 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->cancel($order);
 
-                die($this->module->l('Liability shift is false', self::FILENAME));
+                $logger->debug(sprintf('%s - Liability shift is false', self::FILE_NAME), [
+                    'context' => [
+                        'id_order' => $order->id,
+                    ],
+                ]);
+
+                die($this->module->l('Liability shift is false', self::FILE_NAME));
             }
 
             //NOTE to get latest information possible and not override new information.
@@ -156,7 +181,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $saferPayCapturedStatus = (int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
                 if ((int) $order->current_state === $saferPayCapturedStatus) {
-                    die($this->module->l('Order already created', self::FILENAME));
+                    die($this->module->l('Order already created', self::FILE_NAME));
                 }
 
                 // assuming order transaction was declined
@@ -181,24 +206,23 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 die('canceled');
             }
 
-            PrestaShopLogger::addLog(
-                sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - AccountToAccount order is declined', self::FILE_NAME), [
+                'context' => [
+                    'orderId' => $orderId,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             $this->releaseLock();
 
-            die($this->module->l($e->getMessage(), self::FILENAME));
+            die($this->module->l($e->getMessage(), self::FILE_NAME));
         }
 
-        die($this->module->l('Success', self::FILENAME));
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
+        die($this->module->l('Success', self::FILE_NAME));
     }
 
     private function assertTransaction($cartId)
