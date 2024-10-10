@@ -35,52 +35,11 @@ $(document).ready(function () {
         return;
     }
 
-    if (saferpay_is_opc) {
-        $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
-            handleOpcSubmit(e);
-        });
-    } else {
-        $('[id="payment-form"]').on('submit', function (e) {
-            handleSubmit(e);
-        });
-    }
+    $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
+        handleOpcSubmit(e);
+    });
 
 });
-
-function handleSubmit(event, selectedCardOpc) {
-    event.preventDefault();
-
-    var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
-    var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
-
-    if (saferpay_is_opc) {
-        selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-        selectedCard = selectedCardOpc;
-    }
-
-    //NOTE: not saved card chosen, continuing with normal procedures.
-    if (selectedCard <= 0) {
-        event.target.submit();
-
-        return;
-    }
-
-    $.ajax(saferpay_official_ajax_url, {
-        method: 'POST',
-        data: {
-            action: 'submitHostedFields',
-            paymentMethod: selectedCardMethod,
-            selectedCard: selectedCard,
-            isBusinessLicence: 1,
-            ajax: 1
-        },
-        success: function (response) {
-            var data = jQuery.parseJSON(response);
-
-            window.location = data.url;
-        },
-    });
-}
 
 function getCheckedCardValue() {
     var checkedValue = null;
@@ -94,6 +53,8 @@ function getCheckedCardValue() {
 
 function handleOpcSubmit(event) {
     event.preventDefault();
+    event.stopPropagation()
+    event.stopImmediatePropagation()
 
     var selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
     var form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');

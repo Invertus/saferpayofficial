@@ -29,7 +29,7 @@ $(document).ready(function () {
     $(document).on('change', 'input[name^="saved_card_"]', function () {
 
         var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-
+        console.log('tried to change')
         if(!formSubmitted) {
             $("input[name='selectedCreditCard_" + method + "']").val(getCheckedCardValue());
         }
