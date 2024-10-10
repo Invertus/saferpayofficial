@@ -24,6 +24,7 @@ $(document).ready(function () {
     $(document).on('change', 'input[name^="saved_card_"]', function () {
         var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
         $("input[name='selectedCreditCard_" + method + "']").val(getCheckedCardValue());
+        sessionStorage.setItem('selectedCard', getCheckedCardValue());
     })
 });
 

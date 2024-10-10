@@ -23,13 +23,7 @@
 let selectedCard = null;
 
 $(document).ready(function () {
-    var savedCardMethod = $('input[name="saved_card_method"]');
-
-    $(document).on('change', 'input[name^="saved_card_"]', function() {
-        if (saferpay_is_opc) {
-            selectedCard = getCheckedCardValue();
-        }
-    });
+    let savedCardMethod = $('input[name="saved_card_method"]');
 
     if (!savedCardMethod.length && !saferpay_is_opc) {
         return;
@@ -41,28 +35,18 @@ $(document).ready(function () {
 
 });
 
-function getCheckedCardValue() {
-    var checkedValue = null;
-    $('input[name^="saved_card_"]:checked').each(function() {
-        if ($(this).is(':visible')) {
-            checkedValue = $(this).val();
-        }
-    });
-    return checkedValue;
-}
-
 function handleOpcSubmit(event) {
     event.preventDefault();
-    event.stopImmediatePropagation();
 
-    var selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-    var selectedCard = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
-    var form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
+    let currentCard = parseInt(sessionStorage.getItem('selectedCard'));
+    let selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    let selectedCard = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
+    let form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
+    let hiddenInput = form.find("input[name='selectedCreditCard_" + selectedCardMethod + "']");
 
-    var hiddenInput = form.find("input[name='selectCreditCard_" + selectedCardMethod + "']");
-    hiddenInput.val(selectedCard);
+    hiddenInput.val(currentCard);
 
-    if (selectedCard <= 0) {
+    if (parseInt(hiddenInput.val())  <= 0) {
         event.target.submit();
 
         return;
