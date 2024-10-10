@@ -353,20 +353,26 @@ Thank you for your patience!');
         $paymentFormAssetsLoader->register($this->context->controller);
 
         if ($opcValidator->run()) {
-            $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/saferpay_opc.css');
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $this->context->controller->registerJavascript(
-                    'saved-card',
-                    'modules/' . $this->name . '/views/js/front/saferpay_saved_card.js'
-                );
 
-                $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
-            } else {
-                $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout_16.css");
-                $this->context->controller->addJS("{$this->getPathUri()}views/js/front/saferpay_saved_card_16.js");
-                $fieldsLibrary = \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY;
-                $configSuffix = \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix();
-                $this->context->controller->addJs(Configuration::get($fieldsLibrary . $configSuffix));
+            switch ($opcValidator->getEnabledOpcModule()) {
+                case \Invertus\SaferPay\Config\SaferPayConfig::THE_CHECKOUT_MODULE:
+                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/saferpay_tch.css');
+
+                    if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                        $this->context->controller->registerJavascript(
+                            'saved-card',
+                            'modules/' . $this->name . '/views/js/front/opc/thecheckout/saferpay_saved_card_tch.js'
+                        );
+
+                        $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
+                    } else {
+                        $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout_16.css");
+                        $this->context->controller->addJS("{$this->getPathUri()}views/js/front/saferpay_saved_card_16.js");
+                        $fieldsLibrary = \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY;
+                        $configSuffix = \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix();
+                        $this->context->controller->addJs(Configuration::get($fieldsLibrary . $configSuffix));
+                    }
+                    break;
             }
 
             /** @var \Invertus\SaferPay\Service\SaferPayErrorDisplayService $errorDisplayService */

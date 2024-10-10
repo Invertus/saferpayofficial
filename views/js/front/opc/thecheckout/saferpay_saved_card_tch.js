@@ -20,12 +20,28 @@
  *@license   SIX Payment Services
  */
 
+let formSubmitted = false;
 $(document).ready(function () {
-        var $savedCards = $("input[name^='saved_card_']");
-        $savedCards.on('change', function () {
-            var $selectedCard = $(this);
-            var method = $selectedCard.closest('div.saved_cards').find('.saved_card_method').val();
-            $("input[name='selectedCreditCard_" + method + "']").val($selectedCard.val());
-        });
-    }
-);
+    $("#confirm_order").on('click', function () {
+        formSubmitted = true;
+    });
+
+    $(document).on('change', 'input[name^="saved_card_"]', function () {
+
+        var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+
+        if(!formSubmitted) {
+            $("input[name='selectedCreditCard_" + method + "']").val(getCheckedCardValue());
+        }
+    })
+});
+
+function getCheckedCardValue() {
+    var checkedValue = null;
+    $('input[name^="saved_card_"]:checked').each(function() {
+        if ($(this).is(':visible')) {
+            checkedValue = $(this).val();
+        }
+    });
+    return checkedValue;
+}

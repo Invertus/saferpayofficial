@@ -122,31 +122,7 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
-        if (method_exists($controller, 'registerJavascript')) {
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $controller->registerJavascript(
-                    'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields.js"
-                );
-            } else {
-                $controller->registerJavascript(
-                    'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields_16.js"
-                );
-            }
-        } else {
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields.js',
-                    false
-                );
-            } else {
-                $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields_16.js',
-                    false
-                );
-            }
-        }
+        //
     }
 
     private function registerTheCheckoutAssets($controller)
@@ -155,23 +131,23 @@ class PaymentFormAssetLoader
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
                 $controller->registerJavascript(
                     'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields.js"
+                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields_tch.js"
                 );
             } else {
                 $controller->registerJavascript(
                     'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields_16.js"
+                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields_16_tch.js"
                 );
             }
         } else {
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
                 $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields.js',
+                    $this->module->getPathUri() . 'views/js/front/opc/thecheckout/hosted_fields_tch.js',
                     false
                 );
             } else {
                 $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields_16.js',
+                    $this->module->getPathUri() . 'views/js/front/hosted-templates/opc/thecheckout/hosted_fields_16_tch.js',
                     false
                 );
             }
@@ -180,30 +156,6 @@ class PaymentFormAssetLoader
 
     private function registerSuperCheckoutAssets($controller)
     {
-        if (method_exists($controller, 'registerJavascript')) {
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $controller->registerJavascript(
-                    'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields.js"
-                );
-            } else {
-                $controller->registerJavascript(
-                    'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields_16.js"
-                );
-            }
-        } else {
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields.js',
-                    false
-                );
-            } else {
-                $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields_16.js',
-                    false
-                );
-            }
-        }
+        //
     }
 }
