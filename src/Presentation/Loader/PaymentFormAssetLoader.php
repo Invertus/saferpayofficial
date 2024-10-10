@@ -23,7 +23,9 @@
 
 namespace Invertus\SaferPay\Presentation\Loader;
 
+use Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction;
 use Invertus\SaferPay\Adapter\LegacyContext;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Factory\ModuleFactory;
@@ -50,6 +52,34 @@ class PaymentFormAssetLoader
 
     public function register($controller)
     {
+        /** @var ValidateOpcModuleCompatibilityAction $opcValidator */
+        $opcValidator = $this->module->getService(ValidateOpcModuleCompatibilityAction::class);
+
+        if ($opcValidator->run()) {
+            Media::addJsDef([
+                'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
+                'saferpay_payment_types' => [
+                    'hosted_iframe' => PaymentType::HOSTED_IFRAME,
+                    'iframe' => PaymentType::IFRAME,
+                    'basic' => PaymentType::BASIC,
+                ],
+                'saferpay_is_opc' => $opcValidator->run(),
+            ]);
+
+            $opcModule = $opcValidator->getEnabledOpcModule();
+            switch ($opcModule) {
+                case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
+                    $this->registerOnePageCheckoutAssets($controller);
+                    break;
+                case SaferPayConfig::THE_CHECKOUT_MODULE:
+                    $this->registerTheCheckoutAssets($controller);
+                    break;
+                case SaferPayConfig::SUPER_CHECKOUT_MODULE:
+                    $this->registerSuperCheckoutAssets($controller);
+                    break;
+            }
+        }
+
         if (!$controller instanceof OrderControllerCore) {
             return;
         }
@@ -88,5 +118,44 @@ class PaymentFormAssetLoader
                 );
             }
         }
+    }
+
+    private function registerOnePageCheckoutAssets($controller)
+    {
+        //
+    }
+
+    private function registerTheCheckoutAssets($controller)
+    {
+        if (method_exists($controller, 'registerJavascript')) {
+            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                $controller->registerJavascript(
+                    'saved_card_hosted_fields',
+                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields_tch.js"
+                );
+            } else {
+                $controller->registerJavascript(
+                    'saved_card_hosted_fields',
+                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields_16_tch.js"
+                );
+            }
+        } else {
+            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                $controller->addJs(
+                    $this->module->getPathUri() . 'views/js/front/opc/thecheckout/hosted_fields_tch.js',
+                    false
+                );
+            } else {
+                $controller->addJs(
+                    $this->module->getPathUri() . 'views/js/front/hosted-templates/opc/thecheckout/hosted_fields_16_tch.js',
+                    false
+                );
+            }
+        }
+    }
+
+    private function registerSuperCheckoutAssets($controller)
+    {
+        //
     }
 }
