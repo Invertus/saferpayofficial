@@ -22,6 +22,12 @@
 
 let selectedCard = null;
 
+$(document).on('change', 'input[name^="saved_card_"]', function () {
+    var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    updateCheckedCardValue();
+    $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
+})
+
 $(document).ready(function () {
     let savedCardMethod = $('input[name="saved_card_method"]');
 
@@ -38,15 +44,14 @@ $(document).ready(function () {
 function handleOpcSubmit(event) {
     event.preventDefault();
 
-    let currentCard = parseInt(sessionStorage.getItem('selectedCard'));
     let selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-    let selectedCard = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
     let form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
     let hiddenInput = form.find("input[name='selectedCreditCard_" + selectedCardMethod + "']");
 
-    hiddenInput.val(currentCard);
+    hiddenInput.val(selectedCard);
 
-    if (parseInt(hiddenInput.val())  <= 0) {
+    // NOTE: not saved card chosen, continuing with normal procedures.
+    if (parseInt(selectedCard) <= 0) {
         event.target.submit();
 
         return;
@@ -57,7 +62,7 @@ function handleOpcSubmit(event) {
         data: {
             action: 'submitHostedFields',
             paymentMethod: selectedCardMethod,
-            selectedCard: selectedCard,
+            selectedCard: parseInt(selectedCard),
             isBusinessLicence: 1,
             ajax: 1
         },
@@ -66,5 +71,13 @@ function handleOpcSubmit(event) {
 
             window.location = data.url;
         },
+    });
+}
+
+function updateCheckedCardValue() {
+    $('input[name^="saved_card_"]:checked').each(function() {
+        if ($(this).is(':visible')) {
+            selectedCard = $(this).val();
+        }
     });
 }
