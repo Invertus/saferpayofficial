@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'pendingNotify';
+    const FILE_NAME = 'pendingNotify';
 
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.
@@ -54,7 +54,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         $cart = new Cart($cartId);
 
         if ($cart->secure_key !== $secureKey) {
-            die($this->module->l('Error. Insecure cart', self::FILENAME));
+            die($this->module->l('Error. Insecure cart', self::FILE_NAME));
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -75,7 +75,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
-        die($this->module->l('Success', self::FILENAME));
+        die($this->module->l('Success', self::FILE_NAME));
     }
 
     /**

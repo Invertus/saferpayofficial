@@ -30,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'success';
+    const FILE_NAME = 'success';
 
     public function postProcess()
     {
