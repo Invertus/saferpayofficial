@@ -41,7 +41,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'return';
+    const FILE_NAME = 'return';
 
     public function postProcess()
     {
@@ -58,12 +58,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cart = new Cart($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
-            $this->warning[] = $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME);
+            $this->warning[] = $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME);
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
         }
 
         if ($cart->secure_key !== $secureKey) {
-            $this->warning[] = $this->module->l('Error. Insecure cart', self::FILENAME);
+            $this->warning[] = $this->module->l('Error. Insecure cart', self::FILE_NAME);
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
         }
 
@@ -80,7 +80,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
             \PrestaShopLogger::addLog($e->getMessage());
-            $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILENAME);
+            $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
         }
 
@@ -98,7 +98,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
             } catch (Exception $e) {
                 \PrestaShopLogger::addLog($e->getMessage());
-                $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILENAME);
+                $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
                 $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
             }
         }
@@ -143,7 +143,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
-                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
+                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
             ]));
         }
 
@@ -156,7 +156,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
             $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
-                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILENAME),
+                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
             ]));
         }
 

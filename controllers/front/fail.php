@@ -33,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'fail';
+    const FILE_NAME = 'fail';
 
     /**
      * Security Key Variable Declaration.
@@ -104,7 +104,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             true,
             null
         );
-        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILENAME);
+        $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILE_NAME);
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 

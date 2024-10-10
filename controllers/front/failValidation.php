@@ -32,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'failValidation';
+    const FILE_NAME = 'failValidation';
 
     public function postProcess()
     {

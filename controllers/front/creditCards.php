@@ -32,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'creditCards';
+    const FILE_NAME = 'creditCards';
 
     public function display()
     {
@@ -72,7 +72,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
                 'payment_method' => $savedCard['payment_method'],
                 'date_add' => $savedCard['date_add'],
                 'card_img' => "{$this->module->getPathUri()}views/img/{$savedCard['payment_method']}.png",
-                'controller' => self::FILENAME,
+                'controller' => self::FILE_NAME,
             ]);
             $rows[] = $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/front/credit_card.tpl'
@@ -94,10 +94,10 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
             if ($cardAlias->delete()) {
-                $this->success[] = $this->module->l('Successfully removed credit card', self::FILENAME);
+                $this->success[] = $this->module->l('Successfully removed credit card', self::FILE_NAME);
                 return;
             }
-            $this->errors[] = $this->module->l('Failed to removed credit card', self::FILENAME);
+            $this->errors[] = $this->module->l('Failed to removed credit card', self::FILE_NAME);
         }
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
@@ -110,7 +110,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         $breadcrumb = $this->getBreadcrumbLinks();
 
         $breadcrumb['links'][] = [
-            'title' => $this->module->l('Your account', self::FILENAME),
+            'title' => $this->module->l('Your account', self::FILE_NAME),
             'url' => $this->context->link->getPageLink('my-account'),
         ];
 

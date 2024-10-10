@@ -32,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'failIFrame';
+    const FILE_NAME = 'failIFrame';
 
     protected $display_header = false;
     protected $display_footer = false;

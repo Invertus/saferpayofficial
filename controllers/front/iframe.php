@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'iframe';
+    const FILE_NAME = 'iframe';
 
     public $display_column_left = false;
 
@@ -71,7 +71,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         }
         if (!$authorized) {
             $this->errors[] =
-                $this->module->l('This payment method is not available.', self::FILENAME);
+                $this->module->l('This payment method is not available.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
         $customer = new Customer($cart->id_customer);

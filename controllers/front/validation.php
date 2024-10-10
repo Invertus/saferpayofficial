@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'validation';
+    const FILE_NAME = 'validation';
 
     /** @var SaferPayOfficial */
     public $module;
@@ -75,12 +75,12 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             }
         }
         if (!$authorized) {
-            $this->errors[] = $this->module->l('This payment method is not available.', self::FILENAME);
+            $this->errors[] = $this->module->l('This payment method is not available.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
 
         if (Order::getOrderByCartId($this->context->cart->id)) {
-            $this->errors[] = $this->module->l('Order already exists.', self::FILENAME);
+            $this->errors[] = $this->module->l('Order already exists.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
 

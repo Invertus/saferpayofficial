@@ -31,14 +31,14 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontController
 {
-    const FILENAME = 'hostedIframe';
+    const FILE_NAME = 'hostedIframe';
 
     public function initContent()
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $logger->debug(sprintf('%s - Controller called', self::FILENAME));
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         parent::initContent();
 
@@ -55,7 +55,7 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             'saferpay_selected_card' => $selectedCard,
         ]);
 
-        $logger->debug(sprintf('%s - Controller action ended', self::FILENAME));
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         if (SaferPayConfig::isVersion17()) {
             $this->setTemplate(
@@ -81,7 +81,7 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
         Media::addJsDef([
             'saferpay_field_access_token' => SaferPayConfig::getFieldAccessToken(),
             'saferpay_field_url' => SaferPayConfig::getFieldUrl(),
-            'holder_name' => $this->module->l('Holder name', self::FILENAME),
+            'holder_name' => $this->module->l('Holder name', self::FILE_NAME),
             'saferpay_official_ajax_url' => $this->context->link->getModuleLink('saferpayofficial', 'ajax'),
             'saved_card_method' => Tools::getValue('saved_card_method'),
             'isBusinessLicence' => Tools::getValue('isBusinessLicence'),
