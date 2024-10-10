@@ -39,7 +39,6 @@ $(document).ready(function () {
         event.preventDefault();
 
         var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
-
         var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
 
         //NOTE: not saved card chosen, continuing with normal procedures.
@@ -110,33 +109,4 @@ function getCheckedCardValue() {
         }
     });
     return checkedValue;
-}
-
-function handleOpcSubmit(event) {
-    event.preventDefault();
-
-    var selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-    var form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
-
-    if (selectedCard <= 0) {
-        form[0].submit();
-
-        return;
-    }
-
-    $.ajax(saferpay_official_ajax_url, {
-        method: 'POST',
-        data: {
-            action: 'submitHostedFields',
-            paymentMethod: selectedCardMethod,
-            selectedCard: selectedCard,
-            isBusinessLicence: 1,
-            ajax: 1
-        },
-        success: function (response) {
-            var data = jQuery.parseJSON(response);
-
-            window.location = data.url;
-        },
-    });
 }

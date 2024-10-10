@@ -35,7 +35,7 @@ $(document).ready(function () {
         return;
     }
 
-    $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
+    $('body').on('submit', 'form.payment-form', function (e) {
         handleOpcSubmit(e);
     });
 
@@ -53,14 +53,16 @@ function getCheckedCardValue() {
 
 function handleOpcSubmit(event) {
     event.preventDefault();
+    event.stopImmediatePropagation();
 
     var selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    var selectedCard = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
     var form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
+
     var hiddenInput = form.find("input[name='selectCreditCard_" + selectedCardMethod + "']");
     hiddenInput.val(selectedCard);
 
     if (selectedCard <= 0) {
-        // form[0].submit();
         event.target.submit();
 
         return;
