@@ -54,6 +54,7 @@ class PaymentFormAssetLoader
     {
         /** @var ValidateOpcModuleCompatibilityAction $opcValidator */
         $opcValidator = $this->module->getService(ValidateOpcModuleCompatibilityAction::class);
+
         $inOpcCheckout = get_class($controller) === SaferPayConfig::THE_CHECKOUT_FRONT_CONTROLLER;
 
         if ($opcValidator->run() && $inOpcCheckout) {
