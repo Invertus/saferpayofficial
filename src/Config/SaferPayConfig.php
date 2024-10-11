@@ -156,7 +156,6 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
-        self::PAYMENT_WECHATPAY,
     ];
 
     const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
