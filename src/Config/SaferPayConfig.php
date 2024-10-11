@@ -278,6 +278,8 @@ class SaferPayConfig
     const THE_CHECKOUT_MODULE = 'thecheckout';
     const SUPER_CHECKOUT_MODULE = 'supercheckout';
 
+    const THE_CHECKOUT_FRONT_CONTROLLER = 'TheCheckoutModuleFrontController';
+
     const OPC_MODULE_LIST = [
         'onepagecheckoutps',
         'thecheckout',

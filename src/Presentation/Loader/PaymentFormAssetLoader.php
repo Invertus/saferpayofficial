@@ -54,8 +54,9 @@ class PaymentFormAssetLoader
     {
         /** @var ValidateOpcModuleCompatibilityAction $opcValidator */
         $opcValidator = $this->module->getService(ValidateOpcModuleCompatibilityAction::class);
+        $inOpcCheckout = get_class($controller) === SaferPayConfig::THE_CHECKOUT_FRONT_CONTROLLER;
 
-        if ($opcValidator->run()) {
+        if ($opcValidator->run() && $inOpcCheckout) {
             Media::addJsDef([
                 'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
                 'saferpay_payment_types' => [
