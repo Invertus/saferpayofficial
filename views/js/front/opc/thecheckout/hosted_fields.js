@@ -48,7 +48,7 @@ function handleSubmit(event) {
     let form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
     let hiddenInput = form.find("input[name='selectedCreditCard_" + selectedCardMethod + "']");
 
-    /**
+    /*
      *  NOTE:
      *  when user just press payment method
      *  but not touched what to do with card
@@ -59,7 +59,10 @@ function handleSubmit(event) {
 
     hiddenInput.val(selectedCard);
 
-    // NOTE: not saved card chosen, continuing with normal procedures.
+    /*
+     * NOTE:
+     * not saved card chosen, continuing with normal procedures.
+     */
     if (parseInt(selectedCard) <= 0 || selectedCard === null || selectedCard === undefined) {
         event.target.submit();
 
