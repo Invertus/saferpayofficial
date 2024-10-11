@@ -281,9 +281,9 @@ class SaferPayConfig
     const THE_CHECKOUT_FRONT_CONTROLLER = 'TheCheckoutModuleFrontController';
 
     const OPC_MODULE_LIST = [
-        'onepagecheckoutps',
-        'thecheckout',
-        'supercheckout',
+        self::ONE_PAGE_CHECKOUT_MODULE,
+        self::THE_CHECKOUT_MODULE,
+        self::SUPER_CHECKOUT_MODULE,
     ];
 
     public static function supportsOrderCapture($paymentMethod)
