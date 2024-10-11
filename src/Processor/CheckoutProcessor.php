@@ -208,10 +208,25 @@ class CheckoutProcessor
 
     private function processAuthorizedOrder(CheckoutData $data, Cart $cart)
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->debug(sprintf('%s - Processing authorized order', self::FILE_NAME), [
+            'context' => [
+                'id_order' => $this->getOrder($cart->id)->id,
+            ],
+        ]);
+
         try {
             $this->processCreateOrder($cart, $data->getPaymentMethod());
             $order = $this->getOrder($cart->id);
             $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
+
+            if (
+                $order->getCurrentState() == _SAFERPAY_PAYMENT_AUTHORIZED_
+                || $order->getCurrentState() == _SAFERPAY_PAYMENT_COMPLETED_
+            ) {
+                return;
+            }
 
             if ($data->getOrderStatus() === TransactionStatus::AUTHORIZED) {
                 $saferPayOrder->authorized = true;
