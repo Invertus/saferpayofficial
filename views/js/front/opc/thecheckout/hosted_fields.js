@@ -48,6 +48,10 @@ function handleSubmit(event) {
     let form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
     let hiddenInput = form.find("input[name='selectedCreditCard_" + selectedCardMethod + "']");
 
+    if (selectedCard === null) {
+        selectedCard = hiddenInput.val();
+    }
+
     hiddenInput.val(selectedCard);
 
     // NOTE: not saved card chosen, continuing with normal procedures.
