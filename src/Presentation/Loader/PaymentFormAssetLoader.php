@@ -132,23 +132,23 @@ class PaymentFormAssetLoader
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
                 $controller->registerJavascript(
                     'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields_tch.js"
+                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields.js"
                 );
             } else {
                 $controller->registerJavascript(
                     'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields_16_tch.js"
+                    "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields_16.js"
                 );
             }
         } else {
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
                 $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/opc/thecheckout/hosted_fields_tch.js',
+                    $this->module->getPathUri() . 'views/js/front/opc/thecheckout/hosted_fields.js',
                     false
                 );
             } else {
                 $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/opc/thecheckout/hosted_fields_16_tch.js',
+                    $this->module->getPathUri() . 'views/js/front/hosted-templates/opc/thecheckout/hosted_fields_16.js',
                     false
                 );
             }
