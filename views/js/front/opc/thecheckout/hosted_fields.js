@@ -31,7 +31,7 @@ $(document).on('change', 'input[name^="saved_card_"]', function () {
 $(document).ready(function () {
     let savedCardMethod = $('input[name="saved_card_method"]');
 
-    if (!savedCardMethod.length && !saferpay_is_opc) {
+    if (!savedCardMethod.length) {
         return;
     }
 
