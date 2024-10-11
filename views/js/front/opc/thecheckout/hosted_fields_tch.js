@@ -51,7 +51,7 @@ function handleSubmit(event) {
     hiddenInput.val(selectedCard);
 
     // NOTE: not saved card chosen, continuing with normal procedures.
-    if (parseInt(selectedCard) <= 0) {
+    if (parseInt(selectedCard) <= 0 || selectedCard === null || selectedCard === undefined) {
         event.target.submit();
 
         return;

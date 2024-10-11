@@ -359,11 +359,6 @@ Thank you for your patience!');
                     $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/saferpay_tch.css');
 
                     if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                        $this->context->controller->registerJavascript(
-                            'saved-card',
-                            'modules/' . $this->name . '/views/js/front/opc/thecheckout/saferpay_saved_card_tch.js'
-                        );
-
                         $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
                     } else {
                         $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout_16.css");
@@ -372,6 +367,7 @@ Thank you for your patience!');
                         $configSuffix = \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix();
                         $this->context->controller->addJs(Configuration::get($fieldsLibrary . $configSuffix));
                     }
+
                     break;
             }
 
