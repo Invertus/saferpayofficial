@@ -301,13 +301,13 @@ class Installer extends AbstractInstaller
         return Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '(
                 `id_saferpay_log` INTEGER(10) NOT NULL AUTO_INCREMENT,
-                `id_log` INT(10) DEFAULT NOT NULL,
-                `id_shop` INT(10) DEFAULT ' . (int) Configuration::get('PS_SHOP_DEFAULT') . ',
+                `id_log` INT(10) NOT NULL,
+                `id_shop` INT(10) NOT NULL DEFAULT ' . (int) Configuration::get('PS_SHOP_DEFAULT') . ',
                 `message` TEXT DEFAULT NULL,
                 `request` MEDIUMTEXT DEFAULT NULL,
                 `response` MEDIUMTEXT DEFAULT NULL,
                 `context` TEXT DEFAULT NULL,
-                `date_add` datetime NOT NULL,
+                `date_add` DATETIME NOT NULL,
                 PRIMARY KEY(`id_saferpay_log`, `id_log`, `id_shop`),
                 INDEX(`id_log`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
