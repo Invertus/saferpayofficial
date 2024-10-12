@@ -95,7 +95,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             }
         }
 
-        if ($cart->orderExists()) {
+        /** @var \Invertus\SaferPay\Adapter\Cart $cartAdaoter */
+        $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
+
+        if ($cartAdapter->orderExists($cartId)) {
             $order = new Order($this->getOrderId($cartId));
             $completed = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
