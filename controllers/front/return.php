@@ -160,7 +160,10 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
-        if ($cart->orderExists()) {
+        /** @var \Invertus\SaferPay\Adapter\Cart $cart */
+        $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
+
+        if ($cartAdapter->orderExists($cart->id)) {
             if (method_exists('Order', 'getIdByCartId')) {
                 $orderId = Order::getIdByCartId($cartId);
             } else {

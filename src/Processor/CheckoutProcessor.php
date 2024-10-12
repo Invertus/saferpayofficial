@@ -143,8 +143,11 @@ class CheckoutProcessor
      */
     private function processCreateOrder(Cart $cart, $paymentMethod)
     {
+        /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
+        $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
+
         // Notify and return webhooks triggers together leading into order created previously
-        if ($cart->orderExists()) {
+        if ($cartAdapter->orderExists($cart->id)) {
             return;
         }
 
