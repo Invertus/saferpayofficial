@@ -57,18 +57,18 @@ class PaymentFormAssetLoader
     {
         $inOpcCheckout = get_class($controller) === SaferPayConfig::THE_CHECKOUT_FRONT_CONTROLLER;
 
-        if ($this->validateOpcModuleCompatibility->run() && $inOpcCheckout) {
-            Media::addJsDef([
-                'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
-                'saferpay_payment_types' => [
-                    'hosted_iframe' => PaymentType::HOSTED_IFRAME,
-                    'iframe' => PaymentType::IFRAME,
-                    'basic' => PaymentType::BASIC,
-                ],
-                'saferpay_is_opc' => $opcValidator->run(),
-            ]);
+        Media::addJsDef([
+            'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
+            'saferpay_payment_types' => [
+                'hosted_iframe' => PaymentType::HOSTED_IFRAME,
+                'iframe' => PaymentType::IFRAME,
+                'basic' => PaymentType::BASIC,
+            ],
+        ]);
 
-            $opcModule = $opcValidator->getEnabledOpcModule();
+        if ($this->validateOpcModuleCompatibility->run() && $inOpcCheckout) {
+
+            $opcModule = $this->validateOpcModuleCompatibility->getEnabledOpcModule();
             switch ($opcModule) {
                 case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
                     $this->registerOnePageCheckoutAssets($controller);
@@ -85,15 +85,6 @@ class PaymentFormAssetLoader
         if (!$controller instanceof OrderControllerCore) {
             return;
         }
-
-        Media::addJsDef([
-            'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
-            'saferpay_payment_types' => [
-                'hosted_iframe' => PaymentType::HOSTED_IFRAME,
-                'iframe' => PaymentType::IFRAME,
-                'basic' => PaymentType::BASIC,
-            ],
-        ]);
 
         if (method_exists($controller, 'registerJavascript')) {
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
