@@ -68,7 +68,14 @@ class PaymentFormAssetLoader
 
         $opcModule = $this->validateOpcModuleCompatibility->run();
 
-        if ($opcModule && $inOpcCheckout) {
+        if (
+            !$controller instanceof OrderControllerCore
+            || !$inOpcCheckout
+        ) {
+            return;
+        }
+
+        if ($inOpcCheckout) {
 
             switch ($opcModule) {
                 case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
@@ -81,10 +88,6 @@ class PaymentFormAssetLoader
                     $this->registerSuperCheckoutAssets($controller);
                     break;
             }
-        }
-
-        if (!$controller instanceof OrderControllerCore) {
-            return;
         }
 
         if (method_exists($controller, 'registerJavascript')) {
