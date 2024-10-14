@@ -66,9 +66,10 @@ class PaymentFormAssetLoader
             ],
         ]);
 
-        if ($this->validateOpcModuleCompatibility->run() && $inOpcCheckout) {
+        $opcModule = $this->validateOpcModuleCompatibility->run();
 
-            $opcModule = $this->validateOpcModuleCompatibility->getEnabledOpcModule();
+        if ($opcModule && $inOpcCheckout) {
+
             switch ($opcModule) {
                 case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
                     $this->registerOnePageCheckoutAssets($controller);
