@@ -28,30 +28,17 @@ use Module;
 
 class ValidateOpcModuleCompatibilityAction
 {
+    /**
+     * @return false|string
+     */
     public function run()
     {
         foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule){
             if (Module::isInstalled($opcModule) && Module::isEnabled($opcModule)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get only first enabled OPC module
-     *
-     * @return string
-     */
-    public function getEnabledOpcModule()
-    {
-        foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule) {
-            if (Module::isEnabled($opcModule)) {
                 return $opcModule;
             }
         }
 
-        return '';
+        return false;
     }
 }
