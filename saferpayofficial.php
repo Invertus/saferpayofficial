@@ -355,7 +355,6 @@ Thank you for your patience!');
         $opcModules = $validateOpcModuleCompatibility->run();
 
         if ($opcModules) {
-
             switch ($opcModules) {
                 case \Invertus\SaferPay\Config\SaferPayConfig::THE_CHECKOUT_MODULE:
                     $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/saferpay_tch.css');
