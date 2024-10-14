@@ -272,6 +272,7 @@ class SaferPayConfig
     const LOG_SEVERITY_LEVEL_ERROR = 3;
 
     const LOG_SEVERITY_LEVEL_MAJOR = 4;
+    const TRANSACTION_ALREADY_CAPTURED = 'TRANSACTION_ALREADY_CAPTURED';
 
     public static function supportsOrderCapture($paymentMethod)
     {
