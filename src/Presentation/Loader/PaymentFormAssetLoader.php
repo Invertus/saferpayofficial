@@ -76,7 +76,6 @@ class PaymentFormAssetLoader
         }
 
         if ($inOpcCheckout) {
-
             switch ($opcModule) {
                 case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
                     $this->registerOnePageCheckoutAssets($controller);
