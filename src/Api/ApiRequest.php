@@ -152,7 +152,7 @@ class ApiRequest
 
     private function isValidResponse(Response $response)
     {
-        if ($response->body->ErrorName === SaferPayConfig::TRANSACTION_ALREADY_CAPTURED) {
+        if (isset($response->body->ErrorName) && $response->body->ErrorName === SaferPayConfig::TRANSACTION_ALREADY_CAPTURED) {
             $this->logger->debug('Tried to apply state CAPTURED to already captured order', [
                 'context' => []
             ]);
