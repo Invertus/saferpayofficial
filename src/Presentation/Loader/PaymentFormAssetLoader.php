@@ -70,7 +70,7 @@ class PaymentFormAssetLoader
 
         if (
             !$controller instanceof OrderControllerCore
-            || !$inOpcCheckout
+            && !$inOpcCheckout
         ) {
             return;
         }
@@ -87,6 +87,10 @@ class PaymentFormAssetLoader
                     $this->registerSuperCheckoutAssets($controller);
                     break;
             }
+        }
+
+        if (!$controller instanceof OrderControllerCore) {
+            return;
         }
 
         if (method_exists($controller, 'registerJavascript')) {
