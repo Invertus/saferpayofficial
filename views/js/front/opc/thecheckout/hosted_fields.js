@@ -20,13 +20,13 @@
  *@license   SIX Payment Services
  */
 
-let selectedCard = null;
+var selectedCard = null;
 
 $(document).on('change', 'input[name^="saved_card_"]', function () {
     var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
     updateCheckedCardValue();
     $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
-})
+});
 
 $(document).ready(function () {
     let savedCardMethod = $('input[name="saved_card_method"]');
@@ -34,11 +34,10 @@ $(document).ready(function () {
     if (!savedCardMethod.length) {
         return;
     }
+});
 
-    $('body').on('submit', 'form.payment-form', function (event) {
-        handleSubmit(event);
-    });
-
+$('body').on('submit', 'form.payment-form', function (e) {
+    handleSubmit(e);
 });
 
 function handleSubmit(event) {

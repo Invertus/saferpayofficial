@@ -43,32 +43,39 @@ class PaymentFormAssetLoader
     private $module;
     /** @var LegacyContext */
     private $context;
+    /** @var ValidateOpcModuleCompatibilityAction $validateOpcModuleCompatibility */
+    private $validateOpcModuleCompatibility;
 
-    public function __construct(ModuleFactory $module, LegacyContext $context)
+    public function __construct(ModuleFactory $module, LegacyContext $context, ValidateOpcModuleCompatibilityAction $validateOpcModuleCompatibility)
     {
         $this->module = $module->getModule();
         $this->context = $context;
+        $this->validateOpcModuleCompatibility = $validateOpcModuleCompatibility;
     }
 
     public function register($controller)
     {
-        /** @var ValidateOpcModuleCompatibilityAction $opcValidator */
-        $opcValidator = $this->module->getService(ValidateOpcModuleCompatibilityAction::class);
+        Media::addJsDef([
+            'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
+            'saferpay_payment_types' => [
+                'hosted_iframe' => PaymentType::HOSTED_IFRAME,
+                'iframe' => PaymentType::IFRAME,
+                'basic' => PaymentType::BASIC,
+            ],
+        ]);
 
         $inOpcCheckout = get_class($controller) === SaferPayConfig::THE_CHECKOUT_FRONT_CONTROLLER;
 
-        if ($opcValidator->run() && $inOpcCheckout) {
-            Media::addJsDef([
-                'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
-                'saferpay_payment_types' => [
-                    'hosted_iframe' => PaymentType::HOSTED_IFRAME,
-                    'iframe' => PaymentType::IFRAME,
-                    'basic' => PaymentType::BASIC,
-                ],
-                'saferpay_is_opc' => $opcValidator->run(),
-            ]);
+        $opcModule = $this->validateOpcModuleCompatibility->run();
 
-            $opcModule = $opcValidator->getEnabledOpcModule();
+        if (
+            !$controller instanceof OrderControllerCore
+            && !$inOpcCheckout
+        ) {
+            return;
+        }
+
+        if ($inOpcCheckout) {
             switch ($opcModule) {
                 case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
                     $this->registerOnePageCheckoutAssets($controller);
@@ -85,15 +92,6 @@ class PaymentFormAssetLoader
         if (!$controller instanceof OrderControllerCore) {
             return;
         }
-
-        Media::addJsDef([
-            'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
-            'saferpay_payment_types' => [
-                'hosted_iframe' => PaymentType::HOSTED_IFRAME,
-                'iframe' => PaymentType::IFRAME,
-                'basic' => PaymentType::BASIC,
-            ],
-        ]);
 
         if (method_exists($controller, 'registerJavascript')) {
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {

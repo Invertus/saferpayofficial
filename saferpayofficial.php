@@ -347,16 +347,17 @@ Thank you for your patience!');
         /** @var \Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader $paymentFormAssetsLoader */
         $paymentFormAssetsLoader = $this->getService(\Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader::class);
 
-        /** @var \Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction $opcValidator */
-        $opcValidator = $this->getService(\Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction::class);
+        /** @var \Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction $validateOpcModuleCompatibility */
+        $validateOpcModuleCompatibility = $this->getService(\Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction::class);
 
         $paymentFormAssetsLoader->register($this->context->controller);
 
-        if ($opcValidator->run()) {
+        $opcModules = $validateOpcModuleCompatibility->run();
 
-            switch ($opcValidator->getEnabledOpcModule()) {
+        if ($opcModules) {
+            switch ($opcModules) {
                 case \Invertus\SaferPay\Config\SaferPayConfig::THE_CHECKOUT_MODULE:
-                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/saferpay_tch.css');
+                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/opc/thecheckout/saferpay.css');
 
                     if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
                         $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
