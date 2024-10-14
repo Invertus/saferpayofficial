@@ -357,7 +357,7 @@ Thank you for your patience!');
         if ($opcModules) {
             switch ($opcModules) {
                 case \Invertus\SaferPay\Config\SaferPayConfig::THE_CHECKOUT_MODULE:
-                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/saferpay_tch.css');
+                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/opc/thecheckout/saferpay.css');
 
                     if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
                         $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
