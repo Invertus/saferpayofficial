@@ -22,12 +22,6 @@
 
 let selectedCard = null;
 
-$(document).on('change', 'input[name^="saved_card_"]', function () {
-    var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-    updateCheckedCardValue();
-    $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
-})
-
 $(document).ready(function () {
     let savedCardMethod = $('input[name="saved_card_method"]');
 
@@ -40,6 +34,12 @@ $(document).ready(function () {
     });
 
 });
+
+$(document).on('change', 'input[name^="saved_card_"]', function () {
+    var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    updateCheckedCardValue();
+    $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
+})
 
 function handleSubmit(event) {
     event.preventDefault();
