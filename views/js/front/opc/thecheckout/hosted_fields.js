@@ -20,7 +20,7 @@
  *@license   SIX Payment Services
  */
 
-let selectedCard = null;
+var selectedCard = null;
 
 $(document).ready(function () {
     let savedCardMethod = $('input[name="saved_card_method"]');
