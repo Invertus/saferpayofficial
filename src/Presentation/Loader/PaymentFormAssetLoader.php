@@ -65,8 +65,6 @@ class PaymentFormAssetLoader
             ],
         ]);
 
-        $inOpcCheckout = get_class($controller) === SaferPayConfig::THE_CHECKOUT_FRONT_CONTROLLER;
-
         $opcModule = $this->opcModulesProvider->get();
 
         switch ($opcModule) {
