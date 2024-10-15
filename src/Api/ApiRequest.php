@@ -65,8 +65,6 @@ class ApiRequest
                 json_encode($params)
             );
 
-            $this->isValidResponse($response);
-
             $this->logger->debug(sprintf('%s - POST response: %d', self::FILE_NAME, $response->code), [
                 'context' => [
                     'uri' => $this->getBaseUrl() . $url,
@@ -75,6 +73,8 @@ class ApiRequest
                 'request' => $params,
                 'response' => $response->body,
             ]);
+
+            $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
@@ -104,8 +104,6 @@ class ApiRequest
                 $params
             );
 
-            $this->isValidResponse($response);
-
             $this->logger->debug(sprintf('%s - GET response: %d', self::FILE_NAME, $response->code), [
                 'context' => [
                     'uri' => $this->getBaseUrl() . $url,
@@ -114,6 +112,8 @@ class ApiRequest
                 'request' => $params,
                 'response' => $response->body,
             ]);
+
+            $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
