@@ -29,6 +29,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Factory\ModuleFactory;
+use Invertus\SaferPay\Provider\OpcModulesProvider;
 use Media;
 use OrderControllerCore;
 use SaferPayOfficial;
@@ -43,14 +44,14 @@ class PaymentFormAssetLoader
     private $module;
     /** @var LegacyContext */
     private $context;
-    /** @var ValidateOpcModuleCompatibilityAction $validateOpcModuleCompatibility */
-    private $validateOpcModuleCompatibility;
+    /** @var OpcModulesProvider $opcModuleProvider */
+    private $opcModulesProvider;
 
-    public function __construct(ModuleFactory $module, LegacyContext $context, ValidateOpcModuleCompatibilityAction $validateOpcModuleCompatibility)
+    public function __construct(ModuleFactory $module, LegacyContext $context, OpcModulesProvider $opcModulesProvider)
     {
         $this->module = $module->getModule();
         $this->context = $context;
-        $this->validateOpcModuleCompatibility = $validateOpcModuleCompatibility;
+        $this->opcModulesProvider = $opcModulesProvider;
     }
 
     public function register($controller)
@@ -66,14 +67,7 @@ class PaymentFormAssetLoader
 
         $inOpcCheckout = get_class($controller) === SaferPayConfig::THE_CHECKOUT_FRONT_CONTROLLER;
 
-        $opcModule = $this->validateOpcModuleCompatibility->run();
-
-        if (
-            !$controller instanceof OrderControllerCore
-            && !$inOpcCheckout
-        ) {
-            return;
-        }
+        $opcModule = $this->opcModulesProvider->get();
 
         if ($inOpcCheckout) {
             switch ($opcModule) {
@@ -88,36 +82,8 @@ class PaymentFormAssetLoader
                     break;
             }
         }
-
-        if (!$controller instanceof OrderControllerCore) {
-            return;
-        }
-
-        if (method_exists($controller, 'registerJavascript')) {
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $controller->registerJavascript(
-                    'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields.js"
-                );
-            } else {
-                $controller->registerJavascript(
-                    'saved_card_hosted_fields',
-                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields_16.js"
-                );
-            }
-        } else {
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields.js',
-                    false
-                );
-            } else {
-                $controller->addJs(
-                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields_16.js',
-                    false
-                );
-            }
-        }
+        
+        $this->registerDefaultCheckoutAssets($controller);
     }
 
     private function registerOnePageCheckoutAssets($controller)
@@ -157,5 +123,38 @@ class PaymentFormAssetLoader
     private function registerSuperCheckoutAssets($controller)
     {
         //
+    }
+
+    private function registerDefaultCheckoutAssets($controller)
+    {
+        if (!$controller instanceof OrderControllerCore) {
+            return;
+        }
+
+        if (method_exists($controller, 'registerJavascript')) {
+            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                $controller->registerJavascript(
+                    'saved_card_hosted_fields',
+                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields.js"
+                );
+            } else {
+                $controller->registerJavascript(
+                    'saved_card_hosted_fields',
+                    "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields_16.js"
+                );
+            }
+        } else {
+            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                $controller->addJs(
+                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields.js',
+                    false
+                );
+            } else {
+                $controller->addJs(
+                    $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields_16.js',
+                    false
+                );
+            }
+        }
     }
 }

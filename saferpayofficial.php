@@ -347,12 +347,12 @@ Thank you for your patience!');
         /** @var \Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader $paymentFormAssetsLoader */
         $paymentFormAssetsLoader = $this->getService(\Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader::class);
 
-        /** @var \Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction $validateOpcModuleCompatibility */
-        $validateOpcModuleCompatibility = $this->getService(\Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction::class);
+        /** @var \Invertus\SaferPay\Provider\OpcModulesProvider $opcModulesProvider */
+        $opcModulesProvider = $this->getService(\Invertus\SaferPay\Provider\OpcModulesProvider::class);
 
         $paymentFormAssetsLoader->register($this->context->controller);
 
-        $opcModules = $validateOpcModuleCompatibility->run();
+        $opcModules = $opcModulesProvider->get();
 
         if ($opcModules) {
             switch ($opcModules) {

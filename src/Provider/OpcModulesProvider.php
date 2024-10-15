@@ -21,24 +21,23 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Action;
+namespace Invertus\SaferPay\Provider;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Module;
 
-class ValidateOpcModuleCompatibilityAction
+class OpcModulesProvider
 {
     /**
-     * @return false|string
+     * @return string
      */
-    public function run()
+    public function get()
     {
         foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule){
-            if (Module::isInstalled($opcModule) && Module::isEnabled($opcModule)) {
+            if (\Module::isInstalled($opcModule) && \Module::isEnabled($opcModule)) {
                 return $opcModule;
             }
         }
 
-        return false;
+        return '';
     }
 }
