@@ -31,7 +31,6 @@ $(document).ready(function () {
         event.preventDefault();
 
         var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
-
         var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
 
         //NOTE: not saved card chosen, continuing with normal procedures.
