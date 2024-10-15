@@ -354,28 +354,26 @@ Thank you for your patience!');
 
         $opcModules = $opcModulesProvider->get();
 
-        if ($opcModules) {
-            switch ($opcModules) {
-                case \Invertus\SaferPay\Config\SaferPayConfig::THE_CHECKOUT_MODULE:
-                    $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/opc/thecheckout/saferpay.css');
+        switch ($opcModules) {
+            case \Invertus\SaferPay\Config\SaferPayConfig::THE_CHECKOUT_MODULE:
+                $this->context->controller->addCSS($this->getPathUri() . 'views/css/front/opc/thecheckout/saferpay.css');
 
-                    if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                        $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
-                    } else {
-                        $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/opc/thecheckout/saferpay_checkout_16.css");
-                        $this->context->controller->addJS("{$this->getPathUri()}views/js/front/opc/thecheckout/saferpay_saved_card_16.js");
-                        $fieldsLibrary = \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY;
-                        $configSuffix = \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix();
-                        $this->context->controller->addJs(Configuration::get($fieldsLibrary . $configSuffix));
-                    }
+                if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
+                    $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
+                } else {
+                    $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/opc/thecheckout/saferpay_checkout_16.css");
+                    $this->context->controller->addJS("{$this->getPathUri()}views/js/front/opc/thecheckout/saferpay_saved_card_16.js");
+                    $fieldsLibrary = \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY;
+                    $configSuffix = \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix();
+                    $this->context->controller->addJs(Configuration::get($fieldsLibrary . $configSuffix));
+                }
 
-                    break;
-            }
-
-            /** @var \Invertus\SaferPay\Service\SaferPayErrorDisplayService $errorDisplayService */
-            $errorDisplayService = $this->getService(\Invertus\SaferPay\Service\SaferPayErrorDisplayService::class);
-            $errorDisplayService->showCookieError('saferpay_payment_canceled_error');
+                break;
         }
+
+        /** @var \Invertus\SaferPay\Service\SaferPayErrorDisplayService $errorDisplayService */
+        $errorDisplayService = $this->getService(\Invertus\SaferPay\Service\SaferPayErrorDisplayService::class);
+        $errorDisplayService->showCookieError('saferpay_payment_canceled_error');
 
         if ($this->context->controller instanceof OrderController) {
             if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {

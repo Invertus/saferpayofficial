@@ -84,7 +84,7 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
-        //
+        // TODO: will be implemented in other branches
     }
 
     private function registerTheCheckoutAssets($controller)
@@ -118,7 +118,7 @@ class PaymentFormAssetLoader
 
     private function registerSuperCheckoutAssets($controller)
     {
-        //
+        // TODO: will be implemented in other branches
     }
 
     private function registerDefaultCheckoutAssets($controller)
