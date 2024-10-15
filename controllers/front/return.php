@@ -92,10 +92,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             || Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix())
         ) {
             $order = new Order($this->getOrderId($cartId));
-            $orderPayment = $order->payment;
+            $orderPayment = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
             try {
-                $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
+                if (!$order->payment) {
+                    $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
+                }
             } catch (Exception $e) {
                 \PrestaShopLogger::addLog($e->getMessage());
                 $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
@@ -285,6 +287,24 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment)
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        if (SaferPayConfig::isRedirectPayment($orderPayment) || !$orderPayment) {
+            $logger->debug('Redirect payment method selected, skipping order creation', [
+                'context' => [],
+                'controller' => self::FILE_NAME,
+            ]);
+
+            return;
+        }
+
+        $logger->debug('Not redirect payment selected, creating order', [
+            'context' => [],
+            'controller' => self::FILE_NAME,
+            'order_payment' => $orderPayment,
+        ]);
+
         /** @var CheckoutProcessor $checkoutProcessor * */
         $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
 

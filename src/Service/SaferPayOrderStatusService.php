@@ -138,9 +138,11 @@ class SaferPayOrderStatusService
         $saferPayOrder->update();
 
         //NOTE: Older PS versions does not handle same state change, so we need to check if state is already set
-        if ($order->getCurrentState() === _SAFERPAY_PAYMENT_COMPLETED_) {
+        if ($order->getCurrentState() == _SAFERPAY_PAYMENT_COMPLETED_) {
             return;
         }
+
+        $this->logger->debug('Order set completed (setComplete) SaferPayStatusService.php');
 
         $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
     }
@@ -189,6 +191,11 @@ class SaferPayOrderStatusService
 
             return;
         }
+
+        if ((int) $order->getCurrentState() == (int) _SAFERPAY_PAYMENT_COMPLETED_ || (bool) $saferPayOrder->captured) {
+            return;
+        }
+
         $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
         $order->update();
         $saferPayOrder->captured = 1;

@@ -296,6 +296,21 @@ class SaferPayConfig
         return !in_array($paymentMethod, $unsupportedCancelPayments);
     }
 
+    public static function isRedirectPayment($paymentMethod)
+    {
+        $paymentsAlwaysRedirect = [
+            self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
+            self::PAYMENT_APPLEPAY,
+            self::PAYMENT_GOOGLEPAY,
+            self::PAYMENT_TWINT,
+            self::PAYMENT_POSTFINANCE_PAY,
+            self::PAYMENT_POSTFINANCE
+        ];
+
+        return in_array($paymentMethod, $paymentsAlwaysRedirect);
+    }
+
 
     public static function getConfigSuffix()
     {

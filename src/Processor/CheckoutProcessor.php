@@ -146,12 +146,27 @@ class CheckoutProcessor
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         // Notify and return webhooks triggers together leading into order created previously
         if ($cartAdapter->orderExists($cart->id)) {
+            $logger->debug(sprintf('%s - Order already exists, returning', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cart->id,
+                ],
+            ]);
+
             return;
         }
 
         $customer = new \Customer($cart->id_customer);
+
+        $logger->debug(sprintf('%s - Creating order', self::FILE_NAME), [
+            'context' => [
+                'cartId' => $cart->id,
+            ],
+        ]);
 
         $this->module->validateOrder(
             $cart->id,
@@ -232,10 +247,20 @@ class CheckoutProcessor
             }
 
             if ($data->getOrderStatus() === TransactionStatus::AUTHORIZED) {
+                if ($order->getCurrentState() == (int) _SAFERPAY_PAYMENT_AUTHORIZED_) {
+                    return;
+                }
+
                 $saferPayOrder->authorized = true;
+                $data->setIsAuthorizedOrder(true);
                 $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
             } else {
+                if ($order->getCurrentState() == _SAFERPAY_PAYMENT_COMPLETED_) {
+                    return;
+                }
+
                 $saferPayOrder->captured = true;
+                $logger->debug('Order set completed CheckoutProcessor.php');
                 $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
             }
 
