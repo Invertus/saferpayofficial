@@ -69,18 +69,16 @@ class PaymentFormAssetLoader
 
         $opcModule = $this->opcModulesProvider->get();
 
-        if ($inOpcCheckout) {
-            switch ($opcModule) {
-                case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
-                    $this->registerOnePageCheckoutAssets($controller);
-                    break;
-                case SaferPayConfig::THE_CHECKOUT_MODULE:
-                    $this->registerTheCheckoutAssets($controller);
-                    break;
-                case SaferPayConfig::SUPER_CHECKOUT_MODULE:
-                    $this->registerSuperCheckoutAssets($controller);
-                    break;
-            }
+        switch ($opcModule) {
+            case SaferPayConfig::ONE_PAGE_CHECKOUT_MODULE:
+                $this->registerOnePageCheckoutAssets($controller);
+                break;
+            case SaferPayConfig::THE_CHECKOUT_MODULE:
+                $this->registerTheCheckoutAssets($controller);
+                break;
+            case SaferPayConfig::SUPER_CHECKOUT_MODULE:
+                $this->registerSuperCheckoutAssets($controller);
+                break;
         }
         
         $this->registerDefaultCheckoutAssets($controller);
