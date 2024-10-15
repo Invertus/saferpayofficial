@@ -272,6 +272,7 @@ class SaferPayConfig
     const LOG_SEVERITY_LEVEL_ERROR = 3;
 
     const LOG_SEVERITY_LEVEL_MAJOR = 4;
+    const TRANSACTION_ALREADY_CAPTURED = 'TRANSACTION_ALREADY_CAPTURED';
 
     const ONE_PAGE_CHECKOUT_MODULE = 'onepagecheckoutps';
     const THE_CHECKOUT_MODULE = 'thecheckout';
@@ -305,6 +306,21 @@ class SaferPayConfig
         ];
 
         return !in_array($paymentMethod, $unsupportedCancelPayments);
+    }
+
+    public static function isRedirectPayment($paymentMethod)
+    {
+        $paymentsAlwaysRedirect = [
+            self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
+            self::PAYMENT_APPLEPAY,
+            self::PAYMENT_GOOGLEPAY,
+            self::PAYMENT_TWINT,
+            self::PAYMENT_POSTFINANCE_PAY,
+            self::PAYMENT_POSTFINANCE
+        ];
+
+        return in_array($paymentMethod, $paymentsAlwaysRedirect);
     }
 
 
