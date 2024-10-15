@@ -30,6 +30,7 @@ use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
+use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
@@ -84,22 +85,28 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
         }
 
+        $orderPayment = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
+
+        /** @var SaferPayFieldRepository $saferPayFieldRepository */
+        $saferPayFieldRepository = $this->module->getService(SaferPayFieldRepository::class);
+
         /**
          * NOTE: This flow is for hosted iframe payment method
          */
-        if (
-            Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())
+        if (Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())
             || Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix())
-        ) {
+            || $saferPayFieldRepository->isActiveByName($orderPayment))
+        {
             $order = new Order($this->getOrderId($cartId));
-            $orderPayment = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
             try {
-                if (!$order->payment) {
-                    $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
-                }
+                $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
             } catch (Exception $e) {
-                \PrestaShopLogger::addLog($e->getMessage());
+                $logger->debug($e->getMessage(), [
+                    'context' => [],
+                    'exceptions' => ExceptionUtility::getExceptions($e),
+                ]);
+
                 $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
                 $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
             }
@@ -287,17 +294,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment)
     {
-        /** @var LoggerInterface $logger */
-        $logger = $this->module->getService(LoggerInterface::class);
-
-        if (SaferPayConfig::isRedirectPayment($orderPayment) || !$orderPayment) {
-            $logger->debug('Redirect payment method selected, skipping order creation', [
-                'context' => [],
-                'controller' => self::FILE_NAME,
-            ]);
-
+        if (SaferPayConfig::isRedirectPayment($orderPayment)) {
             return;
         }
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
 
         $logger->debug('Not redirect payment selected, creating order', [
             'context' => [],

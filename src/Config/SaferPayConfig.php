@@ -304,8 +304,7 @@ class SaferPayConfig
             self::PAYMENT_APPLEPAY,
             self::PAYMENT_GOOGLEPAY,
             self::PAYMENT_TWINT,
-            self::PAYMENT_POSTFINANCE_PAY,
-            self::PAYMENT_POSTFINANCE
+            self::PAYMENT_POSTFINANCE_PAY
         ];
 
         return in_array($paymentMethod, $paymentsAlwaysRedirect);
