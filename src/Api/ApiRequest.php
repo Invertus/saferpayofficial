@@ -120,9 +120,9 @@ class ApiRequest
             $this->logger->error($exception->getMessage(), [
                 'context' => [
                     'headers' => $this->getHeaders(),
-                    'request' => $params,
-                    'response' => json_decode($response->raw_body),
                 ],
+                'request' => $params,
+                'response' => json_decode($response->raw_body),
                 'exceptions' => ExceptionUtility::getExceptions($exception)
             ]);
 
