@@ -85,6 +85,9 @@ Cypress.Commands.add(
             cy.visit('/admin1/index.php?controller=AdminModules&configure=saferpayofficial')
             cy.get('.btn-continue').click()
         })
+        Cypress.Commands.add("ngrokPassWarning", () => {
+            cy.get('button').first().click();
+        })
 
         Cypress.Commands.add("navigatingToThePaymentCHF", () => {
             cy.visit('/en/order-history')

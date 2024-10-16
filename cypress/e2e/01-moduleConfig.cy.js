@@ -17,6 +17,7 @@ describe('PS817 Module Configuration', {
     })
     it('01 Connecting the Test API information to module', () => {
         cy.visit('/admin1/')
+        cy.ngrokPassWarning()
         cy.OpeningModuleDashboardURL()  //clicking the Congifure
         cy.get('[name="SAFERPAY_USERNAME_TEST"]').type((Cypress.env('SAFERPAY_USERNAME_TEST')), { delay: 0, log: false })
         cy.get('[name="SAFERPAY_PASSWORD_TEST"]').type((Cypress.env('SAFERPAY_PASSWORD_TEST')), { delay: 0, log: false })
