@@ -22,9 +22,9 @@ jobs:
       - name: Checkouting
         uses: actions/checkout@v2.4.2
 
-      - run: wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
+      - run: wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz
         shell: bash
-      - run: unzip -qq -o ngrok-stable-linux-amd64.zip
+      - run: tar -xvf ngrok-v3-stable-linux-amd64.tgz
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
