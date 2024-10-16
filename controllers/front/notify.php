@@ -103,6 +103,13 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $completed = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
             if ((int) $order->current_state === $completed) {
+                $logger->debug(sprintf('%s - Order already complete. Dying.', self::FILE_NAME), [
+                    'context' => [
+                        'id_order' => $order->id,
+                        'current_state' => $order->current_state,
+                    ],
+                ]);
+
                 die($this->module->l('Order already complete', self::FILE_NAME));
             }
         }
@@ -140,6 +147,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService->cancel($order);
 
                 $logger->debug(sprintf('%s - Liability shift is false', self::FILE_NAME), [
+                    'context' => [
+                        'id_order' => $order->id,
+                    ],
+                ]);
+
+                $logger->debug(sprintf('%s - liability shift is false', self::FILE_NAME), [
                     'context' => [
                         'id_order' => $order->id,
                     ],
