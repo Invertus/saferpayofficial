@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Presentation\Loader;
 
-use Invertus\SaferPay\Action\ValidateOpcModuleCompatibilityAction;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
