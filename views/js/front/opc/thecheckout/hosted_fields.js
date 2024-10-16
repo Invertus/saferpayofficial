@@ -45,7 +45,6 @@ function handleSubmit(event, idPayment) {
     event.preventDefault();
 
     let selectedCardMethod = $('#' + "payment-option-" + idPayment + "-additional-information").find('input[type="hidden"]').val();
-    // let selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
     let form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
     let hiddenInput = form.find("input[name='selectedCreditCard_" + selectedCardMethod + "']");
 
