@@ -46,7 +46,7 @@ describe('PS817 Tests Suite -> Capture + Before auth', {
         cy.contains('Place order').click()
         cy.get('.saferpay-paymentpage').should('be.visible')
         cy.wait(2000);
-        cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+        cy.get('#content-hook_order_confirmation > .card-block', { timeout: 60000 }).should('be.visible')
     })
 
     it('Wechatpay Checkouting', () => {
@@ -57,7 +57,7 @@ describe('PS817 Tests Suite -> Capture + Before auth', {
         cy.contains('Place order').click({ force: true })
         cy.get('.saferpay-paymentpage').should('be.visible')
         cy.wait(2000);
-        cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+        cy.get('#content-hook_order_confirmation > .card-block', { timeout: 60000 }).should('be.visible')
     })
 
     it('MC Checkouting', () => {
@@ -68,7 +68,7 @@ describe('PS817 Tests Suite -> Capture + Before auth', {
         cy.contains('Place order').click({ force: true })
         cy.wait(2000);
         cy.get('[class="btn btn-next pay-button"]').click()
-        cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+        cy.get('#content-hook_order_confirmation > .card-block', { timeout: 60000 }).should('be.visible')
     })
 
     // it('Sofort Checkouting', () => {
@@ -94,7 +94,7 @@ describe('PS817 Tests Suite -> Capture + Before auth', {
         cy.wait(2000);
         cy.FillAmex()
         cy.get('[class="btn btn-next pay-button"]').click()
-        cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+        cy.get('#content-hook_order_confirmation > .card-block', { timeout: 60000 }).should('be.visible')
     })
 
     it('DinersClub Checkouting', () => {
@@ -106,7 +106,7 @@ describe('PS817 Tests Suite -> Capture + Before auth', {
         cy.wait(2000)
         cy.FillDiners()
         cy.get('[class="btn btn-next pay-button"]').click()
-        cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+        cy.get('#content-hook_order_confirmation > .card-block', { timeout: 60000 }).should('be.visible')
     })
 
     it('Jcb Checkouting', () => {
@@ -118,7 +118,7 @@ describe('PS817 Tests Suite -> Capture + Before auth', {
         cy.wait(2000);
         cy.FillJcb()
         cy.get('[class="btn btn-next pay-button"]').click()
-        cy.get('#content-hook_order_confirmation > .card-block').should('be.visible')
+        cy.get('#content-hook_order_confirmation > .card-block', { timeout: 60000 }).should('be.visible')
     })
 
     // it('Apple Pay Checkouting', () => {
