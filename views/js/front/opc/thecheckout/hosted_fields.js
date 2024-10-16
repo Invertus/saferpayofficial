@@ -37,13 +37,15 @@ $(document).on('change', 'input[name^="saved_card_"]', function () {
 });
 
 $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
-    handleSubmit(e);
+    var idPayment = $(this).parent('div').attr('id').match(/\d+/)[0];
+    handleSubmit(e, idPayment);
 });
 
-function handleSubmit(event) {
+function handleSubmit(event, idPayment) {
     event.preventDefault();
 
-    let selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    let selectedCardMethod = $('#' + "payment-option-" + idPayment + "-additional-information").find('input[type="hidden"]').val();
+    // let selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
     let form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
     let hiddenInput = form.find("input[name='selectedCreditCard_" + selectedCardMethod + "']");
 
