@@ -36,7 +36,7 @@ $(document).ready(function () {
     }
 });
 
-$('body').on('submit', 'form.payment-form', function (e) {
+$('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
     handleSubmit(e);
 });
 
