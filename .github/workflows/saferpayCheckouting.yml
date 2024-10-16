@@ -16,7 +16,7 @@ jobs:
             subdomain: 'safer817'
             port: '8002'
             yml: 'docker-compose.817.yml'
-            url: 'https://safer817.eu.ngrok.io'
+            url: 'https://magical-singular-trout.ngrok-free.app'
             test_spec: 'cypress/e2e/**'
     steps:
       - name: Checkouting
@@ -28,7 +28,7 @@ jobs:
         shell: bash
       - run: ./ngrok authtoken ${{ secrets.NGROK_TOKEN }}
         shell: bash
-      - run: ./ngrok http --region=eu --log=stdout --subdomain=safer817 8002 > ngrok.log &
+      - run: ./ngrok http --region=eu --log=stdout --url=magical-singular-trout.ngrok-free.app 8002 > ngrok.log &
         shell: bash
 
       - name: Extract ngrok URL
