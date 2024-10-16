@@ -45,7 +45,7 @@ class SaferPayAssertRefundBuilder
         $assert = new SaferPayAssert();
 
         $assert->id_saferpay_order = $saferPayOrderId;
-        $assert->amount = $assertBody->getTransaction()->getAmount()->getValue();
+        $assert->amount = (int) $assertBody->getTransaction()->getAmount()->getValue();
         $assert->status = $assertBody->getTransaction()->getStatus();
         $assert->authorized = 1; //If creating assert, it must be authorized.
 

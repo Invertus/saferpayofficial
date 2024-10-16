@@ -127,6 +127,12 @@ class SaferPayOrderStatusService
         $saferPayOrder->captured = 1;
 
         $saferPayOrder->update();
+
+        //NOTE: Older PS versions does not handle same state change, so we need to check if state is already set
+        if ($order->getCurrentState() === _SAFERPAY_PAYMENT_COMPLETED_) {
+            return;
+        }
+
         $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
     }
 
