@@ -22,18 +22,18 @@
 
 var selectedCard = null;
 
-$(document).on('change', 'input[name^="saved_card_"]', function () {
-    var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-    updateCheckedCardValue();
-    $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
-});
-
 $(document).ready(function () {
     let savedCardMethod = $('input[name="saved_card_method"]');
 
     if (!savedCardMethod.length) {
         return;
     }
+});
+
+$(document).on('change', 'input[name^="saved_card_"]', function () {
+    var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    updateCheckedCardValue();
+    $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
 });
 
 $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {

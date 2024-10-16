@@ -21,27 +21,36 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Provider;
+namespace Invertus\SaferPay\Validation;
 
-use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Provider\OpcModulesProvider;
+use FrontController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class OpcModulesProvider
+class ValidateIsAssetsRequired
 {
-    /**
-     * @return string
-     */
-    public function get()
+    private $opcModulesProvider;
+
+    public function __construct(OpcModulesProvider $opcModulesProvider)
     {
-        foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule){
-            if (\Module::isInstalled($opcModule) && \Module::isEnabled($opcModule)) {
-                return $opcModule;
-            }
+        $this->opcModulesProvider = $opcModulesProvider;
+    }
+
+    /**
+     * It returns true if it's an OPC controller or an OrderController with products in the cart. Otherwise, it returns false.
+     */
+    public function run(FrontController $controller)
+    {
+        $isOrderController = $controller instanceof \OrderControllerCore
+            || $controller instanceof \ModuleFrontController && isset($controller->php_self) && $controller->php_self === 'order';
+
+        if (!empty($this->opcModulesProvider->get($controller))) {
+            return $isOrderController && !empty(\Context::getContext()->cart->getProducts());
         }
 
-        return '';
+        return true;
     }
 }
