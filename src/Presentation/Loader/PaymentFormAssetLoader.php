@@ -84,7 +84,23 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
-        // TODO: will be implemented in other branches
+        if (get_class($controller) != SaferPayConfig::ONE_PAGE_CHECKOUT_FRONT_CONTROLLER) {
+            return;
+        }
+
+        $controller->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_checkout.css");
+
+        if (method_exists($controller, 'registerJavascript')) {
+            $controller->registerJavascript(
+                'saved_card_hosted_fields_opc',
+                "modules/saferpayofficial/views/js/front/opc/onepagecheckoutps/hosted_fields.js"
+            );
+        } else {
+            $controller->addJs(
+                $this->module->getPathUri() . 'views/js/front/opc/onepagecheckoutps/hosted_fields.js',
+                false
+            );
+        }
     }
 
     private function registerTheCheckoutAssets($controller)
