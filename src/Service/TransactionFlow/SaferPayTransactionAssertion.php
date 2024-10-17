@@ -92,8 +92,23 @@ class SaferPayTransactionAssertion
         $assertResponse = $this->assertionService->assert($assertRequest, $isBusiness);
 
         if (empty($assertResponse)) {
+            $this->logger->debug(sprintf('%s - assert response is empty', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $cartId,
+                    'saferpay_order_id' => $saferPayOrder->id,
+                ],
+            ]);
+
             return null;
         }
+
+        $this->logger->debug(sprintf('%s - adding assert response data into assertBody object', self::FILE_NAME), [
+            'context' => [
+                'cart_id' => $cartId,
+                'saferpay_order_id' => $saferPayOrder->id,
+            ],
+            'reponse' => get_object_vars($assertResponse),
+        ]);
 
         $assertBody = $this->assertionService->createObjectsFromAssertResponse(
             $assertResponse,

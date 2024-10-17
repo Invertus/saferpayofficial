@@ -84,7 +84,15 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME), [
+            'context' => [
+                'cart_id' => $cartId,
+                'safer_pay_order_id' => $saferPayOrderId,
+                'is_authorized' => $saferPayOrder->authorized,
+                'is_captured' => $saferPayOrder->captured,
+                'is_pending' => $saferPayOrder->pending,
+            ],
+        ]);
 
         $this->ajaxDie(json_encode([
             'saferpayOrder' => json_encode($saferPayOrder),
