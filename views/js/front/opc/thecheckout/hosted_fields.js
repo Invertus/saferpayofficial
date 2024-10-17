@@ -22,12 +22,6 @@
 
 var selectedCard = null;
 
-$(document).on('change', 'input[name^="saved_card_"]', function () {
-    var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
-    updateCheckedCardValue();
-    $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
-});
-
 $(document).ready(function () {
     let savedCardMethod = $('input[name="saved_card_method"]');
 
@@ -36,14 +30,21 @@ $(document).ready(function () {
     }
 });
 
-$('body').on('submit', 'form.payment-form', function (e) {
-    handleSubmit(e);
+$(document).on('change', 'input[name^="saved_card_"]', function () {
+    var method = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    updateCheckedCardValue();
+    $("input[name='selectedCreditCard_" + method + "']").val(selectedCard);
 });
 
-function handleSubmit(event) {
+$('body').on('submit', '[id^=pay-with-][id$=-form] form', function (e) {
+    var idPayment = $(this).parent('div').attr('id').match(/\d+/)[0];
+    handleSubmit(e, idPayment);
+});
+
+function handleSubmit(event, idPayment) {
     event.preventDefault();
 
-    let selectedCardMethod = $('[data-module-name*="saferpayofficial"]:checked').closest('div').find('.h6').text().toUpperCase();
+    let selectedCardMethod = $('#' + "payment-option-" + idPayment + "-additional-information").find('input[type="hidden"]').val();
     let form = $(document).find("[name=selectedCreditCard_" + selectedCardMethod + "]").closest('form');
     let hiddenInput = form.find("input[name='selectedCreditCard_" + selectedCardMethod + "']");
 

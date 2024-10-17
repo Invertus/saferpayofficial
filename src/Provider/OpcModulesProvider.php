@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -20,12 +21,27 @@
  *@license   SIX Payment Services
  */
 
-$(document).ready(function () {
-    $('.saferpay_method.js_credit_card').on('click', function () {
-        event.preventDefault();
-        var method = $(this).attr('data-saferpay-method');
-        $('.saferpay_additional_info').hide();
-        var $additionalInfo = $('.saferpay_additional_info.' + method);
-        $additionalInfo.show();
-    })
-});
+namespace Invertus\SaferPay\Provider;
+
+use Invertus\SaferPay\Config\SaferPayConfig;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+class OpcModulesProvider
+{
+    /**
+     * @return string
+     */
+    public function get()
+    {
+        foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule){
+            if (\Module::isInstalled($opcModule) && \Module::isEnabled($opcModule)) {
+                return $opcModule;
+            }
+        }
+
+        return '';
+    }
+}
