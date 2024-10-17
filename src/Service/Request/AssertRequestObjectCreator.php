@@ -55,10 +55,10 @@ class AssertRequestObjectCreator
      *
      * @return AssertRequest
      */
-    public function create($token)
+    public function create($token, $saveCard)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
 
-        return new AssertRequest($requestHeader, $token);
+        return new AssertRequest($requestHeader, $token, $saveCard);
     }
 }

@@ -35,14 +35,18 @@ use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Exception\CouldNotProcessCheckout;
 use Invertus\SaferPay\Factory\ModuleFactory;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use Order;
 use PrestaShopException;
 use SaferPayOrder;
 
 class CheckoutProcessor
 {
+    const FILE_NAME = 'CheckoutProcessor';
+
     /** @var \SaferPayOfficial */
     private $module;
 
@@ -71,7 +75,16 @@ class CheckoutProcessor
     {
         $cart = new Cart($data->getCartId());
 
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         if (!$cart) {
+            $logger->debug(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $data->getCartId(),
+                ],
+            ]);
+
             throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
         }
 
@@ -109,6 +122,13 @@ class CheckoutProcessor
                 $data->getIsTransaction()
             );
         } catch (\Exception $exception) {
+            $logger->error($exception->getMessage(), [
+                'context' => [
+                    'cartId' => $data->getCartId(),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception)
+            ]);
+
             throw CouldNotProcessCheckout::failedToCreateSaferPayOrder($data->getCartId());
         }
 
@@ -123,12 +143,30 @@ class CheckoutProcessor
      */
     private function processCreateOrder(Cart $cart, $paymentMethod)
     {
+        /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
+        $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         // Notify and return webhooks triggers together leading into order created previously
-        if ($cart->orderExists()) {
+        if ($cartAdapter->orderExists($cart->id)) {
+            $logger->debug(sprintf('%s - Order already exists, returning', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cart->id,
+                ],
+            ]);
+
             return;
         }
 
         $customer = new \Customer($cart->id_customer);
+
+        $logger->debug(sprintf('%s - Creating order', self::FILE_NAME), [
+            'context' => [
+                'cartId' => $cart->id,
+            ],
+        ]);
 
         $this->module->validateOrder(
             $cart->id,
@@ -188,22 +226,54 @@ class CheckoutProcessor
 
     private function processAuthorizedOrder(CheckoutData $data, Cart $cart)
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->debug(sprintf('%s - Processing authorized order', self::FILE_NAME), [
+            'context' => [
+                'id_order' => $this->getOrder($cart->id)->id,
+            ],
+        ]);
+
         try {
             $this->processCreateOrder($cart, $data->getPaymentMethod());
             $order = $this->getOrder($cart->id);
             $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
 
+            if (
+                $order->getCurrentState() == _SAFERPAY_PAYMENT_AUTHORIZED_
+                || $order->getCurrentState() == _SAFERPAY_PAYMENT_COMPLETED_
+            ) {
+                return;
+            }
+
             if ($data->getOrderStatus() === TransactionStatus::AUTHORIZED) {
+                if ($order->getCurrentState() == (int) _SAFERPAY_PAYMENT_AUTHORIZED_) {
+                    return;
+                }
+
                 $saferPayOrder->authorized = true;
+                $data->setIsAuthorizedOrder(true);
                 $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZED_);
             } else {
+                if ($order->getCurrentState() == _SAFERPAY_PAYMENT_COMPLETED_) {
+                    return;
+                }
+
                 $saferPayOrder->captured = true;
+                $logger->debug('Order set completed CheckoutProcessor.php');
                 $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
             }
 
             $saferPayOrder->id_order = $order->id;
             $saferPayOrder->update();
         } catch (\Exception $exception) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error($exception->getMessage(), [
+                'context' => [],
+                'cartId' => $data->getCartId(),
+            ]);
+
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
         }
     }

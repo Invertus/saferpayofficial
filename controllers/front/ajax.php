@@ -25,7 +25,9 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -40,6 +42,11 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         switch (Tools::getValue('action')) {
             case 'submitHostedFields':
                 $this->submitHostedFields();
@@ -74,6 +81,18 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId),
             ]));
         }
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME), [
+            'context' => [
+                'cart_id' => $cartId,
+                'safer_pay_order_id' => $saferPayOrderId,
+                'is_authorized' => $saferPayOrder->authorized,
+                'is_captured' => $saferPayOrder->captured,
+                'is_pending' => $saferPayOrder->pending,
+            ],
+        ]);
 
         $this->ajaxDie(json_encode([
             'saferpayOrder' => json_encode($saferPayOrder),
@@ -123,6 +142,9 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
     private function submitHostedFields()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
         try {
             if (Order::getOrderByCartId($this->context->cart->id)) {
                 $this->ajaxDie(json_encode([
@@ -151,11 +173,18 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 $redirectUrl = $this->getRedirectionToControllerUrl('successHosted');
             }
 
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
             $this->ajaxDie(json_encode([
                 'error' => false,
                 'url' => $redirectUrl,
             ]));
         } catch (Exception $e) {
+            $logger->error($e->getMessage(), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             $this->ajaxDie(json_encode([
                 'error' => true,
                 'message' => $e->getMessage(),

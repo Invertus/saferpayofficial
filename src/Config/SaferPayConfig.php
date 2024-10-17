@@ -156,7 +156,6 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
-        self::PAYMENT_WECHATPAY,
     ];
 
     const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
@@ -264,8 +263,18 @@ class SaferPayConfig
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
 
     const SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE = 'MANDATORY';
+    const SAFERPAY_DEBUG_MODE = 'SAFERPAY_DEBUG_MODE';
 
-    public static function supportsOrderCapture(string $paymentMethod)
+    const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
+
+    const LOG_SEVERITY_LEVEL_WARNING = 2;
+
+    const LOG_SEVERITY_LEVEL_ERROR = 3;
+
+    const LOG_SEVERITY_LEVEL_MAJOR = 4;
+    const TRANSACTION_ALREADY_CAPTURED = 'TRANSACTION_ALREADY_CAPTURED';
+
+    public static function supportsOrderCapture($paymentMethod)
     {
         //payments that DOES NOT SUPPORT capture
         $unsupportedCapturePayments = [
@@ -276,7 +285,7 @@ class SaferPayConfig
         return !in_array($paymentMethod, $unsupportedCapturePayments);
     }
 
-    public static function supportsOrderCancel(string $paymentMethod)
+    public static function supportsOrderCancel($paymentMethod)
     {
         //payments that DOES NOT SUPPORT order cancel
         $unsupportedCancelPayments = [
@@ -285,6 +294,20 @@ class SaferPayConfig
         ];
 
         return !in_array($paymentMethod, $unsupportedCancelPayments);
+    }
+
+    public static function isRedirectPayment($paymentMethod)
+    {
+        $paymentsAlwaysRedirect = [
+            self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
+            self::PAYMENT_APPLEPAY,
+            self::PAYMENT_GOOGLEPAY,
+            self::PAYMENT_TWINT,
+            self::PAYMENT_POSTFINANCE_PAY
+        ];
+
+        return in_array($paymentMethod, $paymentsAlwaysRedirect);
     }
 
 
@@ -414,6 +437,11 @@ class SaferPayConfig
     public static function isTestMode()
     {
         return (bool) Configuration::get(self::TEST_MODE);
+    }
+
+    public static function isDebugMode()
+    {
+        return (bool) Configuration::get(self::SAFERPAY_DEBUG_MODE);
     }
 
     public static function isVersion17()

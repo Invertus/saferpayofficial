@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -51,6 +53,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);
+
         $this->addCSS("{$this->module->getPathUri()}views/css/admin/payment_method.css");
         $this->addJS("{$this->module->getPathUri()}views/js/admin/chosen_countries.js");
         $this->addJS("{$this->module->getPathUri()}views/js/admin/payment_method_all.js");

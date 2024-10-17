@@ -169,3 +169,8 @@
 - FO : AccountToAccount Pay payment method added
 - BO : Security improvements
 - BO : Bug fixes and improvements
+
+## [1.2.4]
+- Fixed credit card saving
+- Implemented code logging for debugging purposes
+- Requiring card holder name when entering card details
