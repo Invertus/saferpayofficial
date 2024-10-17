@@ -280,7 +280,7 @@ class SaferPayConfig
 
     const THE_CHECKOUT_FRONT_CONTROLLER = 'TheCheckoutModuleFrontController';
     const ONE_PAGE_CHECKOUT_FRONT_CONTROLLER = 'OrderController' || 'OrderControllerCore';
-    const SUPER_CHECKOUT_FRONT_CONTROLLER = 'SupercheckoutSupercheckoutModuleFrontController';
+
     const OPC_MODULE_LIST = [
         self::ONE_PAGE_CHECKOUT_MODULE,
         self::THE_CHECKOUT_MODULE,
