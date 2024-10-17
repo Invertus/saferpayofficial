@@ -294,12 +294,17 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment)
     {
-        if (SaferPayConfig::isRedirectPayment($orderPayment)) {
-            return;
-        }
-
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
+
+        if (SaferPayConfig::isRedirectPayment($orderPayment)) {
+            $logger->debug('Redirect payment selected, skipping order creation', [
+                'context' => [],
+                'controller' => self::FILE_NAME,
+                'order_payment' => $orderPayment,
+            ]);
+            return;
+        }
 
         $logger->debug('Not redirect payment selected, creating order', [
             'context' => [],
