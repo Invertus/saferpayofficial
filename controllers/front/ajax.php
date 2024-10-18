@@ -153,7 +153,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
         $cardValidation = $this->module->getService(CustomerCreditCardValidation::class);
 
         try {
-            $cardValidation->validate(null, $this->context->customer->id);
+            $cardValidation->validate(Tools::getValue('selectedCard'), $this->context->customer->id);
         } catch (UnauthenticatedCardUserException $e) {
             $logger->error($e->getMessage(), [
                 'context' => [],
