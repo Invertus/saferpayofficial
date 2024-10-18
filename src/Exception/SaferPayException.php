@@ -53,11 +53,14 @@ class SaferPayException extends \Exception
         );
     }
 
-    public static function unauthenticatedCard()
+    public static function unauthenticatedCard($idCardOwner)
     {
         return new static(
             'Customer cannot use current saved card at this moment.',
-            ExceptionCode::CANNOT_USE_CARD
+            ExceptionCode::CANNOT_USE_CARD,
+            [
+                'id_card_owner' => $idCardOwner,
+            ]
         );
     }
 }

@@ -58,7 +58,7 @@ class CustomerCreditCardValidation
         if ($cardOwnerId === $idCustomer) {
             return true;
         } else {
-            throw UnauthenticatedCardUserException::unauthenticatedCard();
+            throw UnauthenticatedCardUserException::unauthenticatedCard($cardOwnerId);
         }
     }
 }
