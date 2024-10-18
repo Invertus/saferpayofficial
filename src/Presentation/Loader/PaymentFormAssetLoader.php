@@ -89,7 +89,7 @@ class PaymentFormAssetLoader
 
     private function registerTheCheckoutAssets($controller)
     {
-        if (get_class($controller) !== SaferPayConfig::THE_CHECKOUT_FRONT_CONTROLLER) {
+        if (!$controller instanceof \TheCheckoutModuleFrontController) {
             return;
         }
 
