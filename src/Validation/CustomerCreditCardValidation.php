@@ -54,6 +54,7 @@ class CustomerCreditCardValidation
 
     /**
      * @return true|Exception
+     *
      * @throws UnauthenticatedCardUserException
      */
     public function validate($idSavedCard, $idCustomer)
