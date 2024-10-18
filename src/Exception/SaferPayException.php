@@ -52,4 +52,12 @@ class SaferPayException extends \Exception
             ExceptionCode::UNKNOWN_ERROR
         );
     }
+
+    public static function unauthenticatedCard()
+    {
+        return new static(
+            'Customer cannot use current saved card at this moment.',
+            ExceptionCode::CANNOT_USE_CARD
+        );
+    }
 }
