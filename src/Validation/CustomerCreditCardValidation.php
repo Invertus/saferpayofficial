@@ -60,7 +60,7 @@ class CustomerCreditCardValidation
      */
     public function validate($idSavedCard, $idCustomer)
     {
-        if (empty($idSavedCard) || $idCustomer) {
+        if (empty($idSavedCard) || empty($idCustomer)) {
             $this->logger->error(sprintf('%s - Missing required data', self::FILE_NAME), [
                 'context' => []
             ]);
@@ -68,7 +68,7 @@ class CustomerCreditCardValidation
             throw SaferPayException::unknownError();
         }
 
-        $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId($idSavedCard, $idCustomer);
+        $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId(pSQL($idSavedCard), pSQL($idCustomer));
 
         if (!empty($cardOwnerId)) {
             return true;
