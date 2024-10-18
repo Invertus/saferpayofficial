@@ -25,6 +25,8 @@ namespace Invertus\SaferPay\Validation;
 
 use Exception;
 use Invertus\SaferPay\Exception\Restriction\UnauthenticatedCardUserException;
+use Invertus\SaferPay\Exception\SaferPayException;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -37,10 +39,17 @@ class CustomerCreditCardValidation
      * @var SaferPayCardAliasRepository
      */
     private $saferPayCardAliasRepository;
+    /**
+     * @var mixed
+     */
+    private $logger;
 
-    public function __construct(SaferPayCardAliasRepository $saferPayCardAliasRepository)
+    const FILE_NAME = 'CustomerCreditCardValidation';
+
+    public function __construct(SaferPayCardAliasRepository $saferPayCardAliasRepository, LoggerInterface $logger)
     {
         $this->saferPayCardAliasRepository = $saferPayCardAliasRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -49,6 +58,14 @@ class CustomerCreditCardValidation
      */
     public function validate($idSavedCard, $idCustomer)
     {
+        if (empty($idSavedCard) || $idCustomer) {
+            $this->logger->error(sprintf('%s - Missing required data', self::FILE_NAME), [
+                'context' => []
+            ]);
+
+            throw SaferPayException::unknownError();
+        }
+
         if ($idCustomer < 1) {
             return true;
         }
