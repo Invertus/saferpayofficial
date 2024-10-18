@@ -23,10 +23,8 @@
 
 namespace Invertus\SaferPay\Validation;
 
-use Complex\Exception;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Exception;
 use Invertus\SaferPay\Exception\Restriction\UnauthenticatedCardUserException;
-use Invertus\SaferPay\Exception\SaferPayException;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,11 +33,14 @@ if (!defined('_PS_VERSION_')) {
 
 class CustomerCreditCardValidation
 {
-    /** @var \Module */
-    private $module;
-    public function __construct(\Module $module)
+    /**
+     * @var SaferPayCardAliasRepository
+     */
+    private $saferPayCardAliasRepository;
+
+    public function __construct(SaferPayCardAliasRepository $saferPayCardAliasRepository)
     {
-        $this->module = \Module::getInstanceByName('saferpayofficial');
+        $this->saferPayCardAliasRepository = $saferPayCardAliasRepository;
     }
 
     /**
@@ -48,14 +49,11 @@ class CustomerCreditCardValidation
      */
     public function validate($idSavedCard, $idCustomer)
     {
-        /** @var SaferPayCardAliasRepository $cardAliasRepository */
-        $cardAliasRepository = $this->module->getService(SaferPayCardAliasRepository::class);
-
         if ($idCustomer < 1) {
             return true;
         }
 
-        $cardOwnerId = $cardAliasRepository->getCustomerIdByReferenceId($idCustomer, $idSavedCard);
+        $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId($idSavedCard);
 
         if ($cardOwnerId === $idCustomer) {
             return true;

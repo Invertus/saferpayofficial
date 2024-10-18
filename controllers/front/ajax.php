@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Exception\Restriction\UnauthenticatedCardUserException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Utility\ExceptionUtility;
@@ -146,10 +147,26 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        /** @var CustomerCreditCardValidation $customerCreditCardValidation */
-        $customerCreditCardValidation = $this->module->getService(CustomerCreditCardValidation::class);
+        /** @var CustomerCreditCardValidation $cardValidation */
+        $cardValidation = $this->module->getService(CustomerCreditCardValidation::class);
 
-        $customerCreditCardValidation->validate("2", $this->context->customer->id);
+        try {
+            $cardValidation->validate(Tools::getValue('selectedCard'), $this->context->customer->id);
+        } catch (UnauthenticatedCardUserException $e) {
+            $logger->error($e->getMessage(), [
+                'context' => [],
+                'id_customer' => $this->context->customer->id,
+                'id_card' => Tools::getValue('selectedCard'),
+                'id_card_owner' =>
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            $this->ajaxDie(json_encode([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'url' => $this->getRedirectionToControllerUrl('fail'),
+            ]));
+        }
 
         try {
             if (Order::getOrderByCartId($this->context->cart->id)) {

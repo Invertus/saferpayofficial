@@ -75,13 +75,12 @@ class SaferPayCardAliasRepository
         return Db::getInstance()->executeS($query);
     }
 
-    public function getCustomerIdByReferenceId($customerId, $aliasId)
+    public function getCustomerIdByReferenceId($cardAliasId)
     {
         $query = new DbQuery();
         $query->select('`id_customer`');
         $query->from('saferpay_card_alias');
-        $query->where('id_customer = "' . (int) $customerId . '"');
-        $query->where('alias_id = "' . pSQL($aliasId) . '"')->limit(1);
+        $query->where('id_saferpay_card_alias = "' . pSQL($cardAliasId) . '"');
 
         return Db::getInstance()->getValue($query);
     }
