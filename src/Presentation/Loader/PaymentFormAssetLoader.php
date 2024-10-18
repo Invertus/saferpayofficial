@@ -84,7 +84,7 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
-        if (get_class($controller) != SaferPayConfig::ONE_PAGE_CHECKOUT_FRONT_CONTROLLER) {
+        if (!$controller instanceof \OrderControllerCore) {
             return;
         }
 
