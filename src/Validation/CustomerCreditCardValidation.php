@@ -68,16 +68,12 @@ class CustomerCreditCardValidation
             throw SaferPayException::unknownError();
         }
 
-        if ($idCustomer < 1) {
+        $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId($idSavedCard, $idCustomer);
+
+        if (!empty($cardOwnerId)) {
             return true;
         }
 
-        $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId($idSavedCard);
-
-        if ($cardOwnerId === $idCustomer) {
-            return true;
-        } else {
-            throw UnauthenticatedCardUserException::unauthenticatedCard($cardOwnerId);
-        }
+        return throw UnauthenticatedCardUserException::unauthenticatedCard($cardOwnerId);
     }
 }
