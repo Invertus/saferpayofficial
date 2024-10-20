@@ -60,19 +60,19 @@ class CustomerCreditCardValidation
      */
     public function validate($idSavedCard, $idCustomer)
     {
-        if (!is_numeric($idCustomer) || !is_numeric($idSavedCard)) {
-            $this->logger->error(sprintf('%s - Invalid data', self::FILE_NAME), [
-                'context' => [],
-                'id_saved_card' => $idSavedCard,
-                'id_customer' => $idCustomer
+        if (empty($idSavedCard) || empty($idCustomer)) {
+            $this->logger->error(sprintf('%s - Missing required data', self::FILE_NAME), [
+                'context' => []
             ]);
 
             throw SaferPayException::unknownError();
         }
 
-        if (empty($idSavedCard) || empty($idCustomer)) {
-            $this->logger->error(sprintf('%s - Missing required data', self::FILE_NAME), [
-                'context' => []
+        if (!is_numeric($idCustomer) || !is_numeric($idSavedCard)) {
+            $this->logger->error(sprintf('%s - Invalid data', self::FILE_NAME), [
+                'context' => [],
+                'id_saved_card' => $idSavedCard,
+                'id_customer' => $idCustomer
             ]);
 
             throw SaferPayException::unknownError();
