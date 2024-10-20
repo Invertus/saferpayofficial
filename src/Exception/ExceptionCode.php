@@ -33,7 +33,6 @@ class ExceptionCode
     // Payment related codes starts from 5***
     const PAYMENT_FAILED_TO_FIND_CART = 5001;
     const PAYMENT_FAILED_TO_CREATE_ORDER = 5002;
-
     const CANNOT_USE_CARD = 5003;
 
     // Order related codes starts from 7***
