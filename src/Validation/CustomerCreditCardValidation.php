@@ -73,6 +73,10 @@ class CustomerCreditCardValidation
             throw SaferPayException::unknownError();
         }
 
+        if ($idSavedCard <= 0) {
+            return true;
+        }
+
         $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId(pSQL($idSavedCard), pSQL($idCustomer));
 
         if (empty($cardOwnerId)) {
