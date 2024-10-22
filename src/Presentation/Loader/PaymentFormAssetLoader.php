@@ -26,6 +26,7 @@ namespace Invertus\SaferPay\Presentation\Loader;
 use Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\Order;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Factory\ModuleFactory;
@@ -84,7 +85,23 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
-        // TODO: will be implemented in other branches
+        if (!$controller instanceof \OrderControllerCore) {
+            return;
+        }
+
+        $controller->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_checkout.css");
+
+        if (method_exists($controller, 'registerJavascript')) {
+            $controller->registerJavascript(
+                'saved_card_hosted_fields_opc',
+                "modules/saferpayofficial/views/js/front/opc/onepagecheckoutps/hosted_fields.js"
+            );
+        } else {
+            $controller->addJs(
+                $this->module->getPathUri() . 'views/js/front/opc/onepagecheckoutps/hosted_fields.js',
+                false
+            );
+        }
     }
 
     private function registerTheCheckoutAssets($controller)
@@ -110,7 +127,23 @@ class PaymentFormAssetLoader
 
     private function registerSuperCheckoutAssets($controller)
     {
-        // TODO: will be implemented in other branches
+        if (!$controller instanceof \SupercheckoutSupercheckoutModuleFrontController) {
+            return;
+        }
+
+        $controller->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_checkout.css");
+
+        if (method_exists($controller, 'registerJavascript')) {
+            $controller->registerJavascript(
+                'saved_card_hosted_fields_opc',
+                "modules/saferpayofficial/views/js/front/opc/supercheckout/hosted_fields.js"
+            );
+        } else {
+            $controller->addJs(
+                $this->module->getPathUri() . 'views/js/front/opc/supercheckout/hosted_fields.js',
+                false
+            );
+        }
     }
 
     private function registerDefaultCheckoutAssets($controller)
