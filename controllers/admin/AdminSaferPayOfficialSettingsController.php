@@ -313,11 +313,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'type' => 'text',
                         'class' => 'fixed-width-xl',
                     ],
-                    SaferPayConfig::CSS_FILE => [
-                        'title' => $this->l('CSS url'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                    ],
                 ],
                 'buttons' => [
                     'save_and_connect' => [
