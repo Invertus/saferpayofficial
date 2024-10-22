@@ -48,7 +48,6 @@ class SaferPayConfig
     const CREDIT_CARD_SAVE = 'SAFERPAY_CREDIT_CARD_SAVE';
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
-    const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
     const API_VERSION = '1.40';
     const PAYMENT_METHODS = [
@@ -435,7 +434,6 @@ class SaferPayConfig
             self::BUSINESS_LICENSE . self::TEST_SUFFIX,
             self::PAYMENT_BEHAVIOR,
             self::CONFIGURATION_NAME,
-            self::CSS_FILE,
             self::PAYMENT_BEHAVIOR_WITHOUT_3D,
             self::CREDIT_CARD_SAVE,
             self::FIELDS_ACCESS_TOKEN,
