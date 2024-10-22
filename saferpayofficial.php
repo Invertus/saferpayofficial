@@ -344,31 +344,19 @@ Thank you for your patience!');
 
     public function hookActionFrontControllerSetMedia()
     {
+        /** @var \Invertus\SaferPay\Validation\ValidateIsAssetsRequired $validateIsAssetsRequired */
+        $validateIsAssetsRequired = $this->getService(\Invertus\SaferPay\Validation\ValidateIsAssetsRequired::class);
+
+        if (!$validateIsAssetsRequired->run($this->context->controller)) {
+            return;
+        }
+
         /** @var \Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader $paymentFormAssetsLoader */
         $paymentFormAssetsLoader = $this->getService(\Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader::class);
 
         $paymentFormAssetsLoader->register($this->context->controller);
 
-        if ($this->context->controller instanceof OrderController) {
-            if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-                $this->context->controller->registerJavascript(
-                    'saved-card',
-                    'modules/' . $this->name . '/views/js/front/saferpay_saved_card.js'
-                );
-
-                $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout.css");
-            } else {
-                $this->context->controller->addCSS("{$this->getPathUri()}views/css/front/saferpay_checkout_16.css");
-                $this->context->controller->addJS("{$this->getPathUri()}views/js/front/saferpay_saved_card_16.js");
-                $fieldsLibrary = \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY;
-                $configSuffix = \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix();
-                $this->context->controller->addJs(Configuration::get($fieldsLibrary . $configSuffix));
-            }
-
-            /** @var \Invertus\SaferPay\Service\SaferPayErrorDisplayService $errorDisplayService */
-            $errorDisplayService = $this->getService(\Invertus\SaferPay\Service\SaferPayErrorDisplayService::class);
-            $errorDisplayService->showCookieError('saferpay_payment_canceled_error');
-        }
+        $paymentFormAssetsLoader->registerErrorBags();
     }
 
     public function hookDisplayCustomerAccount()
