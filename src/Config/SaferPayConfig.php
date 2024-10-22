@@ -315,7 +315,8 @@ class SaferPayConfig
             self::PAYMENT_TWINT,
             self::PAYMENT_POSTFINANCE_PAY,
             self::PAYMENT_DIRECTDEBIT,
-            self::PAYMENT_SOFORT
+            self::PAYMENT_SOFORT,
+            self::PAYMENT_PAYPAL
         ];
 
         return in_array($paymentMethod, $paymentsAlwaysRedirect);
