@@ -60,6 +60,10 @@ class CustomerCreditCardValidation
      */
     public function validate($idSavedCard, $idCustomer)
     {
+        if ($idSavedCard <= 0) {
+            return true;
+        }
+
         if (
             !is_numeric($idCustomer) || !is_numeric($idSavedCard)
             || empty($idCustomer) || empty($idSavedCard))
