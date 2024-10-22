@@ -76,7 +76,7 @@ class CustomerCreditCardValidation
         $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId(pSQL($idSavedCard), pSQL($idCustomer));
 
         if (empty($cardOwnerId)) {
-            return throw UnauthenticatedCardUserException::unauthenticatedCard($cardOwnerId);
+            throw UnauthenticatedCardUserException::unauthenticatedCard($cardOwnerId);
         }
 
         return true;
