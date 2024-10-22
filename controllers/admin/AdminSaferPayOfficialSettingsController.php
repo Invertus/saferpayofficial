@@ -56,11 +56,23 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::postProcess();
 
-        $isCreditCardSaveEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
+        /** @var \Invertus\SaferPay\Adapter\Configuration  $configuration */
+        $configuration = $this->module->getService(\Invertus\SaferPay\Adapter\Configuration::class);
+
+        $isCreditCardSaveEnabled = $configuration->get(SaferPayConfig::CREDIT_CARD_SAVE);
+
         if (!$isCreditCardSaveEnabled) {
             /** @var SaferPaySavedCreditCardRepository $cardRepo */
             $cardRepo = $this->module->getService(SaferPaySavedCreditCardRepository::class);
             $cardRepo->deleteAllSavedCreditCards();
+        }
+
+        $haveFieldToken = $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix());
+        $haveBusinessLicense = $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
+
+        if (!$haveFieldToken && $haveBusinessLicense) {
+            $configuration->set(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix(), 0);
+            $this->errors[] = $this->module->l('Field Access Token is required to use business license');
         }
     }
 
