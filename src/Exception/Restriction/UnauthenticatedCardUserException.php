@@ -21,24 +21,15 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Exception;
+namespace Invertus\SaferPay\Exception\Restriction;
+
+use Invertus\SaferPay\Exception\SaferPayException;
+use RuntimeException;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-// NOTE class to define most used exception codes for our development.
-class ExceptionCode
+class UnauthenticatedCardUserException extends SaferPayException
 {
-    // Payment related codes starts from 5***
-    const PAYMENT_FAILED_TO_FIND_CART = 5001;
-    const PAYMENT_FAILED_TO_CREATE_ORDER = 5002;
-    const CANNOT_USE_CARD = 5003;
-
-    // Order related codes starts from 7***
-    const ORDER_FAILED_TO_FIND_ORDER = 7001;
-    const ORDER_UNHANDLED_TRANSACTION_STATUS = 7002;
-
-    // Any other unhandled codes should start with 9***
-    const UNKNOWN_ERROR = 9001;
 }

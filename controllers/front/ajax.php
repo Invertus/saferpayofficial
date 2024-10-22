@@ -25,9 +25,13 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Exception\Restriction\UnauthenticatedCardUserException;
+use Invertus\SaferPay\Exception\SaferPayException;
 use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Utility\ExceptionUtility;
+use Invertus\SaferPay\Validation\CustomerCreditCardValidation;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -144,6 +148,37 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
+
+        /** @var CustomerCreditCardValidation $cardValidation */
+        $cardValidation = $this->module->getService(CustomerCreditCardValidation::class);
+
+        try {
+            $cardValidation->validate(Tools::getValue('selectedCard'), $this->context->customer->id);
+        } catch (UnauthenticatedCardUserException $e) {
+            $logger->error($e->getMessage(), [
+                'context' => [],
+                'id_customer' => $this->context->customer->id,
+                'id_card' => Tools::getValue('selectedCard'),
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            $this->ajaxDie(json_encode([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'url' => $this->getRedirectionToControllerUrl('fail'),
+            ]));
+        } catch (SaferPayException $e) {
+            $logger->error($e->getMessage(), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
+            $this->ajaxDie(json_encode([
+                'error' => true,
+                'message' => $e->getMessage(),
+                'url' => $this->getRedirectionToControllerUrl('fail'),
+            ]));
+        }
 
         try {
             if (Order::getOrderByCartId($this->context->cart->id)) {
