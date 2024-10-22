@@ -16,28 +16,26 @@
  *versions in the future. If you wish to customize PrestaShop for your
  *needs please refer to http://www.prestashop.com for more information.
  *
- * @author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
- * @copyright SIX Payment Services
- * @license   SIX Payment Services
+ *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
+ *@copyright SIX Payment Services
+ *@license   SIX Payment Services
  */
-
-use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_3(SaferPayOfficial $module)
+function upgrade_module_1_2_4(SaferPayOfficial $module)
 {
-    $installer = new \Invertus\SaferPay\Install\Installer($module);
-
-    return
-        $installer->createPendingOrderStatus()
-        && Db::getInstance()->execute('ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_order ADD COLUMN `pending` TINYINT(1) DEFAULT 0')
-        && $module->registerHook('displayOrderConfirmation')
-        && $module->unregisterHook('actionOrderHistoryAddAfter')
-        && Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION)
-        && Configuration::updateValue(RequestHeader::SPEC_REFUND_VERSION, SaferPayConfig::API_VERSION)
-        && Configuration::deleteByName('SAFERPAY_CSS_FILE');
+    return Db::getInstance()->execute(
+        'ALTER TABLE ' . _DB_PREFIX_ . pSQL(SaferPayLog::$definition['table']) . ' 
+        ADD COLUMN `id_log` INT(10) DEFAULT 0,
+        ADD COLUMN `id_shop` INT(10) DEFAULT ' . (int) Configuration::get('PS_SHOP_DEFAULT') . ',
+        CHANGE `payload` `request` TEXT,
+        ADD COLUMN `response` MEDIUMTEXT DEFAULT NULL,
+        ADD COLUMN `context` MEDIUMTEXT DEFAULT NULL,
+        DROP PRIMARY KEY,
+        ADD PRIMARY KEY (`id_saferpay_log`, `id_log`, `id_shop`),
+        ADD INDEX (`id_log`);'
+    );
 }

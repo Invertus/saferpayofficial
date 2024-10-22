@@ -217,6 +217,12 @@ class InitializeRequest
             ],
         ];
 
+        if ($this->getPaymentMeansField() === []) {
+            $return['CardForm'] = [
+                'HolderName' => SaferPayConfig::SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE,
+            ];
+        }
+
         if ($this->notification !== null) {
             $return['Notification'] = [
                 'MerchantEmails' => [$this->notification->getMerchantEmail()],

@@ -40,7 +40,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.2.3';
+        $this->version = '1.2.4';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -182,7 +182,7 @@ Thank you for your patience!');
         /** @var Invertus\SaferPay\Service\SaferPayCartService $assertService */
         $cartService = $this->getService(\Invertus\SaferPay\Service\SaferPayCartService::class);
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
-            return;
+            return [];
         }
 
         /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
@@ -206,15 +206,29 @@ Thank you for your patience!');
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
+        $logosEnabled = $paymentRepository->getAllActiveLogosNames();
+        $logosEnabled = array_column($logosEnabled, 'name');
+
+        $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();
+        $activePaymentMethods = array_column($activePaymentMethods, 'name');
+
 
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
+
+            if (!in_array($paymentMethod['paymentMethod'], $activePaymentMethods)) {
+                continue;
+            }
+
+            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])) {
+                continue;
+            }
 
             if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
                 continue;
             }
 
-            $imageUrl = ($paymentRepository->isLogoEnabledByName($paymentMethod['paymentMethod']))
+            $imageUrl = (in_array($paymentMethod['paymentMethod'], $logosEnabled))
                 ? $paymentMethod['logoUrl'] : '';
 
             $isCreditCard = in_array(
@@ -365,14 +379,10 @@ Thank you for your patience!');
             return;
         }
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-            return $this->context->smarty->fetch(
-                $this->getLocalPath() . 'views/templates/hook/front/MyAccount.tpl'
-            );
+            return $this->display(__FILE__, 'front/MyAccount.tpl');
         }
 
-        return $this->context->smarty->fetch(
-            $this->getLocalPath() . 'views/templates/hook/front/MyAccount_16.tpl'
-        );
+        return $this->display(__FILE__, 'front/MyAccount_16.tpl');
     }
 
     public function displayNavigationTop()
@@ -679,8 +689,8 @@ Thank you for your patience!');
             );
         } else {
             $action = $this->context->link->getAdminLink(
-                    self::ADMIN_ORDER_CONTROLLER
-                ) . '&id_order=' . (int) $orderId;
+                self::ADMIN_ORDER_CONTROLLER
+            ) . '&id_order=' . (int) $orderId;
         }
 
         $assertId = $orderRepo->getAssertIdBySaferPayOrderId($saferPayOrderId);
