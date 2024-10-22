@@ -80,7 +80,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             );
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
-            \PrestaShopLogger::addLog($e->getMessage());
+            $logger->error($e->getMessage(), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
         }
