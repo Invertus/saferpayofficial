@@ -62,7 +62,7 @@ class CustomerCreditCardValidation
     {
         if (
             !is_numeric($idCustomer) || !is_numeric($idSavedCard)
-            || empty($idCustomer) || empty($idSavedCard))
+            || !isset($idCustomer) || !isset($idSavedCard))
         {
             $this->logger->error(sprintf('%s - Invalid data or bad types', self::FILE_NAME), [
                 'context' => [],
