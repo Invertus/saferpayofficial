@@ -89,6 +89,9 @@ class ResponseObjectCreator
         }
         $paymentMeansObj->setBrand($brandObj);
         $paymentMeansObj->setDisplayText($paymentMeans->DisplayText);
+        if (isset($paymentMeans->Wallet)) {
+            $paymentMeansObj->setWallet($paymentMeans->Wallet);
+        }
 
         return $paymentMeansObj;
     }

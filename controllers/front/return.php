@@ -87,6 +87,10 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         $orderPayment = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
+        if (!empty($assertResponseBody->getPaymentMeans()->getWallet())) {
+            $orderPayment = $assertResponseBody->getPaymentMeans()->getWallet();
+        }
+
         /** @var SaferPayFieldRepository $saferPayFieldRepository */
         $saferPayFieldRepository = $this->module->getService(SaferPayFieldRepository::class);
 
