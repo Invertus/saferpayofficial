@@ -382,7 +382,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function getFailController($order)
     {
-        /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $isIframe */
+        /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
         $paymentTypeProvider = $this->module->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
         $paymentRedirectType = $paymentTypeProvider->get($order->payment);
 
