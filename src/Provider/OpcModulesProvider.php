@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -19,31 +20,28 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-.saved_credit_cards {
-    padding-bottom: 10px;
+
+namespace Invertus\SaferPay\Provider;
+
+use Invertus\SaferPay\Config\SaferPayConfig;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
-.payment-option img {
-    height: 24px;
-}
+class OpcModulesProvider
+{
+    /**
+     * @return string
+     */
+    public function get()
+    {
+        foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule){
+            if (\Module::isInstalled($opcModule) && \Module::isEnabled($opcModule)) {
+                return $opcModule;
+            }
+        }
 
-.payment-logo {
-    max-width: 40px;
-}
-
-.payment-logo {
-    max-width: 40px;
-}
-
-input[type="radio"][name^="saved_card_"] {
-    opacity: 1 !important;
-    width: 15px !important;
-    position: relative !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
-}
-.saved_credit_cards span {
-    padding-left: 3px !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
+        return '';
+    }
 }
