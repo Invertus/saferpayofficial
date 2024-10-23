@@ -22,6 +22,7 @@
  */
 
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -29,10 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'success';
+    const FILE_NAME = 'success';
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = Tools::getValue('cartId');
         $moduleId = Tools::getValue('moduleId');
         $orderId = Tools::getValue('orderId');
@@ -41,6 +47,12 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
         $cart = new Cart($cartId);
 
         if ($cart->secure_key !== $secureKey) {
+            $logger->error(sprintf('%s - Secure key does not match', self::FILE_NAME), [
+                'context' => [
+                    'cartId' => $cartId,
+                ]
+            ]);
+
             $redirectLink = $this->context->link->getPageLink(
                 'order',
                 true,
@@ -52,6 +64,8 @@ class SaferPayOfficialSuccessModuleFrontController extends AbstractSaferPayContr
 
             Tools::redirect($redirectLink);
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         Tools::redirect($this->context->link->getPageLink(
             'order-confirmation',

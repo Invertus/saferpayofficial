@@ -21,6 +21,8 @@
  *@license   SIX Payment Services
  */
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }

@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -31,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'failIFrame';
+    const FILE_NAME = 'failIFrame';
 
     protected $display_header = false;
     protected $display_footer = false;
@@ -48,22 +49,39 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
     {
         parent::initContent();
 
+        $cart = new \Cart(Tools::getValue('cartId'));
+
+        /**
+         * Note: deleting cart prevents
+         * from further failing when creating order with same cart
+         */
+        $cart->delete();
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $orderLink = $this->context->link->getPageLink(
             'order',
             true,
             null
         );
 
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         if (SaferPayConfig::isVersion17()) {
             $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/loading.tpl');
             return;
         }
+
         $this->context->smarty->assign([
             'cssUrl' => "{$this->module->getPathUri()}views/css/front/loading.css",
             'jsUrl' => "{$this->module->getPathUri()}views/js/front/saferpay_iframe.js",
             'redirectUrl' => $orderLink,
         ]);
         $this->setTemplate('loading_16.tpl');
+
     }
 
     public function setMedia()

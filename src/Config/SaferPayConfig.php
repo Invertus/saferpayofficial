@@ -48,7 +48,6 @@ class SaferPayConfig
     const CREDIT_CARD_SAVE = 'SAFERPAY_CREDIT_CARD_SAVE';
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
-    const CSS_FILE = 'SAFERPAY_CSS_FILE';
     const TEST_SUFFIX = '_TEST';
     const API_VERSION = '1.40';
     const PAYMENT_METHODS = [
@@ -156,7 +155,6 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
-        self::PAYMENT_WECHATPAY,
     ];
 
     const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
@@ -264,8 +262,27 @@ class SaferPayConfig
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
 
     const SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE = 'MANDATORY';
+    const SAFERPAY_DEBUG_MODE = 'SAFERPAY_DEBUG_MODE';
 
-    public static function supportsOrderCapture(string $paymentMethod)
+    const LOG_SEVERITY_LEVEL_INFORMATIVE = 1;
+
+    const LOG_SEVERITY_LEVEL_WARNING = 2;
+
+    const LOG_SEVERITY_LEVEL_ERROR = 3;
+
+    const LOG_SEVERITY_LEVEL_MAJOR = 4;
+    const TRANSACTION_ALREADY_CAPTURED = 'TRANSACTION_ALREADY_CAPTURED';
+
+    const ONE_PAGE_CHECKOUT_MODULE = 'onepagecheckoutps';
+    const THE_CHECKOUT_MODULE = 'thecheckout';
+    const SUPER_CHECKOUT_MODULE = 'supercheckout';
+    const OPC_MODULE_LIST = [
+        self::ONE_PAGE_CHECKOUT_MODULE,
+        self::THE_CHECKOUT_MODULE,
+        self::SUPER_CHECKOUT_MODULE,
+    ];
+
+    public static function supportsOrderCapture($paymentMethod)
     {
         //payments that DOES NOT SUPPORT capture
         $unsupportedCapturePayments = [
@@ -276,7 +293,7 @@ class SaferPayConfig
         return !in_array($paymentMethod, $unsupportedCapturePayments);
     }
 
-    public static function supportsOrderCancel(string $paymentMethod)
+    public static function supportsOrderCancel($paymentMethod)
     {
         //payments that DOES NOT SUPPORT order cancel
         $unsupportedCancelPayments = [
@@ -285,6 +302,23 @@ class SaferPayConfig
         ];
 
         return !in_array($paymentMethod, $unsupportedCancelPayments);
+    }
+
+    public static function isRedirectPayment($paymentMethod)
+    {
+        $paymentsAlwaysRedirect = [
+            self::PAYMENT_WECHATPAY,
+            self::PAYMENT_ACCOUNTTOACCOUNT,
+            self::PAYMENT_APPLEPAY,
+            self::PAYMENT_GOOGLEPAY,
+            self::PAYMENT_TWINT,
+            self::PAYMENT_POSTFINANCE_PAY,
+            self::PAYMENT_DIRECTDEBIT,
+            self::PAYMENT_SOFORT,
+            self::PAYMENT_PAYPAL
+        ];
+
+        return in_array($paymentMethod, $paymentsAlwaysRedirect);
     }
 
 
@@ -400,7 +434,6 @@ class SaferPayConfig
             self::BUSINESS_LICENSE . self::TEST_SUFFIX,
             self::PAYMENT_BEHAVIOR,
             self::CONFIGURATION_NAME,
-            self::CSS_FILE,
             self::PAYMENT_BEHAVIOR_WITHOUT_3D,
             self::CREDIT_CARD_SAVE,
             self::FIELDS_ACCESS_TOKEN,
@@ -414,6 +447,11 @@ class SaferPayConfig
     public static function isTestMode()
     {
         return (bool) Configuration::get(self::TEST_MODE);
+    }
+
+    public static function isDebugMode()
+    {
+        return (bool) Configuration::get(self::SAFERPAY_DEBUG_MODE);
     }
 
     public static function isVersion17()

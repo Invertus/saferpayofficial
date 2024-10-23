@@ -43,6 +43,10 @@ class PaymentMeans
      * @var Card
      */
     private $card;
+    /**
+     * @var string
+     */
+    private $wallet;
 
     /**
      * PaymentMeans constructor.
@@ -50,11 +54,12 @@ class PaymentMeans
      * @param string $displayText
      * @param Card|null $card
      */
-    public function __construct(Brand $brand = null, $displayText = null, Card $card = null)
+    public function __construct(Brand $brand = null, $displayText = null, Card $card = null, $wallet = null)
     {
         $this->brand = $brand;
         $this->displayText = $displayText;
         $this->card = $card;
+        $this->wallet = $wallet;
     }
 
     /**
@@ -98,10 +103,23 @@ class PaymentMeans
     }
 
     /**
+     * @return string
+     */
+    public function getWallet()
+    {
+        return $this->wallet;
+    }
+
+    /**
      * @param Card $card
      */
     public function setCard($card)
     {
         $this->card = $card;
+    }
+
+    public function setWallet($wallet)
+    {
+        $this->wallet = $wallet;
     }
 }

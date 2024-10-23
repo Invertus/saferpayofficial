@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 
@@ -33,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'validation';
+    const FILE_NAME = 'validation';
 
     /** @var SaferPayOfficial */
     public $module;
@@ -43,6 +44,11 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
      */
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $paymentMethod = Tools::getValue('saved_card_method');
         $cart = $this->context->cart;
         $redirectLink = $this->context->link->getPageLink(
@@ -69,12 +75,12 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             }
         }
         if (!$authorized) {
-            $this->errors[] = $this->module->l('This payment method is not available.', self::FILENAME);
+            $this->errors[] = $this->module->l('This payment method is not available.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
 
         if (Order::getOrderByCartId($this->context->cart->id)) {
-            $this->errors[] = $this->module->l('Order already exists.', self::FILENAME);
+            $this->errors[] = $this->module->l('Order already exists.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
 
@@ -89,6 +95,8 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             );
 
             $redirectLink = $checkoutController->execute($checkoutData);
+
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
             Tools::redirect($redirectLink);
         } catch (\Exception $exception) {

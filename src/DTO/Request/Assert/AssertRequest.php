@@ -43,13 +43,16 @@ class AssertRequest
      * @var string
      */
     private $token;
+    private $saveCard;
 
     public function __construct(
         RequestHeader $requestHeader,
-        $token
+        $token,
+        $saveCard
     ) {
         $this->requestHeader = $requestHeader;
         $this->token = $token;
+        $this->saveCard = $saveCard;
     }
 
     public function getAsArray()
@@ -64,6 +67,10 @@ class AssertRequest
             ],
             'Token' => $this->token,
         ];
+
+        if ($this->saveCard) {
+            $return['RegisterAlias'] = [ 'IdGenerator' => 'RANDOM_UNIQUE'];
+        }
 
         return $return;
     }
