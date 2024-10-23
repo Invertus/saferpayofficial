@@ -384,11 +384,33 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     {
         /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
         $paymentTypeProvider = $this->module->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
+
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug('Getting fail controller', [
+            'context' => [],
+            'controller' => self::FILE_NAME,
+            'order_payment' => $order->payment,
+        ]);
+
         $paymentRedirectType = $paymentTypeProvider->get($order->payment);
 
         if ($paymentRedirectType === PaymentType::IFRAME) {
+            $logger->debug('Fail controller is FAIL_IFRAME', [
+                'context' => [],
+                'controller' => self::FILE_NAME,
+                'order_payment' => $order->payment,
+            ]);
+
             return ControllerName::FAIL_IFRAME;
         }
+
+        $logger->debug('Fail controller is FAIL', [
+            'context' => [],
+            'controller' => self::FILE_NAME,
+            'order_payment' => $order->payment,
+        ]);
 
         return ControllerName::FAIL;
     }
