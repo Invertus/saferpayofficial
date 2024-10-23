@@ -27,6 +27,7 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
@@ -58,14 +59,16 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         $cart = new Cart($cartId);
 
+        $failController = $this->getFailController($order);
+
         if (!Validate::isLoadedObject($cart)) {
             $this->warning[] = $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME);
-            $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+            $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
         }
 
         if ($cart->secure_key !== $secureKey) {
             $this->warning[] = $this->module->l('Error. Insecure cart', self::FILE_NAME);
-            $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+            $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
         }
 
         /** @var SaferPayTransactionAssertion $transactionAssert */
@@ -86,7 +89,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]);
 
             $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
-            $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+            $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
         }
 
         $orderPayment = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
@@ -375,5 +378,18 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
             return;
         }
+    }
+
+    private function getFailController($order)
+    {
+        /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $isIframe */
+        $paymentTypeProvider = $this->module->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
+        $paymentRedirectType = $paymentTypeProvider->get($order->payment);
+
+        if ($paymentRedirectType === PaymentType::IFRAME) {
+            return ControllerName::FAIL_IFRAME;
+        }
+
+        return ControllerName::FAIL;
     }
 }
