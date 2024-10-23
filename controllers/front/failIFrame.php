@@ -49,6 +49,14 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
     {
         parent::initContent();
 
+        $cart = new \Cart(Tools::getValue('cartId'));
+
+        /**
+         * Note: deleting cart prevents
+         * from further failing when creating order with same cart
+         */
+        $cart->delete();
+
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 

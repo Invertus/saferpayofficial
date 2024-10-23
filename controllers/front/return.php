@@ -290,12 +290,13 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
      */
     private function getRedirectionToControllerUrl($controllerName)
     {
+        $cartId = $this->context->cart->id ? $this->context->cart->id : Tools::getValue('cartId');
         return $this->context->link->getModuleLink(
             $this->module->name,
             $controllerName,
             [
-                'cartId' => $this->context->cart->id,
-                'orderId' => Order::getOrderByCartId($this->context->cart->id),
+                'cartId' => $cartId,
+                'orderId' => Order::getOrderByCartId($cartId),
                 'secureKey' => $this->context->cart->secure_key,
                 'moduleId' => $this->module->id,
             ]
