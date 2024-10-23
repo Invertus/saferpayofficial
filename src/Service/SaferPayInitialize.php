@@ -126,6 +126,7 @@ class SaferPayInitialize
                 'selectedCard' => $selectedCard,
                 'isBusinessLicence' => $isBusinessLicence,
                 'fieldToken' => $fieldToken,
+                'paymentMethod' => $paymentMethod,
             ],
             true
         );

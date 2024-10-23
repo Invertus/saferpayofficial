@@ -56,10 +56,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
         $selectedCard = Tools::getValue('selectedCard');
-
+        $paymentMethod = $order->id ? $order->payment : Tools::getValue('paymentMethod');
         $cart = new Cart($cartId);
-
-        $failController = $this->getFailController($order);
+        $failController = $this->getFailController($paymentMethod);
 
         if (!Validate::isLoadedObject($cart)) {
             $this->warning[] = $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME);
@@ -380,7 +379,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
     }
 
-    private function getFailController($order)
+    private function getFailController($orderPayment)
     {
         /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
         $paymentTypeProvider = $this->module->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
@@ -391,16 +390,16 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $logger->debug('Getting fail controller', [
             'context' => [],
             'controller' => self::FILE_NAME,
-            'order_payment' => $order->payment,
+            'order_payment' => $orderPayment,
         ]);
 
-        $paymentRedirectType = $paymentTypeProvider->get($order->payment);
+        $paymentRedirectType = $paymentTypeProvider->get($orderPayment);
 
         if ($paymentRedirectType === PaymentType::IFRAME) {
             $logger->debug('Fail controller is FAIL_IFRAME', [
                 'context' => [],
                 'controller' => self::FILE_NAME,
-                'order_payment' => $order->payment,
+                'order_payment' => $orderPayment,
             ]);
 
             return ControllerName::FAIL_IFRAME;
@@ -409,7 +408,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $logger->debug('Fail controller is FAIL', [
             'context' => [],
             'controller' => self::FILE_NAME,
-            'order_payment' => $order->payment,
+            'order_payment' => $orderPayment,
         ]);
 
         return ControllerName::FAIL;
