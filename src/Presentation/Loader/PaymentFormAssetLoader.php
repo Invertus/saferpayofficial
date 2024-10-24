@@ -189,6 +189,8 @@ class PaymentFormAssetLoader
                     $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields_16.js',
                     false
                 );
+                $controller->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_checkout_16.css");
+                $controller->addJS("{$this->module->getPathUri()}views/js/front/saferpay_saved_card_16.js");
             }
         }
     }
