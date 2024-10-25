@@ -244,10 +244,6 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
     public function displayAjaxGetLog()
     {
-        if (!$this->ensureHasPermissions([PermissionType::EDIT, PermissionType::VIEW], true)) {
-            return;
-        }
-
         /** @var Invertus\SaferPay\Adapter\Tools $tools */
         $tools = $this->module->getService(Tools::class);
 
