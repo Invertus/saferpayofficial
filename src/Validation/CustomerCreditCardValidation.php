@@ -60,9 +60,11 @@ class CustomerCreditCardValidation
      */
     public function validate($idSavedCard, $idCustomer)
     {
-        if (
-            !is_numeric($idCustomer) || !is_numeric($idSavedCard)
-            || !isset($idCustomer) || !isset($idSavedCard))
+        if ($idSavedCard <= 0 || empty($idSavedCard)) {
+            return true;
+        }
+
+        if (!is_numeric($idCustomer) || !is_numeric($idSavedCard))
         {
             $this->logger->error(sprintf('%s - Invalid data or bad types', self::FILE_NAME), [
                 'context' => [],
@@ -71,10 +73,6 @@ class CustomerCreditCardValidation
             ]);
 
             throw SaferPayException::unknownError();
-        }
-
-        if ($idSavedCard <= 0) {
-            return true;
         }
 
         $cardOwnerId = $this->saferPayCardAliasRepository->getCustomerIdByReferenceId(pSQL($idSavedCard), pSQL($idCustomer));
