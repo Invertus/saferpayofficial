@@ -21,6 +21,7 @@
  */
 
 (function () {
+    // NOTE: Replacing because javascript gives "&amp;" instead of "&" in the URL
     redirectUrl = redirectUrl.replace(/&amp;/g, "&");
     if (top.location !== window.location) {
         top.location.href = redirectUrl;
