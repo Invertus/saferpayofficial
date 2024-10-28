@@ -80,6 +80,18 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         $this->context->smarty->assign(SaferPayConfig::PASSWORD, SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER);
 
+        $savedCardSetting = SaferPayConfig::isVersion17() ? [
+            'type' => 'radio',
+            'title' => $this->l('Credit card saving for customers'),
+            'validation' => 'isInt',
+            'choices' => [
+                1 => $this->l('Enable'),
+                0 => $this->l('Disable'),
+            ],
+            'desc' => $this->l('Allow customers to save credit card for faster purchase'),
+            'form_group_class' => 'thumbs_chose',
+        ] : null;
+
         $this->fields_options = [
             'login_configurations' => [
                 'title' => $this->l('TEST MODE'),
@@ -261,17 +273,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'desc' => $this->l('Default payment behavior for payment without 3-D Secure'),
                         'form_group_class' => 'thumbs_chose',
                     ],
-                    SaferPayConfig::CREDIT_CARD_SAVE => [
-                        'type' => 'radio',
-                        'title' => $this->l('Credit card saving for customers'),
-                        'validation' => 'isInt',
-                        'choices' => [
-                            1 => $this->l('Enable'),
-                            0 => $this->l('Disable'),
-                        ],
-                        'desc' => $this->l('Allow customers to save credit card for faster purchase'),
-                        'form_group_class' => 'thumbs_chose',
-                    ],
+                    SaferPayConfig::CREDIT_CARD_SAVE => $savedCardSetting,
                     SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT => [
                         'type' => 'radio',
                         'title' => $this->l('Restrict RefundAmount To Captured Amount'),

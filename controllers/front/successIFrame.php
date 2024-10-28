@@ -126,9 +126,16 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/loading.tpl');
             return;
         }
+
+        $jsUrl = "{$this->module->getPathUri()}views/js/front/saferpay_iframe_16.js";
+
+        if (SaferPayConfig::isVersion17()) {
+            $jsUrl = "{$this->module->getPathUri()}views/js/front/saferpay_iframe.js";
+        }
+
         $this->context->smarty->assign([
             'cssUrl' => "{$this->module->getPathUri()}views/css/front/loading.css",
-            'jsUrl' => "{$this->module->getPathUri()}views/js/front/saferpay_iframe.js",
+            'jsUrl' => $jsUrl,
             'redirectUrl' => $orderLink,
         ]);
         $this->setTemplate('loading_16.tpl');
