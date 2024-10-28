@@ -364,10 +364,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ];
         }
 
-        if (!SaferPayConfig::isVersion17()) {
-            unset($this->fields_options['payment_behavior']['fields'][SaferPayConfig::CREDIT_CARD_SAVE]);
-        }
-
         $this->fields_options[] = $this->getFieldOptionsOrderState();
         $this->fields_options[] = $this->displayConfigurationSettings();
     }
