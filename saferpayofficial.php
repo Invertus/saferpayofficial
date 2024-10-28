@@ -179,7 +179,7 @@ Thank you for your patience!');
 
     public function hookPaymentOptions($params)
     {
-        /** @var Invertus\SaferPay\Service\SaferPayCartService $assertService */
+        /** @var Invertus\SaferPay\Service\SaferPayCartService $cartService */
         $cartService = $this->getService(\Invertus\SaferPay\Service\SaferPayCartService::class);
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
             return [];
