@@ -470,6 +470,10 @@ Thank you for your patience!');
                 continue;
             }
 
+            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])) {
+                continue;
+            }
+
             $imageUrl = ($paymentRepository->isLogoEnabledByName($paymentMethod['paymentMethod']))
                 ? $paymentMethod['logoUrl'] : '';
             $isCreditCard = in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::TRANSACTION_METHODS);
