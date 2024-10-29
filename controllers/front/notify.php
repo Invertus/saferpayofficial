@@ -50,7 +50,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME), [
+            'context' => [],
+            'HTTP_STATUS_CODE' => http_response_code(),
+        ]);
 
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
