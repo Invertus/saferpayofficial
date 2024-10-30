@@ -33,8 +33,6 @@ class SaferPayLog extends ObjectModel
 
     public $id_shop;
 
-    public $message;
-
     public $request;
 
     public $response;
@@ -49,7 +47,6 @@ class SaferPayLog extends ObjectModel
         'fields' => [
             'id_log' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
             'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
-            'message' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'request' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'response' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'context' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
