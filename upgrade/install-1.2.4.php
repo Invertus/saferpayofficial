@@ -34,6 +34,7 @@ function upgrade_module_1_2_4(SaferPayOfficial $module)
         CHANGE `payload` `request` TEXT,
         ADD COLUMN `response` MEDIUMTEXT DEFAULT NULL,
         ADD COLUMN `context` MEDIUMTEXT DEFAULT NULL,
+        DROP COLUMN `message`,
         DROP PRIMARY KEY,
         ADD PRIMARY KEY (`id_saferpay_log`, `id_log`, `id_shop`),
         ADD INDEX (`id_log`);'
