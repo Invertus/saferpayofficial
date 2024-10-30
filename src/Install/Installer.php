@@ -302,7 +302,6 @@ class Installer extends AbstractInstaller
                 `id_saferpay_log` INTEGER(10) unsigned NOT NULL AUTO_INCREMENT,
                 `id_log` INT(10) NOT NULL,
                 `id_shop` INT(10) NOT NULL DEFAULT ' . (int) Configuration::get('PS_SHOP_DEFAULT') . ',
-                `message` TEXT DEFAULT NULL,
                 `request` MEDIUMTEXT DEFAULT NULL,
                 `response` MEDIUMTEXT DEFAULT NULL,
                 `context` TEXT DEFAULT NULL,
