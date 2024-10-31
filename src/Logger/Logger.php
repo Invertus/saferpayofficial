@@ -129,7 +129,7 @@ class Logger implements LoggerInterface
 
     public function log($level, $message, array $context = [])
     {
-        $idempotencyKey = $this->idempotencyProvider->getIdempotencyKey();
+        $idempotencyKey = $this->idempotencyProvider->getIdempotencyKey(true);
 
         \PrestaShopLogger::addLog(
             $this->logFormatter->getMessage($message),
