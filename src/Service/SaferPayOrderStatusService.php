@@ -193,8 +193,24 @@ class SaferPayOrderStatusService
         }
 
         if ((int) $order->getCurrentState() == (int) _SAFERPAY_PAYMENT_COMPLETED_ || (bool) $saferPayOrder->captured) {
+            $this->logger->debug(sprintf('%s - saferPayAssert object set captured', self::FILE_NAME), [
+                'context' => [
+                    'orderId' => $order->id,
+                ],
+                'message' => 'order is already have captured state',
+            ]);
+
+            if (!$saferPayOrder->captured) {
+                $saferPayOrder->captured = 1;
+                $saferPayOrder->update();
+                $saferPayAssert->status = $captureResponse->Status;
+                $saferPayAssert->update();
+            }
+
             return;
         }
+
+        $this->logger->debug(sprintf('%s - saferPayAssert object set captured', self::FILE_NAME));
 
         $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
         $order->update();

@@ -173,6 +173,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
                 $transactionStatus === TransactionStatus::CAPTURED
             ) {
+                $logger->debug(sprintf('%s - order completed', self::FILE_NAME), [
+                    'context' => [
+                        'id_order' => $order->id,
+                    ],
+                ]);
+
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->setComplete($order);
@@ -184,6 +190,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
                 $transactionStatus !== TransactionStatus::CAPTURED
             ) {
+                $logger->debug(sprintf('%s - order captured', self::FILE_NAME), [
+                    'context' => [
+                        'id_order' => $order->id,
+                    ],
+                ]);
+
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
