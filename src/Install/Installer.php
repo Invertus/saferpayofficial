@@ -94,7 +94,6 @@ class Installer extends AbstractInstaller
         $this->module->registerHook('actionEmailSendBefore');
         $this->module->registerHook('displayAdminOrderTabContent');
         $this->module->registerHook('actionAdminControllerSetMedia');
-        $this->module->registerHook('actionOrderHistoryAddAfter');
         $this->module->registerHook('actionObjectOrderPaymentAddAfter');
         $this->module->registerHook('displayOrderConfirmation');
     }
@@ -299,12 +298,17 @@ class Installer extends AbstractInstaller
     private function installSaferPayLog()
     {
         return Db::getInstance()->execute(
-            'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_log' . '(
-            `id_saferpay_log` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-            `message` TEXT NOT NULL,
-            `payload` TEXT NOT NULL,
-            `date_add` datetime NOT NULL
-                ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
+            'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '(
+                `id_saferpay_log` INTEGER(10) unsigned NOT NULL AUTO_INCREMENT,
+                `id_log` INT(10) NOT NULL,
+                `id_shop` INT(10) NOT NULL DEFAULT ' . (int) Configuration::get('PS_SHOP_DEFAULT') . ',
+                `request` MEDIUMTEXT DEFAULT NULL,
+                `response` MEDIUMTEXT DEFAULT NULL,
+                `context` TEXT DEFAULT NULL,
+                `date_add` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY(`id_saferpay_log`, `id_log`, `id_shop`),
+                INDEX(`id_log`)
+            ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;'
         );
     }
 

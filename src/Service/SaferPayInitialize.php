@@ -31,9 +31,11 @@ use Invertus\SaferPay\Api\Request\InitializeService;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,6 +44,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayInitialize
 {
+    const FILE_NAME = 'SaferPayInitialize';
     /**
      * @var SaferPayOfficial
      */
@@ -89,6 +92,13 @@ class SaferPayInitialize
         try {
             $initialize = $this->initializeService->initialize($initializeRequest, $isBusinessLicence);
         } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error($e->getMessage(), [
+                'context' => [],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
+
             throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
         }
 
@@ -116,6 +126,7 @@ class SaferPayInitialize
                 'selectedCard' => $selectedCard,
                 'isBusinessLicence' => $isBusinessLicence,
                 'fieldToken' => $fieldToken,
+                'paymentMethod' => $paymentMethod,
             ],
             true
         );

@@ -24,6 +24,8 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
+use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,6 +48,11 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $cartId = Tools::getValue('cartId');
         $orderId = Tools::getValue('orderId');
         $secureKey = Tools::getValue('secureKey');
@@ -59,20 +66,17 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
         }
 
         try {
+            $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
             Tools::redirect($this->getOrderConfirmationLink($cartId, $moduleId, $orderId, $secureKey));
         } catch (Exception $e) {
-            PrestaShopLogger::addLog(
-                sprintf(
-                    '%s has caught an error: %s',
-                    __CLASS__,
-                    $e->getMessage()
-                ),
-                1,
-                null,
-                null,
-                null,
-                true
-            );
+            $logger->error($e->getMessage(), [
+                'context' => [
+                    'cartId' => $cartId,
+                    'orderId' => $orderId,
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($e),
+            ]);
 
             Tools::redirect(
                 $this->context->link->getModuleLink(

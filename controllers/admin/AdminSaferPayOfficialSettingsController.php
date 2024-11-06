@@ -24,6 +24,8 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 
+require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -54,17 +56,41 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::postProcess();
 
-        $isCreditCardSaveEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
+        /** @var \Invertus\SaferPay\Adapter\Configuration  $configuration */
+        $configuration = $this->module->getService(\Invertus\SaferPay\Adapter\Configuration::class);
+
+        $isCreditCardSaveEnabled = $configuration->get(SaferPayConfig::CREDIT_CARD_SAVE);
+
         if (!$isCreditCardSaveEnabled) {
             /** @var SaferPaySavedCreditCardRepository $cardRepo */
             $cardRepo = $this->module->getService(SaferPaySavedCreditCardRepository::class);
             $cardRepo->deleteAllSavedCreditCards();
+        }
+
+        $haveFieldToken = $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix());
+        $haveBusinessLicense = $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
+
+        if (!$haveFieldToken && $haveBusinessLicense) {
+            $configuration->set(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix(), 0);
+            $this->errors[] = $this->module->l('Field Access Token is required to use business license');
         }
     }
 
     public function initOptions()
     {
         $this->context->smarty->assign(SaferPayConfig::PASSWORD, SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER);
+
+        $savedCardSetting = SaferPayConfig::isVersion17() ? [
+            'type' => 'radio',
+            'title' => $this->l('Credit card saving for customers'),
+            'validation' => 'isInt',
+            'choices' => [
+                1 => $this->l('Enable'),
+                0 => $this->l('Disable'),
+            ],
+            'desc' => $this->l('Allow customers to save credit card for faster purchase'),
+            'form_group_class' => 'thumbs_chose',
+        ] : null;
 
         $this->fields_options = [
             'login_configurations' => [
@@ -247,17 +273,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'desc' => $this->l('Default payment behavior for payment without 3-D Secure'),
                         'form_group_class' => 'thumbs_chose',
                     ],
-                    SaferPayConfig::CREDIT_CARD_SAVE => [
-                        'type' => 'radio',
-                        'title' => $this->l('Credit card saving for customers'),
-                        'validation' => 'isInt',
-                        'choices' => [
-                            1 => $this->l('Enable'),
-                            0 => $this->l('Disable'),
-                        ],
-                        'desc' => $this->l('Allow customers to save credit card for faster purchase'),
-                        'form_group_class' => 'thumbs_chose',
-                    ],
+                    SaferPayConfig::CREDIT_CARD_SAVE => $savedCardSetting,
                     SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT => [
                         'type' => 'radio',
                         'title' => $this->l('Restrict RefundAmount To Captured Amount'),
@@ -296,11 +312,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'fields' => [
                     SaferPayConfig::CONFIGURATION_NAME => [
                         'title' => $this->l('Payment Page configurations name'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                    ],
-                    SaferPayConfig::CSS_FILE => [
-                        'title' => $this->l('CSS url'),
                         'type' => 'text',
                         'class' => 'fixed-width-xl',
                     ],
@@ -401,6 +412,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'type' => 'text',
                     'desc' => 'This description is visible in payment page also in payment confirmation email',
                     'class' => 'fixed-width-xxl',
+                ],
+                SaferPayConfig::SAFERPAY_DEBUG_MODE => [
+                    'title' => $this->module->l('Debug mode', self::FILE_NAME),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                    'desc' => $this->module->l('Enable debug mode to see more information in logs', self::FILE_NAME),
                 ],
             ],
             'buttons' => [

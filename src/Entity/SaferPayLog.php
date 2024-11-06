@@ -27,18 +27,29 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayLog extends ObjectModel
 {
-    public $message;
+    public $id_saferpay_log;
+
+    public $id_log;
+
+    public $id_shop;
+
+    public $request;
+
+    public $response;
+
+    public $context;
 
     public $date_add;
-
-    public $payload;
 
     public static $definition = [
         'table' => 'saferpay_log',
         'primary' => 'id_saferpay_log',
         'fields' => [
-            'message' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
-            'payload' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'id_log' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'id_shop' => ['type' => self::TYPE_INT, 'validate' => 'isInt'],
+            'request' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'response' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
+            'context' => ['type' => self::TYPE_STRING, 'validate' => 'isString'],
             'date_add' => ['type' => self::TYPE_DATE, 'validate' => 'isDate'],
         ],
     ];
