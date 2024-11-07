@@ -100,7 +100,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         $orderLink = $this->context->link->getPageLink(
-            'order',
+            'order&step=3',
             true,
             null
         );
