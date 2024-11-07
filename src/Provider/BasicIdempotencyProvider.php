@@ -29,8 +29,12 @@ if (!defined('_PS_VERSION_')) {
 
 class BasicIdempotencyProvider implements IdempotencyProviderInterface
 {
-    public function getIdempotencyKey()
+    public function getIdempotencyKey($only_numbers = false)
     {
+        if ($only_numbers) {
+            return (string) mt_rand();
+        }
+
         $uniqueId = uniqid('ps-', true);
 
         $randomNum = rand(100000, 999999);

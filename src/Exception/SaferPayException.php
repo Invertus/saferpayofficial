@@ -35,8 +35,7 @@ class SaferPayException extends \Exception
         $internalMessage,
         $code,
         array  $context = []
-    )
-    {
+    ) {
         parent::__construct($internalMessage, $code);
         $this->context = $context;
     }
@@ -51,6 +50,17 @@ class SaferPayException extends \Exception
         return new static(
             'An unknown error error occurred. Please check system logs or contact support.',
             ExceptionCode::UNKNOWN_ERROR
+        );
+    }
+
+    public static function unauthenticatedCard($idCardOwner)
+    {
+        return new static(
+            'Customer cannot use current saved card at this moment.',
+            ExceptionCode::CANNOT_USE_CARD,
+            [
+                'id_card_owner' => $idCardOwner,
+            ]
         );
     }
 }

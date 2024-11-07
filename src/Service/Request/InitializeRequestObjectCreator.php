@@ -27,10 +27,8 @@ use Cart;
 use Configuration;
 use Customer;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\DTO\Request\RequestHeader;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
-use PrestaShop\PrestaShop\Adapter\Shop\Context;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -79,7 +77,6 @@ class InitializeRequestObjectCreator
         $notification = $isBusinessLicence ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
         $configSet = Configuration::get(SaferPayConfig::CONFIGURATION_NAME);
-        $cssUrl = Configuration::get(SaferPayConfig::CSS_FILE);
 
         $customer = new Customer($customerId);
         $deliveryAddress = new \Address($deliveryAddressId);
@@ -102,7 +99,6 @@ class InitializeRequestObjectCreator
             $notification,
             $deliveryAddressForm,
             $configSet,
-            $cssUrl,
             $deliveryAddress,
             $invoiceAddress,
             $alias,

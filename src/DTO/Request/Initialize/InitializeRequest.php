@@ -87,11 +87,6 @@ class InitializeRequest
     private $configSet;
 
     /**
-     * @var string
-     */
-    private $cssUrl;
-
-    /**
      * @var Address
      */
     private $deliveryAddress;
@@ -131,7 +126,6 @@ class InitializeRequest
         $notification,
         DeliveryAddressForm  $deliveryAddressForm,
         $configSet,
-        $cssUrl,
         Address              $deliveryAddress,
         Address              $billingAddress,
         $alias,
@@ -148,7 +142,6 @@ class InitializeRequest
         $this->notification = $notification;
         $this->deliveryAddressForm = $deliveryAddressForm;
         $this->configSet = $configSet;
-        $this->cssUrl = $cssUrl;
         $this->deliveryAddress = $deliveryAddress;
         $this->billingAddress = $billingAddress;
         $this->alias = $alias;
@@ -224,6 +217,12 @@ class InitializeRequest
             ],
         ];
 
+        if ($this->getPaymentMeansField() === []) {
+            $return['CardForm'] = [
+                'HolderName' => SaferPayConfig::SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE,
+            ];
+        }
+
         if ($this->notification !== null) {
             $return['Notification'] = [
                 'MerchantEmails' => [$this->notification->getMerchantEmail()],
@@ -238,13 +237,6 @@ class InitializeRequest
 
         if ($this->configSet) {
             $return['ConfigSet'] = $this->configSet;
-        }
-
-        if ($this->cssUrl) {
-            $return['Styling'] = [
-                'CssUrl' => $this->cssUrl,
-                'ContentSecurityEnabled' => true,
-            ];
         }
 
         if ($this->alias || $this->fieldToken) {

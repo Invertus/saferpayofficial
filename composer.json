@@ -21,13 +21,17 @@
             "php": "5.6"
         }
     },
-    "repositories": [
-        {
+    "repositories": {
+        "knapsack": {
+            "type": "vcs",
+            "url": "https://github.com/Invertus/Knapsack.git"
+        },
+        "lock": {
             "type": "vcs",
             "url": "https://github.com/Invertus/lock.git",
             "no-api": true
         }
-    ],
+    },
     "require": {
         "vlucas/phpdotenv": "^3.6",
         "symfony/expression-language": "^3.4",
@@ -37,7 +41,8 @@
         "apimatic/unirest-php": "^2.3",
         "symfony/yaml": "^3.4",
         "league/container": "2.5.0",
-        "invertus/lock": "^1.0.0"
+        "invertus/lock": "^1.0.0",
+        "invertus/knapsack": "^10.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "*",
