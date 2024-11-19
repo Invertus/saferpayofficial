@@ -30,12 +30,13 @@ $(document).ready(function () {
     $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (event) {
         event.preventDefault();
 
-        var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
+        var isSaferPayMethodSelected = $('[data-module-name*="saferpayofficial"]:checked').length > 0;
 
-        if (selectedCardMethod === undefined) {
+        if (!isSaferPayMethodSelected) {
             event.target.submit();
         }
 
+        var selectedCardMethod = $(this).find("[name=saved_card_method]").val();
         var selectedCard = $(this).find("[name=selectedCreditCard_" + selectedCardMethod + "]").val();
 
         //NOTE: not saved card chosen, continuing with normal procedures.
