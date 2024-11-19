@@ -30,7 +30,7 @@ $(document).ready(function () {
     $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (event) {
         event.preventDefault();
 
-        var isSaferPayMethodSelected = $('[data-module-name*="saferpayofficial"]:checked').length > 0;
+        var isSaferPayMethodSelected = $('[data-module-name*="saferpayofficial"]:checked').length;
 
         if (!isSaferPayMethodSelected) {
             event.target.submit();
