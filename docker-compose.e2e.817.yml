@@ -6,9 +6,8 @@ services:
     image: "cypress/included:13.13.0"
     environment:
       # pass base url to test pointing at the web application
-      - CYPRESS_baseUrl=https://jusvai.eu.ngrok.io
+      - CYPRESS_baseUrl=process.env.NGROK_URL
       - CYPRESS_EVERY_NTH_FRAME=1
-      - CYPRESS_RECORD_KEY=as4t54
     entrypoint: cypress run --spec "**/cypress/e2e/**"
     command: /bin/sh -c "--config npx browserslist@latest --update-db"
     # share the current folder as volume to avoid copying
@@ -17,5 +16,5 @@ services:
       - ./:/e2e
     #platform: linux/x86_64
 networks:
-  prestashop_saferpayofficial_net_1786:
-    name: 'prestashop_saferpayofficial_net_1786'
+  prestashop_saferpayofficial_net_817:
+    name: 'prestashop_saferpayofficial_net_817'

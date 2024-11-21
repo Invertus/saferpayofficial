@@ -175,10 +175,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         );
     }
 
-    private function assertTransaction($cartId) {
-
-    }
-
     /**
      * @param int $cartId
      *
