@@ -115,6 +115,7 @@ class SaferPayConfig
     const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
     const PAYMENT_WECHATPAY = 'WECHATPAY';
     const PAYMENT_CLICKTOPAY = 'CLICKTOPAY';
+    const PAYMENT_BLIK = 'BLIK';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -148,6 +149,7 @@ class SaferPayConfig
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
         'WeChatPay' => self::PAYMENT_WECHATPAY,
         'ClickToPay' => self::PAYMENT_CLICKTOPAY,
+        'Blik' => self::PAYMENT_BLIK,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
