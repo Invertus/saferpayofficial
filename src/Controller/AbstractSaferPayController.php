@@ -82,7 +82,6 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
             $this->lock->create($resource);
 
             if (!$this->lock->acquire()) {
-
                 if (!SaferPayConfig::isVersion17()) {
                     return  http_response_code(409);
                 }

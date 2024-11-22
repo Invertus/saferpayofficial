@@ -23,6 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 
 if (!defined('_PS_VERSION_')) {
@@ -31,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPayController
 {
-    const FILENAME = 'creditCards16';
+    const FILE_NAME = 'creditCards16';
 
     public $display_column_left = false;
     public $display_column_right = false;
@@ -78,7 +79,7 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPa
                 'payment_method' => $savedCard['payment_method'],
                 'date_add' => $savedCard['date_add'],
                 'card_img' => "{$this->module->getPathUri()}views/img/{$savedCard['payment_method']}.png",
-                'controller' => self::FILENAME,
+                'controller' => self::FILE_NAME,
             ]);
             $rows[] = $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/front/credit_card.tpl'
@@ -91,15 +92,23 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPa
 
     public function postProcess()
     {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+
         $selectedCard = Tools::getValue('saved_card_id');
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
             if ($cardAlias->delete()) {
-                $this->success[] = $this->module->l('Successfully removed credit card', self::FILENAME);
+                $this->success[] = $this->module->l('Successfully removed credit card', self::FILE_NAME);
                 return;
             }
-            $this->errors[] = $this->module->l('Failed to removed credit card', self::FILENAME);
+            $this->errors[] = $this->module->l('Failed to removed credit card', self::FILE_NAME);
         }
+
+        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
+
         parent::postProcess();
     }
 
@@ -108,7 +117,7 @@ class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPa
         $breadcrumb = $this->getBreadcrumbLinks();
 
         $breadcrumb['links'][] = [
-            'title' => $this->module->l('Your account', self::FILENAME),
+            'title' => $this->module->l('Your account', self::FILE_NAME),
             'url' => $this->context->link->getPageLink('my-account'),
         ];
 

@@ -24,12 +24,15 @@
 namespace Invertus\SaferPay\Api\Request;
 
 use Exception;
+use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Api\ApiRequest;
+use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
+use Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Exception\Api\TransactionDeclinedException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
 use SaferPayOrder;
 
@@ -55,15 +58,18 @@ class AssertService
      * @var SaferPayAssertBuilder
      */
     private $assertBuilder;
+    private $aliasBuilder;
 
     public function __construct(
         ApiRequest $apiRequest,
         AssertResponseObjectCreator $assertResponseObjectCreator,
-        SaferPayAssertBuilder $assertBuilder
+        SaferPayAssertBuilder $assertBuilder,
+        SaferPayCardAliasBuilder $aliasBuilder
     ) {
         $this->apiRequest = $apiRequest;
         $this->assertResponseObjectCreator = $assertResponseObjectCreator;
         $this->assertBuilder = $assertBuilder;
+        $this->aliasBuilder = $aliasBuilder;
     }
 
     /**
@@ -73,18 +79,14 @@ class AssertService
      * @return object|null
      * @throws \Exception
      */
-    public function assert(AssertRequest $assertRequest, $saferPayOrderId)
+    public function assert(AssertRequest $assertRequest, $isBusiness)
     {
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
         $assertApi = self::ASSERT_API_PAYMENT;
 
-        //TODO: refactor this to use authorize request.
-        // naming is weird. With transaction, we do a request to an authorize endpoint but name it assert ?
-        // also we call authorize method in some of the success controllers, so if we leave the logic here,
-        // we get an error with TRANSACTION_IN_WRONG_STATE
-        if ($saferPayOrder->is_transaction) {
-          $assertApi = self::ASSERT_API_TRANSACTION;
+        $isBusinessLicense = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
+
+        if ($isBusiness) {
+            $assertApi = self::ASSERT_API_TRANSACTION;
         }
 
         try {
@@ -104,10 +106,15 @@ class AssertService
      * @return AssertBody
      * @throws Exception
      */
-    public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId)
+    public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId, $customerId, $selectedCardOption)
     {
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
+        $isPaymentSafe = $assertBody->getLiability()->getLiabilityShift();
+
+        if ((int) $selectedCardOption === SaferPayConfig::CREDIT_CARD_OPTION_SAVE && $isPaymentSafe) {
+            $this->aliasBuilder->createCardAlias($assertBody, $customerId);
+        }
 
         return $assertBody;
     }

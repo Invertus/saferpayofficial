@@ -169,3 +169,10 @@
 - FO : AccountToAccount Pay payment method added
 - BO : Security improvements
 - BO : Bug fixes and improvements
+
+## [1.2.4]
+- Fixed credit card saving
+- Implemented code logging
+- Requiring card holder name when entering card details
+- Removed depreciated feature for custom CSS
+- Compatibility with most popular OPC modules (The Checkout, Super Checkout, One Page Checkout PS)
