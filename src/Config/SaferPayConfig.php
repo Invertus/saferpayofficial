@@ -322,7 +322,8 @@ class SaferPayConfig
             self::PAYMENT_DIRECTDEBIT,
             self::PAYMENT_SOFORT,
             self::PAYMENT_PAYPAL,
-            self::PAYMENT_CLICKTOPAY
+            self::PAYMENT_CLICKTOPAY,
+            self::PAYMENT_BLIK,
         ];
 
         return in_array($paymentMethod, $paymentsAlwaysRedirect);
