@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Service;
 
 use Exception;
 use Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService;
+use Invertus\SaferPay\Context\GlobalShopContext;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator;
@@ -46,12 +47,14 @@ class SaferPayObtainPaymentMethods
         ObtainPaymentMethodsService $obtainPaymentMethodsService,
         ObtainPaymentMethodsObjectCreator $obtainPaymentMethodsObjectCreator,
         SaferPayPaymentNotation $saferPayPaymentNotation,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        GlobalShopContext $context
     ) {
         $this->obtainPaymentMethodsService = $obtainPaymentMethodsService;
         $this->obtainPaymentMethodsObjectCreator = $obtainPaymentMethodsObjectCreator;
         $this->saferPayPaymentNotation = $saferPayPaymentNotation;
         $this->logger = $logger;
+        $this->context = $context;
     }
 
     public function obtainPaymentMethods()
@@ -87,7 +90,6 @@ class SaferPayObtainPaymentMethods
                 $paymentMethods[$wallet->WalletName] = [
                     'paymentMethod' => $wallet->WalletName,
                     'logoUrl' => $wallet->LogoUrl,
-                    'currencies' => $paymentMethodObject->Currencies,
                 ];
             }
         }
