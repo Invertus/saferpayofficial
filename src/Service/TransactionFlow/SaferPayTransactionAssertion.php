@@ -107,7 +107,7 @@ class SaferPayTransactionAssertion
                 'cart_id' => $cartId,
                 'saferpay_order_id' => $saferPayOrder->id,
             ],
-            'reponse' => get_object_vars($assertResponse),
+            'response' => get_object_vars($assertResponse),
         ]);
 
         $assertBody = $this->assertionService->createObjectsFromAssertResponse(
