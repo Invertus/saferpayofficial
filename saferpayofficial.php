@@ -21,8 +21,6 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Config\SaferPayConfig;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -222,8 +220,7 @@ Thank you for your patience!');
                 continue;
             }
 
-            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])
-                && !in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])) {
                 continue;
             }
 
