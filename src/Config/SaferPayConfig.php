@@ -49,7 +49,7 @@ class SaferPayConfig
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = '1.43';
+    const API_VERSION = '1.40';
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
@@ -78,7 +78,6 @@ class SaferPayConfig
         self::PAYMENT_WLCRYPTOPAYMENTS,
         self::PAYMENT_WECHATPAY,
         self::PAYMENT_ACCOUNTTOACCOUNT,
-        self::PAYMENT_CLICKTOPAY,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -114,13 +113,10 @@ class SaferPayConfig
     const PAYMENT_CARD = 'CARD';
     const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
     const PAYMENT_WECHATPAY = 'WECHATPAY';
-    const PAYMENT_CLICKTOPAY = 'CLICKTOPAY';
-    const PAYMENT_BLIK = 'BLIK';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_GOOGLEPAY,
-        self::PAYMENT_CLICKTOPAY
     ];
 
     const PAYMENT_METHODS_KEYS = [
@@ -148,8 +144,6 @@ class SaferPayConfig
         'Card' => self::PAYMENT_CARD,
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
         'WeChatPay' => self::PAYMENT_WECHATPAY,
-        'ClickToPay' => self::PAYMENT_CLICKTOPAY,
-        'Blik' => self::PAYMENT_BLIK,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -321,9 +315,7 @@ class SaferPayConfig
             self::PAYMENT_POSTFINANCE_PAY,
             self::PAYMENT_DIRECTDEBIT,
             self::PAYMENT_SOFORT,
-            self::PAYMENT_PAYPAL,
-            self::PAYMENT_CLICKTOPAY,
-            self::PAYMENT_BLIK,
+            self::PAYMENT_PAYPAL
         ];
 
         return in_array($paymentMethod, $paymentsAlwaysRedirect);
