@@ -178,4 +178,5 @@
 - Compatibility with most popular OPC modules (The Checkout, Super Checkout, One Page Checkout PS)
 
 ## [1.2.5]
+- Fixed issue with JSON API Password escaping HTML entities
 - Added new payment methods: Blik, ClickToPay
