@@ -228,13 +228,13 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     {
         $currencyOptions[0] = $this->l('All');
 
-//        if (!isset($paymentMethods[$paymentMethod]['currencies']) && in_array($paymentMethod, SaferPayConfig::WALLET_PAYMENT_METHODS)) {
-//            foreach (Currency::getCurrencies() as $currency) {
-//                $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
-//            }
-//
-//            return $currencyOptions;
-//        }
+        if (!isset($paymentMethods[$paymentMethod]['currencies']) && in_array($paymentMethod, SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            foreach (Currency::getCurrencies() as $currency) {
+                $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
+            }
+
+            return $currencyOptions;
+        }
 
         foreach ($paymentMethods[$paymentMethod]['currencies'] as $currencyIso) {
             if (Currency::getIdByIsoCode($currencyIso)) {
