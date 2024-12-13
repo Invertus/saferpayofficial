@@ -180,3 +180,4 @@
 ## [1.2.5]
 - Fixed issue with JSON API Password escaping HTML entities
 - Added new payment methods: Blik, ClickToPay
+- Fixed performance issues when loading "Payments" tab in Back office.
