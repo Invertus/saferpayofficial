@@ -23,6 +23,10 @@
 
 namespace Invertus\SaferPay\Adapter;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Cart
 {
     /**
