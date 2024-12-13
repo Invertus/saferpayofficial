@@ -27,6 +27,10 @@ use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Response\JsonResponse;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class AbstractAdminSaferPayController extends \ModuleAdminController
 {
     const FILE_NAME = 'AbstractAdminSaferPayController';
