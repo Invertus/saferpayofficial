@@ -218,11 +218,15 @@ Thank you for your patience!');
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
-            if (!in_array($paymentMethod['paymentMethod'], $activePaymentMethods)) {
-                continue;
+            if (in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+                foreach (Currency::getCurrencies() as $currency) {
+                    $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
+                }
+
+                $paymentMethod['currencies'] = $currencyOptions;
             }
 
-            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])
+            if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
                 && !in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
                 continue;
             }
