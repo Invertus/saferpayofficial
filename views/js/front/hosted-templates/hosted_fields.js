@@ -34,6 +34,7 @@ $(document).ready(function () {
 
         if (!isSaferPayMethodSelected) {
             event.target.submit();
+            return;
         }
 
         var selectedCardMethod = $(this).find("[name=saved_card_method]").val();

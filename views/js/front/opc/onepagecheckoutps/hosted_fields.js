@@ -41,6 +41,13 @@ $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (event) {
         return;
     }
 
+    var isSaferPayMethodSelected = $('[data-module-name*="saferpayofficial"]:checked').length;
+
+    if (!isSaferPayMethodSelected) {
+        event.target.submit();
+        return;
+    }
+
     $.ajax(saferpay_official_ajax_url, {
         method: 'POST',
         data: {
