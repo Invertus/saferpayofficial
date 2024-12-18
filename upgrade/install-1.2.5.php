@@ -21,25 +21,14 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Adapter;
+use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class Cart
+function upgrade_module_1_2_5(SaferPayOfficial $module)
 {
-    /**
-     * Check if order exists by cart id
-     * From PS 8.x
-     *
-     * @return bool
-     */
-    public function orderExists($idCart)
-    {
-        return (bool) \Db::getInstance()->getValue(
-            'SELECT count(*) FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_cart` = ' . (int) $idCart,
-            false
-        );
-    }
+    return Configuration::updateValue(RequestHeader::SPEC_VERSION, SaferPayConfig::API_VERSION);
 }

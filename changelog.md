@@ -176,3 +176,9 @@
 - Requiring card holder name when entering card details
 - Removed depreciated feature for custom CSS
 - Compatibility with most popular OPC modules (The Checkout, Super Checkout, One Page Checkout PS)
+
+## [1.2.5]
+- Fixed issue with JSON API Password escaping HTML entities
+- Added new payment methods: Blik, ClickToPay
+- Fixed performance issues when loading "Payments" tab in Back office.
+- Fixed issue when saferpay logic is executing on other payment methods which is not saferpay

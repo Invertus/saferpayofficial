@@ -20,26 +20,12 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-namespace Invertus\SaferPay\Adapter;
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class Cart
-{
-    /**
-     * Check if order exists by cart id
-     * From PS 8.x
-     *
-     * @return bool
-     */
-    public function orderExists($idCart)
-    {
-        return (bool) \Db::getInstance()->getValue(
-            'SELECT count(*) FROM `' . _DB_PREFIX_ . 'orders` WHERE `id_cart` = ' . (int) $idCart,
-            false
-        );
-    }
-}
+header('Location: ../');
+exit;

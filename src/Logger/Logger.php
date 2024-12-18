@@ -33,6 +33,10 @@ use Invertus\SaferPay\Logger\Formatter\LogFormatterInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Repository\PrestashopLoggerRepositoryInterface;
 
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
 class Logger implements LoggerInterface
 {
     const FILE_NAME = 'Logger';
