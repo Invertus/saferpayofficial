@@ -2,6 +2,8 @@
 - [ ] I have performed a self-review of my code.
 - [ ] I have updated/added necessary technical documentation in the [README](/README.md) file.
 
+## JIRA task link
+
 ## Summary
 <!-- Briefly explain the purpose of this PR in 1-2 sentences -->
 
@@ -18,8 +20,6 @@
   
 ## Additional Context 
 <!-- Provide a concise description of the changes made in this PR. -->
-
-## JIRA task link
   
 ## Frontend Changes
 <!-- If applicable, provide visual elements such as screenshots, GIFs, or videos to demonstrate frontend changes. -->
