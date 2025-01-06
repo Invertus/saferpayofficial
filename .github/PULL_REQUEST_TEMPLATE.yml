@@ -2,8 +2,10 @@
 - [ ] I have performed a self-review of my code.
 - [ ] I have updated/added necessary technical documentation in the [README](/README.md) file.
 
+## JIRA task link
+
 ## Summary
-  <!-- Briefly explain the purpose of this PR in 1-2 sentences -->
+<!-- Briefly explain the purpose of this PR in 1-2 sentences -->
 
 ## QA Checklist Labels
 - [ ] Bug fix? <!-- Maps to "bug" label -->
@@ -14,10 +16,10 @@
 - [ ] Covered by tests? <!-- Maps to "tested" label -->
 
 ## QA Checklist
-  <!-- Provide related ticket/PR's -->
+<!-- Provide related ticket/PR's -->
   
-  ## Additional Context 
-  <!-- Provide a concise description of the changes made in this PR. -->
+## Additional Context 
+<!-- Provide a concise description of the changes made in this PR. -->
   
-  ## Frontend Changes
-  <!-- If applicable, provide visual elements such as screenshots, GIFs, or videos to demonstrate frontend changes. -->
+## Frontend Changes
+<!-- If applicable, provide visual elements such as screenshots, GIFs, or videos to demonstrate frontend changes. -->
