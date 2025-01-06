@@ -164,6 +164,11 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $fieldsForm = [];
         $fieldsForm[0]['form'] = $this->fields_form;
 
+        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+        $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
+
+        $paymentMethodsList = $saferPayObtainPaymentMethods->obtainPaymentMethods();
+
         foreach ($paymentMethods as $paymentMethod) {
             $isActive = $paymentRepository->isActiveByName($paymentMethod);
             $isLogoActive = $logoRepository->isActiveByName($paymentMethod);
@@ -184,7 +189,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
                     'paymentMethod' => $paymentMethod,
                     'countryOptions' => $this->getActiveCountriesList(),
                     'countrySelect' => $selectedCountries,
-                    'currencyOptions' => $this->getActiveCurrenciesList($paymentMethod),
+                    'currencyOptions' => $this->getActiveCurrenciesList($paymentMethod, $paymentMethodsList),
                     'currencySelect' => $selectedCurrencies,
                     'is_field_active' => $isFieldActive,
                     'supported_field_payments' => SaferPayConfig::FIELD_SUPPORTED_PAYMENT_METHODS,
@@ -219,14 +224,18 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         return $countriesWithNames;
     }
 
-    public function getActiveCurrenciesList($paymentMethod)
+    public function getActiveCurrenciesList($paymentMethod, $paymentMethods)
     {
-        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
-        $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
-
-        $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethods();
-
         $currencyOptions[0] = $this->l('All');
+
+        if (!isset($paymentMethods[$paymentMethod]['currencies']) && in_array($paymentMethod, SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            foreach (Currency::getCurrencies() as $currency) {
+                $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
+            }
+
+            return $currencyOptions;
+        }
+
         foreach ($paymentMethods[$paymentMethod]['currencies'] as $currencyIso) {
             if (Currency::getIdByIsoCode($currencyIso)) {
                 $currencyOptions[Currency::getIdByIsoCode($currencyIso)] = $currencyIso;

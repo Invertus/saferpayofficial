@@ -23,6 +23,18 @@
 {extends file="helpers/options/options.tpl"}
 
 {block name="input" append}
+    {if $field['type'] == 'password_input'}
+        <div class="col-lg-5">
+            <input
+                    type="password"
+                    {if isset($field['id'])} id="{$field['id']}"{/if}
+                    class="{if isset($field['class'])}{$field['class']}{/if}"
+                    size="{if isset($field['size'])}{$field['size']|intval}{else}5{/if}"
+                    name="{$key}"
+                    value="{$field['value']}"
+                    {if isset($field['autocomplete']) && !$field['autocomplete']} autocomplete="off"{/if} />
+        </div>
+    {/if}
     {if $field['type'] == 'desc'}
         <div class="col-lg-5 {if isset($field['class'])}{$field['class']|escape:'htmlall':'UTF-8'}{/if}">
             {if $field['template'] == 'field-javascript-library-desc.tpl'}
