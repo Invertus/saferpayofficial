@@ -31,7 +31,7 @@ jobs:
           chmod -R 777 ${{ env.MODULE_NAME }}/var/cache
           shopt -s extglob
           rm -r !(${{ env.MODULE_NAME }})
-          find . -maxdepth 1 -type f -exec rm "{}" \;
+          find . -maxdepth 1 -type f ! -name ".htaccess" -exec rm "{}" \;
           cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
