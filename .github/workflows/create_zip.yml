@@ -25,16 +25,17 @@ jobs:
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
           cp .github/.htaccess vendor/.htaccess
-          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md
+          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md .editorconfig .gitignore
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
           chmod -R 777 ${{ env.MODULE_NAME }}/var/cache
           shopt -s extglob
           rm -r !(${{ env.MODULE_NAME }})
-          find . -maxdepth 1 -type f ! -name ".htaccess" -exec rm "{}" \;
+          find . -maxdepth 1 -type f -exec rm "{}" \;
           cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
+          include-hidden-files: true
           name: ${{ env.MODULE_NAME }}
           path: ./
