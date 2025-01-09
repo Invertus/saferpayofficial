@@ -4,6 +4,8 @@ on:
     types: [ published, edited, updated, drafted]
 jobs:
   build_release:
+    env:
+      MODULE_NAME: saferpayofficial
     name: build_release
     runs-on: ubuntu-latest
     steps:
@@ -17,27 +19,20 @@ jobs:
         with:
           php-version: '5.6'
 
-      - name: Run composer install
-        run: |
-          composer install --no-dev --optimize-autoloader --classmap-authoritative
-          composer dump-autoload --no-dev --optimize --classmap-authoritative
-
       - name: build
         # IF YOU EDIT THIS, DON'T FORGET TO EDIT deploy.yml
         run: |
+          composer install --no-dev --optimize-autoloader --classmap-authoritative
+          composer dump-autoload --no-dev --optimize --classmap-authoritative
           cp .github/.htaccess vendor/.htaccess
-          rm -rf .git
-          rm -rf .github
-          rm -rf tests
-          rm -rf cypress
-          rm -rf .docker
-          mkdir saferpayofficial
-          rsync -Rr ./ ./saferpayofficial
+          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md .editorconfig .gitignore
+          mkdir ${{ env.MODULE_NAME }}
+          rsync -Rr ./ ./${{ env.MODULE_NAME }}
+          chmod -R 777 ${{ env.MODULE_NAME }}/var/cache
           shopt -s extglob
-          rm -r !(saferpayofficial)
+          rm -r !(${{ env.MODULE_NAME }})
           find . -maxdepth 1 -type f -exec rm "{}" \;
-          cd saferpayofficial && rm -rf saferpayofficial
-          cd ../ && zip -r saferpayofficial.zip saferpayofficial/
+          cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
       - name: Update release
         id: update_release
         uses: tubone24/update_release@v1.0
