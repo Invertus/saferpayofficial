@@ -19,11 +19,6 @@ jobs:
         with:
           php-version: '5.6'
 
-      - name: Run composer install
-        run: |
-          composer install --no-dev --optimize-autoloader --classmap-authoritative
-          composer dump-autoload --no-dev --optimize --classmap-authoritative
-
       - name: build
         # IF YOU EDIT THIS, DON'T FORGET TO EDIT deploy.yml
         run: |
