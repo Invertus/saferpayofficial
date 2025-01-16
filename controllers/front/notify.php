@@ -101,9 +101,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
-        if ($cartAdapter->orderExists($cartId)) {
-            $order = new Order($this->getOrderId($cartId));
+        $order = new Order($this->getOrderId($cartId));
 
+        if ($cartAdapter->orderExists($cartId) && $order->getCurrentState() != _SAFERPAY_PAYMENT_PENDING_) {
             $logger->debug(sprintf('%s - Order already created. Dying.', self::FILE_NAME), [
                 'context' => [
                     'id_order' => $order->id,
