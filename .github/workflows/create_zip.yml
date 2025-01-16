@@ -1,25 +1,26 @@
-name: Deploy
+name: Create module ZIP
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  prepare-zip:
+    name: Prepare module ZIP artifact
+    runs-on: ubuntu-latest
     env:
       MODULE_NAME: saferpayofficial
-    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.2
-
-      - name: Install PHP 5.6
-        uses: shivammathur/setup-php@v2
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.0
         with:
-          php-version: '5.6'
+          access_token: ${{ github.token }}
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Build module ZIP
-        # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
@@ -32,10 +33,9 @@ jobs:
           rm -r !(${{ env.MODULE_NAME }})
           find . -maxdepth 1 -type f -exec rm "{}" \;
           cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
-      - name: Archive production artifacts
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           include-hidden-files: true
-          name: saferpayofficial
-          path: |
-            .
+          name: ${{ env.MODULE_NAME }}
+          path: ./
