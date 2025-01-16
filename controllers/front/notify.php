@@ -98,23 +98,20 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             }
         }
 
-        /** @var \Invertus\SaferPay\Adapter\Cart $cartAdaoter */
+        /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
         if ($cartAdapter->orderExists($cartId)) {
             $order = new Order($this->getOrderId($cartId));
-            $completed = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
-            if ((int) $order->current_state === $completed) {
-                $logger->debug(sprintf('%s - Order already complete. Dying.', self::FILE_NAME), [
-                    'context' => [
-                        'id_order' => $order->id,
-                        'current_state' => $order->current_state,
-                    ],
-                ]);
+            $logger->debug(sprintf('%s - Order already created. Dying.', self::FILE_NAME), [
+                'context' => [
+                    'id_order' => $order->id,
+                    'current_state' => $order->current_state,
+                ],
+            ]);
 
-                die($this->module->l('Order already complete', self::FILE_NAME));
-            }
+            die($this->module->l('Order already complete', self::FILE_NAME));
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -126,6 +123,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             /** @var CheckoutProcessor $checkoutProcessor **/
             $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+
             $checkoutData = CheckoutData::create(
                 (int) $cart->id,
                 $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
@@ -279,7 +277,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         if (method_exists('Order', 'getIdByCartId')) {
             return Order::getIdByCartId($cartId);
         }
-        // For PrestaShop 1.6 use the alternative method
+
         return Order::getOrderByCartId($cartId);
     }
 
