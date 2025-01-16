@@ -117,14 +117,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
         if ($cartAdapter->orderExists($cart->id)) {
-            if (method_exists('Order', 'getIdByCartId')) {
-                $orderId = Order::getIdByCartId($cartId);
-            } else {
-                // For PrestaShop 1.6 use the alternative method
-                $orderId = Order::getOrderByCartId($cartId);
-            }
-
-            $order = new Order($orderId);
+            $order = new Order($this->getOrderId($cartId));
 
             $saferPayAuthorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
             $saferPayCapturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
@@ -137,7 +130,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     $this->getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard),
                     [
                         'cartId' => $cartId,
-                        'orderId' => $orderId,
+                        'orderId' => $order->id,
                         'moduleId' => $moduleId,
                         'secureKey' => $secureKey,
                         'selectedCard' => $selectedCard,
