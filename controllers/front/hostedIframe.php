@@ -38,8 +38,6 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $this->context->cookie->saferpay_webhook = 0;
-
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         parent::initContent();

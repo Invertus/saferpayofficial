@@ -94,7 +94,12 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $checkoutData = CheckoutData::create(
                 (int) $this->context->cart->id,
                 $paymentMethod,
-                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                -1,
+                null,
+                null,
+                false,
+                1
             );
 
             $redirectLink = $checkoutController->execute($checkoutData);

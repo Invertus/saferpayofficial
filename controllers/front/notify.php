@@ -129,7 +129,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $checkoutData = CheckoutData::create(
                 (int) $cart->id,
                 $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-                (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+                (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE),
+                -1,
+                null,
+                null,
+                false,
+                1
             );
 
             $checkoutData->setOrderStatus($transactionStatus);

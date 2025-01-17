@@ -91,8 +91,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
     {
         parent::initContent();
 
-        $this->context->cookie->saferpay_webhook = 0;
-
         $paymentMethod = Tools::getValue('saved_card_method');
         $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");
 
@@ -109,7 +107,11 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 (int) $this->context->cart->id,
                 $paymentMethod,
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
-                $selectedCard
+                $selectedCard,
+                null,
+                null,
+                false,
+                0
             );
 
             $redirectUrl = $checkoutController->execute($checkoutData);
