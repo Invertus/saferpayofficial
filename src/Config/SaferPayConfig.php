@@ -287,6 +287,8 @@ class SaferPayConfig
         self::SUPER_CHECKOUT_MODULE,
     ];
 
+    const SAFERPAY_WEBHOOK = 'SAFERPAY_WEBHOOK';
+
     public static function supportsOrderCapture($paymentMethod)
     {
         //payments that DOES NOT SUPPORT capture
