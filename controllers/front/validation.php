@@ -47,12 +47,13 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $this->context->cookie->__set(SaferPayConfig::SAFERPAY_WEBHOOK, 1);
+        $this->context->cookie->saferpay_webhook = 1;
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         $paymentMethod = Tools::getValue('saved_card_method');
         $cart = $this->context->cart;
+
         $redirectLink = $this->context->link->getPageLink(
             'order',
             true,

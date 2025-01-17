@@ -91,7 +91,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
     {
         parent::initContent();
 
-        $this->context->cookie->__set(SaferPayConfig::SAFERPAY_WEBHOOK, 0);
+        $this->context->cookie->saferpay_webhook = 0;
 
         $paymentMethod = Tools::getValue('saved_card_method');
         $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");

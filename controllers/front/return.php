@@ -52,7 +52,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
-        $isWebhook = $this->context->cookie->__get(SaferPayConfig::SAFERPAY_WEBHOOK);
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
@@ -110,8 +109,10 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         {
             $order = new Order($this->getOrderId($cartId));
 
+            $cookis = $this->context->cookie->saferpay_webhook;
+
             try {
-                if (!$isWebhook) {
+                if (!$this->context->cookie->saferpay_webhook) {
                     $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
                 }
             } catch (Exception $e) {
