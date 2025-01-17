@@ -27,7 +27,6 @@ use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
-use Invertus\SaferPay\Utility\CookieUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -48,9 +47,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        /** @var CookieUtility $cookieUtility */
-        $cookieUtility = $this->module->getService(CookieUtility::class);
-        $cookieUtility->setCookie(SaferPayConfig::SAFERPAY_WEBHOOK, 1);
+        $this->context->cookie->__set(SaferPayConfig::SAFERPAY_WEBHOOK, 1);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 

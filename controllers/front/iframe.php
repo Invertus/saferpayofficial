@@ -25,10 +25,8 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
-use Invertus\SaferPay\DTO\Request\ReturnUrl;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Logger\LoggerInterface;
-use Invertus\SaferPay\Utility\CookieUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -93,9 +91,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
     {
         parent::initContent();
 
-        /** @var CookieUtility $cookieUtility */
-        $cookieUtility = $this->module->getService(CookieUtility::class);
-        $cookieUtility->setCookie(SaferPayConfig::SAFERPAY_WEBHOOK, 0);
+        $this->context->cookie->__set(SaferPayConfig::SAFERPAY_WEBHOOK, 0);
 
         $paymentMethod = Tools::getValue('saved_card_method');
         $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");

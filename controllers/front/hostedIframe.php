@@ -23,7 +23,6 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Logger\LoggerInterface;
-use Invertus\SaferPay\Utility\CookieUtility;
 use PrestaShop\PrestaShop\Core\Checkout\TermsAndConditions;
 
 if (!defined('_PS_VERSION_')) {
@@ -39,9 +38,7 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        /** @var CookieUtility $cookieUtility */
-        $cookieUtility = $this->module->getService(CookieUtility::class);
-        $cookieUtility->setCookie(SaferPayConfig::SAFERPAY_WEBHOOK, 0);
+        $this->context->cookie->__set(SaferPayConfig::SAFERPAY_WEBHOOK, 0);
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 

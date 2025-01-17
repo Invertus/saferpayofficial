@@ -35,7 +35,6 @@ use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
-use Invertus\SaferPay\Utility\CookieUtility;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -51,12 +50,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        /** @var CookieUtility $cookieUtility */
-        $cookieUtility = $this->module->getService(CookieUtility::class);
-        $isWebhook = $cookieUtility->getCookie(SaferPayConfig::SAFERPAY_WEBHOOK);
-
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
+        $isWebhook = $this->context->cookie->__get(SaferPayConfig::SAFERPAY_WEBHOOK);
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
