@@ -57,8 +57,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
-        $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
-        $fieldToken = Tools::getValue('fieldToken');
         $cartId = (int) Tools::getValue('cartId');
         $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
@@ -66,7 +64,6 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $paymentMethod = $order->id ? $order->payment : Tools::getValue('paymentMethod');
         $cart = new Cart($cartId);
         $failController = $this->getFailController($paymentMethod);
-        $usingSavedCard = $selectedCard > 0;
 
         if (!Validate::isLoadedObject($cart)) {
             $this->warning[] = $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME);
