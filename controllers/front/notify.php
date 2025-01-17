@@ -103,7 +103,9 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         $order = new Order($this->getOrderId($cartId));
 
-        if ($cartAdapter->orderExists($cartId) && $order->getCurrentState() != _SAFERPAY_PAYMENT_PENDING_) {
+        $awaitingState = \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT);
+
+        if ($cartAdapter->orderExists($cartId) && $order->getCurrentState() != $awaitingState) {
             $logger->debug(sprintf('%s - Order already created. Dying.', self::FILE_NAME), [
                 'context' => [
                     'id_order' => $order->id,
