@@ -109,10 +109,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         {
             $order = new Order($this->getOrderId($cartId));
 
-            $cookis = $this->context->cookie->saferpay_webhook;
-
             try {
-                if (!$this->context->cookie->saferpay_webhook) {
+                if (!Tools::getValue('isWebhook')) {
                     $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
                 }
             } catch (Exception $e) {
