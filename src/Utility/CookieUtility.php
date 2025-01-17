@@ -38,11 +38,4 @@ class CookieUtility
 
         return $_COOKIE[$name];
     }
-
-    public function deleteCookie($name)
-    {
-        unset($_COOKIE['remember_user']);
-
-        return setcookie('remember_user', '', -1, '/');
-    }
 }
