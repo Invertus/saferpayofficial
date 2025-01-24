@@ -96,8 +96,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
                 -1,
                 null,
                 null,
-                false,
-                1
+                false
             );
 
             $redirectLink = $checkoutController->execute($checkoutData);
