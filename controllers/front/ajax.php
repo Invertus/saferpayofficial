@@ -197,7 +197,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 Tools::getValue('selectedCard'),
                 Tools::getValue('fieldToken'),
                 ControllerName::SUCCESS_HOSTED,
-                true
+                true,
+                0
             );
 
             /** @var CheckoutController $checkoutController */

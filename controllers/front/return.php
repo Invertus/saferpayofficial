@@ -110,7 +110,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $order = new Order($this->getOrderId($cartId));
 
             try {
-                $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
+                if (!Tools::getValue('isWebhook')) {
+                    $this->createAndValidateOrder($assertResponseBody, $transactionStatus, $cartId, $orderPayment);
+                }
             } catch (Exception $e) {
                 $logger->debug($e->getMessage(), [
                     'context' => [],
@@ -138,6 +140,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
     }
+
     /**
      * @throws PrestaShopException
      */
@@ -183,14 +186,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
         if ($cartAdapter->orderExists($cart->id)) {
-            if (method_exists('Order', 'getIdByCartId')) {
-                $orderId = Order::getIdByCartId($cartId);
-            } else {
-                // For PrestaShop 1.6 use the alternative method
-                $orderId = Order::getOrderByCartId($cartId);
-            }
-
-            $order = new Order($orderId);
+            $order = new Order($this->getOrderId($cartId));
 
             $saferPayAuthorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
             $saferPayCapturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
@@ -203,7 +199,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                     $this->getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard),
                     [
                         'cartId' => $cartId,
-                        'orderId' => $orderId,
+                        'orderId' => $order->id,
                         'moduleId' => $moduleId,
                         'secureKey' => $secureKey,
                         'selectedCard' => $selectedCard,

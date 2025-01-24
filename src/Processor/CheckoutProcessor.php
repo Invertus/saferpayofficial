@@ -108,7 +108,8 @@ class CheckoutProcessor
                 $data->getIsBusinessLicense(),
                 $data->getSelectedCard(),
                 $data->getFieldToken(),
-                $data->getSuccessController()
+                $data->getSuccessController(),
+                $data->getIsWebhook()
             );
         } catch (\Exception $exception) {
             throw new SaferPayApiException('Failed to initialize payment API', SaferPayApiException::INITIALIZE);
@@ -194,14 +195,16 @@ class CheckoutProcessor
         $isBusinessLicense,
         $selectedCard,
         $fieldToken,
-        $successController
+        $successController,
+        $isWebhook
     ) {
         $request = $this->saferPayInitialize->buildRequest(
             $paymentMethod,
             $isBusinessLicense,
             $selectedCard,
             $fieldToken,
-            $successController
+            $successController,
+            $isWebhook
         );
 
         return $this->saferPayInitialize->initialize($request, $isBusinessLicense);
