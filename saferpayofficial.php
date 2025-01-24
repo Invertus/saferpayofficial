@@ -21,8 +21,6 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Config\SaferPayConfig;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -218,7 +216,7 @@ Thank you for your patience!');
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
-            if (in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig\Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
                 foreach (Currency::getCurrencies() as $currency) {
                     $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
                 }
@@ -227,7 +225,7 @@ Thank you for your patience!');
             }
 
             if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
-                && !in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
                 continue;
             }
 
