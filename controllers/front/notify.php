@@ -98,23 +98,22 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             }
         }
 
-        /** @var \Invertus\SaferPay\Adapter\Cart $cartAdaoter */
+        /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
-        if ($cartAdapter->orderExists($cartId)) {
-            $order = new Order($this->getOrderId($cartId));
-            $completed = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+        $order = new Order($this->getOrderId($cartId));
 
-            if ((int) $order->current_state === $completed) {
-                $logger->debug(sprintf('%s - Order already complete. Dying.', self::FILE_NAME), [
-                    'context' => [
-                        'id_order' => $order->id,
-                        'current_state' => $order->current_state,
-                    ],
-                ]);
+        $awaitingState = \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT);
 
-                die($this->module->l('Order already complete', self::FILE_NAME));
-            }
+        if ($cartAdapter->orderExists($cartId) && $order->getCurrentState() != $awaitingState && $order->payment != SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT) {
+            $logger->debug(sprintf('%s - Order already created. Dying.', self::FILE_NAME), [
+                'context' => [
+                    'id_order' => $order->id,
+                    'current_state' => $order->current_state,
+                ],
+            ]);
+
+            die($this->module->l('Order already complete', self::FILE_NAME));
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -126,10 +125,16 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             /** @var CheckoutProcessor $checkoutProcessor **/
             $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
+
             $checkoutData = CheckoutData::create(
                 (int) $cart->id,
                 $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-                (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+                (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE),
+                -1,
+                null,
+                null,
+                false,
+                1
             );
 
             $checkoutData->setOrderStatus($transactionStatus);
@@ -279,7 +284,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         if (method_exists('Order', 'getIdByCartId')) {
             return Order::getIdByCartId($cartId);
         }
-        // For PrestaShop 1.6 use the alternative method
+
         return Order::getOrderByCartId($cartId);
     }
 
