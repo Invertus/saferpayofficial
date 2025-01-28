@@ -216,7 +216,7 @@ Thank you for your patience!');
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
-            if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig\Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
                 foreach (Currency::getCurrencies() as $currency) {
                     $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
                 }
