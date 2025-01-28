@@ -182,3 +182,7 @@
 - Added new payment methods: Blik, ClickToPay
 - Fixed performance issues when loading "Payments" tab in Back office.
 - Fixed issue when saferpay logic is executing on other payment methods which is not saferpay
+
+## [1.2.6]
+- Fixed minor issues with PrestaShop 1.6 compatibility
+- Fixed issues with double same statuses in order

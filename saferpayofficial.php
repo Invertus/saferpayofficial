@@ -21,8 +21,6 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Config\SaferPayConfig;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -42,7 +40,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '1.2.5';
+        $this->version = '1.2.6';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -218,7 +216,7 @@ Thank you for your patience!');
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
-            if (in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
                 foreach (Currency::getCurrencies() as $currency) {
                     $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
                 }
@@ -227,7 +225,7 @@ Thank you for your patience!');
             }
 
             if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
-                && !in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
                 continue;
             }
 
@@ -371,7 +369,7 @@ Thank you for your patience!');
         $isCreditCardSaveEnabled =
             Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::CREDIT_CARD_SAVE);
         if (!$isCreditCardSaveEnabled) {
-            return;
+            return '';
         }
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
             return $this->display(__FILE__, 'front/MyAccount.tpl');
@@ -383,7 +381,7 @@ Thank you for your patience!');
     public function displayNavigationTop()
     {
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-            return;
+            return '';
         }
 
         $menu_tabs = [];
@@ -553,7 +551,7 @@ Thank you for your patience!');
     public function hookPaymentReturn()
     {
         if (\Invertus\SaferPay\Config\SaferPayConfig::isVersion17()) {
-            return;
+            return '';
         }
 
         /** @var \Invertus\SaferPay\Builder\OrderConfirmationMessageTemplate $OrderConfirmationMessageTemplate */
@@ -604,9 +602,9 @@ Thank you for your patience!');
             if ((int) Configuration::get(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
                 return true;
             }
-
-            return false;
         }
+
+        return false;
     }
 
     public function hookActionAdminControllerSetMedia()
@@ -666,8 +664,10 @@ Thank you for your patience!');
     {
         $orderId = $params['id_order'];
         $order = new Order($orderId);
-        /** @var SaferPayOrderRepository $orderRepo */
+
+        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $orderRepo */
         $orderRepo = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+
         $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
