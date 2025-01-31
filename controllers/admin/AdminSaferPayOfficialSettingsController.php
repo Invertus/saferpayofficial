@@ -80,18 +80,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         $this->context->smarty->assign(SaferPayConfig::PASSWORD, SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER);
 
-        $savedCardSetting = SaferPayConfig::isVersion17() ? [
-            'type' => 'radio',
-            'title' => $this->l('Credit card saving for customers'),
-            'validation' => 'isInt',
-            'choices' => [
-                1 => $this->l('Enable'),
-                0 => $this->l('Disable'),
-            ],
-            'desc' => $this->l('Allow customers to save credit card for faster purchase'),
-            'form_group_class' => 'thumbs_chose',
-        ] : null;
-
         $this->fields_options = [
             'login_configurations' => [
                 'title' => $this->l('TEST MODE'),
@@ -275,7 +263,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                         'desc' => $this->l('Default payment behavior for payment without 3-D Secure'),
                         'form_group_class' => 'thumbs_chose',
                     ],
-                    SaferPayConfig::CREDIT_CARD_SAVE => $savedCardSetting,
                     SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT => [
                         'type' => 'radio',
                         'title' => $this->l('Restrict RefundAmount To Captured Amount'),
@@ -330,40 +317,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
 
         if (SaferPayConfig::isVersion17()) {
-            $this->fields_options[] =
-                [
-                    'title' => $this->module->l('Email sending'),
-                    'icon' => 'icon-settings',
-                    'fields' => [
-                        SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => [
-                            'title' => $this->l('Send an email from Saferpay on payment completion'),
-                            'desc' => $this->l('With this setting enabled an email from the Saferpay system will be sent to the customer'),
-                            'validation' => 'isBool',
-                            'cast' => 'intval',
-                            'type' => 'bool',
-                        ],
-                        SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL => [
-                            'title' => $this->l('Send new order mail on authorization'),
-                            'desc' => $this->l('Receive a notification when an order is authorized by Saferpay (Using the Mail alert module)'),
-                            'validation' => 'isBool',
-                            'cast' => 'intval',
-                            'type' => 'bool',
-                        ],
-                        SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL . '_description' => [
-                            'type' => 'desc',
-                            'class' => 'col-lg-12',
-                            'template' => 'field-new-order-mail-desc.tpl',
-                        ],
-                    ],
-                    'buttons' => [
-                        'save_and_connect' => [
-                            'title' => $this->l('Save'),
-                            'icon' => 'process-icon-save',
-                            'class' => 'btn btn-default pull-right',
-                            'type' => 'submit',
-                        ],
-                    ],
-                ];
+            $this->fields_options[] = $this->displaySavedCardsConfiguration();
+            $this->fields_options[] = $this->displayEmailSettings();
         }
 
         $this->fields_options[] = $this->getFieldOptionsOrderState();
@@ -434,9 +389,66 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
+    private function displaySavedCardsConfiguration()
+    {
+        return [
+            'title' => $this->l('Credit card saving'),
+            'fields' => [
+                SaferPayConfig::CREDIT_CARD_SAVE => [
+                    'type' => 'radio',
+                    'title' => $this->l('Credit card saving for customers'),
+                    'validation' => 'isInt',
+                    'choices' => [
+                        1 => $this->l('Enable'),
+                        0 => $this->l('Disable'),
+                    ],
+                    'desc' => $this->l('Allow customers to save credit card for faster purchase'),
+                    'form_group_class' => 'thumbs_chose',
+                ],
+            ]
+        ];
+    }
+
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);
         $this->addJS("{$this->module->getPathUri()}views/js/admin/saferpay_settings.js");
+    }
+
+    private function displayEmailSettings()
+    {
+        return [
+            'title' => $this->l('Email sending'),
+            'icon' => 'icon-settings',
+            'fields' => [
+                SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => [
+                    'title' => $this->l('Send an email from Saferpay on payment completion'),
+                    'desc' => $this->l('With this setting enabled an email from the Saferpay system will be sent to the customer'),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                ],
+                SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL => [
+                    'title' => $this->l('Send new order mail on authorization'),
+                    'desc' => $this->l('Receive a notification when an order is authorized by Saferpay (Using the Mail alert module)'),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                ],
+                SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL . '_description' => [
+                    'type' => 'desc',
+                    'class' => 'col-lg-12',
+                    'template' => 'field-new-order-mail-desc.tpl',
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ],
+        ];
     }
 }
