@@ -80,241 +80,11 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         $this->context->smarty->assign(SaferPayConfig::PASSWORD, SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER);
 
-        $this->fields_options = [
-            'login_configurations' => [
-                'title' => $this->l('TEST MODE'),
-                'icon' => 'icon-settings',
-                'fields' => [
-                    SaferPayConfig::TEST_MODE => [
-                        'title' => $this->l('Test mode'),
-                        'validation' => 'isBool',
-                        'cast' => 'intval',
-                        'type' => 'bool',
-                    ],
-                ],
-                'buttons' => [
-                    'save_and_connect' => [
-                        'title' => $this->l('Save'),
-                        'icon' => 'process-icon-save',
-                        'class' => 'btn btn-default pull-right',
-                        'type' => 'submit',
-                    ],
-                ],
-            ],
-            [
-                'title' => $this->l('Live environment'),
-                'icon' => 'icon-settings',
-                'fields' => [
-                    SaferPayConfig::USERNAME => [
-                        'title' => $this->l('JSON API Username'),
-                        'type' => 'text',
-                        'validation' => 'isGenericName',
-                        'class' => 'fixed-width-xl',
-                    ],
-                    SaferPayConfig::PASSWORD => [
-                        'title' => $this->l('JSON API Password'),
-                        'type' => 'password_input',
-                        'class' => 'fixed-width-xl',
-                        'value' => Configuration::get(SaferPayConfig::PASSWORD),
-                    ],
-                    SaferPayConfig::CUSTOMER_ID => [
-                        'title' => $this->l('Customer ID'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                        'size' => 3,
-                    ],
-                    SaferPayConfig::TERMINAL_ID => [
-                        'title' => $this->l('Terminal ID'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                    ],
-                    SaferPayConfig::MERCHANT_EMAILS => [
-                        'title' => $this->l('Merchant emails'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                    ],
-                    SaferPayConfig::FIELDS_ACCESS_TOKEN . '_description' => [
-                        'type' => 'desc',
-                        'class' => 'col-lg-12',
-                        'template' => 'field-access-token-desc.tpl',
-                    ],
-                    SaferPayConfig::FIELDS_ACCESS_TOKEN => [
-                        'title' => $this->l('Field Access Token'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xxl',
-                    ],
-                    SaferPayConfig::FIELDS_LIBRARY . '_description' => [
-                        'type' => 'desc',
-                        'class' => 'col-lg-12',
-                        'template' => 'field-javascript-library-desc.tpl',
-                    ],
-                    SaferPayConfig::FIELDS_LIBRARY => [
-                        'title' => $this->l('Field Javascript library url'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xxl',
-                    ],
-                    SaferPayConfig::BUSINESS_LICENSE => [
-                        'title' => $this->l('I have Business license'),
-                        'validation' => 'isBool',
-                        'cast' => 'intval',
-                        'type' => 'bool',
-                    ],
-                ],
-                'buttons' => [
-                    'save_and_connect' => [
-                        'title' => $this->l('Save'),
-                        'icon' => 'process-icon-save',
-                        'class' => 'btn btn-default pull-right',
-                        'type' => 'submit',
-                    ],
-                ],
-            ],
-            [
-                'title' => $this->l('Test environment'),
-                'icon' => 'icon-settings',
-                'fields' => [
-                    SaferPayConfig::USERNAME . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('JSON API Username'),
-                        'type' => 'text',
-                        'validation' => 'isGenericName',
-                        'class' => 'fixed-width-xl',
-                    ],
-                    SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('JSON API Password'),
-                        'type' => 'password_input',
-                        'class' => 'fixed-width-xl',
-                        'value' => Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
-                    ],
-                    SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('Customer ID'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                        'size' => 3,
-                    ],
-                    SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('Terminal ID'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                    ],
-                    SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('Merchant emails'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                    ],
-                    SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX . '_description' => [
-                        'type' => 'desc',
-                        'class' => 'col-lg-12',
-                        'template' => 'field-access-token-desc.tpl',
-                    ],
-                    SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('Field Access Token'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xxl',
-                    ],
-                    SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX . '_description' => [
-                        'type' => 'desc',
-                        'class' => 'col-lg-12',
-                        'template' => 'field-javascript-library-desc.tpl',
-                    ],
-                    SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('Field Javascript library url'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xxl',
-                    ],
-                    SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX => [
-                        'title' => $this->l('I have Business license'),
-                        'validation' => 'isBool',
-                        'cast' => 'intval',
-                        'type' => 'bool',
-                    ],
-                ],
-                'buttons' => [
-                    'save_and_connect' => [
-                        'title' => $this->l('Save'),
-                        'icon' => 'process-icon-save',
-                        'class' => 'btn btn-default pull-right',
-                        'type' => 'submit',
-                    ],
-                ],
-            ],
-            [
-                'title' => $this->l('Payment behavior'),
-                'icon' => 'icon-settings',
-                'fields' => [
-                    SaferPayConfig::PAYMENT_BEHAVIOR => [
-                        'type' => 'radio',
-                        'title' => $this->l('Default payment behavior'),
-                        'validation' => 'isInt',
-                        'choices' => [
-                            0 => $this->l('Capture'),
-                            1 => $this->l('Authorize'),
-                        ],
-                        'desc' => $this->l('How payment provider should behave when order is created'),
-                        'form_group_class' => 'thumbs_chose',
-                    ],
-                    SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => [
-                        'type' => 'radio',
-                        'title' => $this->l('Behaviour when 3D secure fails'),
-                        'validation' => 'isInt',
-                        'choices' => [
-                            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL => $this->l('Cancel'),
-                            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE => $this->l('Authorize'),
-                        ],
-                        'desc' => $this->l('Default payment behavior for payment without 3-D Secure'),
-                        'form_group_class' => 'thumbs_chose',
-                    ],
-                    SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT => [
-                        'type' => 'radio',
-                        'title' => $this->l('Restrict RefundAmount To Captured Amount'),
-                        'validation' => 'isInt',
-                        'choices' => [
-                            1 => $this->l('Enable'),
-                            0 => $this->l('Disable'),
-                        ],
-                        'desc' => $this->l('If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.'),
-                        'form_group_class' => 'thumbs_chose',
-                    ],
-                    SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => [
-                        'type' => 'radio',
-                        'title' => $this->l('Order creation rule'),
-                        'validation' => 'isInt',
-                        'choices' => [
-                            1 => $this->l('After authorization'),
-                            0 => $this->l('Before authorization'),
-                        ],
-                        'desc' => $this->l('Select the option to determine whether the order should be created'),
-                        'form_group_class' => 'thumbs_chose',
-                    ],
-                ],
-                'buttons' => [
-                    'save_and_connect' => [
-                        'title' => $this->l('Save'),
-                        'icon' => 'process-icon-save',
-                        'class' => 'btn btn-default pull-right',
-                        'type' => 'submit',
-                    ],
-                ],
-            ],
-            [
-                'title' => $this->l('STYLING'),
-                'icon' => 'icon-settings',
-                'fields' => [
-                    SaferPayConfig::CONFIGURATION_NAME => [
-                        'title' => $this->l('Payment Page configurations name'),
-                        'type' => 'text',
-                        'class' => 'fixed-width-xl',
-                    ],
-                ],
-                'buttons' => [
-                    'save_and_connect' => [
-                        'title' => $this->l('Save'),
-                        'icon' => 'process-icon-save',
-                        'class' => 'btn btn-default pull-right',
-                        'type' => 'submit',
-                    ],
-                ],
-            ],
-        ];
+        $this->fields_options[] = $this->displayEnvironmentSelectorConfiguration();
+        $this->fields_options[] = $this->displayLiveEnvironmentConfiguration();
+        $this->fields_options[] = $this->displayTestEnvironmentConfiguration();
+        $this->fields_options[] = $this->displayPaymentBehaviorConfiguration();
+        $this->fields_options[] = $this->displayStylingConfiguration();
 
         if (SaferPayConfig::isVersion17()) {
             $this->fields_options[] = $this->displaySavedCardsConfiguration();
@@ -393,6 +163,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         return [
             'title' => $this->l('Credit card saving'),
+            'icon' => 'icon-settings',
             'fields' => [
                 SaferPayConfig::CREDIT_CARD_SAVE => [
                     'type' => 'radio',
@@ -405,7 +176,38 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'desc' => $this->l('Allow customers to save credit card for faster purchase'),
                     'form_group_class' => 'thumbs_chose',
                 ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ]
             ]
+        ];
+    }
+
+    private function displayStylingConfiguration()
+    {
+        return [
+            'title' => $this->l('Styling'),
+            'icon' => 'icon-settings',
+            'fields' => [
+                SaferPayConfig::CONFIGURATION_NAME => [
+                    'title' => $this->l('Payment Page configurations name'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xl',
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ],
         ];
     }
 
@@ -449,6 +251,236 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'type' => 'submit',
                 ],
             ],
+        ];
+    }
+
+    private function displayPaymentBehaviorConfiguration()
+    {
+        return [
+            'title' => $this->l('Payment behavior'),
+            'icon' => 'icon-settings',
+            'fields' => [
+                SaferPayConfig::PAYMENT_BEHAVIOR => [
+                    'type' => 'radio',
+                    'title' => $this->l('Default payment behavior'),
+                    'validation' => 'isInt',
+                    'choices' => [
+                        0 => $this->l('Capture'),
+                        1 => $this->l('Authorize'),
+                    ],
+                    'desc' => $this->l('How payment provider should behave when order is created'),
+                    'form_group_class' => 'thumbs_chose',
+                ],
+                SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => [
+                    'type' => 'radio',
+                    'title' => $this->l('Behaviour when 3D secure fails'),
+                    'validation' => 'isInt',
+                    'choices' => [
+                        SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL => $this->l('Cancel'),
+                        SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE => $this->l('Authorize'),
+                    ],
+                    'desc' => $this->l('Default payment behavior for payment without 3-D Secure'),
+                    'form_group_class' => 'thumbs_chose',
+                ],
+                SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT => [
+                    'type' => 'radio',
+                    'title' => $this->l('Restrict RefundAmount To Captured Amount'),
+                    'validation' => 'isInt',
+                    'choices' => [
+                        1 => $this->l('Enable'),
+                        0 => $this->l('Disable'),
+                    ],
+                    'desc' => $this->l('If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.'),
+                    'form_group_class' => 'thumbs_chose',
+                ],
+                SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => [
+                    'type' => 'radio',
+                    'title' => $this->l('Order creation rule'),
+                    'validation' => 'isInt',
+                    'choices' => [
+                        1 => $this->l('After authorization'),
+                        0 => $this->l('Before authorization'),
+                    ],
+                    'desc' => $this->l('Select the option to determine whether the order should be created'),
+                    'form_group_class' => 'thumbs_chose',
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ],
+        ];
+    }
+
+    private function displayTestEnvironmentConfiguration()
+    {
+        return [
+            'title' => $this->l('Test environment'),
+            'icon' => 'icon-settings',
+            'fields' => [
+                SaferPayConfig::USERNAME . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('JSON API Username'),
+                    'type' => 'text',
+                    'validation' => 'isGenericName',
+                    'class' => 'fixed-width-xl',
+                ],
+                SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('JSON API Password'),
+                    'type' => 'password_input',
+                    'class' => 'fixed-width-xl',
+                    'value' => Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
+                ],
+                SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('Customer ID'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xl',
+                    'size' => 3,
+                ],
+                SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('Terminal ID'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xl',
+                ],
+                SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('Merchant emails'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xl',
+                ],
+                SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX . '_description' => [
+                    'type' => 'desc',
+                    'class' => 'col-lg-12',
+                    'template' => 'field-access-token-desc.tpl',
+                ],
+                SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('Field Access Token'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xxl',
+                ],
+                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX . '_description' => [
+                    'type' => 'desc',
+                    'class' => 'col-lg-12',
+                    'template' => 'field-javascript-library-desc.tpl',
+                ],
+                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('Field Javascript library url'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xxl',
+                ],
+                SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX => [
+                    'title' => $this->l('I have Business license'),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ],
+        ];
+    }
+
+    private function displayLiveEnvironmentConfiguration()
+    {
+        return [
+            'title' => $this->l('Live environment'),
+            'icon' => 'icon-settings',
+            'fields' => [
+                SaferPayConfig::USERNAME => [
+                    'title' => $this->l('JSON API Username'),
+                    'type' => 'text',
+                    'validation' => 'isGenericName',
+                    'class' => 'fixed-width-xl',
+                ],
+                SaferPayConfig::PASSWORD => [
+                    'title' => $this->l('JSON API Password'),
+                    'type' => 'password_input',
+                    'class' => 'fixed-width-xl',
+                    'value' => Configuration::get(SaferPayConfig::PASSWORD),
+                ],
+                SaferPayConfig::CUSTOMER_ID => [
+                    'title' => $this->l('Customer ID'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xl',
+                    'size' => 3,
+                ],
+                SaferPayConfig::TERMINAL_ID => [
+                    'title' => $this->l('Terminal ID'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xl',
+                ],
+                SaferPayConfig::MERCHANT_EMAILS => [
+                    'title' => $this->l('Merchant emails'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xl',
+                ],
+                SaferPayConfig::FIELDS_ACCESS_TOKEN . '_description' => [
+                    'type' => 'desc',
+                    'class' => 'col-lg-12',
+                    'template' => 'field-access-token-desc.tpl',
+                ],
+                SaferPayConfig::FIELDS_ACCESS_TOKEN => [
+                    'title' => $this->l('Field Access Token'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xxl',
+                ],
+                SaferPayConfig::FIELDS_LIBRARY . '_description' => [
+                    'type' => 'desc',
+                    'class' => 'col-lg-12',
+                    'template' => 'field-javascript-library-desc.tpl',
+                ],
+                SaferPayConfig::FIELDS_LIBRARY => [
+                    'title' => $this->l('Field Javascript library url'),
+                    'type' => 'text',
+                    'class' => 'fixed-width-xxl',
+                ],
+                SaferPayConfig::BUSINESS_LICENSE => [
+                    'title' => $this->l('I have Business license'),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ],
+        ];
+    }
+
+    private function displayEnvironmentSelectorConfiguration()
+    {
+        return [
+            'title' => $this->l('Select environment'),
+            'icon' => 'icon-settings',
+            'fields' => [
+                SaferPayConfig::TEST_MODE => [
+                    'title' => $this->l('Test mode'),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                ],
+            ],
+            'buttons' => [
+                'save_and_connect' => [
+                    'title' => $this->l('Save'),
+                    'icon' => 'process-icon-save',
+                    'class' => 'btn btn-default pull-right',
+                    'type' => 'submit',
+                ],
+            ]
         ];
     }
 }
