@@ -480,7 +480,7 @@ Thank you for your patience!');
                 $paymentMethod['currencies'] = $currencyProvider->getAllCurrenciesInArray();
             }
 
-            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])) {
+            if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])) {
                 continue;
             }
 
