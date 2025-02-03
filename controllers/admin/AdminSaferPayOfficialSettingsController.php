@@ -95,6 +95,19 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $this->fields_options[] = $this->displayConfigurationSettings();
     }
 
+    /**
+     * @param $isNewTheme
+     * @return void
+     */
+    public function setMedia($isNewTheme = false)
+    {
+        parent::setMedia($isNewTheme);
+        $this->addJS("{$this->module->getPathUri()}views/js/admin/saferpay_settings.js");
+    }
+
+    /**
+     * @return array
+     */
     private function getFieldOptionsOrderState()
     {
         return [
@@ -159,6 +172,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
+    /**
+     * @return array
+     */
     private function displaySavedCardsConfiguration()
     {
         return [
@@ -188,6 +204,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
+    /**
+     * @return array
+     */
     private function displayStylingConfiguration()
     {
         return [
@@ -211,12 +230,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
-    public function setMedia($isNewTheme = false)
-    {
-        parent::setMedia($isNewTheme);
-        $this->addJS("{$this->module->getPathUri()}views/js/admin/saferpay_settings.js");
-    }
-
+    /**
+     * @return array
+     */
     private function displayEmailSettings()
     {
         return [
@@ -254,6 +270,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
+    /**
+     * @return array
+     */
     private function displayPaymentBehaviorConfiguration()
     {
         return [
@@ -316,6 +335,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
+    /**
+     * @return array
+     */
     private function displayTestEnvironmentConfiguration()
     {
         return [
@@ -388,6 +410,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
+    /**
+     * @return array
+     */
     private function displayLiveEnvironmentConfiguration()
     {
         return [
@@ -460,6 +485,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
     }
 
+    /**
+     * @return array
+     */
     private function displayEnvironmentSelectorConfiguration()
     {
         return [
