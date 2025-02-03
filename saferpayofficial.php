@@ -212,16 +212,14 @@ Thank you for your patience!');
         $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();
         $activePaymentMethods = array_column($activePaymentMethods, 'name');
 
+        /** @var \Invertus\SaferPay\Provider\CurrencyProvider $currencyProvider */
+        $currencyProvider = $this->getService(\Invertus\SaferPay\Provider\CurrencyProvider::class);
 
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
             if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
-                foreach (Currency::getCurrencies() as $currency) {
-                    $currencyOptions[$currency['id_currency']] = $currency['iso_code'];
-                }
-
-                $paymentMethod['currencies'] = $currencyOptions;
+                $paymentMethod['currencies'] = $currencyProvider->getAllCurrenciesInArray();
             }
 
             if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
@@ -468,6 +466,9 @@ Thank you for your patience!');
             \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
         );
 
+        /** @var \Invertus\SaferPay\Provider\CurrencyProvider $currencyProvider */
+        $currencyProvider = $this->getService(\Invertus\SaferPay\Provider\CurrencyProvider::class);
+
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
@@ -475,7 +476,11 @@ Thank you for your patience!');
                 continue;
             }
 
-            if (!in_array($this->context->currency->iso_code, $paymentMethods[$paymentMethod['paymentMethod']]['currencies'])) {
+            if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+                $paymentMethod['currencies'] = $currencyProvider->getAllCurrenciesInArray();
+            }
+
+            if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])) {
                 continue;
             }
 
