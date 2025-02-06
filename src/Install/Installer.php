@@ -104,13 +104,6 @@ class Installer extends AbstractInstaller
 
         foreach ($configuration as $name => $value) {
             if (!Configuration::updateValue($name, $value, false, 0, 0)) {
-                \PrestaShopLogger::addLog(
-                    "Failed to install configuration {$name}",
-                    3,
-                    null,
-                    'SaferPay'
-                );
-
                 return false;
             }
         }
