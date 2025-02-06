@@ -57,11 +57,6 @@ class Installer extends AbstractInstaller
     {
         $this->registerHooks();
 
-        if (!$this->installConfiguration()) {
-            $this->errors[] = $this->module->l('Failed to install configuration', __CLASS__);
-            return false;
-        }
-
         if (!$this->processDatabase()) {
             $this->errors[] = $this->module->l('Failed to install database', __CLASS__);
             return false;
@@ -69,6 +64,11 @@ class Installer extends AbstractInstaller
 
         if (!$this->createAllOrderStatus()) {
             $this->errors[] = $this->module->l('Failed to create order status', __CLASS__);
+            return false;
+        }
+
+        if (!$this->installConfiguration()) {
+            $this->errors[] = $this->module->l('Failed to install configuration', __CLASS__);
             return false;
         }
 
