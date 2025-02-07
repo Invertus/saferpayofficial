@@ -744,4 +744,44 @@ Thank you for your patience!');
 
         return true;
     }
+
+    /**
+     * Override method to add "IGNORE" in the SQL Request to prevent duplicate entry and for getting All Carriers installed
+     * Add checkbox carrier restrictions for a new module.
+     *
+     * @see PaymentModuleCore
+     *
+     * @param array $shopsList List of Shop identifier
+     *
+     * @return bool
+     */
+    public function addCheckboxCarrierRestrictionsForModule(array $shopsList = [])
+    {
+        if (false === version_compare(_PS_VERSION_, '1.7.0.0', '>=')) {
+            return true;
+        }
+
+        $shopsList = empty($shopsList) ? Shop::getShops(true, null, true) : $shopsList;
+        $carriersList = Carrier::getCarriers((int) \Context::getContext()->language->id, false, false, false, null, Carrier::ALL_CARRIERS);
+        $allCarriers = array_column($carriersList, 'id_reference');
+        $dataToInsert = [];
+
+        foreach ($shopsList as $idShop) {
+            foreach ($allCarriers as $idCarrier) {
+                $dataToInsert[] = [
+                    'id_reference' => (int) $idCarrier,
+                    'id_shop' => (int) $idShop,
+                    'id_module' => (int) $this->id,
+                ];
+            }
+        }
+
+        return \Db::getInstance()->insert(
+            'module_carrier',
+            $dataToInsert,
+            false,
+            true,
+            Db::INSERT_IGNORE
+        );
+    }
 }
