@@ -412,7 +412,7 @@ class SaferPayConfig
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => 0,
             self::TEST_MODE => 1,
             self::HOSTED_FIELDS_TEMPLATE => self::HOSTED_FIELDS_TEMPLATE_DEFAULT,
-            self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => Configuration::get(
+            self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => (int) Configuration::get(
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
         ];
