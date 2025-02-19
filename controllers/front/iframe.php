@@ -69,12 +69,15 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 break;
             }
         }
+
         if (!$authorized) {
-            $this->errors[] =
-                $this->module->l('This payment method is not available.', self::FILE_NAME);
+            $this->errors[] = $this->module->l('This payment method is not available.', self::FILE_NAME);
+
             $this->redirectWithNotifications($redirectLink);
         }
+
         $customer = new Customer($cart->id_customer);
+
         if (!Validate::isLoadedObject($customer)) {
             $logger->error(sprintf('%s - Customer not found', self::FILE_NAME), [
                 'context' => [],
@@ -136,6 +139,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
 
         if (SaferPayConfig::isVersion17()) {
             $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_iframe.tpl');
+
             return;
         }
 
