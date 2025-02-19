@@ -59,6 +59,12 @@ class CheckoutProcessor
     /** @var SaferPayOrderRepository */
     private $saferPayOrderRepository;
 
+    /** @var array */
+    private $authorizedStatuses = [
+        TransactionStatus::AUTHORIZED,
+        TransactionStatus::CAPTURED,
+    ];
+
     public function __construct(
         ModuleFactory $module,
         SaferPayOrderBuilder $saferPayOrderBuilder,
@@ -78,7 +84,7 @@ class CheckoutProcessor
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        if (!$cart) {
+        if (!\Validate::isLoadedObject($cart)) {
             $logger->debug(sprintf('%s - Cart not found', self::FILE_NAME), [
                 'context' => [
                     'cartId' => $data->getCartId(),
@@ -92,12 +98,7 @@ class CheckoutProcessor
             $this->processCreateOrder($cart, $data->getPaymentMethod());
         }
 
-        $authorizedStates = [
-            TransactionStatus::AUTHORIZED,
-            TransactionStatus::CAPTURED,
-        ];
-
-        if (in_array($data->getOrderStatus(), $authorizedStates)) {
+        if (in_array($data->getOrderStatus(), $this->authorizedStatuses)) {
             $this->processAuthorizedOrder($data, $cart);
             return '';
         }
