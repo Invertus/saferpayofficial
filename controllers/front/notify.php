@@ -58,6 +58,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $cart = new Cart($cartId);
+        $orderId = $this->getOrderId($cartId);
 
         if (!Validate::isLoadedObject($cart)) {
             $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
@@ -98,7 +99,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
-        $order = new Order($this->getOrderId($cartId));
+        $order = new \Order($orderId);
 
         $awaitingState = \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT);
 
@@ -137,8 +138,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $checkoutData->setOrderStatus($transactionStatus);
             $checkoutProcessor->run($checkoutData);
 
-            $orderId = $this->getOrderId($cartId);
-
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
@@ -166,8 +165,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             // if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
             // so in this case if status comes back "captured" we just update the order state accordingly
-            if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
-                $transactionStatus === TransactionStatus::CAPTURED
+            if (!SaferPayConfig::supportsOrderCapture($paymentMethod)
+                && $transactionStatus === TransactionStatus::CAPTURED
             ) {
                 $logger->debug(sprintf('%s - order completed', self::FILE_NAME), [
                     'context' => [
@@ -177,6 +176,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+
                 $orderStatusService->setComplete($order);
 
                 return;

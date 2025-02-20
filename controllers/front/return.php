@@ -62,11 +62,13 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
         if (!Validate::isLoadedObject($cart)) {
             $this->warning[] = $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME);
+
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
         }
 
         if ($cart->secure_key !== $secureKey) {
             $this->warning[] = $this->module->l('Error. Insecure cart', self::FILE_NAME);
+
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
         }
 
@@ -120,21 +122,18 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ]);
 
                 $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
-                $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+                $this->redirectWithNotifications($this->getRedirectionToControllerUrl($this->getFailController($orderPayment)));
             }
         }
 
+        /** @var SaferPayOrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+
         try {
-            /** @var SaferPayOrderStatusService $orderStatusService */
-            $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-            if ($assertResponseBody->getTransaction()->getStatus() === TransactionStatus::PENDING) {
+            if ($assertResponseBody->getTransaction()->getStatus() !== TransactionStatus::PENDING) {
                 $orderStatusService->setPending($order);
             }
         } catch (SaferPayApiException $e) {
-            $logger->debug($e->getMessage(), [
-                'context' => [],
-                'exceptions' => ExceptionUtility::getExceptions($e),
-            ]);
             // we only care if we have a response with pending status, else we skip further actions
         }
 
