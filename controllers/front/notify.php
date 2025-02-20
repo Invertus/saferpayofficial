@@ -182,9 +182,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 return;
             }
 
-            if (SaferPayConfig::supportsOrderCapture($paymentMethod) &&
-                (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE &&
-                $transactionStatus !== TransactionStatus::CAPTURED
+            if (
+                SaferPayConfig::supportsOrderCapture($paymentMethod)
+                && (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR) === SaferPayConfig::DEFAULT_PAYMENT_BEHAVIOR_CAPTURE
+                && $transactionStatus !== TransactionStatus::CAPTURED
             ) {
                 $logger->debug(sprintf('%s - order captured', self::FILE_NAME), [
                     'context' => [
@@ -194,6 +195,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
@@ -234,12 +236,15 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 }
 
                 $saferPayOrder->update();
+
                 $this->releaseLock();
-                die('canceled');
+
+                die();
             }
 
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
+
             $logger->error(sprintf('%s - AccountToAccount order is declined', self::FILE_NAME), [
                 'context' => [
                     'orderId' => $orderId,
@@ -249,12 +254,12 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             $this->releaseLock();
 
-            die($this->module->l($e->getMessage(), self::FILE_NAME));
+            die();
         }
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
-        die($this->module->l('Success', self::FILE_NAME));
+        die();
     }
 
     private function assertTransaction($cartId)
