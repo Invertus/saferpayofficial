@@ -65,10 +65,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 'exceptions' => [],
             ]);
 
-            $this->ajaxDie(json_encode([
-                'error_type' => 'unknown_error',
-                'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
-            ]));
+            die();
         }
 
         if ($cart->secure_key !== $secureKey) {
@@ -79,7 +76,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 'exceptions' => [],
             ]);
 
-            die($this->module->l('Error. Insecure cart', self::FILE_NAME));
+            die();
         }
 
         $lockResult = $this->applyLock(sprintf(
@@ -90,11 +87,11 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         if (!SaferPayConfig::isVersion17()) {
             if ($lockResult > 200) {
-                die($this->module->l('Lock already exists', self::FILE_NAME));
+                die();
             }
         } else {
             if (!$lockResult->isSuccessful()) {
-                die($this->module->l('Lock already exists', self::FILE_NAME));
+                die();
             }
         }
 
@@ -113,7 +110,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 ],
             ]);
 
-            die($this->module->l('Order already complete', self::FILE_NAME));
+            die();
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -160,13 +157,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                     ],
                 ]);
 
-                $logger->debug(sprintf('%s - liability shift is false', self::FILE_NAME), [
-                    'context' => [
-                        'id_order' => $order->id,
-                    ],
-                ]);
-
-                die($this->module->l('Liability shift is false', self::FILE_NAME));
+                die();
             }
 
             //NOTE to get latest information possible and not override new information.
