@@ -53,7 +53,7 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
     {
         $this->fields_options = [
             'hosted_fields_settings' => [
-                'title' => $this->l('Hosted fields settings'),
+                'title' => $this->module->l('Hosted fields settings'),
                 'icon' => 'icon-settings',
                 'fields' => [
                     SaferPayConfig::HOSTED_FIELDS_TEMPLATE . '_description' => [

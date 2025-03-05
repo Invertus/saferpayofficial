@@ -70,7 +70,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         try {
             $refreshPaymentsService->refreshPayments();
         } catch (SaferPayApiException $exception) {
-            $this->errors[] = $this->l($exception->getMessage());
+            $this->errors[] = $this->module->l($exception->getMessage());
         }
 
         if (!Tools::isSubmit('submitAddconfiguration')) {
@@ -117,15 +117,15 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
                     Tools::getValue($paymentMethod . SaferPayRestrictionCreator::CURRENCY_SUFFIX)
                 );
             } catch (RestrictionException $e) {
-                $this->errors[] = $this->l('Wrong restriction type');
+                $this->errors[] = $this->module->l('Wrong restriction type');
                 $success = false;
             }
         }
 
         if (!$success) {
-            $this->errors[] = $this->l('Failed update');
+            $this->errors[] = $this->module->l('Failed update');
         } else {
-            $this->confirmations[] = $this->l('Successful update');
+            $this->confirmations[] = $this->module->l('Successful update');
         }
     }
 
@@ -216,7 +216,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $langId = $this->context->language->id;
         $countries = Country::getCountries($langId, $onlyActive);
         $countriesWithNames = [];
-        $countriesWithNames[0] = $this->l('All');
+        $countriesWithNames[0] = $this->module->l('All');
         foreach ($countries as $key => $country) {
             $countriesWithNames[$key] = $country['name'];
         }
@@ -226,7 +226,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
     public function getActiveCurrenciesList($paymentMethod, $paymentMethods)
     {
-        $currencyOptions[0] = $this->l('All');
+        $currencyOptions[0] = $this->module->l('All');
 
         if (!isset($paymentMethods[$paymentMethod]['currencies']) && in_array($paymentMethod, SaferPayConfig::WALLET_PAYMENT_METHODS)) {
             foreach (Currency::getCurrencies() as $currency) {
@@ -255,7 +255,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         ];
         $fields[] = [
             'type' => 'free',
-            'label' => $this->l('All payments'),
+            'label' => $this->module->l('All payments'),
             'name' => 'all',
             'form_group_class' => 'saferpay-group all-payments',
         ];
@@ -274,7 +274,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             );
             $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
 
-            $this->errors[] = $this->l('Please connect to SaferPay system to allowed payment methods.');
+            $this->errors[] = $this->module->l('Please connect to SaferPay system to allowed payment methods.');
 
             return;
         }
@@ -292,12 +292,12 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
         $this->fields_form = [
             'legend' => [
-                'title' => $this->l('Payments'),
+                'title' => $this->module->l('Payments'),
             ],
             'input' =>
                 $fields,
             'submit' => [
-                'title' => $this->l('Save'),
+                'title' => $this->module->l('Save'),
             ],
         ];
     }
@@ -319,7 +319,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             );
             $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
 
-            $this->errors[] = $this->l('To see available payment methods, you must connect to your SaferPay account.');
+            $this->errors[] = $this->module->l('To see available payment methods, you must connect to your SaferPay account.');
 
             return null;
         }
