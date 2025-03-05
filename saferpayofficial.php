@@ -731,7 +731,9 @@ Thank you for your patience!');
 
     public function addFlash($msg, $type)
     {
-        if (\Invertus\SaferPay\Config\SaferPayConfig::isVersionAbove177()) {
+        if (\Invertus\SaferPay\Config\SaferPayConfig::isVersionAbove177()
+            && \Invertus\SaferPay\Utility\VersionUtility::isPsVersionLessThan('9.0.0')
+        ) {
             return $this->get('session')->getFlashBag()->add($type, $msg);
         }
 
