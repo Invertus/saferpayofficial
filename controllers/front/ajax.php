@@ -80,10 +80,12 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
         if (!$saferPayOrder->id || $saferPayOrder->canceled) {
-            $this->ajaxDie(json_encode([
+            $this->ajaxRender(json_encode([
                 'isFinished' => true,
                 'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId),
             ]));
+
+            exit;
         }
 
         /** @var LoggerInterface $logger */
@@ -98,7 +100,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             ],
         ]);
 
-        $this->ajaxDie(json_encode([
+        $this->ajaxRender(json_encode([
             'saferpayOrder' => json_encode($saferPayOrder),
             'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->pending,
             'href' => $this->context->link->getModuleLink(
@@ -113,6 +115,8 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 ]
             ),
         ]));
+
+        exit;
     }
 
     private function getFailControllerLink($cartId, $secureKey, $moduleId)
@@ -162,31 +166,37 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
-            $this->ajaxDie(json_encode([
+            $this->ajaxRender(json_encode([
                 'error' => true,
                 'message' => $e->getMessage(),
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
+
+            exit;
         } catch (SaferPayException $e) {
             $logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
-            $this->ajaxDie(json_encode([
+            $this->ajaxRender(json_encode([
                 'error' => true,
                 'message' => $e->getMessage(),
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
+
+            exit;
         }
 
         try {
-            if (Order::getOrderByCartId($this->context->cart->id)) {
-                $this->ajaxDie(json_encode([
+            if (Order::getIdByCartId($this->context->cart->id)) {
+                $this->ajaxRender(json_encode([
                     'error' => true,
                     'message' => $this->module->l('Order already exists', self::FILE_NAME),
                     'url' => $this->getRedirectionToControllerUrl('fail'),
                 ]));
+
+                exit;
             }
 
             // refactor it to create checkout data from validator request
@@ -211,21 +221,25 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
 
             $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
-            $this->ajaxDie(json_encode([
+            $this->ajaxRender(json_encode([
                 'error' => false,
                 'url' => $redirectUrl,
             ]));
+
+            exit;
         } catch (Exception $e) {
             $logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
-            $this->ajaxDie(json_encode([
+            $this->ajaxRender(json_encode([
                 'error' => true,
                 'message' => $e->getMessage(),
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
+
+            exit;
         }
     }
 
@@ -241,7 +255,7 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
             $controllerName,
             [
                 'cartId' => $this->context->cart->id,
-                'orderId' => Order::getOrderByCartId($this->context->cart->id),
+                'orderId' => Order::getIdByCartId($this->context->cart->id),
                 'secureKey' => $this->context->cart->secure_key,
                 'moduleId' => $this->module->id,
             ],
