@@ -88,14 +88,10 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
             true
         );
 
-        if (method_exists($this->context->controller, 'registerStylesheet')) {
-            $this->context->controller->registerStylesheet(
-                'saferpayIFrame',
-                'modules/' . $this->module->name . '/views/css/front/loading.css'
-            );
-        } else {
-            $this->addCSS("{$this->module->getPathUri()}views/css/front/loading.css");
-        }
+        $this->context->controller->registerStylesheet(
+            'saferpayIFrame',
+            'modules/' . $this->module->name . '/views/css/front/loading.css'
+        );
 
         Media::addJsDef([
             'redirectUrl' => $failUrl,
@@ -103,7 +99,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
 
         $this->context->controller->registerJavascript(
             'saferpayIFrame',
-            '/modules/saferpayofficial/views/js/front/saferpay_iframe.js'
+            '/modules/' . $this->module->name . '/views/js/front/saferpay_iframe.js'
         );
     }
 }

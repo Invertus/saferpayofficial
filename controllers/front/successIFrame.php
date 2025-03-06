@@ -154,7 +154,7 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
 
         $this->context->controller->registerJavascript(
             'saferpayIFrame',
-            '/modules/saferpayofficial/views/js/front/saferpay_iframe.js'
+            'modules/' . $this->module->name . '/views/js/front/saferpay_iframe.js'
         );
     }
 

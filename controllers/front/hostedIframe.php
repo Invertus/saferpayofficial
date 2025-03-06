@@ -84,18 +84,18 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
 
         $this->context->controller->registerJavascript(
             'hosted-template-js-init',
-            "modules/saferpayofficial/views/js/front/hosted-templates/template" .
+            'modules/' . $this->module->name . '/views/js/front/hosted-templates/template' .
             Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
             ".js"
         );
         $this->context->controller->registerJavascript(
             'hosted-template-js-submit',
-            "modules/saferpayofficial/views/js/front/hosted-templates/template_submit.js"
+            'modules/' . $this->module->name . '/views/js/front/hosted-templates/template_submit.js'
         );
 
         $this->context->controller->registerStylesheet(
             'theme-css',
-            "modules/saferpayofficial/views/css/front/hosted-templates/template" .
+            'modules/' . $this->module->name . '/views/css/front/hosted-templates/template' .
             Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
             ".css"
         );
