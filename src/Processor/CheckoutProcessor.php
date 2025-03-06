@@ -188,7 +188,7 @@ class CheckoutProcessor
      * @param $selectedCard
      * @param $fieldToken
      * @param $successController
-     * @return array|null
+     * @return ?object
      */
     private function processInitializePayment(
         $paymentMethod,
@@ -288,10 +288,6 @@ class CheckoutProcessor
      */
     private function getOrder($cartId)
     {
-        if (method_exists('Order', 'getIdByCartId')) {
-            return new Order(Order::getIdByCartId($cartId));
-        }
-        // For PrestaShop 1.6 use the alternative method
-        return new Order(Order::getOrderByCartId($cartId));
+        return new Order(Order::getIdByCartId($cartId));
     }
 }
