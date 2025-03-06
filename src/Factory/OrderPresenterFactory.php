@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -18,34 +19,27 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- *}
+ */
 
-{extends file='checkout/checkout.tpl'}
+namespace Invertus\SaferPay\Factory;
 
-<head>
-    {block name='head'}
-        {include file='_partials/head.tpl'}
-    {/block}
-</head>
+use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderPresenter;
 
-{block name='content'}
-    <div>
-        <iframe id="saferpay-iframe" src="{$redirect|escape:'htmlall':'UTF-8'}"></iframe>
-    </div>
-{/block}
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
 
-{block name='checkout_process'}
-    <div>
-        <iframe id="saferpay-iframe" src="{$redirect|escape:'htmlall':'UTF-8'}"></iframe>
-    </div>
-{/block}
+class OrderPresenterFactory
+{
+    /**
+     * @return \PrestaShop\PrestaShop\Adapter\Order\OrderPresenter|OrderPresenter
+     */
+    public static function getOrderPresenter()
+    {
+        if (class_exists('PrestaShop\\PrestaShop\\Adapter\\Order\\OrderPresenter')) {
+            return new \PrestaShop\PrestaShop\Adapter\Order\OrderPresenter();
+        }
 
-{block name='footer'}
-    <div class="footer-container">
-        <div class="container">
-            <div class="row">
-                {hook h='displayFooter'}
-            </div>
-        </div>
-    </div>
-{/block}
+        return new \PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderPresenter();
+    }
+}

@@ -23,9 +23,9 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Factory\OrderPresenterFactory;
 use Invertus\SaferPay\Service\CartDuplicationService;
 use Invertus\SaferPay\Logger\LoggerInterface;
-use PrestaShop\PrestaShop\Adapter\Order\OrderPresenter;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -87,7 +87,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
         $cartDuplicationService = $this->module->getService(CartDuplicationService::class);
         $cartDuplicationService->restoreCart($this->id_cart);
 
-        $this->order_presenter = new OrderPresenter();
+        $this->order_presenter = OrderPresenterFactory::getOrderPresenter();
     }
 
     public function initContent()
