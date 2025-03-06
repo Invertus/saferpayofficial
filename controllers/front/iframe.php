@@ -139,6 +139,9 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
     {
         parent::setMedia();
 
-        $this->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_iframe.css");
+        $this->registerStylesheet(
+            $this->module->name . '-iframe',
+            'modules/' . $this->module->name . '/views/css/front/saferpay_iframe.css'
+        );
     }
 }

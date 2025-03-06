@@ -116,7 +116,10 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             ]
         );
 
-        $this->addCSS("{$this->module->getPathUri()}views/css/front/loading.css");
+        $this->registerStylesheet(
+            $this->module->name . '-loading',
+            'modules/' . $this->module->name . '/views/css/front/loading.css'
+        );
 
         Media::addJsDef([
             'redirectUrl' => $orderLink,
@@ -146,7 +149,10 @@ class SaferPayOfficialSuccessIFrameModuleFrontController extends AbstractSaferPa
             ]
         );
 
-        $this->addCSS("{$this->module->getPathUri()}views/css/front/loading.css");
+        $this->registerStylesheet(
+            $this->module->name . '-loading',
+            'modules/' . $this->module->name . '/views/css/front/loading.css'
+        );
 
         Media::addJsDef([
             'redirectUrl' => $orderLink,
