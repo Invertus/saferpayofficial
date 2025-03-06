@@ -31,6 +31,7 @@ use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
+use Invertus\SaferPay\Provider\PaymentTypeProvider;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
@@ -227,12 +228,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             )
         );
 
-        if (SaferPayConfig::isVersion17()) {
-            $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_wait.tpl');
-            return;
-        }
-
-        $this->setTemplate('saferpay_wait_16.tpl');
+        $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_wait.tpl');
     }
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard)
@@ -277,6 +273,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     private function getRedirectionToControllerUrl($controllerName)
     {
         $cartId = $this->context->cart->id ? $this->context->cart->id : Tools::getValue('cartId');
+
         return $this->context->link->getModuleLink(
             $this->module->name,
             $controllerName,
@@ -368,8 +365,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function getFailController($orderPayment)
     {
-        /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
-        $paymentTypeProvider = $this->module->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
+        /** @var PaymentTypeProvider $paymentTypeProvider */
+        $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
 
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);

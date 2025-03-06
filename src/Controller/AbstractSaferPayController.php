@@ -69,10 +69,6 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
             setcookie('notifications', $notifications);
         }
 
-        if (!SaferPayConfig::isVersion17()) {
-            $this->context->cookie->saferpay_payment_canceled_error =
-                json_encode($this->warning);
-        }
         return call_user_func_array(['Tools', 'redirect'], func_get_args());
     }
 
@@ -82,9 +78,6 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
             $this->lock->create($resource);
 
             if (!$this->lock->acquire()) {
-                if (!SaferPayConfig::isVersion17()) {
-                    return  http_response_code(409);
-                }
                 return Response::respond(
                     $this->module->l('Resource conflict', self::FILE_NAME),
                     Response::HTTP_CONFLICT
@@ -96,18 +89,10 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
             $logger->payload = $resource;
             $logger->save();
 
-            if (!SaferPayConfig::isVersion17()) {
-                return  http_response_code(500);
-            }
-
             return Response::respond(
                 $this->module->l('Internal error', self::FILE_NAME),
                 Response::HTTP_INTERNAL_SERVER_ERROR
             );
-        }
-
-        if (!SaferPayConfig::isVersion17()) {
-            return  http_response_code(200);
         }
 
         return Response::respond(

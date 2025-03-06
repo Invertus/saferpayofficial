@@ -58,10 +58,6 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
 
     public function init()
     {
-        if (!SaferPayConfig::isVersion17()) {
-            return parent::init();
-        }
-
         parent::init();
 
         $this->id_cart = (int) Tools::getValue('cartId', 0);
@@ -76,15 +72,17 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
             Tools::redirect($redirectLink . (Tools::isSubmit('slowvalidation') ? '&slowvalidation' : ''));
         }
 
-        if ((string) $this->secure_key !== (string) $cart->secure_key ||
-            (int) $cart->id_customer !== (int) $this->context->customer->id ||
-            !Validate::isLoadedObject($cart)
+        if (
+            (string) $this->secure_key !== (string) $cart->secure_key
+            || (int) $cart->id_customer !== (int) $this->context->customer->id
+            || !Validate::isLoadedObject($cart)
         ) {
             Tools::redirect($redirectLink);
         }
 
         /** @var CartDuplicationService $cartDuplicationService */
         $cartDuplicationService = $this->module->getService(CartDuplicationService::class);
+
         $cartDuplicationService->restoreCart($this->id_cart);
 
         $this->order_presenter = OrderPresenterFactory::getOrderPresenter();
@@ -107,10 +105,6 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
         $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILE_NAME);
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
-
-        if (!SaferPayConfig::isVersion17()) {
-            $this->redirectWithNotifications($orderLink);
-        }
 
         $this->redirectWithNotifications(
             $this->context->link->getPageLink(

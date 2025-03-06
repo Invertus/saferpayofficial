@@ -68,14 +68,17 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
     protected function processGetStatus()
     {
         header('Content-Type: application/json;charset=UTF-8');
+
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
+
         $cartId = Tools::getValue('cartId');
         $secureKey = Tools::getValue('secureKey');
         $isBusinessLicence = (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
         $fieldToken = Tools::getValue('fieldToken');
         $moduleId = $this->module->id;
         $selectedCard = Tools::getValue('selectedCard');
+
         $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 

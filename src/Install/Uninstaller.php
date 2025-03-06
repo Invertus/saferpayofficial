@@ -56,13 +56,6 @@ class Uninstaller extends AbstractInstaller
             }
         }
 
-        if (!SaferPayConfig::isVersion17()) {
-            if (!$this->uninstallTabs()) {
-                $this->errors[] = $this->module->l('Failed to uninstall tabs', __CLASS__);
-                return false;
-            }
-        }
-
         return true;
     }
 

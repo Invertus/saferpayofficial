@@ -72,13 +72,6 @@ class Installer extends AbstractInstaller
             return false;
         }
 
-        if (!SaferPayConfig::isVersion17()) {
-            if (!$this->installTabs()) {
-                $this->errors[] = $this->module->l('Failed to install tabs', __CLASS__);
-                return false;
-            }
-        }
-
         return true;
     }
 

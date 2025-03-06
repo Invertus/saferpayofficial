@@ -90,14 +90,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $secureKey
         ));
 
-        if (!SaferPayConfig::isVersion17()) {
-            if ($lockResult > 200) {
-                die($this->module->l('Lock already exists', self::FILE_NAME));
-            }
-        } else {
-            if (!$lockResult->isSuccessful()) {
-                die($this->module->l('Lock already exists', self::FILE_NAME));
-            }
+        if (!$lockResult->isSuccessful()) {
+            die($this->module->l('Lock already exists', self::FILE_NAME));
         }
 
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
