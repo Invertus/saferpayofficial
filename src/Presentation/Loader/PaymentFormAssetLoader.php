@@ -90,19 +90,15 @@ class PaymentFormAssetLoader
             return;
         }
 
-        $controller->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_checkout.css");
+        $controller->registerStylesheet(
+            $this->module->name . '-checkout',
+            "modules/" . $this->module->name . "/views/css/front/saferpay_checkout.css"
+        );
 
-        if (method_exists($controller, 'registerJavascript')) {
-            $controller->registerJavascript(
-                'saved_card_hosted_fields_opc',
-                "modules/saferpayofficial/views/js/front/opc/onepagecheckoutps/hosted_fields.js"
-            );
-        } else {
-            $controller->addJs(
-                $this->module->getPathUri() . 'views/js/front/opc/onepagecheckoutps/hosted_fields.js',
-                false
-            );
-        }
+        $controller->registerJavascript(
+            'saved_card_hosted_fields_opc',
+            "modules/saferpayofficial/views/js/front/opc/onepagecheckoutps/hosted_fields.js"
+        );
     }
 
     private function registerTheCheckoutAssets($controller)
@@ -111,19 +107,15 @@ class PaymentFormAssetLoader
             return;
         }
 
-        $controller->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_checkout.css");
+        $controller->registerStylesheet(
+            $this->module->name . '-checkout',
+            "modules/" . $this->module->name . "/views/css/front/saferpay_checkout.css"
+        );
 
-        if (method_exists($controller, 'registerJavascript')) {
-            $controller->registerJavascript(
-                'saved_card_hosted_fields_opc',
-                "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields.js"
-            );
-        } else {
-            $controller->addJs(
-                $this->module->getPathUri() . 'views/js/front/opc/thecheckout/hosted_fields.js',
-                false
-            );
-        }
+        $controller->registerJavascript(
+            'saved_card_hosted_fields_opc',
+            "modules/saferpayofficial/views/js/front/opc/thecheckout/hosted_fields.js"
+        );
     }
 
     private function registerSuperCheckoutAssets($controller)
@@ -132,19 +124,15 @@ class PaymentFormAssetLoader
             return;
         }
 
-        $controller->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_checkout.css");
+        $controller->registerStylesheet(
+            $this->module->name . '-checkout',
+            "modules/" . $this->module->name . "/views/css/front/saferpay_checkout.css"
+        );
 
-        if (method_exists($controller, 'registerJavascript')) {
-            $controller->registerJavascript(
-                'saved_card_hosted_fields_opc',
-                "modules/saferpayofficial/views/js/front/opc/supercheckout/hosted_fields.js"
-            );
-        } else {
-            $controller->addJs(
-                $this->module->getPathUri() . 'views/js/front/opc/supercheckout/hosted_fields.js',
-                false
-            );
-        }
+        $controller->registerJavascript(
+            'saved_card_hosted_fields_opc',
+            "modules/" . $this->module->name . "/views/js/front/opc/supercheckout/hosted_fields.js"
+        );
     }
 
     private function registerDefaultCheckoutAssets($controller)
@@ -155,21 +143,18 @@ class PaymentFormAssetLoader
 
         if (method_exists($controller, 'registerJavascript')) {
             $controller->registerJavascript(
-                'saved_card_hosted_fields',
-                "modules/saferpayofficial/views/js/front/hosted-templates/hosted_fields.js"
+                $this->module->name . 'saved_card_hosted_fields',
+                "modules/" . $this->module->name . "/views/js/front/hosted-templates/hosted_fields.js"
             );
 
             $controller->registerJavascript(
-                'saved-card',
+                $this->module->name . '-saved-card',
                 'modules/' . $this->module->name . '/views/js/front/saferpay_saved_card.js'
             );
 
-            $controller->registerStylesheet("",
-                "{$this->module->getPathUri()}views/css/front/saferpay_checkout.css");
-        } else {
-            $controller->addJs(
-                $this->module->getPathUri() . 'views/js/front/hosted-templates/hosted_fields.js',
-                false
+            $controller->registerStylesheet(
+                $this->module->name . '-checkout',
+                "{$this->module->getPathUri()}views/css/front/saferpay_checkout.css"
             );
         }
     }
