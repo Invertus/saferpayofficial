@@ -27,10 +27,8 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_2_6(SaferPayOfficial $module)
 {
-    $result = true;
+    $module->unregisterHook('displayPayment');
+    $module->unregisterHook('displayReturn');
 
-    $result &= $module->unregisterHook('displayPayment');
-    $result &= $module->unregisterHook('displayReturn');
-
-    return $result;
+    return true;
 }
