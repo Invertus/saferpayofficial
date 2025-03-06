@@ -83,10 +83,6 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
     public function initContent()
     {
-        if ($this->module instanceof SaferPayOfficial) {
-            $this->content .= $this->module->displayNavigationTop();
-        }
-
         $this->content .= $this->displaySeverityInformation();
         
         parent::initContent();

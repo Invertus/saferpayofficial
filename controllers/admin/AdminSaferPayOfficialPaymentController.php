@@ -33,6 +33,7 @@ use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayLogoRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
+use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Service\SaferPayFieldCreator;
 use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayPaymentCreator;
@@ -131,10 +132,8 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
     public function initContent()
     {
-        if ($this->module instanceof SaferPayOfficial) {
-            $this->content .= $this->module->displayNavigationTop();
-        }
         parent::initContent();
+
         $this->content .= $this->renderShoppingPointOptions();
         $this->context->smarty->assign('content', $this->content);
     }
@@ -164,7 +163,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $fieldsForm = [];
         $fieldsForm[0]['form'] = $this->fields_form;
 
-        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+        /** @var SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
         $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
 
         $paymentMethodsList = $saferPayObtainPaymentMethods->obtainPaymentMethods();
@@ -261,12 +260,12 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         ];
 
         try {
-            /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+            /** @var SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
             $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
             $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
         } catch (SaferPayApiException $exception) {
-            /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
-            $exceptionService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayExceptionService::class);
+            /** @var SaferPayExceptionService $exceptionService */
+            $exceptionService = $this->module->getService(SaferPayExceptionService::class);
             $saferPayErrors = json_decode($this->context->cookie->saferPayErrors, true);
             $saferPayErrors[] = $exceptionService->getErrorMessageForException(
                 $exception,
@@ -278,7 +277,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
             return;
         }
-        /** @var \Invertus\SaferPay\Service\SaferPayPaymentNotation $saferPayPaymentNotation */
+        /** @var SaferPayPaymentNotation $saferPayPaymentNotation */
         $saferPayPaymentNotation = $this->module->getService(SaferPayPaymentNotation::class);
 
         foreach ($paymentMethods as $paymentMethod) {
@@ -305,13 +304,13 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     private function getPaymentMethods()
     {
         try {
-            /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+            /** @var SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
             $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
 
             return $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
         } catch (SaferPayApiException $exception) {
-            /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
-            $exceptionService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayExceptionService::class);
+            /** @var SaferPayExceptionService $exceptionService */
+            $exceptionService = $this->module->getService(SaferPayExceptionService::class);
             $saferPayErrors = json_decode($this->context->cookie->saferPayErrors, true);
             $saferPayErrors[] = $exceptionService->getErrorMessageForException(
                 $exception,

@@ -43,9 +43,6 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
 
     public function initContent()
     {
-        if ($this->module instanceof SaferPayOfficial) {
-            $this->content .= $this->module->displayNavigationTop();
-        }
         parent::initContent();
     }
 
