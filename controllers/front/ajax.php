@@ -22,13 +22,13 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Restriction\UnauthenticatedCardUserException;
 use Invertus\SaferPay\Exception\SaferPayException;
 use Invertus\SaferPay\Logger\LoggerInterface;
-use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 use Invertus\SaferPay\Validation\CustomerCreditCardValidation;
@@ -37,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
+class SaferPayOfficialAjaxModuleFrontController extends AbstractSaferPayController
 {
     const FILE_NAME = 'ajax';
 
@@ -87,8 +87,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'isFinished' => true,
                 'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId),
             ]));
-
-            exit;
         }
 
         /** @var LoggerInterface $logger */
@@ -118,8 +116,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 ]
             ),
         ]));
-
-        exit;
     }
 
     private function getFailControllerLink($cartId, $secureKey, $moduleId)
@@ -174,8 +170,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'message' => $e->getMessage(),
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
-
-            exit;
         } catch (SaferPayException $e) {
             $logger->error($e->getMessage(), [
                 'context' => [],
@@ -187,8 +181,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'message' => $e->getMessage(),
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
-
-            exit;
         }
 
         try {
@@ -198,8 +190,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                     'message' => $this->module->l('Order already exists', self::FILE_NAME),
                     'url' => $this->getRedirectionToControllerUrl('fail'),
                 ]));
-
-                exit;
             }
 
             // refactor it to create checkout data from validator request
@@ -228,8 +218,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'error' => false,
                 'url' => $redirectUrl,
             ]));
-
-            exit;
         } catch (Exception $e) {
             $logger->error($e->getMessage(), [
                 'context' => [],
@@ -241,8 +229,6 @@ class SaferPayOfficialAjaxModuleFrontController extends ModuleFrontController
                 'message' => $e->getMessage(),
                 'url' => $this->getRedirectionToControllerUrl('fail'),
             ]));
-
-            exit;
         }
     }
 

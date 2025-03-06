@@ -91,4 +91,11 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
 
         return true;
     }
+
+    protected function ajaxRender($value = null, $controller = null, $method = null)
+    {
+        parent::ajaxRender($value, $controller, $method);
+
+        exit;
+    }
 }

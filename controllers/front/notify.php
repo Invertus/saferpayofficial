@@ -69,8 +69,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
             ]));
-
-            exit;
         }
 
         if ($cart->secure_key !== $secureKey) {
