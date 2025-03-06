@@ -105,7 +105,14 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
             true
         );
 
-        $this->addCSS("{$this->module->getPathUri()}views/css/front/loading.css");
+        if (method_exists($this->context->controller, 'registerStylesheet')) {
+            $this->context->controller->registerStylesheet(
+                'saferpayIFrame',
+                'modules/' . $this->module->name . '/views/css/front/loading.css'
+            );
+        } else {
+            $this->addCSS("{$this->module->getPathUri()}views/css/front/loading.css");
+        }
 
         Media::addJsDef([
             'redirectUrl' => $failUrl,
