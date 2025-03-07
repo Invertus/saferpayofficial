@@ -96,7 +96,7 @@ class PaymentFormAssetLoader
         );
 
         $controller->registerJavascript(
-            'saved_card_hosted_fields_opc',
+            $this->module->name . '-onepagecheckoutps-hosted-fields',
             "modules/" . $this->module->name . "/views/js/front/opc/onepagecheckoutps/hosted_fields.js"
         );
     }
@@ -113,7 +113,7 @@ class PaymentFormAssetLoader
         );
 
         $controller->registerJavascript(
-            'saved_card_hosted_fields_opc',
+            $this->module->name . '-thecheckout-hosted-fields',
             "modules/" . $this->module->name . "/views/js/front/opc/thecheckout/hosted_fields.js"
         );
     }
@@ -130,7 +130,7 @@ class PaymentFormAssetLoader
         );
 
         $controller->registerJavascript(
-            'saved_card_hosted_fields_opc',
+            $this->module->name . '-supercheckout-hosted-fields',
             "modules/" . $this->module->name . "/views/js/front/opc/supercheckout/hosted_fields.js"
         );
     }
@@ -143,7 +143,7 @@ class PaymentFormAssetLoader
 
         if (method_exists($controller, 'registerJavascript')) {
             $controller->registerJavascript(
-                $this->module->name . 'saved_card_hosted_fields',
+                $this->module->name . '-hosted-fields',
                 'modules/' . $this->module->name . '/views/js/front/hosted-templates/hosted_fields.js'
             );
 
