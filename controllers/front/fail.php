@@ -94,11 +94,9 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
+        $logger->debug(sprintf('%s - Cannot be accessed via link', self::FILE_NAME));
 
         $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILE_NAME);
-
-        $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         $this->redirectWithNotifications(
             $this->context->link->getPageLink(
