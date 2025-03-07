@@ -288,6 +288,10 @@ class CheckoutProcessor
      */
     private function getOrder($cartId)
     {
+        if ($cartId < 1) {
+            throw new \Exception('Cart ID is invalid');
+        }
+
         return new Order(Order::getIdByCartId($cartId));
     }
 }

@@ -141,22 +141,20 @@ class PaymentFormAssetLoader
             return;
         }
 
-        if (method_exists($controller, 'registerJavascript')) {
-            $controller->registerJavascript(
-                $this->module->name . '-hosted-fields',
-                'modules/' . $this->module->name . '/views/js/front/hosted-templates/hosted_fields.js'
-            );
+        $controller->registerJavascript(
+            $this->module->name . '-hosted-fields',
+            'modules/' . $this->module->name . '/views/js/front/hosted-templates/hosted_fields.js'
+        );
 
-            $controller->registerJavascript(
-                $this->module->name . '-saved-card',
-                'modules/' . $this->module->name . '/views/js/front/saferpay_saved_card.js'
-            );
+        $controller->registerJavascript(
+            $this->module->name . '-saved-card',
+            'modules/' . $this->module->name . '/views/js/front/saferpay_saved_card.js'
+        );
 
-            $controller->registerStylesheet(
-                $this->module->name . '-checkout',
-                'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
-            );
-        }
+        $controller->registerStylesheet(
+            $this->module->name . '-checkout',
+            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
+        );
     }
 
     public function registerErrorBags()
