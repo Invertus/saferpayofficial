@@ -122,7 +122,7 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
         }
     }
 
-    protected function ajaxRender($value = null, $controller = null, $method = null)
+    protected function ajaxRender($value = null, $controller = null, $method = null): void
     {
         parent::ajaxRender($value, $controller, $method);
 
