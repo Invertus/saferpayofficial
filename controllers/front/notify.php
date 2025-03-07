@@ -95,7 +95,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
-        $order = new Order($this->getOrderId($cartId));
+        $order = new Order(Order::getIdByCartId($cartId));
 
         $awaitingState = \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT);
 
@@ -134,7 +134,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $checkoutData->setOrderStatus($transactionStatus);
             $checkoutProcessor->run($checkoutData);
 
-            $orderId = $this->getOrderId($cartId);
+            $orderId = Order::getIdByCartId($cartId);
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
@@ -207,7 +207,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             // this might be executed after pending transaction is declined (e.g. with accountToAccount payment)
             if (!isset($order)) {
-                $order = new Order($this->getOrderId($cartId));
+                $order = new Order(Order::getIdByCartId($cartId));
             }
 
             $orderId = (int) $order->id;
@@ -266,20 +266,6 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
         return $transactionAssert->assert($cartId);
-    }
-
-    /**
-     * @param int $cartId
-     *
-     * @return bool|int
-     */
-    private function getOrderId($cartId)
-    {
-        if (method_exists('Order', 'getIdByCartId')) {
-            return Order::getIdByCartId($cartId);
-        }
-
-        return Order::getOrderByCartId($cartId);
     }
 
     protected function displayMaintenancePage()
