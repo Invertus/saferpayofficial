@@ -21,7 +21,6 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Factory\OrderPresenterFactory;
 use Invertus\SaferPay\Service\CartDuplicationService;
@@ -97,11 +96,6 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
-        $orderLink = $this->context->link->getPageLink(
-            'order',
-            true,
-            null
-        );
         $this->warning[] = $this->module->l('We couldn\'t authorize your payment. Please try again.', self::FILE_NAME);
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
