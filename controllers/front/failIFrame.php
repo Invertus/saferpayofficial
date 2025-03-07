@@ -89,7 +89,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
         );
 
         $this->context->controller->registerStylesheet(
-            'saferpayIFrame',
+             $this->module->name .'-iframe-css',
             'modules/' . $this->module->name . '/views/css/front/loading.css'
         );
 
@@ -98,7 +98,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
         ]);
 
         $this->context->controller->registerJavascript(
-            'saferpayIFrame',
+             $this->module->name .'-iframe-js',
             '/modules/' . $this->module->name . '/views/js/front/saferpay_iframe.js'
         );
     }
