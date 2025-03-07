@@ -96,10 +96,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
 
-        $this->context->controller->registerJavascript(
-            $this->module->name . '-settings-js',
-            'modules/' . $this->module->name . '/views/js/admin/saferpay_settings.js'
-        );
+        $this->addJS('modules/' . $this->module->name . '/views/js/admin/saferpay_settings.js');
     }
 
     /**
