@@ -414,7 +414,10 @@ Thank you for your patience!');
         if ('AdminOrders' === Tools::getValue('controller')
             && (Tools::isSubmit('vieworder') || Tools::getValue('action') === 'vieworder')
         ) {
-            $this->context->controller->addCSS("{$this->getPathUri()}views/css/admin/saferpay_admin_order.css");
+            $this->context->controller->registerStylesheet(
+                $this->name . '-admin-order',
+                'modules/' . $this->name . '/views/css/admin/saferpay_admin_order.css'
+            );
 
             $orderId = Tools::getValue('id_order');
             $order = new Order($orderId);

@@ -162,14 +162,21 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             ],
         ]);
 
-        $this->addCSS("{$this->module->getPathUri()}views/css/admin/logs_tab.css");
-        $this->addJS($this->module->getPathUri() . 'views/js/admin/log.js', false);
+        $this->context->controller->registerStylesheet(
+            $this->module->name . '-logs-tab',
+            'modules/' . $this->module->name . '/views/css/admin/logs_tab.css'
+        );
+
+        $this->context->controller->registerJavascript(
+            $this->module->name . '-log',
+            'modules/' . $this->module->name . '/views/js/admin/log.js'
+        );
     }
 
     public function displaySeverityInformation()
     {
         return $this->context->smarty->fetch(
-            "{$this->module->getLocalPath()}views/templates/admin/logs/severity_levels.tpl"
+            'modules/' . $this->module->name . '/views/templates/admin/logs/severity_levels.tpl'
         );
     }
 
@@ -192,7 +199,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         ]);
 
         return $this->context->smarty->fetch(
-            "{$this->module->getLocalPath()}views/templates/admin/logs/severity_level_column.tpl"
+            'modules/' . $this->module->name . '/views/templates/admin/logs/severity_level_column.tpl'
         );
     }
 
@@ -210,7 +217,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         ]);
 
         return $this->context->smarty->fetch(
-            "{$this->module->getLocalPath()}views/templates/admin/logs/log_modal.tpl"
+            'modules/' . $this->module->name . '/views/templates/admin/logs/log_modal.tpl'
         );
     }
 

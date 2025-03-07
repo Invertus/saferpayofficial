@@ -84,7 +84,15 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);
-        $this->addJS("{$this->module->getPathUri()}views/js/admin/saferpay_fields.js");
-        $this->addCss("{$this->module->getPathUri()}views/css/admin/saferpay_fields.css");
+
+        $this->context->controller->registerJavascript(
+            $this->module->name . '-fields-js',
+            'modules/' . $this->module->name . '/views/js/admin/saferpay_fields.js'
+        );
+
+        $this->context->controller->registerStylesheet(
+            $this->module->name . '-fields-css',
+            'modules/' . $this->module->name . '/views/css/admin/saferpay_fields.css'
+        );
     }
 }

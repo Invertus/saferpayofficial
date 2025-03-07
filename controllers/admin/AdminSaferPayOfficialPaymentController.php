@@ -55,9 +55,20 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
 
-        $this->addCSS("{$this->module->getPathUri()}views/css/admin/payment_method.css");
-        $this->addJS("{$this->module->getPathUri()}views/js/admin/chosen_countries.js");
-        $this->addJS("{$this->module->getPathUri()}views/js/admin/payment_method_all.js");
+        $this->context->controller->registerStylesheet(
+            $this->module->name . '-payment-method',
+            'modules/' . $this->module->name . '/views/css/admin/payment_method.css'
+        );
+
+        $this->context->controller->registerJavascript(
+            $this->module->name . '-chosen-countries',
+            'modules/' . $this->module->name . '/views/js/admin/chosen_countries.js'
+        );
+
+        $this->context->controller->registerJavascript(
+            $this->module->name . '-payment-method-all',
+            'modules/' . $this->module->name . '/views/js/admin/payment_method_all.js'
+        );
     }
 
     /**
