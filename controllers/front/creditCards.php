@@ -49,6 +49,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         $this->initCardList();
         $this->setBreadcrumb();
         $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/credit_cards.tpl');
+
         parent::display();
     }
 
