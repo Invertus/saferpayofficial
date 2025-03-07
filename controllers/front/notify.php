@@ -238,7 +238,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 $saferPayOrder->update();
                 $this->releaseLock();
-                die('canceled');
+                die($this->module->l('canceled'));
             }
 
             /** @var LoggerInterface $logger */
