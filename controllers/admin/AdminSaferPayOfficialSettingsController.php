@@ -349,7 +349,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('JSON API Password'),
                     'type' => 'password_input',
                     'class' => 'fixed-width-xl',
-                    'value' => Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
+                    'value' => \Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
                 ],
                 SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX => [
                     'title' => $this->module->l('Customer ID'),
@@ -424,7 +424,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('JSON API Password'),
                     'type' => 'password_input',
                     'class' => 'fixed-width-xl',
-                    'value' => Configuration::get(SaferPayConfig::PASSWORD),
+                    'value' => \Configuration::get(SaferPayConfig::PASSWORD),
                 ],
                 SaferPayConfig::CUSTOMER_ID => [
                     'title' => $this->module->l('Customer ID'),
