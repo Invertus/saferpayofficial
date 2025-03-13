@@ -21,6 +21,11 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Service\SaferPayExceptionService;
+use Invertus\SaferPay\Service\SaferPayOrderStatusService;
+
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
 if (!defined('_PS_VERSION_')) {
@@ -37,10 +42,10 @@ class AdminSaferPayOfficialOrderController extends ModuleAdminController
 
     public function postProcess()
     {
-        /** @var \Invertus\SaferPay\Service\SaferPayOrderStatusService $orderStatusService */
-        $orderStatusService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayOrderStatusService::class);
+        /** @var SaferPayOrderStatusService $orderStatusService */
+        $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
 
-        if (\Invertus\SaferPay\Config\SaferPayConfig::isVersionAbove177()) {
+        if (SaferPayConfig::isVersionAbove177()) {
             $orderId = Tools::getValue('orderId');
         } else {
             $orderId = Tools::getValue('id_order');
@@ -59,9 +64,9 @@ class AdminSaferPayOfficialOrderController extends ModuleAdminController
                 $orderStatusService->refund($order, $refundAmount);
                 $this->context->cookie->refunded = true;
             }
-        } catch (Invertus\SaferPay\Exception\Api\SaferPayApiException $e) {
-            /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
-            $exceptionService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayExceptionService::class);
+        } catch (SaferPayApiException $e) {
+            /** @var SaferPayExceptionService $exceptionService */
+            $exceptionService = $this->module->getService(SaferPayExceptionService::class);
             $saferPayErrors = json_decode($this->context->cookie->saferPayErrors, true);
             $saferPayErrors[$orderId] = $exceptionService->getErrorMessageForException(
                 $e,
@@ -70,12 +75,17 @@ class AdminSaferPayOfficialOrderController extends ModuleAdminController
             $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
         }
 
-        if (\Invertus\SaferPay\Config\SaferPayConfig::isVersionAbove177()) {
-            $orderLink = $this->context->link
-                    ->getAdminLink('AdminOrders', true, ['orderId' => $orderId, 'vieworder' => 1]);
+        if (SaferPayConfig::isVersionAbove177()) {
+            $orderLink = $this->context->link->getAdminLink(
+                'AdminOrders',
+                true,
+                [
+                    'orderId' => $orderId,
+                    'vieworder' => 1
+                ]
+            );
         } else {
-            $orderLink = $this->context->link
-                    ->getAdminLink('AdminOrders') . '&id_order=' . $orderId . '&vieworder';
+            $orderLink = $this->context->link->getAdminLink('AdminOrders') . '&id_order=' . $orderId . '&vieworder';
         }
 
         Tools::redirectAdmin($orderLink);

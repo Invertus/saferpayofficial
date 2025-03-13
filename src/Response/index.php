@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -19,14 +20,12 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-.payment_module a.saferpay_method {
-    padding-left: 10px;
-}
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-.saferpay_method img {
-    height: 24px;
-}
+header('Location: ../');
+exit;

@@ -23,6 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
+use Invertus\SaferPay\Adapter\Configuration;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -46,9 +47,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
     public function initContent()
     {
-        if ($this->module instanceof SaferPayOfficial) {
-            $this->content .= $this->module->displayNavigationTop();
-        }
         parent::initContent();
     }
 
@@ -56,8 +54,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::postProcess();
 
-        /** @var \Invertus\SaferPay\Adapter\Configuration  $configuration */
-        $configuration = $this->module->getService(\Invertus\SaferPay\Adapter\Configuration::class);
+        /** @var Configuration $configuration */
+        $configuration = $this->module->getService(Configuration::class);
 
         $isCreditCardSaveEnabled = $configuration->get(SaferPayConfig::CREDIT_CARD_SAVE);
 
@@ -85,12 +83,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $this->fields_options[] = $this->displayTestEnvironmentConfiguration();
         $this->fields_options[] = $this->displayPaymentBehaviorConfiguration();
         $this->fields_options[] = $this->displayStylingConfiguration();
-
-        if (SaferPayConfig::isVersion17()) {
-            $this->fields_options[] = $this->displaySavedCardsConfiguration();
-            $this->fields_options[] = $this->displayEmailSettings();
-        }
-
+        $this->fields_options[] = $this->displaySavedCardsConfiguration();
+        $this->fields_options[] = $this->displayEmailSettings();
         $this->fields_options[] = $this->getFieldOptionsOrderState();
         $this->fields_options[] = $this->displayConfigurationSettings();
     }
@@ -102,7 +96,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);
-        $this->addJS("{$this->module->getPathUri()}views/js/admin/saferpay_settings.js");
+
+        $this->addJS('modules/' . $this->module->name . '/views/js/admin/saferpay_settings.js');
     }
 
     /**
@@ -354,7 +349,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('JSON API Password'),
                     'type' => 'password_input',
                     'class' => 'fixed-width-xl',
-                    'value' => Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
+                    'value' => \Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
                 ],
                 SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX => [
                     'title' => $this->module->l('Customer ID'),
@@ -429,7 +424,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('JSON API Password'),
                     'type' => 'password_input',
                     'class' => 'fixed-width-xl',
-                    'value' => Configuration::get(SaferPayConfig::PASSWORD),
+                    'value' => \Configuration::get(SaferPayConfig::PASSWORD),
                 ],
                 SaferPayConfig::CUSTOMER_ID => [
                     'title' => $this->module->l('Customer ID'),
