@@ -21,11 +21,11 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\Context\GlobalShopContext;
+use Invertus\Saferpay\Context\GlobalShopContext;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
+use Invertus\SaferPay\Enum\PermissionType;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayLogRepository;
@@ -83,6 +83,10 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
     public function initContent()
     {
+        if ($this->module instanceof SaferPayOfficial) {
+            $this->content .= $this->module->displayNavigationTop();
+        }
+
         $this->content .= $this->displaySeverityInformation();
         
         parent::initContent();
@@ -163,19 +167,14 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             ],
         ]);
 
-        $this->context->controller->addCSS(
-            'modules/' . $this->module->name . '/views/css/admin/logs_tab.css',
-        );
-
-        $this->context->controller->addJS(
-            'modules/' . $this->module->name . '/views/js/admin/log.js',
-        );
+        $this->addCSS("{$this->module->getPathUri()}views/css/admin/logs_tab.css");
+        $this->addJS($this->module->getPathUri() . 'views/js/admin/log.js', false);
     }
 
     public function displaySeverityInformation()
     {
         return $this->context->smarty->fetch(
-            $this->module->getLocalPath() . '/views/templates/admin/logs/severity_levels.tpl'
+            "{$this->module->getLocalPath()}views/templates/admin/logs/severity_levels.tpl"
         );
     }
 
@@ -198,7 +197,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         ]);
 
         return $this->context->smarty->fetch(
-            $this->module->getLocalPath() . '/views/templates/admin/logs/severity_level_column.tpl'
+            "{$this->module->getLocalPath()}views/templates/admin/logs/severity_level_column.tpl"
         );
     }
 
@@ -216,7 +215,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         ]);
 
         return $this->context->smarty->fetch(
-            $this->module->getLocalPath() . '/views/templates/admin/logs/log_modal.tpl'
+            "{$this->module->getLocalPath()}views/templates/admin/logs/log_modal.tpl"
         );
     }
 

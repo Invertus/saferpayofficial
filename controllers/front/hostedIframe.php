@@ -44,6 +44,9 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
 
         $paymentMethod = Tools::getValue('saved_card_method');
         $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");
+        if (!SaferPayConfig::isVersion17()) {
+            $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
+        }
 
         $this->context->smarty->assign([
             'credit_card_front_url' => "{$this->module->getPathUri()}views/img/example-card/credit-card-front.png",
@@ -54,12 +57,20 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
-        $this->setTemplate(
-            SaferPayConfig::SAFERPAY_HOSTED_TEMPLATE_LOCATION .
-            'template' .
-            Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
-            '.tpl'
-        );
+        if (SaferPayConfig::isVersion17()) {
+            $this->setTemplate(
+                SaferPayConfig::SAFERPAY_HOSTED_TEMPLATE_LOCATION .
+                'template' .
+                Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
+                '.tpl'
+            );
+        } else {
+            $this->setTemplate(
+                '/hosted-templates/template' .
+                Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
+                '_16.tpl'
+            );
+        }
 
     }
 
@@ -76,29 +87,44 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             'isBusinessLicence' => Tools::getValue('isBusinessLicence'),
         ]);
 
-        $this->context->controller->registerJavascript(
-            'remote-saferpay-fields-js-lib',
-            Configuration::get(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::getConfigSuffix()),
-            ['server' => 'remote', 'position' => 'bottom', 'priority' => 20]
-        );
+        if (SaferPayConfig::isVersion17()) {
+            $this->context->controller->registerJavascript(
+                'remote-saferpay-fields-js-lib',
+                Configuration::get(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::getConfigSuffix()),
+                ['server' => 'remote', 'position' => 'bottom', 'priority' => 20]
+            );
 
-        $this->context->controller->registerJavascript(
-            'hosted-template-js-init',
-            'modules/' . $this->module->name . '/views/js/front/hosted-templates/template' .
-            Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
-            ".js"
-        );
-        $this->context->controller->registerJavascript(
-            'hosted-template-js-submit',
-            'modules/' . $this->module->name . '/views/js/front/hosted-templates/template_submit.js'
-        );
+            $this->context->controller->registerJavascript(
+                'hosted-template-js-init',
+                "modules/saferpayofficial/views/js/front/hosted-templates/template" .
+                Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
+                ".js"
+            );
+            $this->context->controller->registerJavascript(
+                'hosted-template-js-submit',
+                "modules/saferpayofficial/views/js/front/hosted-templates/template_submit.js"
+            );
 
-        $this->context->controller->registerStylesheet(
-            'theme-css',
-            'modules/' . $this->module->name . '/views/css/front/hosted-templates/template' .
-            Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
-            ".css"
-        );
+            $this->context->controller->registerStylesheet(
+                'theme-css',
+                "modules/saferpayofficial/views/css/front/hosted-templates/template" .
+                Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
+                ".css"
+            );
+        } else {
+            $this->addJs(Configuration::get(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::getConfigSuffix()));
+            $this->addJs(
+                "{$this->module->getPathUri()}views/js/front/hosted-templates/template" .
+                Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
+                ".js"
+            );
+            $this->addJs("{$this->module->getPathUri()}views/js/front/hosted-templates/template_submit.js");
+            $this->addCss(
+                "{$this->module->getPathUri()}views/css/front/hosted-templates/template" .
+                Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
+                ".css"
+            );
+        }
     }
 
     protected function getDefaultTermsAndConditions()

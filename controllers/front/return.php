@@ -31,7 +31,6 @@ use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
-use Invertus\SaferPay\Provider\PaymentTypeProvider;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
@@ -54,7 +53,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         $cartId = (int) Tools::getValue('cartId');
-        $order = new Order(Order::getIdByCartId($cartId));
+        $order = new Order($this->getOrderId($cartId));
         $secureKey = Tools::getValue('secureKey');
         $selectedCard = Tools::getValue('selectedCard');
         $paymentMethod = $order->id ? $order->payment : Tools::getValue('paymentMethod');
@@ -108,7 +107,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             || Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix())
             || $saferPayFieldRepository->isActiveByName($orderPayment))
         {
-            $order = new Order(Order::getIdByCartId($cartId));
+            $order = new Order($this->getOrderId($cartId));
 
             try {
                 if (!Tools::getValue('isWebhook')) {
@@ -164,7 +163,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 'exceptions' => [],
             ]);
 
-            $this->ajaxRender(json_encode([
+            $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
             ]));
@@ -177,7 +176,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ],
             ]);
 
-            $this->ajaxRender(json_encode([
+            $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
             ]));
@@ -187,7 +186,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
         if ($cartAdapter->orderExists($cart->id)) {
-            $order = new Order(Order::getIdByCartId($cartId));
+            $order = new Order($this->getOrderId($cartId));
 
             $saferPayAuthorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
             $saferPayCapturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
@@ -224,7 +223,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             )
         );
 
-        $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_wait.tpl');
+        if (SaferPayConfig::isVersion17()) {
+            $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_wait.tpl');
+            return;
+        }
+
+        $this->setTemplate('saferpay_wait_16.tpl');
     }
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard)
@@ -262,6 +266,20 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     }
 
     /**
+     * @param int $cartId
+     *
+     * @return bool|int
+     */
+    private function getOrderId($cartId)
+    {
+        if (method_exists('Order', 'getIdByCartId')) {
+            return Order::getIdByCartId($cartId);
+        }
+        // For PrestaShop 1.6 use the alternative method
+        return Order::getOrderByCartId($cartId);
+    }
+
+    /**
      * @param string $controllerName
      *
      * @return string
@@ -269,13 +287,12 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
     private function getRedirectionToControllerUrl($controllerName)
     {
         $cartId = $this->context->cart->id ? $this->context->cart->id : Tools::getValue('cartId');
-
         return $this->context->link->getModuleLink(
             $this->module->name,
             $controllerName,
             [
                 'cartId' => $cartId,
-                'orderId' => Order::getIdByCartId($cartId),
+                'orderId' => Order::getOrderByCartId($cartId),
                 'secureKey' => $this->context->cart->secure_key,
                 'moduleId' => $this->module->id,
             ]
@@ -320,7 +337,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $checkoutProcessor->run($checkoutData);
         }
 
-        $orderId = Order::getIdByCartId($cartId);
+        $orderId = $this->getOrderId($cartId);
 
         $order = new Order($orderId);
         if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
@@ -361,8 +378,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function getFailController($orderPayment)
     {
-        /** @var PaymentTypeProvider $paymentTypeProvider */
-        $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
+        /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
+        $paymentTypeProvider = $this->module->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
 
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);

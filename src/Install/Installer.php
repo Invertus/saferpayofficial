@@ -72,15 +72,25 @@ class Installer extends AbstractInstaller
             return false;
         }
 
+        if (!SaferPayConfig::isVersion17()) {
+            if (!$this->installTabs()) {
+                $this->errors[] = $this->module->l('Failed to install tabs', __CLASS__);
+                return false;
+            }
+        }
+
         return true;
     }
 
     private function registerHooks()
     {
         $this->module->registerHook('paymentOptions');
+        $this->module->registerHook('displayPayment');
         $this->module->registerHook('displayAdminOrder');
         $this->module->registerHook('actionFrontControllerSetMedia');
         $this->module->registerHook('displayCustomerAccount');
+        $this->module->registerHook('displayPayment');
+        $this->module->registerHook('paymentReturn');
         $this->module->registerHook('actionEmailSendBefore');
         $this->module->registerHook('displayAdminOrderTabContent');
         $this->module->registerHook('actionAdminControllerSetMedia');

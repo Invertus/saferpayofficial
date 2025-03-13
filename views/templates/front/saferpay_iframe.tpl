@@ -34,12 +34,6 @@
     </div>
 {/block}
 
-{block name='checkout_process'}
-    <div>
-        <iframe id="saferpay-iframe" src="{$redirect|escape:'htmlall':'UTF-8'}"></iframe>
-    </div>
-{/block}
-
 {block name='footer'}
     <div class="footer-container">
         <div class="container">

@@ -47,7 +47,7 @@ class ValidateIsAssetsRequired
         $isOrderController = $controller instanceof \OrderControllerCore
             || $controller instanceof \ModuleFrontController && isset($controller->php_self) && $controller->php_self === 'order';
 
-        if (!empty($this->opcModulesProvider->get())) {
+        if (!empty($this->opcModulesProvider->get($controller))) {
             return $isOrderController && !empty(\Context::getContext()->cart->getProducts());
         }
 

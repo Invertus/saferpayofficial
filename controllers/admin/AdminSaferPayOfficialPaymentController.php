@@ -33,7 +33,6 @@ use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayLogoRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
-use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Service\SaferPayFieldCreator;
 use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayPaymentCreator;
@@ -55,9 +54,9 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
 
-        $this->addCSS('modules/' . $this->module->name . '/views/css/admin/payment_method.css');
-        $this->addJS('modules/' . $this->module->name . '/views/js/admin/chosen_countries.js');
-        $this->addJS('modules/' . $this->module->name . '/views/js/admin/payment_method_all.js');
+        $this->addCSS("{$this->module->getPathUri()}views/css/admin/payment_method.css");
+        $this->addJS("{$this->module->getPathUri()}views/js/admin/chosen_countries.js");
+        $this->addJS("{$this->module->getPathUri()}views/js/admin/payment_method_all.js");
     }
 
     /**
@@ -71,7 +70,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         try {
             $refreshPaymentsService->refreshPayments();
         } catch (SaferPayApiException $exception) {
-            $this->errors[] = $this->module->l($exception->getMessage());
+            $this->errors[] = $this->l($exception->getMessage());
         }
 
         if (!Tools::isSubmit('submitAddconfiguration')) {
@@ -118,22 +117,24 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
                     Tools::getValue($paymentMethod . SaferPayRestrictionCreator::CURRENCY_SUFFIX)
                 );
             } catch (RestrictionException $e) {
-                $this->errors[] = $this->module->l('Wrong restriction type');
+                $this->errors[] = $this->l('Wrong restriction type');
                 $success = false;
             }
         }
 
         if (!$success) {
-            $this->errors[] = $this->module->l('Failed update');
+            $this->errors[] = $this->l('Failed update');
         } else {
-            $this->confirmations[] = $this->module->l('Successful update');
+            $this->confirmations[] = $this->l('Successful update');
         }
     }
 
     public function initContent()
     {
+        if ($this->module instanceof SaferPayOfficial) {
+            $this->content .= $this->module->displayNavigationTop();
+        }
         parent::initContent();
-
         $this->content .= $this->renderShoppingPointOptions();
         $this->context->smarty->assign('content', $this->content);
     }
@@ -163,7 +164,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $fieldsForm = [];
         $fieldsForm[0]['form'] = $this->fields_form;
 
-        /** @var SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
         $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
 
         $paymentMethodsList = $saferPayObtainPaymentMethods->obtainPaymentMethods();
@@ -215,7 +216,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $langId = $this->context->language->id;
         $countries = Country::getCountries($langId, $onlyActive);
         $countriesWithNames = [];
-        $countriesWithNames[0] = $this->module->l('All');
+        $countriesWithNames[0] = $this->l('All');
         foreach ($countries as $key => $country) {
             $countriesWithNames[$key] = $country['name'];
         }
@@ -225,7 +226,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
     public function getActiveCurrenciesList($paymentMethod, $paymentMethods)
     {
-        $currencyOptions[0] = $this->module->l('All');
+        $currencyOptions[0] = $this->l('All');
 
         if (!isset($paymentMethods[$paymentMethod]['currencies']) && in_array($paymentMethod, SaferPayConfig::WALLET_PAYMENT_METHODS)) {
             foreach (Currency::getCurrencies() as $currency) {
@@ -254,18 +255,18 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         ];
         $fields[] = [
             'type' => 'free',
-            'label' => $this->module->l('All payments'),
+            'label' => $this->l('All payments'),
             'name' => 'all',
             'form_group_class' => 'saferpay-group all-payments',
         ];
 
         try {
-            /** @var SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+            /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
             $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
             $paymentMethods = $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
         } catch (SaferPayApiException $exception) {
-            /** @var SaferPayExceptionService $exceptionService */
-            $exceptionService = $this->module->getService(SaferPayExceptionService::class);
+            /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
+            $exceptionService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayExceptionService::class);
             $saferPayErrors = json_decode($this->context->cookie->saferPayErrors, true);
             $saferPayErrors[] = $exceptionService->getErrorMessageForException(
                 $exception,
@@ -273,11 +274,11 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             );
             $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
 
-            $this->errors[] = $this->module->l('Please connect to SaferPay system to allowed payment methods.');
+            $this->errors[] = $this->l('Please connect to SaferPay system to allowed payment methods.');
 
             return;
         }
-        /** @var SaferPayPaymentNotation $saferPayPaymentNotation */
+        /** @var \Invertus\SaferPay\Service\SaferPayPaymentNotation $saferPayPaymentNotation */
         $saferPayPaymentNotation = $this->module->getService(SaferPayPaymentNotation::class);
 
         foreach ($paymentMethods as $paymentMethod) {
@@ -291,12 +292,12 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 
         $this->fields_form = [
             'legend' => [
-                'title' => $this->module->l('Payments'),
+                'title' => $this->l('Payments'),
             ],
             'input' =>
                 $fields,
             'submit' => [
-                'title' => $this->module->l('Save'),
+                'title' => $this->l('Save'),
             ],
         ];
     }
@@ -304,13 +305,13 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
     private function getPaymentMethods()
     {
         try {
-            /** @var SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
+            /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $saferPayObtainPaymentMethods */
             $saferPayObtainPaymentMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
 
             return $saferPayObtainPaymentMethods->obtainPaymentMethodsNamesAsArray();
         } catch (SaferPayApiException $exception) {
-            /** @var SaferPayExceptionService $exceptionService */
-            $exceptionService = $this->module->getService(SaferPayExceptionService::class);
+            /** @var \Invertus\SaferPay\Service\SaferPayExceptionService $exceptionService */
+            $exceptionService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayExceptionService::class);
             $saferPayErrors = json_decode($this->context->cookie->saferPayErrors, true);
             $saferPayErrors[] = $exceptionService->getErrorMessageForException(
                 $exception,
@@ -318,7 +319,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
             );
             $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
 
-            $this->errors[] = $this->module->l('To see available payment methods, you must connect to your SaferPay account.');
+            $this->errors[] = $this->l('To see available payment methods, you must connect to your SaferPay account.');
 
             return null;
         }

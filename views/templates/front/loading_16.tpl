@@ -1,4 +1,4 @@
-/**
+{**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -18,32 +18,22 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- */
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
+ *}
 
-.payment-option img {
-    height: 24px;
-}
 
-.payment-logo {
-    max-width: 40px;
-}
+{block name='header'}
+{/block}
+{block name='head'}
+{/block}
 
-.payment-logo {
-    max-width: 40px;
-}
+{block name='content'}
+    <script type="text/javascript">
+        var redirectUrl = '{$redirectUrl|escape:'html':'UTF-8'}';
+    </script>
+    <div class="loader"></div>
+    <link rel="stylesheet" href="{$cssUrl|escape:'html':'UTF-8'}" type="text/css" media="all">
+    <script type="text/javascript" src="{$jsUrl|escape:'html':'UTF-8'}"></script>
+{/block}
 
-input[type="radio"][name^="saved_card_"] {
-    opacity: 1 !important;
-    width: 15px !important;
-    position: relative !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
-}
-.saved_credit_cards span {
-    padding-left: 3px !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
-}
+{block name='footer'}
+{/block}

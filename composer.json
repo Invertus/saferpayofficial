@@ -34,7 +34,7 @@
     },
     "require": {
         "vlucas/phpdotenv": "^3.6",
-
+        "symfony/expression-language": "^3.4",
         "symfony/config": "^3.4",
         "symfony/dependency-injection": "^3.4",
         "symfony/filesystem": "^3.4",

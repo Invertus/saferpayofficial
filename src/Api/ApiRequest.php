@@ -40,7 +40,6 @@ if (!defined('_PS_VERSION_')) {
 class ApiRequest
 {
     const FILE_NAME = 'ApiRequest';
-
     /** @var LoggerInterface */
     private $logger;
 
@@ -135,7 +134,6 @@ class ApiRequest
     {
         $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
         $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
-
         $credentials = base64_encode("$username:$password");
 
         return [
