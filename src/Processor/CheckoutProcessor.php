@@ -231,15 +231,17 @@ class CheckoutProcessor
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
+
         $logger->debug(sprintf('%s - Processing authorized order', self::FILE_NAME), [
             'context' => [
-                'id_order' => $this->getOrder($cart->id)->id,
+                'id_cart' => $cart->id,
             ],
         ]);
 
         try {
             $this->processCreateOrder($cart, $data->getPaymentMethod());
-            $order = $this->getOrder($cart->id);
+
+            $order = new Order(Order::getIdByCartId($cart->id));
             $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
 
             if (
@@ -279,19 +281,5 @@ class CheckoutProcessor
 
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
         }
-    }
-
-    /**
-     * @param int $cartId
-     *
-     * @return Order
-     */
-    private function getOrder($cartId)
-    {
-        if ($cartId < 1) {
-            throw new \Exception('Cart ID is invalid');
-        }
-
-        return new Order(Order::getIdByCartId($cartId));
     }
 }
