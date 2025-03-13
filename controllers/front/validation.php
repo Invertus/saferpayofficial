@@ -51,6 +51,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
 
         $paymentMethod = Tools::getValue('saved_card_method');
         $cart = $this->context->cart;
+
         $redirectLink = $this->context->link->getPageLink(
             'order',
             true,
@@ -91,7 +92,11 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $checkoutData = CheckoutData::create(
                 (int) $this->context->cart->id,
                 $paymentMethod,
-                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                -1,
+                null,
+                null,
+                false
             );
 
             $redirectLink = $checkoutController->execute($checkoutData);

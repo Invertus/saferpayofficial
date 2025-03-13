@@ -83,8 +83,6 @@ class AssertService
     {
         $assertApi = self::ASSERT_API_PAYMENT;
 
-        $isBusinessLicense = \Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
-
         if ($isBusiness) {
             $assertApi = self::ASSERT_API_TRANSACTION;
         }
