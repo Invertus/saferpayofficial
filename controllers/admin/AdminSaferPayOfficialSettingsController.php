@@ -23,6 +23,7 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
+use Invertus\SaferPay\Adapter\Configuration;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -53,7 +54,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::postProcess();
 
-        /** @var Configuration  $configuration */
+        /** @var Configuration $configuration */
         $configuration = $this->module->getService(Configuration::class);
 
         $isCreditCardSaveEnabled = $configuration->get(SaferPayConfig::CREDIT_CARD_SAVE);

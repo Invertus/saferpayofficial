@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Context\GlobalShopContext;
