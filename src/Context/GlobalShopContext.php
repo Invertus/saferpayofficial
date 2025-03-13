@@ -41,42 +41,42 @@ class GlobalShopContext implements GlobalShopContextInterface
         $this->context = $context;
     }
 
-    public function getShopId(): int
+    public function getShopId()
     {
         return $this->context->getShopId();
     }
 
-    public function getLanguageId(): int
+    public function getLanguageId()
     {
         return $this->context->getLanguageId();
     }
 
-    public function getLanguageIso(): string
+    public function getLanguageIso()
     {
         return $this->context->getLanguageIso();
     }
 
-    public function getCurrencyIso(): string
+    public function getCurrencyIso()
     {
         return $this->context->getCurrencyIso();
     }
 
-    public function getCurrency(): ?\Currency
+    public function getCurrency()
     {
         return $this->context->getCurrency();
     }
 
-    public function getShopDomain(): string
+    public function getShopDomain()
     {
         return $this->context->getShopDomain();
     }
 
-    public function getShopName(): string
+    public function getShopName()
     {
         return $this->context->getShopName();
     }
 
-    public function isShopSingleShopContext(): bool
+    public function isShopSingleShopContext()
     {
         return \Shop::getContext() === \Shop::CONTEXT_SHOP;
     }

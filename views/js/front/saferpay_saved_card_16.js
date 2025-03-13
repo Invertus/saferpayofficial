@@ -1,4 +1,3 @@
-<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -21,25 +20,12 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Factory;
-
-use PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderPresenter;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-class OrderPresenterFactory
-{
-    /**
-     * @return \PrestaShop\PrestaShop\Adapter\Order\OrderPresenter|OrderPresenter
-     */
-    public static function getOrderPresenter()
-    {
-        if (class_exists('PrestaShop\\PrestaShop\\Adapter\\Presenter\\Order\\OrderPresenter')) {
-            return new \PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderPresenter();
-        }
-
-        return new \PrestaShop\PrestaShop\Adapter\Order\OrderPresenter();
-    }
-}
+$(document).ready(function () {
+    $('.saferpay_method.js_credit_card').on('click', function () {
+        event.preventDefault();
+        var method = $(this).attr('data-saferpay-method');
+        $('.saferpay_additional_info').hide();
+        var $additionalInfo = $('.saferpay_additional_info.' + method);
+        $additionalInfo.show();
+    })
+});

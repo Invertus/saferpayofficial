@@ -1,5 +1,4 @@
-<?php
-/**
+{**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -19,13 +18,11 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- */
-header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+ *}
 
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
-
-header('Location: ../');
-exit;
+<li>
+    <a title="{l s='My credit cards' mod='saferpayofficial'}" href="{$link->getModuleLink('saferpayofficial', 'creditCards16')|escape:'htmlall':'UTF-8'}">
+        <i class="icon-tasks"></i>
+        <span>{l s='My credit cards' mod='saferpayofficial'}</span>
+    </a>
+</li>

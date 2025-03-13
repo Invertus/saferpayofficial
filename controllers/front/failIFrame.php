@@ -39,8 +39,9 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
 
     public function init()
     {
-        $this->display_header = true;
-
+        if (SaferPayConfig::isVersion17()) {
+            $this->display_header = true;
+        }
         parent::init();
     }
 
@@ -61,10 +62,26 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
+        $orderLink = $this->context->link->getPageLink(
+            'order',
+            true,
+            null
+        );
+
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
+        if (SaferPayConfig::isVersion17()) {
+            $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/loading.tpl');
+            return;
+        }
 
-        $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/loading.tpl');
+        $this->context->smarty->assign([
+            'cssUrl' => "{$this->module->getPathUri()}views/css/front/loading.css",
+            'jsUrl' => "{$this->module->getPathUri()}views/js/front/saferpay_iframe.js",
+            'redirectUrl' => $orderLink,
+        ]);
+        $this->setTemplate('loading_16.tpl');
+
     }
 
     public function setMedia()
@@ -88,18 +105,17 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
             true
         );
 
-        $this->context->controller->registerStylesheet(
-             $this->module->name .'-iframe-css',
-            'modules/' . $this->module->name . '/views/css/front/loading.css'
-        );
+        $this->addCSS("{$this->module->getPathUri()}views/css/front/loading.css");
 
         Media::addJsDef([
             'redirectUrl' => $failUrl,
         ]);
 
-        $this->context->controller->registerJavascript(
-             $this->module->name .'-iframe-js',
-            '/modules/' . $this->module->name . '/views/js/front/saferpay_iframe.js'
-        );
+        if (SaferPayConfig::isVersion17()) {
+            $this->context->controller->registerJavascript(
+                'saferpayIFrame',
+                '/modules/saferpayofficial/views/js/front/saferpay_iframe.js'
+            );
+        }
     }
 }

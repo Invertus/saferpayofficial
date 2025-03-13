@@ -36,8 +36,10 @@ class SaferPayErrorDisplayService
     {
         $context = Context::getContext();
         if (isset($context->cookie->$id)) {
-            $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
-            unset($_SERVER['HTTP_REFERER']);
+            if (SaferPayConfig::isVersion17()) {
+                $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
+                unset($_SERVER['HTTP_REFERER']);
+            }
             unset($context->cookie->$id);
         }
     }
@@ -46,7 +48,7 @@ class SaferPayErrorDisplayService
     {
         $value = is_array($value) ?
             array_map('stripslashes', $value) :
-            stripslashes($value);
+            \Tools::stripslashes($value);
 
         return $value;
     }

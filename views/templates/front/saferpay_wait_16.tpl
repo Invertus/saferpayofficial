@@ -1,4 +1,4 @@
-/**
+{**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -18,32 +18,15 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- */
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
+ *}
+{block name='header'}
+{/block}
+{block name='head'}
+{/block}
 
-.payment-option img {
-    height: 24px;
-}
+{block name='content'}
+    {include file="./saferpay_wait.tpl"}
+{/block}
 
-.payment-logo {
-    max-width: 40px;
-}
-
-.payment-logo {
-    max-width: 40px;
-}
-
-input[type="radio"][name^="saved_card_"] {
-    opacity: 1 !important;
-    width: 15px !important;
-    position: relative !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
-}
-.saved_credit_cards span {
-    padding-left: 3px !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
-}
+{block name='footer'}
+{/block}

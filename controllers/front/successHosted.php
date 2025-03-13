@@ -40,8 +40,9 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
 
     public function init()
     {
-        $this->display_header = true;
-
+        if (SaferPayConfig::isVersion17()) {
+            $this->display_header = true;
+        }
         parent::init();
     }
 

@@ -80,7 +80,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $this->redirectWithNotifications($redirectLink);
         }
 
-        if (Order::getIdByCartId($this->context->cart->id)) {
+        if (Order::getOrderByCartId($this->context->cart->id)) {
             $this->errors[] = $this->module->l('Order already exists.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
@@ -113,7 +113,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
                 $orderId = Order::getIdByCartId($this->context->cart->id);
             } else {
                 // For PrestaShop 1.6 use the alternative method
-                $orderId = Order::getIdByCartId($this->context->cart->id);
+                $orderId = Order::getOrderByCartId($this->context->cart->id);
             }
 
             $redirectLink = $this->context->link->getModuleLink(

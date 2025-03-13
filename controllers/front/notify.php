@@ -65,7 +65,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 'exceptions' => [],
             ]);
 
-            $this->ajaxRender(json_encode([
+            $this->ajaxDie(json_encode([
                 'error_type' => 'unknown_error',
                 'error_text' => $this->module->l('An unknown error error occurred. Please contact support', self::FILE_NAME),
             ]));
@@ -88,14 +88,20 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $secureKey
         ));
 
-        if (!$lockResult->isSuccessful()) {
-            die($this->module->l('Lock already exists', self::FILE_NAME));
+        if (!SaferPayConfig::isVersion17()) {
+            if ($lockResult > 200) {
+                die($this->module->l('Lock already exists', self::FILE_NAME));
+            }
+        } else {
+            if (!$lockResult->isSuccessful()) {
+                die($this->module->l('Lock already exists', self::FILE_NAME));
+            }
         }
 
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
 
-        $order = new Order(Order::getIdByCartId($cartId));
+        $order = new Order($this->getOrderId($cartId));
 
         $awaitingState = \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT);
 
@@ -134,7 +140,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             $checkoutData->setOrderStatus($transactionStatus);
             $checkoutProcessor->run($checkoutData);
 
-            $orderId = Order::getIdByCartId($cartId);
+            $orderId = $this->getOrderId($cartId);
 
             //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
             //NOTE must be left below assert action to get newest information.
@@ -207,7 +213,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             // this might be executed after pending transaction is declined (e.g. with accountToAccount payment)
             if (!isset($order)) {
-                $order = new Order(Order::getIdByCartId($cartId));
+                $order = new Order($this->getOrderId($cartId));
             }
 
             $orderId = (int) $order->id;
@@ -238,7 +244,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 $saferPayOrder->update();
                 $this->releaseLock();
-                die($this->module->l('canceled'));
+                die('canceled');
             }
 
             /** @var LoggerInterface $logger */
@@ -266,6 +272,20 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
         return $transactionAssert->assert($cartId);
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return bool|int
+     */
+    private function getOrderId($cartId)
+    {
+        if (method_exists('Order', 'getIdByCartId')) {
+            return Order::getIdByCartId($cartId);
+        }
+
+        return Order::getOrderByCartId($cartId);
     }
 
     protected function displayMaintenancePage()

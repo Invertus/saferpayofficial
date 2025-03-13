@@ -19,31 +19,11 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
 
-.payment-option img {
-    height: 24px;
-}
-
-.payment-logo {
-    max-width: 40px;
-}
-
-.payment-logo {
-    max-width: 40px;
-}
-
-input[type="radio"][name^="saved_card_"] {
-    opacity: 1 !important;
-    width: 15px !important;
-    position: relative !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
-}
-.saved_credit_cards span {
-    padding-left: 3px !important;
-    vertical-align: middle !important;
-    margin: 0 !important;
-}
+(function () {
+    // NOTE: Replacing because javascript gives "&amp;" instead of "&" in the URL
+    redirectUrl = redirectUrl.replace(/&amp;/g, "&");
+    if (top.location !== window.location) {
+        top.location.href = redirectUrl;
+    }
+})();

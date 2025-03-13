@@ -30,9 +30,13 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayController
+class SaferPayOfficialCreditCards16ModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'creditCards';
+    const FILE_NAME = 'creditCards16';
+
+    public $display_column_left = false;
+    public $display_column_right = false;
+
 
     public function display()
     {
@@ -43,19 +47,22 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
             $back_url = $this->context->link->getModuleLink('saferpay', 'my-account');
 
             Tools::redirect(
-                $this->context->link->getPageLink('authentication', null, null, ['back' => $back_url])
+                $this->context->link->getPageLink(
+                    'authentication',
+                    null,
+                    null,
+                    ['back' => $back_url]
+                )
             );
         }
         $this->initCardList();
-        $this->setBreadcrumb();
-        $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/credit_cards.tpl');
+        $this->setTemplate('credit_cards_16.tpl');
         parent::display();
     }
 
     private function initCardList()
     {
         $customerId = $this->context->customer->id;
-
         /** @var SaferPayCardAliasRepository $cardAliasRep */
         $cardAliasRep = $this->module->getService(SaferPayCardAliasRepository::class);
         $savedCustomerCards = $cardAliasRep->getSavedCardsByCustomerId($customerId);

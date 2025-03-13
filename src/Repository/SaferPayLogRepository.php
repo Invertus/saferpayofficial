@@ -42,7 +42,7 @@ class SaferPayLogRepository extends CollectionRepository implements SaferPayLogR
             $this->findAllInCollection()
                 ->sqlWhere('DATEDIFF(NOW(),date_add) >= ' . $daysToKeep)
         )
-            ->each(function (\SaferPayLog $log) {
+            ->each(function (\KlarnaPaymentLog $log) {
                 $log->delete();
             })
             ->realize();

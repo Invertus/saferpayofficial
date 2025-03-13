@@ -28,39 +28,6 @@
     {/block}
 </head>
 
-{block name='checkout_process'}
-
-    {include file="module:saferpayofficial/views/templates/front/hosted-templates/partials/all_errors.tpl"}
-
-    <div class="container" id="main">
-        <div class="form-group">
-            <input class="form-control" id="fields-holder-name" readonly placeholder="{l s='Holder name' mod='saferpayofficial'}">
-        </div>
-
-        <div class="form-group row">
-            <div class="col-sm-12">
-                <input class="form-control" id="fields-card-number" readonly placeholder="{l s='0000 0000 0000 0000' mod='saferpayofficial'}">
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-sm-6 col-xs-12 form-group">
-                <input class="form-control" id="fields-expiration" readonly placeholder="{l s='MM/YYYY' mod='saferpayofficial'}">
-            </div>
-            <div class="col-sm-6 col-xs-12 form-group">
-                <input class="form-control" id="fields-cvc" readonly placeholder="{l s='000' mod='saferpayofficial'}">
-            </div>
-        </div>
-
-        <button class="col-md-4 btn btn-primary" id="submit_hosted_field" disabled="disabled">{l s='Pay' mod='saferpayofficial'}</button>
-
-        <input class="form-control" id="token" readonly="" type="hidden" />
-
-    </div>
-
-    <input type="hidden" name="saferpay_selected_card" value="{$saferpay_selected_card|escape:'htmlall':'UTF-8'}" />
-{/block}
-
 {block name='content'}
 
     {include file="module:saferpayofficial/views/templates/front/hosted-templates/partials/all_errors.tpl"}

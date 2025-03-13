@@ -188,7 +188,7 @@ class CheckoutProcessor
      * @param $selectedCard
      * @param $fieldToken
      * @param $successController
-     * @return ?object
+     * @return array|null
      */
     private function processInitializePayment(
         $paymentMethod,
@@ -231,17 +231,15 @@ class CheckoutProcessor
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
-
         $logger->debug(sprintf('%s - Processing authorized order', self::FILE_NAME), [
             'context' => [
-                'id_cart' => $cart->id,
+                'id_order' => $this->getOrder($cart->id)->id,
             ],
         ]);
 
         try {
             $this->processCreateOrder($cart, $data->getPaymentMethod());
-
-            $order = new Order(Order::getIdByCartId($cart->id));
+            $order = $this->getOrder($cart->id);
             $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
 
             if (
@@ -281,5 +279,19 @@ class CheckoutProcessor
 
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
         }
+    }
+
+    /**
+     * @param int $cartId
+     *
+     * @return Order
+     */
+    private function getOrder($cartId)
+    {
+        if (method_exists('Order', 'getIdByCartId')) {
+            return new Order(Order::getIdByCartId($cartId));
+        }
+        // For PrestaShop 1.6 use the alternative method
+        return new Order(Order::getOrderByCartId($cartId));
     }
 }
