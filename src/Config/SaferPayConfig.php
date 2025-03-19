@@ -64,6 +64,7 @@ class SaferPayConfig
         'actionObjectOrderPaymentAddAfter',
         'displayOrderConfirmation'
     ];
+
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
