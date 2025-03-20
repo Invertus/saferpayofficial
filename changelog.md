@@ -187,3 +187,7 @@
 - Fixed minor issues with PrestaShop 1.6 compatibility
 - Fixed issues with default awaiting status on installation
 - Fixed issues with double same statuses in order
+
+## [2.0.0]
+- Fixed installation error
+- PrestaShop 9 compatibility

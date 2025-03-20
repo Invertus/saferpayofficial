@@ -77,15 +77,7 @@ class Installer extends AbstractInstaller
 
     private function registerHooks()
     {
-        $this->module->registerHook('paymentOptions');
-        $this->module->registerHook('displayAdminOrder');
-        $this->module->registerHook('actionFrontControllerSetMedia');
-        $this->module->registerHook('displayCustomerAccount');
-        $this->module->registerHook('actionEmailSendBefore');
-        $this->module->registerHook('displayAdminOrderTabContent');
-        $this->module->registerHook('actionAdminControllerSetMedia');
-        $this->module->registerHook('actionObjectOrderPaymentAddAfter');
-        $this->module->registerHook('displayOrderConfirmation');
+        $this->module->registerHook(SaferPayConfig::HOOKS);
     }
 
     private function installConfiguration()
