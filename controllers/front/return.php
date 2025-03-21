@@ -104,9 +104,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /**
          * NOTE: This flow is for hosted iframe payment method
          */
-        if (Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())
-            || Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix())
-            || $saferPayFieldRepository->isActiveByName($orderPayment))
+
+        /** @var PaymentTypeProvider $paymentType */
+        $paymentType = $this->module->getService(PaymentTypeProvider::class);
+
+        if ($paymentType->get($orderPayment) === PaymentType::HOSTED_IFRAME)
         {
             $order = new Order(Order::getIdByCartId($cartId));
 
