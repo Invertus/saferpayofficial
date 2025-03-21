@@ -105,10 +105,10 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
          * NOTE: This flow is for hosted iframe payment method
          */
 
-        /** @var PaymentTypeProvider $paymentType */
-        $paymentType = $this->module->getService(PaymentTypeProvider::class);
+        /** @var PaymentTypeProvider $paymentTypeProvider */
+        $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
 
-        if ($paymentType->get($orderPayment) === PaymentType::HOSTED_IFRAME)
+        if ($paymentTypeProvider->get($orderPayment) === PaymentType::HOSTED_IFRAME)
         {
             $order = new Order(Order::getIdByCartId($cartId));
 
