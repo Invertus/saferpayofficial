@@ -121,7 +121,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ]);
 
                 $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
-                $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+                $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
             }
         }
 
