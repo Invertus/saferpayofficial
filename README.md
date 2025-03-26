@@ -4,6 +4,10 @@
     </a>
 </p>
 
+> [!NOTE]  
+> Disclaimer: This module is only compatible with PrestaShop versions that are 1.7.6.1 and higher
+> Lower version compatibility module can be found here: [Saferpayofficial-1.7.6](https://github.com/Invertus/saferpayofficial-1.7.6)
+
 Saferpay - Easy, flexible, secure - The comprehensive e-payment solution from SIX Payment Services for easier and more secure payment in your online shop.
 
 SIX Payment Services has been part of Worldline since the end of 2018, making it Europe's largest technology partner for banks and merchants. The tailor-made solutions from SIX Payment Services include a broad portfolio of payment terminals and the acceptance and processing of national and international payments with credit, debit and prepaid cards as well as the smartphone.
