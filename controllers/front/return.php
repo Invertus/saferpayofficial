@@ -102,7 +102,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $saferPayFieldRepository = $this->module->getService(SaferPayFieldRepository::class);
 
         /**
-         * NOTE: This flow is for hosted iframe payment method
+         * NOTE: This flow is for hosted & iframe payment method
          */
 
         /** @var PaymentTypeProvider $paymentTypeProvider */
