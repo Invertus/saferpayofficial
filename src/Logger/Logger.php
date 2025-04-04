@@ -73,7 +73,7 @@ class Logger implements LoggerInterface
         $this->prestashopLoggerRepository = $prestashopLoggerRepository;
     }
 
-    public function emergency($message, array $context = [])
+    public function emergency($message, array $context = []): void
     {
         $this->log(
             $this->configuration->getAsInteger(
@@ -85,12 +85,12 @@ class Logger implements LoggerInterface
         );
     }
 
-    public function alert($message, array $context = [])
+    public function alert($message, array $context = []): void
     {
         $this->log(self::SEVERITY_WARNING, $message, $context);
     }
 
-    public function critical($message, array $context = [])
+    public function critical($message, array $context = []): void
     {
         $this->log(
             $this->configuration->getAsInteger(
@@ -102,27 +102,27 @@ class Logger implements LoggerInterface
         );
     }
 
-    public function error($message, array $context = [])
+    public function error($message, array $context = []): void
     {
         $this->log(self::SEVERITY_ERROR, $message, $context);
     }
 
-    public function warning($message, array $context = [])
+    public function warning($message, array $context = []): void
     {
         $this->log(self::SEVERITY_WARNING, $message, $context);
     }
 
-    public function notice($message, array $context = [])
+    public function notice($message, array $context = []): void
     {
         $this->log(self::SEVERITY_INFO, $message, $context);
     }
 
-    public function info($message, array $context = [])
+    public function info($message, array $context = []): void
     {
         $this->log(self::SEVERITY_INFO, $message, $context);
     }
 
-    public function debug($message, array $context = [])
+    public function debug($message, array $context = []): void
     {
         if (!SaferPayConfig::isDebugMode()) {
             return;
@@ -131,7 +131,7 @@ class Logger implements LoggerInterface
         $this->log(self::SEVERITY_INFO, $message, $context);
     }
 
-    public function log($level, $message, array $context = [])
+    public function log($level, $message, array $context = []): void
     {
         $idempotencyKey = $this->idempotencyProvider->getIdempotencyKey(true);
 
@@ -155,7 +155,7 @@ class Logger implements LoggerInterface
         $this->logContext($logId, $context);
     }
 
-    private function logContext($logId, array $context)
+    private function logContext($logId, array $context): void
     {
         $request = '';
         $response = '';

@@ -55,13 +55,7 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
         }
 
         try {
-            if (method_exists(\ControllerCore::class, 'ajaxRender')) {
-                $this->ajaxRender($value, $controller, $method);
-
-                exit;
-            }
-
-            $this->ajaxDie($value, $controller, $method);
+            $this->ajaxRender($value, $controller, $method);
         } catch (\Exception $exception) {
             $logger->error($exception->getMessage(), [
                 'context' => [],
@@ -94,5 +88,12 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
         }
 
         return true;
+    }
+
+    protected function ajaxRender($value = null, $controller = null, $method = null)
+    {
+        parent::ajaxRender($value, $controller, $method);
+
+        exit;
     }
 }

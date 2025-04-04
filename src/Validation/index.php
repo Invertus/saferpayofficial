@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -18,15 +19,13 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- *}
-{block name='header'}
-{/block}
-{block name='head'}
-{/block}
+ */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-{block name='content'}
-    {include file="./saferpay_wait.tpl"}
-{/block}
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
 
-{block name='footer'}
-{/block}
+header('Location: ../');
+exit;

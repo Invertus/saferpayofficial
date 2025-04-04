@@ -70,11 +70,13 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             }
         }
         if (!$authorized) {
-            $this->errors[] =
-                $this->module->l('This payment method is not available.', self::FILE_NAME);
+            $this->errors[] = $this->module->l('This payment method is not available.', self::FILE_NAME);
+
             $this->redirectWithNotifications($redirectLink);
         }
+
         $customer = new Customer($cart->id_customer);
+
         if (!Validate::isLoadedObject($customer)) {
             $logger->error(sprintf('%s - Customer not found', self::FILE_NAME), [
                 'context' => [],
@@ -94,10 +96,6 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         $paymentMethod = Tools::getValue('saved_card_method');
         $selectedCard = Tools::getValue("selectedCreditCard_{$paymentMethod}");
 
-        if (!SaferPayConfig::isVersion17()) {
-            $selectedCard = Tools::getValue("saved_card_{$paymentMethod}");
-        }
-
         try {
             /** @var CheckoutController $checkoutController */
             $checkoutController = $this->module->getService(CheckoutController::class);
@@ -107,7 +105,11 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 (int) $this->context->cart->id,
                 $paymentMethod,
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
-                $selectedCard
+                $selectedCard,
+                null,
+                null,
+                false,
+                0
             );
 
             $redirectUrl = $checkoutController->execute($checkoutData);
@@ -117,7 +119,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                 ControllerName::FAIL,
                 [
                     'cartId' => $this->context->cart->id,
-                    'orderId' => Order::getOrderByCartId($this->context->cart->id),
+                    'orderId' => Order::getIdByCartId($this->context->cart->id),
                     'secureKey' => $this->context->cart->secure_key,
                     'moduleId' => $this->module->id,
                 ],
@@ -130,17 +132,16 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
             'redirect' => $redirectUrl,
         ]);
 
-        if (SaferPayConfig::isVersion17()) {
-            $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_iframe.tpl');
-            return;
-        }
-
-        $this->setTemplate('saferpay_iframe_16.tpl');
+        $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/saferpay_iframe.tpl');
     }
 
     public function setMedia()
     {
         parent::setMedia();
-        $this->addCSS("{$this->module->getPathUri()}views/css/front/saferpay_iframe.css");
+
+        $this->registerStylesheet(
+            $this->module->name . '-iframe',
+            'modules/' . $this->module->name . '/views/css/front/saferpay_iframe.css'
+        );
     }
 }

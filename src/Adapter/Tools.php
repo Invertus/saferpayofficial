@@ -24,6 +24,9 @@
 namespace Invertus\SaferPay\Adapter;
 
 use Context as PrestashopContext;
+use Currency;
+use Invertus\SaferPay\Utility\VersionUtility;
+use Locale;
 use Tools as PrestashopTools;
 
 if (!defined('_PS_VERSION_')) {
@@ -151,6 +154,18 @@ class Tools
 
     public function displayPrice($price, $currency = null, $no_utf8 = false, PrestashopContext $context = null)
     {
+        if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0'))
+        {
+            $context = $context ?: PrestashopContext::getContext();
+            $currency = $currency ?: $context->currency;
+
+            $contextLocale = PrestashopTools::getContextLocale($currency);
+
+            $currencyCode = is_array($currency) ? $currency['iso_code'] : $currency->iso_code;
+
+            return $contextLocale->formatPrice($price, $currencyCode);
+        }
+
         return PrestashopTools::displayPrice($price, $currency, $no_utf8, $context);
     }
 

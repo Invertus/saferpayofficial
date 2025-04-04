@@ -51,6 +51,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
 
         $paymentMethod = Tools::getValue('saved_card_method');
         $cart = $this->context->cart;
+
         $redirectLink = $this->context->link->getPageLink(
             'order',
             true,
@@ -79,7 +80,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $this->redirectWithNotifications($redirectLink);
         }
 
-        if (Order::getOrderByCartId($this->context->cart->id)) {
+        if (Order::getIdByCartId($this->context->cart->id)) {
             $this->errors[] = $this->module->l('Order already exists.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
@@ -91,7 +92,11 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $checkoutData = CheckoutData::create(
                 (int) $this->context->cart->id,
                 $paymentMethod,
-                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
+                (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE),
+                -1,
+                null,
+                null,
+                false
             );
 
             $redirectLink = $checkoutController->execute($checkoutData);
@@ -108,7 +113,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
                 $orderId = Order::getIdByCartId($this->context->cart->id);
             } else {
                 // For PrestaShop 1.6 use the alternative method
-                $orderId = Order::getOrderByCartId($this->context->cart->id);
+                $orderId = Order::getIdByCartId($this->context->cart->id);
             }
 
             $redirectLink = $this->context->link->getModuleLink(

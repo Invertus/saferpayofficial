@@ -32,19 +32,19 @@ if (!defined('_PS_VERSION_')) {
  */
 interface GlobalShopContextInterface
 {
-    public function getShopId();
+    public function getShopId(): int;
 
-    public function getLanguageId();
+    public function getLanguageId(): int;
 
-    public function getLanguageIso();
+    public function getLanguageIso(): string;
 
-    public function getCurrencyIso();
+    public function getCurrencyIso(): string;
 
-    public function getCurrency();
+    public function getCurrency(): ?\Currency;
 
-    public function getShopDomain();
+    public function getShopDomain(): string;
 
-    public function getShopName();
+    public function getShopName(): string;
 
-    public function isShopSingleShopContext();
+    public function isShopSingleShopContext(): bool;
 }

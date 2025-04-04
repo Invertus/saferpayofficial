@@ -57,11 +57,6 @@ class Installer extends AbstractInstaller
     {
         $this->registerHooks();
 
-        if (!$this->installConfiguration()) {
-            $this->errors[] = $this->module->l('Failed to install configuration', __CLASS__);
-            return false;
-        }
-
         if (!$this->processDatabase()) {
             $this->errors[] = $this->module->l('Failed to install database', __CLASS__);
             return false;
@@ -72,11 +67,9 @@ class Installer extends AbstractInstaller
             return false;
         }
 
-        if (!SaferPayConfig::isVersion17()) {
-            if (!$this->installTabs()) {
-                $this->errors[] = $this->module->l('Failed to install tabs', __CLASS__);
-                return false;
-            }
+        if (!$this->installConfiguration()) {
+            $this->errors[] = $this->module->l('Failed to install configuration', __CLASS__);
+            return false;
         }
 
         return true;
@@ -84,18 +77,7 @@ class Installer extends AbstractInstaller
 
     private function registerHooks()
     {
-        $this->module->registerHook('paymentOptions');
-        $this->module->registerHook('displayPayment');
-        $this->module->registerHook('displayAdminOrder');
-        $this->module->registerHook('actionFrontControllerSetMedia');
-        $this->module->registerHook('displayCustomerAccount');
-        $this->module->registerHook('displayPayment');
-        $this->module->registerHook('paymentReturn');
-        $this->module->registerHook('actionEmailSendBefore');
-        $this->module->registerHook('displayAdminOrderTabContent');
-        $this->module->registerHook('actionAdminControllerSetMedia');
-        $this->module->registerHook('actionObjectOrderPaymentAddAfter');
-        $this->module->registerHook('displayOrderConfirmation');
+        $this->module->registerHook(SaferPayConfig::HOOKS);
     }
 
     private function installConfiguration()

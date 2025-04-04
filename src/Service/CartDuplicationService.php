@@ -60,12 +60,7 @@ class CartDuplicationService
         $cartRule->quantity++;
         $cartRule->update();
 
-        if (method_exists('Order', 'getIdByCartId')) {
-            $orderId = Order::getIdByCartId($cartId);
-        } else {
-            // For PrestaShop 1.6 or lower, use the alternative method
-            $orderId = Order::getOrderByCartId($cartId);
-        }
+        $orderId = Order::getIdByCartId($cartId);
 
         $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'order_cart_rule`
                     WHERE id_order = ' . (int) $orderId . '

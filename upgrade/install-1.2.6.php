@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -18,10 +19,16 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- *}
+ */
 
-{block name='content'}
-    <div>
-        <iframe id="saferpay-iframe" src="{$redirect|escape:'html':'UTF-8'}"></iframe>
-    </div>
-{/block}
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+function upgrade_module_1_2_6(SaferPayOfficial $module)
+{
+    $module->unregisterHook('displayPayment');
+    $module->unregisterHook('displayReturn');
+
+    return true;
+}

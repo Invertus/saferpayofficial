@@ -49,22 +49,25 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         $this->initCardList();
         $this->setBreadcrumb();
         $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/credit_cards.tpl');
+
         parent::display();
     }
 
     private function initCardList()
     {
-        $customerId = $this->context->customer->id;
-
         /** @var SaferPayCardAliasRepository $cardAliasRep */
         $cardAliasRep = $this->module->getService(SaferPayCardAliasRepository::class);
-        $savedCustomerCards = $cardAliasRep->getSavedCardsByCustomerId($customerId);
+
+        $savedCustomerCards = $cardAliasRep->getSavedCardsByCustomerId($this->context->customer->id);
+
         $rows = [];
+
         foreach ($savedCustomerCards as $savedCard) {
             $dateTill = date(
                 'Y-m-d',
                 strtotime($savedCard['date_add'] . ' + ' . $savedCard['lifetime'] . ' days')
             );
+
             $this->context->smarty->assign([
                 'saved_card_id' => $savedCard['id_saferpay_card_alias'],
                 'date_ends' => $dateTill,
@@ -74,10 +77,12 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
                 'card_img' => "{$this->module->getPathUri()}views/img/{$savedCard['payment_method']}.png",
                 'controller' => self::FILE_NAME,
             ]);
+
             $rows[] = $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/front/credit_card.tpl'
             );
         }
+
         $this->context->smarty->assign([
             'rows' => $rows,
         ]);
@@ -91,8 +96,10 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         $selectedCard = Tools::getValue('saved_card_id');
+
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
+
             if ($cardAlias->delete()) {
                 $this->success[] = $this->module->l('Successfully removed credit card', self::FILE_NAME);
                 return;
