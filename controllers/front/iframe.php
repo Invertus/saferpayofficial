@@ -46,14 +46,25 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         $cart = $this->context->cart;
+
         $redirectLink = $this->context->link->getPageLink(
             'order',
-            true,
+            null,
             null,
             [
                 'step' => 1,
             ]
         );
+
+        if (!Validate::isLoadedObject($cart)) {
+            $logger->error(sprintf('%s - Cart not found', self::FILE_NAME), [
+                'context' => [],
+                'exceptions' => [],
+            ]);
+
+            Tools::redirect($redirectLink);
+        }
+
         if ($cart->id_customer == 0
             || $cart->id_address_delivery == 0
             || $cart->id_address_invoice == 0
@@ -63,12 +74,14 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
         }
 
         $authorized = false;
+
         foreach (Module::getPaymentModules() as $module) {
             if ($module['name'] === $this->module->name) {
                 $authorized = true;
                 break;
             }
         }
+
         if (!$authorized) {
             $this->errors[] = $this->module->l('This payment method is not available.', self::FILE_NAME);
 
@@ -122,8 +135,7 @@ class SaferPayOfficialIFrameModuleFrontController extends AbstractSaferPayContro
                     'orderId' => Order::getIdByCartId($this->context->cart->id),
                     'secureKey' => $this->context->cart->secure_key,
                     'moduleId' => $this->module->id,
-                ],
-                true
+                ]
             );
             $this->redirectWithNotifications($redirectUrl);
         }

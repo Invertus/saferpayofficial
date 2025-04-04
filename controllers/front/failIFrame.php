@@ -84,12 +84,11 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
                 'secureKey' => $secureKey,
                 'orderId' => $orderId,
                 'moduleId' => $moduleId,
-            ],
-            true
+            ]
         );
 
         $this->context->controller->registerStylesheet(
-             $this->module->name .'-iframe-css',
+             $this->module->name . '-iframe-css',
             'modules/' . $this->module->name . '/views/css/front/loading.css'
         );
 
@@ -98,7 +97,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
         ]);
 
         $this->context->controller->registerJavascript(
-             $this->module->name .'-iframe-js',
+             $this->module->name . '-iframe-js',
             '/modules/' . $this->module->name . '/views/js/front/saferpay_iframe.js'
         );
     }
