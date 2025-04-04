@@ -74,7 +74,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
                 'card_number' => $savedCard['card_number'],
                 'payment_method' => $savedCard['payment_method'],
                 'date_add' => $savedCard['date_add'],
-                'card_img' => "{$this->module->getPathUri()}views/img/{$savedCard['payment_method']}.png",
+                'card_img' => $this->module->getPathUri() . 'views/img/' . $savedCard['payment_method'] . '.png',
                 'controller' => self::FILE_NAME,
             ]);
 

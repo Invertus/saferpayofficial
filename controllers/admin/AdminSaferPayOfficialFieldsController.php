@@ -63,9 +63,9 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
                         'type' => 'select-template',
                         'name' => SaferPayConfig::HOSTED_FIELDS_TEMPLATE,
                         'templateOptions' => [
-                            "{$this->module->getPathUri()}views/img/hosted-templates/template1.jpg",
-                            "{$this->module->getPathUri()}views/img/hosted-templates/template2.jpg",
-                            "{$this->module->getPathUri()}views/img/hosted-templates/template3.jpg",
+                            $this->module->getPathUri() . 'views/img/hosted-templates/template1.jpg',
+                            $this->module->getPathUri() . 'views/img/hosted-templates/template2.jpg',
+                            $this->module->getPathUri() . 'views/img/hosted-templates/template3.jpg',
                         ],
                     ],
                 ],
