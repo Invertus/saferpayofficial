@@ -84,8 +84,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
                 'secureKey' => $secureKey,
                 'orderId' => $orderId,
                 'moduleId' => $moduleId,
-            ],
-            true
+            ]
         );
 
         $this->context->controller->registerStylesheet(

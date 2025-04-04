@@ -118,12 +118,11 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
         );
 
         $termsAndConditions = new TermsAndConditions();
-        $termsAndConditions
-            ->setText(
-                '[' . $cms->meta_title . ']',
-                $link
-            )
-            ->setIdentifier('terms-and-conditions-footer');
+        $termsAndConditions->setText(
+            '[' . $cms->meta_title . ']',
+            $link
+        )
+        ->setIdentifier('terms-and-conditions-footer');
 
         return $termsAndConditions->format();
     }

@@ -52,7 +52,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME), [
             'context' => [],
-            'HTTP_STATUS_CODE' => http_response_code(),
+            'status_code' => http_response_code(),
         ]);
 
         $cartId = Tools::getValue('cartId');
@@ -99,7 +99,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
         $awaitingState = \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT);
 
-        if ($cartAdapter->orderExists($cartId) && $order->getCurrentState() != $awaitingState && $order->payment != SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT) {
+        if ($cartAdapter->orderExists($cartId)
+            && $order->getCurrentState() != $awaitingState
+            && $order->payment != SaferPayConfig::PAYMENT_ACCOUNTTOACCOUNT
+        ) {
             $logger->debug(sprintf('%s - Order already created. Dying.', self::FILE_NAME), [
                 'context' => [
                     'id_order' => $order->id,
@@ -124,11 +127,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 (int) $cart->id,
                 $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
                 (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE),
-                -1,
-                null,
-                null,
-                false,
-                1
+                -1
             );
 
             $checkoutData->setOrderStatus($transactionStatus);
@@ -140,21 +139,15 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             //NOTE must be left below assert action to get newest information.
             $order = new Order($orderId);
 
-            if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+            if (null === $assertResponseBody->getLiability()->getLiabilityShift()
+                && in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
+                && (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->cancel($order);
 
                 $logger->debug(sprintf('%s - Liability shift is false', self::FILE_NAME), [
-                    'context' => [
-                        'id_order' => $order->id,
-                    ],
-                ]);
-
-                $logger->debug(sprintf('%s - liability shift is false', self::FILE_NAME), [
                     'context' => [
                         'id_order' => $order->id,
                     ],
@@ -169,8 +162,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             // if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
             // so in this case if status comes back "captured" we just update the order state accordingly
-            if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
-                $transactionStatus === TransactionStatus::CAPTURED
+            if (!SaferPayConfig::supportsOrderCapture($paymentMethod)
+                && $transactionStatus === TransactionStatus::CAPTURED
             ) {
                 $logger->debug(sprintf('%s - order completed', self::FILE_NAME), [
                     'context' => [
@@ -180,6 +173,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+
                 $orderStatusService->setComplete($order);
 
                 return;
@@ -197,6 +191,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
+
                 $orderStatusService->capture($order);
             }
         } catch (Exception $e) {
@@ -238,6 +233,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
                 $saferPayOrder->update();
                 $this->releaseLock();
+
                 die($this->module->l('canceled'));
             }
 
