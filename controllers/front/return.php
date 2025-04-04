@@ -101,11 +101,14 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $saferPayFieldRepository = $this->module->getService(SaferPayFieldRepository::class);
 
         /**
-         * NOTE: This flow is for hosted iframe payment method
+         * NOTE: This flow is for hosted & iframe payment method
          */
-        if (Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())
-            || Configuration::get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix())
-            || $saferPayFieldRepository->isActiveByName($orderPayment))
+
+        /** @var PaymentTypeProvider $paymentTypeProvider */
+        $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
+
+        if ($paymentTypeProvider->get($orderPayment) === PaymentType::IFRAME
+            || $paymentTypeProvider->get($orderPayment) === PaymentType::HOSTED_IFRAME)
         {
             $order = new Order($this->getOrderId($cartId));
 
@@ -120,7 +123,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 ]);
 
                 $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
-                $this->redirectWithNotifications($this->getRedirectionToControllerUrl('fail'));
+                $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
             }
         }
 

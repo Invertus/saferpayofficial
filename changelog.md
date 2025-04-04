@@ -183,7 +183,8 @@
 - Fixed performance issues when loading "Payments" tab in Back office.
 - Fixed issue when saferpay logic is executing on other payment methods which is not saferpay
 
-## [1.2.6]
-- Fixed minor issues with PrestaShop 1.6 compatibility
+## [2.0.0]
 - Fixed issues with default awaiting status on installation
 - Fixed issues with double same statuses in order
+- Fixed issue with failure after user come back after initializing payment
+- PrestaShop 9 compatibility
