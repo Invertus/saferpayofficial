@@ -63,7 +63,7 @@ class SaferPayCardAliasRepository
     public function getSavedCardIdByCustomerIdAndAliasId($customerId, $aliasId)
     {
         $pCustomerId = (int) pSQL($customerId);
-        $pAliasId = (int) pSQL($aliasId);
+        $pAliasId = pSQL($aliasId);
 
         $query = new DbQuery();
         $query->select('`id_saferpay_card_alias`');
@@ -88,7 +88,7 @@ class SaferPayCardAliasRepository
 
     public function getCustomerIdByReferenceId($cardAliasId, $idCustomer)
     {
-        $pCardAliasId = (int) pSQL($cardAliasId);
+        $pCardAliasId = pSQL($cardAliasId);
         $pIdCustomer = (int) pSQL($idCustomer);
 
         $query = new DbQuery();
