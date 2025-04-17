@@ -76,7 +76,7 @@ class SaferPayOrderRepository
         $query = new DbQuery();
         $query->select('`id_saferpay_assert`');
         $query->from('saferpay_assert');
-        $query->where('id_saferPay_order = "' . (int) $pSaferPayOrderId . '"');
+        $query->where('id_saferPay_order = "' . $pSaferPayOrderId . '"');
         $query->orderBy('id_saferpay_assert DESC');
 
         return Db::getInstance()->getValue($query);
