@@ -56,7 +56,6 @@ class SaferPayConfig
         'displayAdminOrder',
         'actionFrontControllerSetMedia',
         'displayCustomerAccount',
-        'paymentReturn',
         'actionEmailSendBefore',
         'displayAdminOrderTabContent',
         'actionAdminControllerSetMedia',
