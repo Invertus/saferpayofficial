@@ -71,7 +71,7 @@ class SaferPayOrderRepository
     }
     public function getAssertIdBySaferPayOrderId($saferPayOrderId)
     {
-        $pSaferPayOrderId = (int) pSQL($saferPayOrderId);
+        $pSaferPayOrderId = pSQL($saferPayOrderId);
 
         $query = new DbQuery();
         $query->select('`id_saferpay_assert`');
@@ -89,7 +89,7 @@ class SaferPayOrderRepository
      */
     public function getOrderRefunds($saferPayOrderId)
     {
-        $pSaferPayOrderId = (int) pSQL($saferPayOrderId);
+        $pSaferPayOrderId = pSQL($saferPayOrderId);
 
         $query = new DbQuery();
         $query->select('*');
@@ -101,7 +101,7 @@ class SaferPayOrderRepository
 
     public function getPaymentBrandBySaferpayOrderId($saferPayOrderId)
     {
-        $pSaferPayOrderId = (int) pSQL($saferPayOrderId);
+        $pSaferPayOrderId = pSQL($saferPayOrderId);
 
         $query = new DbQuery();
         $query->select('`brand`');

@@ -63,7 +63,7 @@ class Uninstaller extends AbstractInstaller
     {
         return [
             \SaferPayPayment::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayPayment::$definition['table']) . '`;',
-            \SaferPayLogo::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayLogo::$definition['table']) . '`;',
+            \SaferPayLogo::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayLogo::$definition['table']) . '`;',
             \SaferPayCountry::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayCountry::$definition['table']) . '`;',
             \SaferPayCurrency::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayCurrency::$definition['table']) . '`;',
             \SaferPayOrder::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayOrder::$definition['table']) . '`;',
