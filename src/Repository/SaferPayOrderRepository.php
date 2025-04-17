@@ -46,12 +46,10 @@ class SaferPayOrderRepository
 
     public function getIdByOrderId($orderId)
     {
-        $pOrderId = (int) pSQL($orderId);
-
         $query = new DbQuery();
         $query->select('`id_saferpay_order`');
         $query->from('saferpay_order');
-        $query->where('id_order = "' . $pOrderId . '"');
+        $query->where('id_order = "' . (int) $orderId . '"');
         $query->orderBy('`id_saferpay_order` DESC');
 
         return Db::getInstance()->getValue($query);
@@ -59,24 +57,24 @@ class SaferPayOrderRepository
 
     public function getIdByCartId($cartId)
     {
-        $pCartId = (int) pSQL($cartId);
-
         $query = new DbQuery();
         $query->select('`id_saferpay_order`');
         $query->from('saferpay_order');
-        $query->where('id_cart = "' . $pCartId . '"');
+        $query->where('id_cart = "' . (int) $cartId . '"');
         $query->orderBy('`id_saferpay_order` DESC');
 
         return Db::getInstance()->getValue($query);
     }
     public function getAssertIdBySaferPayOrderId($saferPayOrderId)
     {
-        $pSaferPayOrderId = (int) pSQL($saferPayOrderId);
-
         $query = new DbQuery();
         $query->select('`id_saferpay_assert`');
         $query->from('saferpay_assert');
+<<<<<<< HEAD
         $query->where('id_saferPay_order = "' . $pSaferPayOrderId . '"');
+=======
+        $query->where('id_saferPay_order = "' . (int) $saferPayOrderId . '"');
+>>>>>>> parent of e9102790 ([SL-310] fix)
         $query->orderBy('id_saferpay_assert DESC');
 
         return Db::getInstance()->getValue($query);
@@ -89,24 +87,20 @@ class SaferPayOrderRepository
      */
     public function getOrderRefunds($saferPayOrderId)
     {
-        $pSaferPayOrderId = (int) pSQL($saferPayOrderId);
-
         $query = new DbQuery();
         $query->select('*');
         $query->from('saferpay_order_refund');
-        $query->where('id_saferPay_order = "' . $pSaferPayOrderId . '"');
+        $query->where('id_saferPay_order = "' . (int) $saferPayOrderId . '"');
 
         return Db::getInstance()->executeS($query);
     }
 
-    public function getPaymentBrandBySaferpayOrderId($saferPayOrderId)
+    public function getPaymentBrandBySaferpayOrderId($saferpayOrderId)
     {
-        $pSaferPayOrderId = (int) pSQL($saferPayOrderId);
-
         $query = new DbQuery();
         $query->select('`brand`');
         $query->from('saferpay_assert');
-        $query->where('id_saferpay_order = "' . $pSaferPayOrderId . '"');
+        $query->where('id_saferpay_order = "' . (int) $saferpayOrderId . '"');
 
         return Db::getInstance()->getValue($query);
     }
