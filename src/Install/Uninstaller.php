@@ -62,16 +62,16 @@ class Uninstaller extends AbstractInstaller
     private function getCommands()
     {
         return [
-            \SaferPayPayment::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayPayment::$definition['table']) . '`;',
-            \SaferPayLogo::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayLogo::$definition['table']) . '`;',
-            \SaferPayCountry::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayCountry::$definition['table']) . '`;',
-            \SaferPayCurrency::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayCurrency::$definition['table']) . '`;',
-            \SaferPayOrder::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayOrder::$definition['table']) . '`;',
-            \SaferPayAssert::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayAssert::$definition['table']) . '`;',
-            \SaferPayCardAlias::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayCardAlias::$definition['table']) . '`;',
-            \SaferPayLog::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '`;',
-            \SaferPayField::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayField::$definition['table']) . '`;',
-            \SaferPayOrderRefund::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . pSQL(\SaferPayOrderRefund::$definition['table']) . '`;',
+            \SaferPayPayment::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayPayment::$definition['table']) . '`;',
+            \SaferPayLogo::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayLogo::$definition['table']) . '`;',
+            \SaferPayCountry::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayCountry::$definition['table']) . '`;',
+            \SaferPayCurrency::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayCurrency::$definition['table']) . '`;',
+            \SaferPayOrder::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayOrder::$definition['table']) . '`;',
+            \SaferPayAssert::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayAssert::$definition['table']) . '`;',
+            \SaferPayCardAlias::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayCardAlias::$definition['table']) . '`;',
+            \SaferPayLog::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayLog::$definition['table']) . '`;',
+            \SaferPayField::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayField::$definition['table']) . '`;',
+            \SaferPayOrderRefund::$definition['table'] => 'DROP TABLE IF EXISTS `' . _DB_PREFIX_ . bqSQL(\SaferPayOrderRefund::$definition['table']) . '`;',
         ];
     }
 
