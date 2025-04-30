@@ -43,9 +43,6 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
 
     public function initContent()
     {
-        if ($this->module instanceof SaferPayOfficial) {
-            $this->content .= $this->module->displayNavigationTop();
-        }
         parent::initContent();
     }
 
@@ -53,7 +50,7 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
     {
         $this->fields_options = [
             'hosted_fields_settings' => [
-                'title' => $this->l('Hosted fields settings'),
+                'title' => $this->module->l('Hosted fields settings'),
                 'icon' => 'icon-settings',
                 'fields' => [
                     SaferPayConfig::HOSTED_FIELDS_TEMPLATE . '_description' => [
@@ -87,7 +84,8 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
     public function setMedia($isNewTheme = false)
     {
         parent::setMedia($isNewTheme);
-        $this->addJS("{$this->module->getPathUri()}views/js/admin/saferpay_fields.js");
-        $this->addCss("{$this->module->getPathUri()}views/css/admin/saferpay_fields.css");
+
+        $this->addJS('modules/' . $this->module->name . '/views/js/admin/saferpay_fields.js');
+        $this->addCSS('modules/' . $this->module->name . '/views/css/admin/saferpay_fields.css');
     }
 }

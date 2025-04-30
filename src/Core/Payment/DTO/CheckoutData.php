@@ -42,6 +42,7 @@ class CheckoutData
     private $createAfterAuthorization;
     private $isAuthorizedOrder;
     private $status;
+    private $isWebhook;
 
     public function __construct(
         $cartId,
@@ -50,7 +51,8 @@ class CheckoutData
         $selectedCard = -1,
         $fieldToken = null,
         $successController = null,
-        $isTransaction = false
+        $isTransaction = false,
+        $isWebhook = 1
     ) {
         $this->cartId = $cartId;
         $this->paymentMethod = $paymentMethod;
@@ -61,6 +63,7 @@ class CheckoutData
         $this->isTransaction = $isTransaction;
         $this->isAuthorizedOrder = false;
         $this->setCreateAfterAuthorization($paymentMethod);
+        $this->isWebhook = $isWebhook;
     }
 
     public static function create(
@@ -70,7 +73,8 @@ class CheckoutData
         $selectedCard = -1,
         $fieldToken = null,
         $successController = null,
-        $isTransaction = false
+        $isTransaction = false,
+        $isWebhook = 1
     ) {
         return new self(
             $cartId,
@@ -79,7 +83,8 @@ class CheckoutData
             $selectedCard,
             $fieldToken,
             $successController,
-            $isTransaction
+            $isTransaction,
+            $isWebhook
         );
     }
 
@@ -201,5 +206,15 @@ class CheckoutData
         }
 
         $this->createAfterAuthorization = Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION);
+    }
+
+    public function getIsWebhook()
+    {
+        return $this->isWebhook;
+    }
+
+    public function setIsWebhook($isWebhook)
+    {
+        $this->isWebhook = $isWebhook;
     }
 }

@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -19,14 +20,22 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-.payment_module a.saferpay_method {
-    padding-left: 10px;
-}
 
-.saved_credit_cards {
-    padding-bottom: 10px;
-}
+namespace Invertus\SaferPay\Provider;
 
-.saferpay_method img {
-    height: 24px;
+use Currency;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+class CurrencyProvider
+{
+    public function getAllCurrenciesInArray()
+    {
+        foreach (Currency::getCurrencies() as $currency) {
+            $currencies[$currency['id_currency']] = $currency['iso_code'];
+        }
+
+        return $currencies;
+    }
 }

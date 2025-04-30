@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -19,11 +20,12 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
 
-(function () {
-    // NOTE: Replacing because javascript gives "&amp;" instead of "&" in the URL
-    redirectUrl = redirectUrl.replace(/&amp;/g, "&");
-    if (top.location !== window.location) {
-        top.location.href = redirectUrl;
-    }
-})();
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+
+header('Location: ../');
+exit;

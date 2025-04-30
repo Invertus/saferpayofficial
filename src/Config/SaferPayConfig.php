@@ -49,7 +49,20 @@ class SaferPayConfig
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = '1.43';
+    const API_VERSION = '1.45';
+
+    const HOOKS = [
+        'paymentOptions',
+        'displayAdminOrder',
+        'actionFrontControllerSetMedia',
+        'displayCustomerAccount',
+        'actionEmailSendBefore',
+        'displayAdminOrderTabContent',
+        'actionAdminControllerSetMedia',
+        'actionObjectOrderPaymentAddAfter',
+        'displayOrderConfirmation'
+    ];
+
     const PAYMENT_METHODS = [
         self::PAYMENT_ALIPAY,
         self::PAYMENT_AMEX,
@@ -79,6 +92,7 @@ class SaferPayConfig
         self::PAYMENT_WECHATPAY,
         self::PAYMENT_ACCOUNTTOACCOUNT,
         self::PAYMENT_CLICKTOPAY,
+        self::PAYMENT_REKA,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -116,6 +130,7 @@ class SaferPayConfig
     const PAYMENT_WECHATPAY = 'WECHATPAY';
     const PAYMENT_CLICKTOPAY = 'CLICKTOPAY';
     const PAYMENT_BLIK = 'BLIK';
+    const PAYMENT_REKA = 'REKA';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -149,6 +164,7 @@ class SaferPayConfig
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
         'WeChatPay' => self::PAYMENT_WECHATPAY,
         'Blik' => self::PAYMENT_BLIK,
+        'Reka' => self::PAYMENT_REKA,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -323,6 +339,7 @@ class SaferPayConfig
             self::PAYMENT_PAYPAL,
             self::PAYMENT_CLICKTOPAY,
             self::PAYMENT_BLIK,
+            self::PAYMENT_REKA,
         ];
 
         return in_array($paymentMethod, $paymentsAlwaysRedirect);
@@ -412,7 +429,7 @@ class SaferPayConfig
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => 0,
             self::TEST_MODE => 1,
             self::HOSTED_FIELDS_TEMPLATE => self::HOSTED_FIELDS_TEMPLATE_DEFAULT,
-            self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => Configuration::get(
+            self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => (int) Configuration::get(
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
         ];
@@ -459,11 +476,6 @@ class SaferPayConfig
     public static function isDebugMode()
     {
         return (bool) Configuration::get(self::SAFERPAY_DEBUG_MODE);
-    }
-
-    public static function isVersion17()
-    {
-        return (bool) version_compare(_PS_VERSION_, '1.7', '>=');
     }
 
     public static function isVersionAbove177()

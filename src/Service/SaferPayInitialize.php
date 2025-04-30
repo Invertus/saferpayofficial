@@ -110,7 +110,8 @@ class SaferPayInitialize
         $isBusinessLicence,
         $selectedCard = -1,
         $fieldToken = null,
-        $successController = null
+        $successController = null,
+        $isWebhook = 1
     ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
@@ -127,6 +128,7 @@ class SaferPayInitialize
                 'isBusinessLicence' => $isBusinessLicence,
                 'fieldToken' => $fieldToken,
                 'paymentMethod' => $paymentMethod,
+                'isWebhook' => $isWebhook
             ],
             true
         );
