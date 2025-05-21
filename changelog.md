@@ -188,3 +188,6 @@
 - Fixed issues with double same statuses in order
 - Fixed issue with failure after user come back after initializing payment
 - PrestaShop 9 compatibility
+
+## [2.0.1]
+- Fixed issue when user is redirected to payment page in Back office when module is disabled

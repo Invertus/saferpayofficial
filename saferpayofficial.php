@@ -78,9 +78,6 @@ class SaferPayOfficial extends PaymentModule
 
     public function getContent()
     {
-        if (Configuration::get(SaferPayConfig::USERNAME)) {
-            Tools::redirectAdmin($this->context->link->getAdminLink(self::ADMIN_PAYMENTS_CONTROLLER));
-        }
         Tools::redirectAdmin($this->context->link->getAdminLink(self::ADMIN_SETTINGS_CONTROLLER));
     }
 

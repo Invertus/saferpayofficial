@@ -53,11 +53,9 @@ class SaferPayConfig
 
     const HOOKS = [
         'paymentOptions',
-        'displayPayment',
         'displayAdminOrder',
         'actionFrontControllerSetMedia',
         'displayCustomerAccount',
-        'paymentReturn',
         'actionEmailSendBefore',
         'displayAdminOrderTabContent',
         'actionAdminControllerSetMedia',
