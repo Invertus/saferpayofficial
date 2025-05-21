@@ -191,3 +191,4 @@
 
 ## [2.0.1]
 - Fixed issue when user is redirected to payment page in Back office when module is disabled
+- Fixed issue when payment is showing but it is disabled
