@@ -88,8 +88,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);
 
-            $this->warning[] = $this->module->l('An error occurred. Please contact support', self::FILE_NAME);
-            $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
+            Tools::redirect($this->getRedirectionToControllerUrl($failController));
         }
 
         $orderPayment = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
