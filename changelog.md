@@ -190,4 +190,6 @@
 - PrestaShop 9 compatibility
 
 ## [2.0.1]
-- Fixed issue when user is redirected to payment page in Back office when module is disabled
+- Fixed redirection to payment page in Back Office when module is disabled
+- Fixed display of disabled payment methods
+- Fixed order confirmation email delivery
