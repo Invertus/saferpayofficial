@@ -7,10 +7,7 @@
 ## Actual Behavior
 
 ## Possible Fix
-<!--- Not required -->
-
-## Possible Fix
-<!--- Not required -->
+<!--- Not required, but will help us to fix the issue -->
 
 ## Steps to Reproduce
 1. Enable <..>
