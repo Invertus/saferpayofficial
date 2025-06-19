@@ -1,8 +1,6 @@
 ---
 name: Bug Report
 about: Report a reproducible bug in the module
-title: "[Bug] "
-labels: bug
 assignees: 'TLabutis'
 ---
 
