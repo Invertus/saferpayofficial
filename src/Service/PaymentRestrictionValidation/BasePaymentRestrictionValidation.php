@@ -72,7 +72,15 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
      */
     public function isValid($paymentName)
     {
+        if (!$this->isPaymentMethodEnabled($paymentName)) {
+            return false;
+        }
+
         if (!$this->isCountrySupportedByPaymentName($paymentName)) {
+            return false;
+        }
+
+        if (!$this->isCurrencySupportedByPaymentName($paymentName)) {
             return false;
         }
 
@@ -126,5 +134,34 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
         $isCountryInList = in_array($this->legacyContext->getCountryId(), $enabledCountries, false);
 
         return $isCountryInList || $isAllCountries;
+    }
+
+    /**
+     * @param string $paymentName
+     *
+     * @return bool
+     */
+    private function isPaymentMethodEnabled($paymentName)
+    {
+        return $this->paymentRepository->isActiveByName($paymentName);
+    }
+
+    /**
+     * @param string $paymentName
+     *
+     * @return bool
+     */
+    private function isCurrencySupportedByPaymentName($paymentName)
+    {
+        $enabledCurrencies = $this->getEnabledCurrenciesByPaymentName($paymentName);
+
+        if (!$enabledCurrencies) {
+            return false;
+        }
+
+        $isAllCurrencies = in_array('0', $enabledCurrencies, false);
+        $isCurrencyInList = in_array($this->legacyContext->getCurrencyId(), $enabledCurrencies, false);
+
+        return $isCurrencyInList || $isAllCurrencies;
     }
 }
