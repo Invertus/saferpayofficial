@@ -74,7 +74,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
                 'card_number' => $savedCard['card_number'],
                 'payment_method' => $savedCard['payment_method'],
                 'date_add' => $savedCard['date_add'],
-                'card_img' => "{$this->module->getPathUri()}views/img/{$savedCard['payment_method']}.png",
+                'card_img' => $this->module->getPathUri() . 'views/img/' . $savedCard['payment_method'] . '.png',
                 'controller' => self::FILE_NAME,
             ]);
 
@@ -102,9 +102,9 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
 
             if ($cardAlias->delete()) {
                 $this->success[] = $this->module->l('Successfully removed credit card', self::FILE_NAME);
-                return;
+            } else {
+                $this->errors[] = $this->module->l('Failed to remove credit card', self::FILE_NAME);
             }
-            $this->errors[] = $this->module->l('Failed to removed credit card', self::FILE_NAME);
         }
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));

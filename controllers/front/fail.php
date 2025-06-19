@@ -107,10 +107,7 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
                 $this->context->language->id,
                 [
                     'action' => 'show',
-                ],
-                false,
-                null,
-                false
+                ]
             )
         );
     }

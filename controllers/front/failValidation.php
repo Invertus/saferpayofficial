@@ -21,6 +21,7 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -77,7 +78,7 @@ class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferP
         $saferPayOrder->update();
 
         $cartDuplicationService->restoreCart($cartId);
-        $isBusinessLicence = Tools::getValue(\Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE);
+        $isBusinessLicence = Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE);
         $controller = $isBusinessLicence ? 'failIFrame' : 'fail';
 
         $failUrl = $this->context->link->getModuleLink(
