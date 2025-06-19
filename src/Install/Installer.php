@@ -330,17 +330,20 @@ class Installer extends AbstractInstaller
             SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED,
             'Payment completed by Saferpay',
             '#32cd31',
-            true
-        );
-        $success &= $this->createOrderStatus(
-            SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED,
-            'Payment authorized by Saferpay',
             true,
             true,
             true,
             true,
             false,
             'payment'
+        );
+        $success &= $this->createOrderStatus(
+            SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED,
+            'Payment authorized by Saferpay',
+            '#4069e1',
+            false,
+            true,
+            true
         );
         $success &= $this->createPendingOrderStatus();
         $success &= $this->createOrderStatus(
