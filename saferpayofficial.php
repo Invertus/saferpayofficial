@@ -33,6 +33,7 @@ use Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Validation\ValidateIsAssetsRequired;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Invertus\SaferPay\Service\CardPaymentGroupingService;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -225,6 +226,15 @@ Thank you for your patience!');
         /** @var \Invertus\SaferPay\Provider\CurrencyProvider $currencyProvider */
         $currencyProvider = $this->getService(\Invertus\SaferPay\Provider\CurrencyProvider::class);
 
+        $allCurrencies = $currencyProvider->getAllCurrenciesInArray();
+
+        /** @var CardPaymentGroupingService $cardGroupingService */
+        $cardGroupingService = $this->getService(CardPaymentGroupingService::class);
+
+        if (Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS)) {
+            $paymentMethods = $cardGroupingService->group($paymentMethods, $allCurrencies);
+        }
+
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
@@ -264,12 +274,12 @@ Thank you for your patience!');
             $paymentRedirectionProvider = $this->getService(PaymentRedirectionProvider::class);
 
             $newOption = new PaymentOption();
+
             $translator = $this->getService(
                 LegacyTranslator::class
             );
-            /** @var \Invertus\SaferPay\Service\SaferPayPaymentNotation $saferPayPaymentNotation */
-            $saferPayPaymentNotation = $this->getService(\Invertus\SaferPay\Service\SaferPayPaymentNotation::class);
-            $paymentMethodName = $saferPayPaymentNotation->getForDisplay($paymentMethod['paymentMethod']);
+
+            $paymentMethodName = $translator->translate($paymentMethod['paymentMethod']);
 
             $inputs = [
                 'saved_card_method' => [

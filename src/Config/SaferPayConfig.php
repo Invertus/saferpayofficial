@@ -161,7 +161,7 @@ class SaferPayConfig
         'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT,
         'AccountToAccount' => self::PAYMENT_ACCOUNTTOACCOUNT,
         'Payconiq' => self::PAYMENT_PAYCONIQ,
-        'Card' => self::PAYMENT_CARD,
+        'Cards' => self::PAYMENT_CARD,
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
         'WeChatPay' => self::PAYMENT_WECHATPAY,
         'Blik' => self::PAYMENT_BLIK,
@@ -305,6 +305,21 @@ class SaferPayConfig
     ];
 
     const SAFERPAY_GROUP_CARDS = 'SAFERPAY_GROUP_CARDS';
+
+    /**
+     * Card brands that can be grouped under 'Cards' method
+     */
+    public const CARD_BRANDS = [
+        self::PAYMENT_AMEX,
+        self::PAYMENT_MAESTRO,
+        self::PAYMENT_MASTERCARD,
+        self::PAYMENT_VISA,
+        self::PAYMENT_VPAY,
+        self::PAYMENT_JCB,
+        self::PAYMENT_DINERS,
+        self::PAYMENT_MYONE,
+        self::PAYMENT_BANCONTACT,
+    ];
 
     public static function supportsOrderCapture($paymentMethod)
     {

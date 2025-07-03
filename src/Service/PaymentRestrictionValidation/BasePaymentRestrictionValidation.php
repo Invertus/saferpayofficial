@@ -72,6 +72,10 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
      */
     public function isValid($paymentName)
     {
+        if ($paymentName === 'CARD') {
+            return true;
+        }
+
         if (!$this->isPaymentMethodEnabled($paymentName)) {
             return false;
         }
