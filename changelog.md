@@ -68,11 +68,11 @@
 
 ## [1.0.15] - 2022-05-31
 
-- BO : "Invalid credentials" exception catcher added. 
+- BO : "Invalid credentials" exception catcher added.
 
 ## [1.0.16] - 2022-06-07
 
-- BO : Changed mastercard config name from MASTERCARD to MasterCard. 
+- BO : Changed mastercard config name from MASTERCARD to MasterCard.
 
 ## [1.0.17] - 2022-06-14
 
@@ -82,7 +82,7 @@
 
 - BO: Added new switch to control when new order mail is sent to merchant.
 - BO : Fixed issue where on older PS version capture order would send wrong price.
-- 
+-
 ## [1.0.19] - *
 
 - FO: added ability to save and use saved cards with hosted fields payment
@@ -116,7 +116,7 @@
 
 ## [1.1.1] - *
 
-- FO : Fixed ApplePay payment method was not displayed on Macintosh PC's. 
+- FO : Fixed ApplePay payment method was not displayed on Macintosh PC's.
 
 ## [1.1.2] - *
 
@@ -160,7 +160,7 @@
 
 - ## [1.2.2] - *
 - FO : Confirmation email after order authorization fix
-- BO : Order confirmation email setting removed 
+- BO : Order confirmation email setting removed
 - BO : Security improvements
 
 - ## [1.2.3] - *
@@ -192,3 +192,6 @@
 ## [2.0.1]
 - Fixed issue when user is redirected to payment page in Back office when module is disabled
 - Fixed issue when payment is showing but it is disabled
+
+## [2.0.2]
+- Remove WL Crypto payment method
