@@ -93,6 +93,7 @@ class SaferPayConfig
         self::PAYMENT_ACCOUNTTOACCOUNT,
         self::PAYMENT_CLICKTOPAY,
         self::PAYMENT_REKA,
+        self::PAYMENT_CARD,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -302,6 +303,8 @@ class SaferPayConfig
         self::THE_CHECKOUT_MODULE,
         self::SUPER_CHECKOUT_MODULE,
     ];
+
+    const SAFERPAY_GROUP_CARDS = 'SAFERPAY_GROUP_CARDS';
 
     public static function supportsOrderCapture($paymentMethod)
     {
