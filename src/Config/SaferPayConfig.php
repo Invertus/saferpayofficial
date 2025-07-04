@@ -88,7 +88,6 @@ class SaferPayConfig
         self::PAYMENT_VPAY,
         self::PAYMENT_APPLEPAY,
         self::PAYMENT_KLARNA,
-        self::PAYMENT_WLCRYPTOPAYMENTS,
         self::PAYMENT_WECHATPAY,
         self::PAYMENT_ACCOUNTTOACCOUNT,
         self::PAYMENT_CLICKTOPAY,
@@ -120,7 +119,6 @@ class SaferPayConfig
     const PAYMENT_VPAY = 'VPAY';
     const PAYMENT_KLARNA = 'KLARNA';
     const PAYMENT_APPLEPAY = 'APPLEPAY';
-    const PAYMENT_WLCRYPTOPAYMENTS = 'WLCRYPTOPAYMENTS';
     const PAYMENT_GOOGLEPAY = 'GOOGLEPAY';
     const PAYMENT_BONUS = 'BONUS';
     const PAYMENT_LASTSCHRIFT = 'DIRECTDEBIT';
@@ -154,7 +152,6 @@ class SaferPayConfig
         'PayPal' => self::PAYMENT_PAYPAL,
         'Twint' => self::PAYMENT_TWINT,
         'Visa' => self::PAYMENT_VISA,
-        'WLCryptoPayments' => self::PAYMENT_WLCRYPTOPAYMENTS,
         'Postcard' => self::PAYMENT_POSTCARD,
         'BonusCard' => self::PAYMENT_BONUS,
         'Lastschrift' => self::PAYMENT_LASTSCHRIFT,
@@ -177,10 +174,6 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_JCB,
         self::PAYMENT_MYONE,
-    ];
-
-    const WLCRYPTOPAYMENTS_SUPPORTED_CURRENCIES = [
-        'CHF',
     ];
 
     const KLARNA_SUPPORTED_CURRENCIES = [
