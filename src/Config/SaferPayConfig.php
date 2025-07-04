@@ -426,7 +426,7 @@ class SaferPayConfig
             self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => (int) Configuration::get(
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
-            self::SAFERPAY_SEND_ORDER_CONF_MAIL => 1,
+            self::SAFERPAY_SEND_ORDER_CONF_MAIL => 0,
         ];
     }
 

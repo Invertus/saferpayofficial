@@ -27,7 +27,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_2_0_2()
 {
-    Configuration::updateValue('SAFERPAY_SEND_ORDER_CONF_MAIL', 1);
+    Configuration::updateValue('SAFERPAY_SEND_ORDER_CONF_MAIL', 0);
 
     return true;
 }
