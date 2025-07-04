@@ -403,6 +403,11 @@ Thank you for your patience!');
             }
         }
 
+        if ($params['template'] === 'order_conf'
+            && Configuration::get(SaferPayConfig::SAFERPAY_SEND_ORDER_CONF_MAIL)) {
+            return true;
+        }
+
         return false;
     }
 

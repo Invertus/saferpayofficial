@@ -248,6 +248,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'cast' => 'intval',
                     'type' => 'bool',
                 ],
+                SaferPayConfig::SAFERPAY_SEND_ORDER_CONF_MAIL => [
+                    'title' => $this->module->l('Send order confirmation mail on payment completion'),
+                    'desc' => $this->module->l('Send an email from Saferpay on payment completion'),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                ],
                 SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL . '_description' => [
                     'type' => 'desc',
                     'class' => 'col-lg-12',
