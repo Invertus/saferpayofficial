@@ -44,7 +44,7 @@ jobs:
           ps-module-name: ${{ env.ps-module-name }}
           ps-version-dockerhub-tag: ${{ matrix.PS }}
           project-workspace-dir: ${{ env.project-workspace-dir }}
-          ps-module-workspace-private-key: ${{ secrets.PS_MODULE_WORKSPACE_PRIVATE_KEY }}
+          ps-module-workspace-private-key: ${{ secrets.PS_MODULE_WORKSPACE_SAFERPAY_PRIVATE_KEY }}
 
       - name: Run PrestaShop
         run: |
