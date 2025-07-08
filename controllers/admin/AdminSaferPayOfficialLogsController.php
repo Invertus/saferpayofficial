@@ -84,7 +84,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
     public function initContent()
     {
         $this->content .= $this->displaySeverityInformation();
-        
+
         parent::initContent();
     }
 
@@ -164,11 +164,11 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         ]);
 
         $this->context->controller->addCSS(
-            'modules/' . $this->module->name . '/views/css/admin/logs_tab.css',
+            'modules/' . $this->module->name . '/views/css/admin/logs_tab.css'
         );
 
         $this->context->controller->addJS(
-            'modules/' . $this->module->name . '/views/js/admin/log.js',
+            'modules/' . $this->module->name . '/views/js/admin/log.js'
         );
     }
 
