@@ -75,7 +75,7 @@ jobs:
 
       - name: Switch to the correct branch
         run: |
-          docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && git fetch origin && git checkout ${{ github.ref_name }}"
+          docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && git fetch origin && git checkout ${{ github.head_ref || github.ref_name }}"
 
       - name: Install composer dependencies
         run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && composer install"
