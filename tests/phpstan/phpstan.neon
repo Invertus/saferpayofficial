@@ -1,0 +1,12 @@
+includes:
+  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
+parameters:
+  paths:
+    - ../../controllers
+    - ../../src
+    - ../../klarnapayment.php
+  level: 2
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    - '#Cannot call method getFlashBag\(\) on object\|false#'
