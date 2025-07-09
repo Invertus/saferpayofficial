@@ -21,7 +21,7 @@ jobs:
       project-workspace-dir: ${{ github.workspace }}/../workspace
     strategy:
       matrix:
-        PS: [ 1.7.8-7.1 ]
+        PS: [ 1.7.8-7.4 ]
         testsuite: [ lint, phpstan ]
 
     steps:
