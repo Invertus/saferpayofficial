@@ -123,7 +123,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
             null,
             [
                 'step' => 1,
-            ],
+            ]
         );
     }
 }

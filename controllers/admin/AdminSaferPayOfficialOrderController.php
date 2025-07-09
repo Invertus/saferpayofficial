@@ -82,7 +82,7 @@ class AdminSaferPayOfficialOrderController extends ModuleAdminController
                 [
                     'orderId' => $orderId,
                     'vieworder' => 1,
-                ],
+                ]
             );
         } else {
             $orderLink = $this->context->link->getAdminLink('AdminOrders') . '&id_order=' . $orderId . '&vieworder';
