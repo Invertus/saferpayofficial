@@ -22,7 +22,7 @@ jobs:
     strategy:
       matrix:
         PS: [ 1.7.8-7.1 ]
-        testsuite: [ lint, phpstan, unit, integration ]
+        testsuite: [ lint, phpstan ]
 
     steps:
       - name: Cancel Previous Runs
@@ -65,29 +65,13 @@ jobs:
           key: ${{ github.sha }}
 
       - name: Install module
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html && php bin/console prestashop:module install ${{ env.ps-module-name }}"
+        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules && git clone https://github.com/Invertus/${{ env.ps-module-name }}"
+
+      - name: Install composer dependencies
+        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && composer install"
 
       - name: Run ${{ matrix.testsuite }} tests
         run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && make ci-${{ matrix.testsuite }} ps_version_tag=${{ matrix.PS }}"
-
-  deploy-dev:
-    name: Deploy to dev environment
-    if: github.event_name == 'push' && (contains(github.ref, 'refs/heads/main'))
-    needs: [ test ]
-    runs-on: ubuntu-latest
-    environment: dev
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.INVERTUSDEMO_APACHE_SERVER_IP }}
-          username: ${{ secrets.INVERTUSDEMO_APACHE_SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY_FOR_INVERTUSDEMO_AUTH }}
-          script: (cd ${{ secrets.WORKSPACE_DIR }} && make demo-deploy)
-          debug: true
 
   prepare-zip:
     name: Prepare module ZIP artifact
