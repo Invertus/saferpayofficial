@@ -161,7 +161,7 @@ ci-lint:
 
 ci-phpstan:
 	# PHPStan version is PHP version-dependent, so we need to install it on the go depending on actual PHP version used by CI.
-	composer require phpstan/phpstan --dev --ignore-platform-reqs
+	composer require phpstan/phpstan:^1.4 --dev --ignore-platform-reqs
 	ps_version=$(firstword $(subst -, ,$(ps_version_tag))); \
 	if [ -e tests/phpstan/phpstan-$$ps_version.neon ] ; then \
 		phpstan_config_path=tests/phpstan/phpstan-$$ps_version.neon ; \
