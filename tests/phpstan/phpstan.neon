@@ -5,7 +5,7 @@ parameters:
   paths:
     - ../../controllers
     - ../../src
-    - ../../klarnapayment.php
+    - ../../saferpayofficial.php
   level: 2
   reportUnmatchedIgnoredErrors: false
   ignoreErrors:
