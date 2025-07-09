@@ -38,13 +38,17 @@ jobs:
         with:
           swap-size-gb: 10
 
-      - name: Setup PS module workspace
-        uses: Invertus/setup-ps-module-workspace@1.0.2
-        with:
-          ps-module-name: ${{ env.ps-module-name }}
-          ps-version-dockerhub-tag: ${{ matrix.PS }}
-          project-workspace-dir: ${{ env.project-workspace-dir }}
-          ps-module-workspace-private-key: ${{ secrets.PS_MODULE_WORKSPACE_SAFERPAY_PRIVATE_KEY }}
+      - name: Set up workspace
+        shell: bash
+        run: |
+          eval `ssh-agent -s`
+          ssh-add - <<< "${{ secrets.PS_MODULE_WORKSPACE_SAFERPAY_PRIVATE_KEY }}"
+          git clone git@github.com:Invertus/ps-module-workspace.git ${{ env.project-workspace-dir }}
+          cd ${{ env.project-workspace-dir }}
+          sed 's/PROJECT_NAME=.*/PROJECT_NAME=${{ env.ps-module-name }}/g' < .env.dist |
+          sed 's/PS_VERSION_TAG=.*/PS_VERSION_TAG=${{ matrix.PS }}/g' > .env
+          make create-modules-dir
+          cp -R ${{ github.workspace }} ${{ env.project-workspace-dir }}/prestashop/${{ matrix.PS }}/modules/${{ env.ps-module-name }}
 
       - name: Run PrestaShop
         run: |
