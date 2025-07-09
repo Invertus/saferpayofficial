@@ -80,6 +80,9 @@ jobs:
       - name: Install composer dependencies
         run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && composer install"
 
+      - name: PHP version
+        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "php -v"
+
       - name: Run ${{ matrix.testsuite }} tests
         run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && make ci-${{ matrix.testsuite }} ps_version_tag=${{ matrix.PS }}"
 
