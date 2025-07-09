@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Exception\Restriction;
 
 use Invertus\SaferPay\Exception\SaferPayException;
-use RuntimeException;
 
 if (!defined('_PS_VERSION_')) {
     exit;

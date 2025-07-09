@@ -60,7 +60,6 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
             '.tpl'
         );
-
     }
 
     public function setMedia()

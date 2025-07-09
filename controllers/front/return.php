@@ -108,8 +108,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
 
         if ($paymentTypeProvider->get($orderPayment) === PaymentType::IFRAME
-            || $paymentTypeProvider->get($orderPayment) === PaymentType::HOSTED_IFRAME)
-        {
+            || $paymentTypeProvider->get($orderPayment) === PaymentType::HOSTED_IFRAME) {
             $order = new Order(Order::getIdByCartId($cartId));
 
             try {
@@ -308,9 +307,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $checkoutProcessor = $this->module->getService(CheckoutProcessor::class);
 
         $checkoutData = CheckoutData::create(
-            (int)$cartId,
+            (int) $cartId,
             $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod(),
-            (int)Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
+            (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
         );
         $checkoutData->setOrderStatus($transactionStatus);
 

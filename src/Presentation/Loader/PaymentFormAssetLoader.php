@@ -23,10 +23,8 @@
 
 namespace Invertus\SaferPay\Presentation\Loader;
 
-use Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\DTO\Request\Order;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Factory\ModuleFactory;

@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Controller;
 
 use Invertus\Lock\Lock;
-use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Response\Response;
 use SaferPayLog;
 
@@ -84,6 +83,7 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
                 );
             }
         } catch (\Exception $exception) {
+            // TODO: Refactor this to use the logger service
             $logger = new SaferPayLog();
             $logger->message = 'Failed to lock process';
             $logger->payload = $resource;
@@ -115,6 +115,7 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
         try {
             $this->lock->release();
         } catch (\Exception $exception) {
+            // TODO: Refactor this to use the logger service
             $logger = new SaferPayLog();
             $logger->message = 'Failed to release process';
             $logger->payload = $exception->getMessage() . $this->lock->acquire();

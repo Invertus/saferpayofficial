@@ -128,7 +128,7 @@ class SaferPayInitialize
                 'isBusinessLicence' => $isBusinessLicence,
                 'fieldToken' => $fieldToken,
                 'paymentMethod' => $paymentMethod,
-                'isWebhook' => $isWebhook
+                'isWebhook' => $isWebhook,
             ],
             true
         );

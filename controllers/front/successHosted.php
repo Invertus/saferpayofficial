@@ -21,7 +21,6 @@
  *@license   SIX Payment Services
  */
 
-use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Logger\LoggerInterface;
@@ -124,7 +123,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
             null,
             [
                 'step' => 1,
-            ]
+            ],
         );
     }
 }

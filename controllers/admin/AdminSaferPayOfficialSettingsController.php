@@ -194,8 +194,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'icon' => 'process-icon-save',
                     'class' => 'btn btn-default pull-right',
                     'type' => 'submit',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -510,7 +510,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'class' => 'btn btn-default pull-right',
                     'type' => 'submit',
                 ],
-            ]
+            ],
         ];
     }
 }

@@ -29,7 +29,6 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Utility\ExceptionUtility;
-use SaferPayLog;
 use Unirest\Request;
 use Unirest\Response;
 
@@ -119,7 +118,7 @@ class ApiRequest
                 ],
                 'request' => $params,
                 'response' => json_decode($response->raw_body),
-                'exceptions' => ExceptionUtility::getExceptions($exception)
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
             throw $exception;
@@ -151,7 +150,7 @@ class ApiRequest
     {
         if (isset($response->body->ErrorName) && $response->body->ErrorName === SaferPayConfig::TRANSACTION_ALREADY_CAPTURED) {
             $this->logger->debug('Tried to apply state CAPTURED to already captured order', [
-                'context' => []
+                'context' => [],
             ]);
 
             return;
