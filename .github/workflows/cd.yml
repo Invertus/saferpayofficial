@@ -67,6 +67,9 @@ jobs:
       - name: Install git
         run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "apt update && apt install -y git"
 
+      - name: Remove old module
+        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules && rm -rf ${{ env.ps-module-name }}"
+
       - name: Install module
         run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules && git clone https://github.com/Invertus/${{ env.ps-module-name }}"
 
