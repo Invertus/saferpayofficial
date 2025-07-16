@@ -6,7 +6,15 @@ parameters:
     - ../../controllers
     - ../../src
     - ../../saferpayofficial.php
+    - ../../saferpay.config.php
   level: 2
   reportUnmatchedIgnoredErrors: false
   ignoreErrors:
-    - '#Cannot call method getFlashBag\(\) on object\|false#'
+    - "#Call to method registerStylesheet\\(\\) on an unknown class TheCheckoutModuleFrontController#"
+    - "#Call to method registerJavascript\\(\\) on an unknown class TheCheckoutModuleFrontController#"
+    - "#Undefined type 'SupercheckoutSupercheckoutModuleFrontController'#"
+    - "#Call to method registerStylesheet\\(\\) on an unknown class SupercheckoutSupercheckoutModuleFrontController#"
+    - "#Call to method registerJavascript\\(\\) on an unknown class SupercheckoutSupercheckoutModuleFrontController#"
+    - "#@var for variable \\$emailAlertsModule contains unknown class Ps_EmailAlerts#"
+    - "#Call to method hookActionValidateOrder\\(\\) on an unknown class Ps_EmailAlerts#"
+
