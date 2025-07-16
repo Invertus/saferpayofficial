@@ -101,5 +101,7 @@ class SaferPayOfficialFailIFrameModuleFrontController extends AbstractSaferPayCo
             $this->module->name . '-iframe-js',
             '/modules/' . $this->module->name . '/views/js/front/saferpay_iframe.js'
         );
+
+        return true;
     }
 }

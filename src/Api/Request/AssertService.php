@@ -55,6 +55,9 @@ class AssertService
      * @var SaferPayAssertBuilder
      */
     private $assertBuilder;
+    /**
+     * @var SaferPayCardAliasBuilder
+     */
     private $aliasBuilder;
 
     public function __construct(
@@ -71,7 +74,7 @@ class AssertService
 
     /**
      * @param AssertRequest $assertRequest
-     * @param int $saferPayOrderId
+     * @param bool $isBusiness
      *
      * @return object|null
      * @throws \Exception
@@ -97,6 +100,8 @@ class AssertService
     /**
      * @param object|null $responseBody
      * @param int $saferPayOrderId
+     * @param string $customerId
+     * @param int $selectedCardOption
      *
      * @return AssertBody
      * @throws Exception

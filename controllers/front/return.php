@@ -74,6 +74,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
 
+        $assertResponseBody = null;
+        $transactionStatus = null;
+
         try {
             $assertResponseBody = $transactionAssert->assert(
                 $cartId,
@@ -81,6 +84,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
                 $selectedCard,
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
             );
+
             $transactionStatus = $assertResponseBody->getTransaction()->getStatus();
         } catch (Exception $e) {
             $logger->error($e->getMessage(), [
@@ -184,10 +188,10 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
-        /** @var \Invertus\SaferPay\Adapter\Cart $cart */
-        $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
+        /** @var Cart $cartAdapter */
+        $cartAdapter = $this->module->getService(Cart::class);
 
-        if ($cartAdapter->orderExists($cart->id)) {
+        if ($cartAdapter->orderExists($cartId)) {
             $order = new Order(Order::getIdByCartId($cartId));
 
             $saferPayAuthorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);

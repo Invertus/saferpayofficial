@@ -33,6 +33,9 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
 {
     const FILE_NAME = 'hostedIframe';
 
+    /** @var \SaferPayOfficial */
+    public $module;
+
     public function initContent()
     {
         /** @var LoggerInterface $logger */
@@ -98,6 +101,8 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
             Configuration::get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE) .
             ".css"
         );
+
+        return true;
     }
 
     protected function getDefaultTermsAndConditions()

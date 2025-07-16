@@ -92,6 +92,8 @@ class ApiRequest
      */
     public function get($url, $params = [])
     {
+        $response = null;
+        
         try {
             $response = Request::get(
                 $this->getBaseUrl() . $url,
