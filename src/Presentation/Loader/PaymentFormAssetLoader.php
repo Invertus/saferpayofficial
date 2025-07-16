@@ -84,6 +84,7 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
+        /** @phpstan-ignore-next-line */
         if (!$controller instanceof \OrderControllerCore) {
             return;
         }
@@ -101,6 +102,7 @@ class PaymentFormAssetLoader
 
     private function registerTheCheckoutAssets($controller)
     {
+        /** @phpstan-ignore-next-line */
         if (!$controller instanceof \TheCheckoutModuleFrontController) {
             return;
         }
@@ -118,6 +120,7 @@ class PaymentFormAssetLoader
 
     private function registerSuperCheckoutAssets($controller)
     {
+        /** @phpstan-ignore-next-line */
         if (!$controller instanceof \SupercheckoutSupercheckoutModuleFrontController) {
             return;
         }
