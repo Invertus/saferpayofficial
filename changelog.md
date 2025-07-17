@@ -195,3 +195,4 @@
 
 ## [2.0.2]
 - Remove WL Crypto payment method
+- Added setting to toggle order confirmation email sending
