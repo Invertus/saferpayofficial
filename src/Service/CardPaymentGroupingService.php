@@ -40,23 +40,22 @@ class CardPaymentGroupingService
     public function group(array $paymentMethods, array $allCurrencies): array
     {
         $result = [];
-        $cardMethods = [];
 
         foreach ($paymentMethods as $method) {
-            if (in_array($method, SaferPayConfig::CARD_BRANDS, true)) {
-                $cardMethods[] = $method;
-            } else {
+            if (!in_array($method, SaferPayConfig::CARD_BRANDS, true)) {
                 $result[] = $method;
             }
         }
 
-        if (!empty($cardMethods)) {
-            $result[] = [
-                'paymentMethod' => SaferPayConfig::PAYMENT_CARDS,
-                'logoUrl' => '',
-                'currencies' => $allCurrencies,
-            ];
+        if (!in_array(SaferPayConfig::PAYMENT_CARDS, $result)) {
+            return $result;
         }
+
+        $result[] = [
+            'paymentMethod' => SaferPayConfig::PAYMENT_CARDS,
+            'logoUrl' => '',
+            'currencies' => $allCurrencies,
+        ];
 
         return $result;
     }
