@@ -51,10 +51,6 @@ class PaymentRestrictionValidation
      */
     public function isPaymentMethodValid($paymentMethod)
     {
-        if ($paymentMethod === 'CARD') {
-            return true;
-        }
-
         $success = false;
         $paymentValidators = $this->paymentRestrictionProvider->getPaymentValidators();
         /**
