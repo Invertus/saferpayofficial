@@ -83,7 +83,7 @@ class SaferPayTransactionAuthorization
      * @param string $selectedCard
      *
      * @return AssertBody
-     * 
+     *
      * @throws \Exception
      */
     public function authorize($cartId, $saveCard, $selectedCard)
