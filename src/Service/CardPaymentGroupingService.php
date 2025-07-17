@@ -26,7 +26,7 @@ class CardPaymentGroupingService
         }
 
         $result[] = [
-            'paymentMethod' => SaferPayConfig::PAYMENT_CARD,
+            'paymentMethod' => SaferPayConfig::PAYMENT_CARDS,
             'logoUrl' => '',
             'currencies' => $allCurrencies,
         ];

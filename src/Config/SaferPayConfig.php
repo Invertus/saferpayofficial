@@ -92,7 +92,7 @@ class SaferPayConfig
         self::PAYMENT_ACCOUNTTOACCOUNT,
         self::PAYMENT_CLICKTOPAY,
         self::PAYMENT_REKA,
-        self::PAYMENT_CARD,
+        self::PAYMENT_CARDS,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -124,7 +124,7 @@ class SaferPayConfig
     const PAYMENT_LASTSCHRIFT = 'DIRECTDEBIT';
     const PAYMENT_ACCOUNTTOACCOUNT = 'ACCOUNTTOACCOUNT';
     const PAYMENT_PAYCONIQ = 'PAYCONIQ';
-    const PAYMENT_CARD = 'CARD';
+    const PAYMENT_CARDS = 'CARDS';
     const PAYMENT_POSTFINANCE_PAY = 'POSTFINANCEPAY';
     const PAYMENT_WECHATPAY = 'WECHATPAY';
     const PAYMENT_CLICKTOPAY = 'CLICKTOPAY';
@@ -158,7 +158,7 @@ class SaferPayConfig
         'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT,
         'AccountToAccount' => self::PAYMENT_ACCOUNTTOACCOUNT,
         'Payconiq' => self::PAYMENT_PAYCONIQ,
-        'Cards' => self::PAYMENT_CARD,
+        'Cards' => self::PAYMENT_CARDS,
         'PostFinancePay' => self::PAYMENT_POSTFINANCE_PAY,
         'WeChatPay' => self::PAYMENT_WECHATPAY,
         'Blik' => self::PAYMENT_BLIK,

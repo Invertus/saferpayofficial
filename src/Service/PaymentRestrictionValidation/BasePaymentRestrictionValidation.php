@@ -73,7 +73,7 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
      */
     public function isValid($paymentName)
     {
-        if ($paymentName === SaferPayConfig::PAYMENT_CARD) {
+        if ($paymentName === SaferPayConfig::PAYMENT_CARDS) {
             return true;
         }
 
