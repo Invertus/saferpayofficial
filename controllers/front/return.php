@@ -37,7 +37,7 @@ use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
 use Invertus\SaferPay\Utility\ExceptionUtility;
-use Invertus\SaferPay\Adapter\Cart;
+use Invertus\SaferPay\Adapter\Cart as CartAdapter;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -189,7 +189,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             ]));
         }
 
-        /** @var Cart $cartAdapter */
+        /** @var CartAdapter $cartAdapter */
         $cartAdapter = $this->module->getService(Cart::class);
 
         if ($cartAdapter->orderExists($cartId)) {
