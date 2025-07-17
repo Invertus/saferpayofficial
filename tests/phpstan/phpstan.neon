@@ -22,4 +22,5 @@ parameters:
     - '#Access to an undefined property Cookie::\$refunded#'
     - '#Cannot call method getFlashBag\(\) on object\|false#'
     - '#Access to an undefined property Cookie::\$saferPayErrors#'
+    - '#Property SaferPayOfficialFailModuleFrontController::\$order_presenter has unknown class OrderPresenter as its type#'
 
