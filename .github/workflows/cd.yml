@@ -21,7 +21,7 @@ jobs:
       project-workspace-dir: ${{ github.workspace }}/../workspace
     strategy:
       matrix:
-        PS: [ 1.7.8-7.1 ]
+        PS: [ 1.7.8-7.4 ]
         testsuite: [ lint, phpstan ]
 
     steps:
@@ -72,7 +72,7 @@ jobs:
             apt update && \
             apt install -y git \
           "
-          
+
       - name: Remove old module
         run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules && rm -rf ${{ env.ps-module-name }}"
 
