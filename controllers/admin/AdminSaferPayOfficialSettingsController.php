@@ -329,6 +329,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'desc' => $this->module->l('Select the option to determine whether the order should be created'),
                     'form_group_class' => 'thumbs_chose',
                 ],
+                SaferPayConfig::SAFERPAY_GROUP_CARDS => [
+                    'type' => 'bool',
+                    'title' => $this->module->l("Group debit/credit cards as 'Cards' in checkout", self::FILE_NAME),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'desc' => $this->module->l("If enabled, all supported card brands (Visa, Mastercard, Amex, etc.) will be grouped and shown as a single 'Cards' payment method at checkout.", self::FILE_NAME),
+                ],
             ],
             'buttons' => [
                 'save_and_connect' => [
