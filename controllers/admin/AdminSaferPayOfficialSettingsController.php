@@ -35,12 +35,14 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 {
     const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
 
+    /** @var \SaferPayOfficial */
+    public $module;
+
     public function __construct()
     {
         parent::__construct();
         $this->bootstrap = true;
 
-        $this->override_folder = 'field-option-settings/';
         $this->tpl_folder = 'field-option-settings/';
         $this->initOptions();
     }
@@ -72,6 +74,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             $configuration->set(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix(), 0);
             $this->errors[] = $this->module->l('Field Access Token is required to use business license');
         }
+
+        return true;
     }
 
     public function initOptions()
@@ -194,8 +198,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'icon' => 'process-icon-save',
                     'class' => 'btn btn-default pull-right',
                     'type' => 'submit',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -510,7 +514,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'class' => 'btn btn-default pull-right',
                     'type' => 'submit',
                 ],
-            ]
+            ],
         ];
     }
 }

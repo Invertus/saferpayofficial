@@ -28,7 +28,6 @@ use Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\Request\ObtainPaymentMethodsObjectCreator;
-use function Invertus\Knapsack\toArray;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -59,13 +58,14 @@ class SaferPayObtainPaymentMethods
         $paymentMethods = [];
 
         try {
+            // TODO: Fix this to return an object
             $paymentMethodsObject = $this->obtainPaymentMethodsService->getPaymentMethods(
                 $this->obtainPaymentMethodsObjectCreator->create()
             );
         } catch (Exception $e) {
             $this->logger->debug(sprintf('%s - failed to get payment methods list', self::FILE_NAME), [
                 'context' => [],
-                'exception' => $e
+                'exception' => $e,
             ]);
 
             throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
@@ -83,6 +83,7 @@ class SaferPayObtainPaymentMethods
         }
 
         if (!empty($paymentMethodsObject->Wallets)) {
+            // TODO: Fix this to return an object (now error in IDE)
             foreach ($paymentMethodsObject->Wallets as $wallet) {
                 $paymentMethods[$wallet->WalletName] = [
                     'paymentMethod' => $wallet->WalletName,

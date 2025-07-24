@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Context;
-use Invertus\SaferPay\Config\SaferPayConfig;
 
 if (!defined('_PS_VERSION_')) {
     exit;

@@ -36,7 +36,7 @@ interface TranslatorInterface
     /**
      * Translates the given message.
      *
-     * @param string  The array key
+     * @param string $key The array key
      *
      * @return string The translated string
      */

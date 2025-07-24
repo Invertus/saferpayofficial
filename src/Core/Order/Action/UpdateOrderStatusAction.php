@@ -37,12 +37,14 @@ class UpdateOrderStatusAction
      * @param int $orderStatusId
      *
      * @return void
+     *
      * @throws CouldNotChangeOrderStatus
+     * @throws \Exception
      */
     public function run($orderId, $orderStatusId)
     {
         try {
-            /** @var \Order|null $order */
+            /** @var Order $order */
             $order = new Order($orderId);
         } catch (\Exception $exception) {
             throw CouldNotChangeOrderStatus::unknownError();
