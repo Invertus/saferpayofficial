@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
 use Invertus\SaferPay\Api\Request\AssertService;
-use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -81,7 +80,7 @@ class SaferPayTransactionAssertion
 
         $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
 
-        $this->logger->debug(sprintf('%s - assert service called',self::FILE_NAME), [
+        $this->logger->debug(sprintf('%s - assert service called', self::FILE_NAME), [
             'context' => [
                 'cart_id' => $cartId,
                 'saferpay_order_id' => $saferPayOrder->id,
@@ -124,7 +123,7 @@ class SaferPayTransactionAssertion
             $saferPayOrder->update();
         }
 
-        $this->logger->debug(sprintf('%s - assert service ended',self::FILE_NAME), [
+        $this->logger->debug(sprintf('%s - assert service ended', self::FILE_NAME), [
             'context' => [
                 'cart_id' => $cartId,
                 'saferpay_order_id' => $saferPayOrder->id,

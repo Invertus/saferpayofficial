@@ -60,7 +60,7 @@ class SaferPayConfig
         'displayAdminOrderTabContent',
         'actionAdminControllerSetMedia',
         'actionObjectOrderPaymentAddAfter',
-        'displayOrderConfirmation'
+        'displayOrderConfirmation',
     ];
 
     const PAYMENT_METHODS = [

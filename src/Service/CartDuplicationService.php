@@ -47,7 +47,7 @@ class CartDuplicationService
                 $duplicatedCart->addCartRule($cartRuleId['id_cart_rule']);
                 $this->restoreCartRuleQuantity($cartId, $cartRuleId['id_cart_rule']);
             }
-            $context->cookie->id_cart = $duplicatedCart->id;
+            
             $context->cart = $duplicatedCart;
             CartRule::autoAddToCart($context);
             $context->cookie->write();

@@ -32,6 +32,8 @@ class CurrencyProvider
 {
     public function getAllCurrenciesInArray()
     {
+        $currencies = [];
+        
         foreach (Currency::getCurrencies() as $currency) {
             $currencies[$currency['id_currency']] = $currency['iso_code'];
         }

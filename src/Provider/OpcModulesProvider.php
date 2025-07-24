@@ -36,7 +36,7 @@ class OpcModulesProvider
      */
     public function get()
     {
-        foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule){
+        foreach (SaferPayConfig::OPC_MODULE_LIST as $opcModule) {
             if (\Module::isInstalled($opcModule) && \Module::isEnabled($opcModule)) {
                 return $opcModule;
             }
