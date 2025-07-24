@@ -26,9 +26,7 @@ namespace Invertus\SaferPay\Api\Request;
 use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
-use Invertus\SaferPay\EntityBuilder\SaferPayAssertRefundBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,19 +41,9 @@ class AssertRefundService
      */
     private $apiRequest;
 
-    /**
-     * @var SaferPayAssertRefundBuilder
-     */
-    private $assertRefundBuilder;
-
-    public function __construct(
-        ApiRequest $apiRequest,
-        AssertRefundResponseObjectCreator $assertRefundResponseObjectCreator,
-        SaferPayAssertRefundBuilder $assertRefundBuilder
-    ) {
+    public function __construct(ApiRequest $apiRequest)
+    {
         $this->apiRequest = $apiRequest;
-        $this->assertRefundResponseObjectCreator = $assertRefundResponseObjectCreator;
-        $this->assertRefundBuilder = $assertRefundBuilder;
     }
 
     /**

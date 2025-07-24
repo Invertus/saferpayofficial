@@ -23,10 +23,8 @@
 
 namespace Invertus\SaferPay\Presentation\Loader;
 
-use Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\DTO\Request\Order;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Factory\ModuleFactory;
@@ -86,6 +84,7 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
+        /** @phpstan-ignore-next-line */
         if (!$controller instanceof \OrderControllerCore) {
             return;
         }
@@ -103,6 +102,7 @@ class PaymentFormAssetLoader
 
     private function registerTheCheckoutAssets($controller)
     {
+        /** @phpstan-ignore-next-line */
         if (!$controller instanceof \TheCheckoutModuleFrontController) {
             return;
         }
@@ -120,6 +120,7 @@ class PaymentFormAssetLoader
 
     private function registerSuperCheckoutAssets($controller)
     {
+        /** @phpstan-ignore-next-line */
         if (!$controller instanceof \SupercheckoutSupercheckoutModuleFrontController) {
             return;
         }

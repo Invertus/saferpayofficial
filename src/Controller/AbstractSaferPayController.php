@@ -24,9 +24,8 @@
 namespace Invertus\SaferPay\Controller;
 
 use Invertus\Lock\Lock;
-use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Response\Response;
-use SaferPayLog;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,11 +43,17 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
      */
     protected $lock;
 
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->lock = new Lock($this->module->getLocalPath() . 'var/cache');
+        $this->logger = $this->module->getService(LoggerInterface::class);
     }
 
     public function redirectWithNotifications()
@@ -84,10 +89,10 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
                 );
             }
         } catch (\Exception $exception) {
-            $logger = new SaferPayLog();
-            $logger->message = 'Failed to lock process';
-            $logger->payload = $resource;
-            $logger->save();
+            $this->logger->error('Failed to lock process', [
+                'resource' => $resource,
+                'exception' => $exception,
+            ]);
 
             return Response::respond(
                 $this->module->l('Internal error', self::FILE_NAME),
@@ -115,10 +120,9 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
         try {
             $this->lock->release();
         } catch (\Exception $exception) {
-            $logger = new SaferPayLog();
-            $logger->message = 'Failed to release process';
-            $logger->payload = $exception->getMessage() . $this->lock->acquire();
-            $logger->save();
+            $this->logger->error('Failed to release process', [
+                'exception' => $exception,
+            ]);
         }
     }
 

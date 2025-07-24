@@ -86,10 +86,10 @@ class AuthorizationService
     }
 
     /**
-     * @param $responseBody
-     * @param $saferPayOrderId
-     * @param $customerId
-     * @param $selectedCardOption
+     * @param array $responseBody
+     * @param int $saferPayOrderId
+     * @param int $customerId
+     * @param int $selectedCardOption
      *
      * @return AssertBody
      * @throws Exception
