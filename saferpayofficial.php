@@ -122,11 +122,7 @@ class SaferPayOfficial extends PaymentModule
      */
     private function autoload()
     {
-        try {
-            require_once dirname(__FILE__) . '/vendor/autoload.php';
-        } catch (\Throwable $e) {
-            echo "Could not load autoload.php";
-        }
+        require_once dirname(__FILE__) . '/vendor/autoload.php';
     }
 
     private function loadConfig()
@@ -424,7 +420,7 @@ Thank you for your patience!');
 
         if ($params['template'] === 'new_order'
             && Configuration::get(SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
-                return true;
+            return true;
         }
 
         if ($params['template'] === 'order_conf'
