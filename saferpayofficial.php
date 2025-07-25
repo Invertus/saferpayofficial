@@ -457,10 +457,13 @@ Thank you for your patience!');
                 return;
             }
 
-            if (isset($this->context->cookie->saferPayErrors[$orderId])) {
+            if (isset($this->context->cookie->saferPayErrors)) {
                 $saferPayErrors = json_decode($this->context->cookie->saferPayErrors, true);
-                $this->addFlash($saferPayErrors[$orderId], 'error');
-                $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
+                if (isset($saferPayErrors[$orderId])) {
+                    $this->addFlash($saferPayErrors[$orderId], 'error');
+                    unset($saferPayErrors[$orderId]);
+                    $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
+                }
             }
 
             if ($this->context->cookie->canceled) {
