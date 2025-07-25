@@ -53,7 +53,7 @@ class SaferPayObtainPaymentMethods
         $this->logger = $logger;
     }
 
-    public function obtainPaymentMethods()
+    public function obtainPaymentMethods(): array
     {
         $paymentMethods = [];
 
@@ -95,7 +95,7 @@ class SaferPayObtainPaymentMethods
         return $paymentMethods;
     }
 
-    public function obtainPaymentMethodsNamesAsArray()
+    public function obtainPaymentMethodsNamesAsArray(): array
     {
         $paymentMethodsObject = $this->obtainPaymentMethods();
         $paymentMethodsArray = [];
