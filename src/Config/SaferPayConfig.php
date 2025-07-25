@@ -445,6 +445,7 @@ class SaferPayConfig
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
             self::SAFERPAY_SEND_ORDER_CONF_MAIL => 0,
+            self::SAFERPAY_GROUP_CARDS => 0,
         ];
     }
 
@@ -479,6 +480,7 @@ class SaferPayConfig
             self::FIELDS_LIBRARY . self::TEST_SUFFIX,
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION,
             self::SAFERPAY_SEND_ORDER_CONF_MAIL,
+            self::SAFERPAY_GROUP_CARDS,
         ];
     }
 
