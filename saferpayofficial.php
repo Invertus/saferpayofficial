@@ -44,6 +44,7 @@ use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation;
+use Invertus\SaferPay\Provider\CurrencyProvider;
 
 if (!defined('_PS_VERSION_')) {
     exit;
