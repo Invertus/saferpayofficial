@@ -33,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 class CardPaymentGroupingService
 {
     /** @var SaferPayOfficial */
-    public $module;
+    private $module;
 
     public function __construct(SaferPayOfficial $module)
     {
