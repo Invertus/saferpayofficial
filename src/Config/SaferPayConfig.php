@@ -299,7 +299,7 @@ class SaferPayConfig
     ];
 
     const SAFERPAY_GROUP_CARDS = 'SAFERPAY_GROUP_CARDS';
-
+    const SAFERPAY_GROUP_CARDS_LOGO = 'SAFERPAY_GROUP_CARDS_LOGO';
     /**
      * Card brands that can be grouped under 'Cards' method
      */

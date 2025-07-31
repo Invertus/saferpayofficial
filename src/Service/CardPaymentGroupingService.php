@@ -24,6 +24,7 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -31,6 +32,14 @@ if (!defined('_PS_VERSION_')) {
 
 class CardPaymentGroupingService
 {
+    /** @var SaferPayOfficial */
+    private $module;
+
+    public function __construct(SaferPayOfficial $module)
+    {
+        $this->module = $module;
+    }
+
     /**
      * @param array $paymentMethods Raw payment methods from API
      * @param array $allCurrencies List of all supported currencies (for CARD method)
@@ -53,7 +62,7 @@ class CardPaymentGroupingService
         if (!empty($cardMethods)) {
             $result[] = [
                 'paymentMethod' => SaferPayConfig::PAYMENT_CARDS,
-                'logoUrl' => '',
+                'logoUrl' => _PS_BASE_URL_SSL_ . $this->module->getPathUri() . 'views/img/' . SaferPayConfig::PAYMENT_CARDS . '.png',
                 'currencies' => $allCurrencies,
             ];
         }

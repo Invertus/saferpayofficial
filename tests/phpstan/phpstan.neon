@@ -23,4 +23,5 @@ parameters:
     - '#Cannot call method getFlashBag\(\) on object\|false#'
     - '#Access to an undefined property Cookie::\$saferPayErrors#'
     - '#Property SaferPayOfficialFailModuleFrontController::\$order_presenter has unknown class OrderPresenter as its type#'
+    - '#Constant _PS_BASE_URL_SSL_ not found#'
 
