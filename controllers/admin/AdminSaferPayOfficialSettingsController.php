@@ -341,6 +341,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l("Show 'Cards' payment method logo", self::FILE_NAME),
                     'validation' => 'isBool',
                     'cast' => 'intval',
+                    'desc' => $this->module->l("If enabled, a logo for the grouped 'Cards' payment method will be displayed at checkout.", self::FILE_NAME),
                 ],
             ],
             'buttons' => [
