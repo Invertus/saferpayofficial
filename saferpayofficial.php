@@ -231,6 +231,10 @@ Thank you for your patience!');
         $logosEnabled = $paymentRepository->getAllActiveLogosNames();
         $logosEnabled = array_column($logosEnabled, 'name');
 
+        if (Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO)) {
+            $logosEnabled = array_merge($logosEnabled, [SaferPayConfig::PAYMENT_CARDS]);
+        }
+
         $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();
         $activePaymentMethods = array_column($activePaymentMethods, 'name');
 

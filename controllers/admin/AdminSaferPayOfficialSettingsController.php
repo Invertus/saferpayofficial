@@ -336,6 +336,12 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'cast' => 'intval',
                     'desc' => $this->module->l("If enabled, all supported card brands (Visa, Mastercard, Amex, etc.) will be grouped and shown as a single 'Cards' payment method at checkout.", self::FILE_NAME),
                 ],
+                SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO => [
+                    'type' => 'bool',
+                    'title' => $this->module->l("Show 'Cards' payment method logo", self::FILE_NAME),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                ],
             ],
             'buttons' => [
                 'save_and_connect' => [
