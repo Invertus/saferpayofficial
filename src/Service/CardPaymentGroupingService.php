@@ -59,12 +59,10 @@ class CardPaymentGroupingService
             }
         }
 
-        $logoUrl = _PS_BASE_URL_SSL_ . $this->module->getPathUri() . 'views/img/' . SaferPayConfig::PAYMENT_CARDS . '.png';
-
         if (!empty($cardMethods)) {
             $result[] = [
                 'paymentMethod' => SaferPayConfig::PAYMENT_CARDS,
-                'logoUrl' => $logoUrl,
+                'logoUrl' => _PS_BASE_URL_SSL_ . $this->module->getPathUri() . 'views/img/' . SaferPayConfig::PAYMENT_CARDS . '.png',
                 'currencies' => $allCurrencies,
             ];
         }
