@@ -24,9 +24,7 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Media;
 use SaferPayOfficial;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
