@@ -82,13 +82,6 @@ SIX Payment Services has been part of Worldline since 2018, making it Europe's l
     </a>
 </p>
 
-## Module Screenshots
-
-<p align="center">
-  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/pic1.png" alt="Saferpay Module Configuration">
-  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/pic2.png" alt="Saferpay Payment Interface">
-</p>
-
 ## Support
 
 For technical support and questions:
