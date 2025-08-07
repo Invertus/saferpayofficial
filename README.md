@@ -89,6 +89,10 @@ For technical support and questions:
 - **SIX Payment Services:** Contact their support team for account-related issues
 - **GitHub Issues:** Report bugs or feature requests on the GitHub repository
 
+## Contributing
+
+Contributions are welcome! Please feel free to submit a pull request.
+
 ## License
 
 This module requires a valid Saferpay license. Please contact SIX Payment Services for licensing information.
