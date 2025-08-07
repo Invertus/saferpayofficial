@@ -52,7 +52,7 @@ Before installing the Saferpay module, ensure you have:
 ## Account Setup
 
 ### Test Environment
-- [Test Account Information](https://test.saferpay.com/BO/Login)
+- [Login to Saferpay Test Backoffice](https://test.saferpay.com/BO/Login)
 - Use test credentials for development and testing
 
 ### Live Environment
