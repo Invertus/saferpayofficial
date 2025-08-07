@@ -36,7 +36,6 @@ class AdminSaferPayOfficialFieldsController extends ModuleAdminController
         parent::__construct();
         $this->bootstrap = true;
 
-        $this->override_folder = 'field-option-settings/';
         $this->tpl_folder = 'field-option-settings/';
         $this->initOptions();
     }

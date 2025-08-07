@@ -24,17 +24,14 @@
 namespace Invertus\SaferPay\Api\Request;
 
 use Exception;
-use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
 use Invertus\SaferPay\EntityBuilder\SaferPayCardAliasBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\Response\AssertResponseObjectCreator;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -58,6 +55,9 @@ class AssertService
      * @var SaferPayAssertBuilder
      */
     private $assertBuilder;
+    /**
+     * @var SaferPayCardAliasBuilder
+     */
     private $aliasBuilder;
 
     public function __construct(
@@ -74,7 +74,7 @@ class AssertService
 
     /**
      * @param AssertRequest $assertRequest
-     * @param int $saferPayOrderId
+     * @param bool $isBusiness
      *
      * @return object|null
      * @throws \Exception
@@ -100,6 +100,8 @@ class AssertService
     /**
      * @param object|null $responseBody
      * @param int $saferPayOrderId
+     * @param string $customerId
+     * @param int $selectedCardOption
      *
      * @return AssertBody
      * @throws Exception

@@ -36,8 +36,6 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
 
     public function display()
     {
-        $this->module_instance = Module::getInstanceByName($this->module->name);
-
         $isCreditCardSaveEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
         if (!$this->context->customer->logged || !$isCreditCardSaveEnabled) {
             $back_url = $this->context->link->getModuleLink('saferpay', 'my-account');
@@ -51,6 +49,8 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/credit_cards.tpl');
 
         parent::display();
+
+        return true;
     }
 
     private function initCardList()

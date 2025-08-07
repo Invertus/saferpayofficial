@@ -34,25 +34,13 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
 {
     const FILE_NAME = 'fail';
 
-    /**
-     * Security Key Variable Declaration.
-     *
-     * @var
-     */
+    /** @var string */
     private $secure_key;
 
-    /**
-     * ID Cart Variable Declaration.
-     *
-     * @var
-     */
+    /** @var int */
     private $id_cart;
 
-    /**
-     * Order Presenter Variable Declaration.
-     *
-     * @var
-     */
+    /** @var OrderPresenter|null */
     private $order_presenter;
 
     public function init()

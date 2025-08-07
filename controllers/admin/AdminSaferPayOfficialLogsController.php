@@ -50,6 +50,9 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
     const LOG_INFORMATION_TYPE_CONTEXT = 'context';
 
+    /** @var \SaferPayOfficial */
+    public $module;
+
     public function __construct()
     {
         $this->table = 'log';
@@ -84,7 +87,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
     public function initContent()
     {
         $this->content .= $this->displaySeverityInformation();
-        
+
         parent::initContent();
     }
 
@@ -164,11 +167,11 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         ]);
 
         $this->context->controller->addCSS(
-            'modules/' . $this->module->name . '/views/css/admin/logs_tab.css',
+            'modules/' . $this->module->name . '/views/css/admin/logs_tab.css'
         );
 
         $this->context->controller->addJS(
-            'modules/' . $this->module->name . '/views/js/admin/log.js',
+            'modules/' . $this->module->name . '/views/js/admin/log.js'
         );
     }
 
@@ -245,19 +248,21 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
     public function displayAjaxGetLog()
     {
-        /** @var Invertus\SaferPay\Adapter\Tools $tools */
+        /** @var Tools $tools */
         $tools = $this->module->getService(Tools::class);
 
-        /** @var Invertus\SaferPay\Repository\SaferPayLogRepository $logRepository */
+        /** @var SaferPayLogRepository $logRepository */
         $logRepository = $this->module->getService(SaferPayLogRepository::class);
 
-        /** @var Invertus\SaferPay\Context\GlobalShopContext $shopContext */
+        /** @var GlobalShopContext $globalShopContext */
         $globalShopContext = $this->module->getService(GlobalShopContext::class);
 
         $logId = $tools->getValueAsInt('log_id');
 
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
+
+        $log = null;
 
         try {
             /** @var \SaferPayLog|null $log */
@@ -280,7 +285,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             ]));
         }
 
-        if (!isset($log)) {
+        if (null === $log) {
             $logger->error('No log information found.', [
                 'context' => [
                     'id_log' => $logId,

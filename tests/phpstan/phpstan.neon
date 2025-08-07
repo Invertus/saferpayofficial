@@ -1,0 +1,27 @@
+includes:
+  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+
+parameters:
+  paths:
+    - ../../controllers
+    - ../../src
+    - ../../saferpayofficial.php
+    - ../../saferpay.config.php
+  level: 2
+  reportUnmatchedIgnoredErrors: false
+  ignoreErrors:
+    - "#Call to method registerStylesheet\\(\\) on an unknown class TheCheckoutModuleFrontController#"
+    - "#Call to method registerJavascript\\(\\) on an unknown class TheCheckoutModuleFrontController#"
+    - "#Undefined type 'SupercheckoutSupercheckoutModuleFrontController'#"
+    - "#Call to method registerStylesheet\\(\\) on an unknown class SupercheckoutSupercheckoutModuleFrontController#"
+    - "#Call to method registerJavascript\\(\\) on an unknown class SupercheckoutSupercheckoutModuleFrontController#"
+    - "#@var for variable \\$emailAlertsModule contains unknown class Ps_EmailAlerts#"
+    - "#Call to method hookActionValidateOrder\\(\\) on an unknown class Ps_EmailAlerts#"
+    - '#Access to an undefined property Cookie::\$canceled#'
+    - '#Access to an undefined property Cookie::\$captured#'
+    - '#Access to an undefined property Cookie::\$refunded#'
+    - '#Cannot call method getFlashBag\(\) on object\|false#'
+    - '#Access to an undefined property Cookie::\$saferPayErrors#'
+    - '#Property SaferPayOfficialFailModuleFrontController::\$order_presenter has unknown class OrderPresenter as its type#'
+    - '#Constant _PS_BASE_URL_SSL_ not found#'
+

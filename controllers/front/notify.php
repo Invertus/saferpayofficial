@@ -206,7 +206,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             ]);
 
             // this might be executed after pending transaction is declined (e.g. with accountToAccount payment)
-            if (!isset($order)) {
+            if (!Validate::isLoadedObject($order)) {
                 $order = new Order(Order::getIdByCartId($cartId));
             }
 

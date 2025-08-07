@@ -45,6 +45,9 @@ use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 
 class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 {
+    /** @var \SaferPayOfficial */
+    public $module;
+
     public function __construct()
     {
         parent::__construct();
@@ -128,6 +131,8 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         } else {
             $this->confirmations[] = $this->module->l('Successful update');
         }
+
+        return true;
     }
 
     public function initContent()
@@ -148,7 +153,7 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         /** @var SaferPayLogoRepository $logoRepository */
         $logoRepository = $this->module->getService(SaferPayLogoRepository::class);
 
-        /** @var SaferPayLogoRepository $fieldsRepository */
+        /** @var SaferPayFieldRepository $fieldRepository */
         $fieldRepository = $this->module->getService(SaferPayFieldRepository::class);
 
         /** @var SaferPayRestrictionRepository $restrictionRepository */

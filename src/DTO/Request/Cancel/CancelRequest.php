@@ -38,7 +38,7 @@ class CancelRequest
     private $requestHeader;
 
     /**
-     * @var
+     * @var string
      */
     private $transactionId;
 
