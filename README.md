@@ -44,7 +44,7 @@ Before installing the Saferpay module, ensure you have:
 2. **Upload to PrestaShop**
    - Install through PrestaShop admin panel
 
-4. **Configure Module**
+3. **Configure Module**
    - Navigate to Modules > Module Manager
    - Find "Saferpay Official" and click Configure
    - Enter your API credentials and terminal information
