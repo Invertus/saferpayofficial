@@ -34,8 +34,6 @@ Before installing the Saferpay module, ensure you have:
 - **Valid Acceptance Agreement** for credit cards or other payment methods
 
 ### Technical Requirements
-- **Composer** installed on your system
-  - Download from: https://getcomposer.org/download/
 - **PrestaShop 1.7.6.1+** installed and configured
 
 ## Installation
@@ -43,13 +41,7 @@ Before installing the Saferpay module, ensure you have:
 1. **Download the Module**
    - Get the latest version from [releases page](https://github.com/Invertus/saferpayofficial/releases)
 
-2. **Install Dependencies**
-   ```bash
-   composer install
-   ```
-
-3. **Upload to PrestaShop**
-   - Upload the module to your `modules/` directory
+2. **Upload to PrestaShop**
    - Install through PrestaShop admin panel
 
 4. **Configure Module**
@@ -60,11 +52,11 @@ Before installing the Saferpay module, ensure you have:
 ## Account Setup
 
 ### Test Environment
-- **Test Account Information:** https://www.six-payment-services.com/en/site/e-commerce-developer/testaccount.html
+- [Test Account Information](https://test.saferpay.com/BO/Login)
 - Use test credentials for development and testing
 
 ### Live Environment
-- **Register for Live Account:** https://www.six-payment-services.com/en/site/e-commerce/solutions/paymentsolution.html
+- [Register for Live Account](https://www.saferpay.com/BO/Login)
 - Contact SIX Payment Services for production credentials
 
 ## About SIX Payment Services
