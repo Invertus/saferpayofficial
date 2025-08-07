@@ -56,7 +56,7 @@ Before installing the Saferpay module, ensure you have:
 - Use test credentials for development and testing
 
 ### Live Environment
-- [Register for Live Account](https://www.saferpay.com/BO/Login)
+- [Login to Saferpay Live Backoffice](https://www.saferpay.com/BO/Login)
 - Contact SIX Payment Services for production credentials
 
 ## About SIX Payment Services
