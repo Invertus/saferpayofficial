@@ -23,4 +23,4 @@ On every push to the branch, the CI/CD GitHub Actions will be triggered.
 
 - All CI/CD GitHub Actions should be passing
 - Pointed to latest release branch e.g. `release-2.0.0`
-- Description should be clear and concise. Explain why this feature is needed or what do you want to achieve.
+- Description should be clear and concise, explaining the purpose of the pull request.
