@@ -1,56 +1,90 @@
 <p align="center">
     <a href="https://www.six-payment-services.com" target="_blank">
-        <img src="./views/img/readme/img.png" />
+        <img src="./views/img/readme/img.png" alt="SIX Payment Services Logo" />
     </a>
 </p>
 
-> [!NOTE]  
-> This module is only compatible with PrestaShop versions **1.7.6.1 and higher.**\
-> A module compatible with lower versions can be found here: [Saferpayofficial-1.7.6](https://github.com/Invertus/saferpayofficial-1.7.6)
+## Overview
 
-Saferpay - Easy, flexible, secure - The comprehensive e-payment solution from SIX Payment Services for easier and more secure payment in your online shop.
+Saferpay is a comprehensive e-payment solution from SIX Payment Services (part of Worldline) that provides easy, flexible, and secure payment processing for your PrestaShop online store.
 
-SIX Payment Services has been part of Worldline since the end of 2018, making it Europe's largest technology partner for banks and merchants. The tailor-made solutions from SIX Payment Services include a broad portfolio of payment terminals and the acceptance and processing of national and international payments with credit, debit and prepaid cards as well as the smartphone.
+**Key Features:**
+- Secure payment processing with credit, debit, and prepaid cards
+- Smartphone payment support
+- Multi-currency support
+- Comprehensive fraud protection
+- Easy integration with PrestaShop
 
-Worldline is European market leader in payment technology. More than 11,000 payment experts ensure future-oriented innovations and services in over 30 countries. With 45 years of experience, Worldline is an innovative pan-European company that covers the entire value chain of cashless payment transactions with its highly secure payment and transaction services.
+## Compatibility
 
-Use of the Saferpay PrestaShop requires the following:
+> ⚠️ This module is only compatible with PrestaShop versions **1.7.6.1 and higher.**
+>
+> For older PrestaShop versions, please use [Saferpayofficial-1.7.6](https://github.com/Invertus/saferpayofficial-1.7.6)
 
-- A corresponding license for the Saferpay module.
+## Prerequisites
 
-- The existence of a valid identification with a username and password for the Saferpay Backoffice.
-    - Respective API credentials for the Saferpay Live- and/or Test environment
-    
-- Availability of at least one active Saferpay terminal via which payment can be carried out and the associated
-    
-- Availability of Saferpay terminal number (Terminal ID parameter) and Saferpay customer number (CustomerId parameter).
+Before installing the Saferpay module, ensure you have:
 
-- Availability of valid acceptance agreement for credit cards or other payment methods.
+### Required Accounts & Credentials
+- **Saferpay Backoffice Account** with valid username and password
+- **API Credentials** for Saferpay Live and/or Test environments
+- **Active Saferpay Terminal** for payment processing
+- **Terminal ID** (Terminal ID parameter)
+- **Customer ID** (CustomerId parameter)
+- **Valid Acceptance Agreement** for credit cards or other payment methods
+
+### Technical Requirements
+- **PrestaShop 1.7.6.1+** installed and configured
+
+## Installation
+
+1. **Download the Module**
+   - Get the latest version from [releases page](https://github.com/Invertus/saferpayofficial/releases)
+
+2. **Upload to PrestaShop**
+   - Install through PrestaShop admin panel
+
+3. **Configure Module**
+   - Navigate to Modules > Module Manager
+   - Find "Saferpay Official" and click Configure
+   - Enter your API credentials and terminal information
+
+## Account Setup
+
+### Test Environment
+- [Login to Saferpay Test Backoffice](https://test.saferpay.com/BO/Login)
+- Use test credentials for development and testing
+
+### Live Environment
+- [Login to Saferpay Live Backoffice](https://www.saferpay.com/BO/Login)
+- Contact SIX Payment Services for production credentials
+
+## About SIX Payment Services
+
+SIX Payment Services has been part of Worldline since 2018, making it Europe's largest technology partner for banks and merchants. Worldline is the European market leader in payment technology with:
+
+- **45+ years** of experience in payment processing
+- **11,000+** payment experts across 30+ countries
+- **Complete value chain** coverage for cashless payment transactions
+- **Highly secure** payment and transaction services
 
 <p align="center">
     <a href="https://www.six-payment-services.com" target="_blank">
-        <img src="./views/img/readme/02.png" />
+        <img src="./views/img/readme/02.png" alt="SIX Payment Services Features" />
     </a>
 </p>
 
-To register for live account please follow this link: https://www.six-payment-services.com/en/site/e-commerce/solutions/paymentsolution.html 
+## Support
 
-Test account information can be found here: https://www.six-payment-services.com/en/site/e-commerce-developer/testaccount.html
+For technical support and questions:
+- **Documentation:** Check the module documentation in your PrestaShop admin
+- **SIX Payment Services:** Contact their support team for account-related issues
+- **GitHub Issues:** Report bugs or feature requests on the GitHub repository
 
-Please be sure to have composer installed on your device before installing the module, you can simply do that here - https://getcomposer.org/download/
+## Contributing
 
-<h1>Steps to use module from Github</h1>
-You can download the module straight from GitHub:
+Contributions are welcome! Please feel free to submit a pull request.
 
+## License
 
-1)    Find the section "Releases"
-2)    Press on the latest release.
-3)    Press on "saferpayofficial.zip" file and it will download automatically.
-4)    Install the module to your shop.
-
-Press here:
-
-<p align="center">
-  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/pic1.png">
-  <img src="https://github.com/Invertus/saferpayofficial/blob/master/views/img/readme/pic2.png">
-</p>
+This module requires a valid Saferpay license. Please contact SIX Payment Services for licensing information.
