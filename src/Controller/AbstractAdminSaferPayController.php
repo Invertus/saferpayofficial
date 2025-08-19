@@ -35,6 +35,9 @@ class AbstractAdminSaferPayController extends \ModuleAdminController
 {
     const FILE_NAME = 'AbstractAdminSaferPayController';
 
+    /** @var \SaferPayOfficial */
+    public $module;
+
     protected function ajaxResponse($value = null, $controller = null, $method = null)
     {
         /** @var LoggerInterface $logger */

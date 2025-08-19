@@ -31,7 +31,6 @@ use Invertus\SaferPay\Logger\Formatter\LogFormatterInterface;
 use Invertus\SaferPay\Logger\Logger;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
-use Invertus\SaferPay\Provider\CurrentPaymentTypeProvider;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepository;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;

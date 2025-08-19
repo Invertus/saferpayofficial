@@ -96,6 +96,7 @@ class SaferPayMailService
         if (!Module::isEnabled(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME)) {
             return;
         }
+
         $customer = $order->getCustomer();
 
         /** @var \Ps_EmailAlerts $emailAlertsModule */

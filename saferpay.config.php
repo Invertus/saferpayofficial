@@ -28,41 +28,29 @@ if (!defined('_PS_VERSION_')) {
 }
 
 if (!defined('_SAFERPAY_PAYMENT_COMPLETED_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_COMPLETED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED));
 }
 if (!defined('_SAFERPAY_PAYMENT_AUTHORIZED_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_AUTHORIZED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED));
 }
 if (!defined('_SAFERPAY_PAYMENT_PENDING_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_PENDING_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_PENDING));
 }
 if (!defined('_SAFERPAY_PAYMENT_REJECTED_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_REJECTED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_REJECTED));
 }
 if (!defined('_SAFERPAY_PAYMENT_REFUND_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_REFUND_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_REFUNDED));
 }
 if (!defined('_SAFERPAY_PAYMENT_PARTLY_REFUND_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_PARTLY_REFUND_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_PARTLY_REFUNDED));
 }
 if (!defined('_SAFERPAY_PAYMENT_PENDING_REFUND_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_PENDING_REFUND_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_PENDING_REFUND));
 }
 if (!defined('_SAFERPAY_PAYMENT_CANCELED_')) {
-    /** @var URL to module IMG files directory */
     define('_SAFERPAY_PAYMENT_CANCELED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_CANCELED));
 }
 if (!defined('_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_')) {
-    /** @var URL to module IMG files directory */
-    define(
-        '_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_',
-        Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZATION_FAILED)
-    );
+    define('_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_', Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZATION_FAILED));
 }

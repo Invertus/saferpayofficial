@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Validation;
 
-use Exception;
 use Invertus\SaferPay\Exception\Restriction\UnauthenticatedCardUserException;
 use Invertus\SaferPay\Exception\SaferPayException;
 use Invertus\SaferPay\Logger\LoggerInterface;
@@ -64,12 +63,11 @@ class CustomerCreditCardValidation
             return true;
         }
 
-        if (!is_numeric($idCustomer) || !is_numeric($idSavedCard))
-        {
+        if (!is_numeric($idCustomer) || !is_numeric($idSavedCard)) {
             $this->logger->error(sprintf('%s - Invalid data or bad types', self::FILE_NAME), [
                 'context' => [],
                 'id_saved_card' => $idSavedCard,
-                'id_customer' => $idCustomer
+                'id_customer' => $idCustomer,
             ]);
 
             throw SaferPayException::unknownError();

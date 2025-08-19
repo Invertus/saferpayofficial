@@ -266,8 +266,7 @@ class SaferPayOrderStatusService
 
         $cart = new Cart($order->id_cart);
         $pendingNotification = null;
-        if ($saferPayAssert->payment_method === SaferPayConfig::PAYMENT_WLCRYPTOPAYMENTS ||
-            $saferPayAssert->payment_method === SaferPayConfig::PAYMENT_PAYDIREKT) {
+        if ($saferPayAssert->payment_method === SaferPayConfig::PAYMENT_PAYDIREKT) {
             $pendingNotify = $this->context->getLink()->getModuleLink(
                 $this->module->name,
                 ControllerName::PENDING_NOTIFY,

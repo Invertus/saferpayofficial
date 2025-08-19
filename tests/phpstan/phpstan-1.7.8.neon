@@ -1,0 +1,7 @@
+includes:
+  - %currentWorkingDirectory%/tests/phpstan/phpstan.neon
+
+parameters:
+  ignoreErrors:
+    - '#unknown class Symfony\\Component\\Lock\\LockFactory#'
+    - '#class Symfony\\Component\\Lock\\LockFactory not found#'

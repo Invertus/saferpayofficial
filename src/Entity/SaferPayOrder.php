@@ -71,22 +71,22 @@ class SaferPayOrder extends ObjectModel
     public $is_transaction;
 
     /**
-     * @var
+     * @var string
      */
     public $transaction_id;
 
     /**
-     * @var
+     * @var bool
      */
     public $refunded;
 
     /**
-     * @var
+     * @var string
      */
     public $refund_id;
 
     /**
-     * @var
+     * @var bool
      */
     public $authorized;
 

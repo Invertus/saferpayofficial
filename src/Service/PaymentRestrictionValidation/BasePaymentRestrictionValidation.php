@@ -24,6 +24,7 @@
 namespace Invertus\SaferPay\Service\PaymentRestrictionValidation;
 
 use Invertus\SaferPay\Adapter\LegacyContext;
+use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
@@ -72,6 +73,10 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
      */
     public function isValid($paymentName)
     {
+        if ($paymentName === SaferPayConfig::PAYMENT_CARDS) {
+            return true;
+        }
+
         if (!$this->isPaymentMethodEnabled($paymentName)) {
             return false;
         }

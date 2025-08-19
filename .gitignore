@@ -7,3 +7,4 @@ tests/.env
 /node_modules
 var/cache/*
 !var/cache/index.php
+.DS_Store
