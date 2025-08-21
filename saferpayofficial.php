@@ -43,6 +43,8 @@ use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation;
 use Invertus\SaferPay\Provider\CurrencyProvider;
+use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -403,10 +405,21 @@ Thank you for your patience!');
 
     public function hookActionEmailSendBefore($params)
     {
-        /** @var \Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface $emailTemplateControlService */
-        $emailTemplateControlService = $this->getService(\Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface::class);
+        try {
+            /** @var SaferPayEmailTemplateControlServiceInterface $emailTemplateControlService */
+            $emailTemplateControlService = $this->getService(SaferPayEmailTemplateControlServiceInterface::class);
 
-        return $emailTemplateControlService->shouldSendEmail($params);
+            return $emailTemplateControlService->shouldSendEmail($params);
+        } catch (\Throwable $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - %s', $this->name, $e->getMessage()));
+
+            return true;
+        }
+
+        return true;
     }
 
     public function hookActionAdminControllerSetMedia()
