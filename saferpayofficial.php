@@ -36,8 +36,6 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 use Invertus\SaferPay\Service\CardPaymentGroupingService;
 use Invertus\SaferPay\Install\Installer;
 use Invertus\SaferPay\Install\Uninstaller;
-use Cart;
-use Order;
 use Invertus\SaferPay\Service\SaferPayCartService;
 use Invertus\SaferPay\Provider\PaymentTypeProvider;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
@@ -45,6 +43,8 @@ use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation;
 use Invertus\SaferPay\Provider\CurrencyProvider;
+use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -405,34 +405,21 @@ Thank you for your patience!');
 
     public function hookActionEmailSendBefore($params)
     {
-        if (!isset($params['cart']->id)) {
+        try {
+            /** @var SaferPayEmailTemplateControlServiceInterface $emailTemplateControlService */
+            $emailTemplateControlService = $this->getService(SaferPayEmailTemplateControlServiceInterface::class);
+
+            return $emailTemplateControlService->shouldSendEmail($params);
+        } catch (\Throwable $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - %s', $this->name, $e->getMessage()));
+
             return true;
         }
 
-        $cart = new Cart($params['cart']->id);
-
-        /** @var Order $order */
-        $order = Order::getByCartId($cart->id);
-
-        if (!$order) {
-            return true;
-        }
-
-        if ($order->module !== $this->name) {
-            return true;
-        }
-
-        if ($params['template'] === 'new_order'
-            && Configuration::get(SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
-            return true;
-        }
-
-        if ($params['template'] === 'order_conf'
-            && Configuration::get(SaferPayConfig::SAFERPAY_SEND_ORDER_CONF_MAIL)) {
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public function hookActionAdminControllerSetMedia()

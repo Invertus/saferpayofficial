@@ -39,6 +39,8 @@ use Invertus\SaferPay\Repository\PrestashopLoggerRepositoryInterface;
 use Invertus\SaferPay\Repository\SaferPayLogRepository;
 use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
 use Invertus\SaferPay\Context\GlobalShopContextInterface;
+use Invertus\SaferPay\Service\SaferPayEmailTemplateControlService;
+use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
 use League\Container\Container;
 
 if (!defined('_PS_VERSION_')) {
@@ -67,6 +69,7 @@ final class BaseServiceProvider
         $this->addService($container, PrestashopLoggerRepositoryInterface::class, $container->get(PrestashopLoggerRepository::class));
         $this->addService($container, LoggerInterface::class, $container->get(Logger::class));
         $this->addService($container, EntityManagerInterface::class, $container->get(ObjectModelEntityManager::class));
+        $this->addService($container, SaferPayEmailTemplateControlServiceInterface::class, $container->get(SaferPayEmailTemplateControlService::class));
     }
 
     private function addService(Container $container, $className, $service)
