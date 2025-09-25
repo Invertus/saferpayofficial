@@ -42,7 +42,6 @@ class SaferPayCardAliasRepository
         $query->where('valid_till > "' . pSQL($currentDate) . '"');
         $query->where('success = 1');
         $query->orderBy('date_add DESC');
-        $query->limit(10);
 
         return Db::getInstance()->executeS($query);
     }
@@ -53,8 +52,6 @@ class SaferPayCardAliasRepository
         $query->select('`alias_id`');
         $query->from('saferpay_card_alias');
         $query->where('id_saferpay_card_alias = ' . (int) $id);
-        $query->where('success = 1');
-        $query->limit(1);
 
         return Db::getInstance()->getValue($query);
     }
@@ -67,7 +64,6 @@ class SaferPayCardAliasRepository
         $query->where('id_customer = ' . (int) $customerId);
         $query->where('alias_id = "' . pSQL($aliasId) . '"');
         $query->where('success = 1');
-        $query->limit(1);
 
         return Db::getInstance()->getValue($query);
     }
