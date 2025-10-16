@@ -34,6 +34,9 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialOrderController extends ModuleAdminController
 {
+    /** @var \SaferPayOfficial */
+    public $module;
+
     public function __construct()
     {
         parent::__construct();
@@ -81,7 +84,7 @@ class AdminSaferPayOfficialOrderController extends ModuleAdminController
                 true,
                 [
                     'orderId' => $orderId,
-                    'vieworder' => 1
+                    'vieworder' => 1,
                 ]
             );
         } else {
@@ -89,5 +92,7 @@ class AdminSaferPayOfficialOrderController extends ModuleAdminController
         }
 
         Tools::redirectAdmin($orderLink);
+
+        return true;
     }
 }

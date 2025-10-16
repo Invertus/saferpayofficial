@@ -35,12 +35,14 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 {
     const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
 
+    /** @var \SaferPayOfficial */
+    public $module;
+
     public function __construct()
     {
         parent::__construct();
         $this->bootstrap = true;
 
-        $this->override_folder = 'field-option-settings/';
         $this->tpl_folder = 'field-option-settings/';
         $this->initOptions();
     }
@@ -72,6 +74,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             $configuration->set(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix(), 0);
             $this->errors[] = $this->module->l('Field Access Token is required to use business license');
         }
+
+        return true;
     }
 
     public function initOptions()
@@ -194,8 +198,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'icon' => 'process-icon-save',
                     'class' => 'btn btn-default pull-right',
                     'type' => 'submit',
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -244,6 +248,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL => [
                     'title' => $this->module->l('Send new order mail on authorization'),
                     'desc' => $this->module->l('Receive a notification when an order is authorized by Saferpay (Using the Mail alert module)'),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'type' => 'bool',
+                ],
+                SaferPayConfig::SAFERPAY_SEND_ORDER_CONF_MAIL => [
+                    'title' => $this->module->l('Send order confirmation mail on payment completion'),
+                    'desc' => $this->module->l('Send an email from Saferpay on payment completion'),
                     'validation' => 'isBool',
                     'cast' => 'intval',
                     'type' => 'bool',
@@ -317,6 +328,20 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     ],
                     'desc' => $this->module->l('Select the option to determine whether the order should be created'),
                     'form_group_class' => 'thumbs_chose',
+                ],
+                SaferPayConfig::SAFERPAY_GROUP_CARDS => [
+                    'type' => 'bool',
+                    'title' => $this->module->l("Group debit/credit cards as 'Cards' in checkout", self::FILE_NAME),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'desc' => $this->module->l("If enabled, all supported card brands (Visa, Mastercard, Amex, etc.) will be grouped and shown as a single 'Cards' payment method at checkout.", self::FILE_NAME),
+                ],
+                SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO => [
+                    'type' => 'bool',
+                    'title' => $this->module->l("Show 'Cards' payment method logo", self::FILE_NAME),
+                    'validation' => 'isBool',
+                    'cast' => 'intval',
+                    'desc' => $this->module->l("If enabled, a logo for the grouped 'Cards' payment method will be displayed at checkout.", self::FILE_NAME),
                 ],
             ],
             'buttons' => [
@@ -503,7 +528,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'class' => 'btn btn-default pull-right',
                     'type' => 'submit',
                 ],
-            ]
+            ],
         ];
     }
 }

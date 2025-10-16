@@ -127,7 +127,7 @@ class CheckoutProcessor
                 'context' => [
                     'cartId' => $data->getCartId(),
                 ],
-                'exceptions' => ExceptionUtility::getExceptions($exception)
+                'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
 
             throw CouldNotProcessCheckout::failedToCreateSaferPayOrder($data->getCartId());

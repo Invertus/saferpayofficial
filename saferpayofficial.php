@@ -33,6 +33,18 @@ use Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Validation\ValidateIsAssetsRequired;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
+use Invertus\SaferPay\Service\CardPaymentGroupingService;
+use Invertus\SaferPay\Install\Installer;
+use Invertus\SaferPay\Install\Uninstaller;
+use Invertus\SaferPay\Service\SaferPayCartService;
+use Invertus\SaferPay\Provider\PaymentTypeProvider;
+use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
+use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Service\PaymentRestrictionValidation;
+use Invertus\SaferPay\Provider\CurrencyProvider;
+use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,7 +65,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '2.0.1';
+        $this->version = '2.0.2';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -90,7 +102,7 @@ class SaferPayOfficial extends PaymentModule
 
     public function uninstall()
     {
-        $uninstaller = new \Invertus\SaferPay\Install\Uninstaller($this);
+        $uninstaller = new Uninstaller($this);
         if (!$uninstaller->uninstall()) {
             $this->_errors += $uninstaller->getErrors();
             return false;
@@ -100,7 +112,7 @@ class SaferPayOfficial extends PaymentModule
 
     public function getTabs()
     {
-        $installer = new \Invertus\SaferPay\Install\Installer($this);
+        $installer = new Installer($this);
 
         return $installer->tabs();
     }
@@ -133,8 +145,8 @@ class SaferPayOfficial extends PaymentModule
         /** @var Order $psOrder */
         $psOrder = $params['order'];
 
-        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $repository */
-        $repository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+        /** @var SaferPayOrderRepository $repository */
+        $repository = $this->getService(SaferPayOrderRepository::class);
 
 
         $sfOrder = $repository->getByOrderId((int) $psOrder->id);
@@ -159,8 +171,8 @@ Thank you for your patience!');
             return;
         }
 
-        /** @var \Invertus\SaferPay\Repository\SaferPayOrderRepository $saferPayOrderRepository */
-        $saferPayOrderRepository = $this->getService(\Invertus\SaferPay\Repository\SaferPayOrderRepository::class);
+        /** @var SaferPayOrderRepository $saferPayOrderRepository */
+        $saferPayOrderRepository = $this->getService(SaferPayOrderRepository::class);
 
         $orders = Order::getByReference($orderPayment->order_reference);
 
@@ -189,41 +201,54 @@ Thank you for your patience!');
 
     public function hookPaymentOptions($params)
     {
-        /** @var Invertus\SaferPay\Service\SaferPayCartService $cartService */
-        $cartService = $this->getService(\Invertus\SaferPay\Service\SaferPayCartService::class);
+        /** @var SaferPayCartService $cartService */
+        $cartService = $this->getService(SaferPayCartService::class);
         if (!$cartService->isCurrencyAvailable($params['cart'])) {
             return [];
         }
 
-        /** @var \Invertus\SaferPay\Provider\PaymentTypeProvider $paymentTypeProvider */
-        $paymentTypeProvider = $this->getService(\Invertus\SaferPay\Provider\PaymentTypeProvider::class);
+        /** @var PaymentTypeProvider $paymentTypeProvider */
+        $paymentTypeProvider = $this->getService(PaymentTypeProvider::class);
 
-        /** @var \Invertus\SaferPay\Service\SaferPayObtainPaymentMethods $obtainPaymentMethods */
-        $obtainPaymentMethods = $this->getService(\Invertus\SaferPay\Service\SaferPayObtainPaymentMethods::class);
-        /** @var \Invertus\SaferPay\Repository\SaferPayPaymentRepository $paymentRepository */
-        $paymentRepository = $this->getService(\Invertus\SaferPay\Repository\SaferPayPaymentRepository::class);
+        /** @var SaferPayObtainPaymentMethods $obtainPaymentMethods */
+        $obtainPaymentMethods = $this->getService(SaferPayObtainPaymentMethods::class);
+        /** @var SaferPayPaymentRepository $paymentRepository */
+        $paymentRepository = $this->getService(SaferPayPaymentRepository::class);
 
         try {
             $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
-        } catch (\Invertus\SaferPay\Exception\Api\SaferPayApiException $exception) {
+        } catch (SaferPayApiException $exception) {
             return [];
         }
 
         $paymentOptions = [];
 
-        /** @var \Invertus\SaferPay\Service\PaymentRestrictionValidation $paymentRestrictionValidation */
+        /** @var PaymentRestrictionValidation $paymentRestrictionValidation */
         $paymentRestrictionValidation = $this->getService(
-            \Invertus\SaferPay\Service\PaymentRestrictionValidation::class
+            PaymentRestrictionValidation::class
         );
 
         $logosEnabled = $paymentRepository->getAllActiveLogosNames();
         $logosEnabled = array_column($logosEnabled, 'name');
 
+        if (Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO)) {
+            $logosEnabled[] = SaferPayConfig::PAYMENT_CARDS;
+        }
+
         $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();
         $activePaymentMethods = array_column($activePaymentMethods, 'name');
 
-        /** @var \Invertus\SaferPay\Provider\CurrencyProvider $currencyProvider */
-        $currencyProvider = $this->getService(\Invertus\SaferPay\Provider\CurrencyProvider::class);
+        /** @var CurrencyProvider $currencyProvider */
+        $currencyProvider = $this->getService(CurrencyProvider::class);
+
+        $allCurrencies = $currencyProvider->getAllCurrenciesInArray();
+
+        /** @var CardPaymentGroupingService $cardGroupingService */
+        $cardGroupingService = $this->getService(CardPaymentGroupingService::class);
+
+        if (Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS)) {
+            $paymentMethods = $cardGroupingService->group($paymentMethods, $allCurrencies);
+        }
 
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
@@ -264,12 +289,12 @@ Thank you for your patience!');
             $paymentRedirectionProvider = $this->getService(PaymentRedirectionProvider::class);
 
             $newOption = new PaymentOption();
+
             $translator = $this->getService(
                 LegacyTranslator::class
             );
-            /** @var \Invertus\SaferPay\Service\SaferPayPaymentNotation $saferPayPaymentNotation */
-            $saferPayPaymentNotation = $this->getService(\Invertus\SaferPay\Service\SaferPayPaymentNotation::class);
-            $paymentMethodName = $saferPayPaymentNotation->getForDisplay($paymentMethod['paymentMethod']);
+
+            $paymentMethodName = $translator->translate($paymentMethod['paymentMethod']);
 
             $inputs = [
                 'saved_card_method' => [
@@ -380,30 +405,21 @@ Thank you for your patience!');
 
     public function hookActionEmailSendBefore($params)
     {
-        if (!isset($params['cart']->id)) {
+        try {
+            /** @var SaferPayEmailTemplateControlServiceInterface $emailTemplateControlService */
+            $emailTemplateControlService = $this->getService(SaferPayEmailTemplateControlServiceInterface::class);
+
+            return $emailTemplateControlService->shouldSendEmail($params);
+        } catch (\Throwable $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->getService(LoggerInterface::class);
+
+            $logger->error(sprintf('%s - %s', $this->name, $e->getMessage()));
+
             return true;
         }
 
-        $cart = new Cart($params['cart']->id);
-
-        /** @var \Order $order */
-        $order = \Order::getByCartId($cart->id);
-
-        if (!$order) {
-            return true;
-        }
-
-        if ($order->module !== $this->name) {
-            return true;
-        }
-
-        if ($params['template'] === 'new_order') {
-            if ((int) Configuration::get(SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL)) {
-                return true;
-            }
-        }
-
-        return false;
+        return true;
     }
 
     public function hookActionAdminControllerSetMedia()

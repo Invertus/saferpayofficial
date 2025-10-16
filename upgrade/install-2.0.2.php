@@ -21,23 +21,14 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Provider;
-
-use Currency;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-class CurrencyProvider
-{
-    public function getAllCurrenciesInArray()
-    {
-        $currencies = [];
-        
-        foreach (Currency::getCurrencies() as $currency) {
-            $currencies[$currency['id_currency']] = $currency['iso_code'];
-        }
 
-        return $currencies;
-    }
+function upgrade_module_2_0_2()
+{
+    Configuration::updateValue('SAFERPAY_SEND_ORDER_CONF_MAIL', 0);
+    Configuration::updateValue('SAFERPAY_GROUP_CARDS', 0);
+
+    return true;
 }
