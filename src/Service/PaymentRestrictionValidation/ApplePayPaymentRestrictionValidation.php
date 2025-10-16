@@ -49,7 +49,7 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
      */
     public function isValid($paymentName): bool
     {
-        return true;
+        return $this->isIosDevice() || $this->isMacDesktop();
     }
 
     /**
@@ -58,12 +58,15 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
      */
     public function supports($paymentName): bool
     {
+        return \Tools::strtoupper($paymentName) == SaferPayConfig::PAYMENT_APPLEPAY;
+    }
+
     /**
      * ApplePay works in Test mode with all browsers and devices
      *
      * @return bool
      */
-    private function isIosDevice()
+    private function isIosDevice(): bool
     {
         if (SaferPayConfig::isTestMode()) {
             return true;
@@ -72,7 +75,10 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
         return (bool) $this->context->getMobileDetect()->is('ios');
     }
 
-    private function isMacDesktop()
+    /**
+     * @return bool
+     */
+    private function isMacDesktop(): bool
     {
         if (SaferPayConfig::isTestMode()) {
             return true;
