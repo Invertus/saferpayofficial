@@ -56,7 +56,7 @@ class ApiRequest
      * @return object|null
      * @throws Exception
      */
-    public function post(string $url, array $params = [])
+    public function post(string $url, array $params = []): ?object
     {
         try {
             $response = Request::post(
@@ -87,10 +87,10 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
-     * @return array |null
+     * @return object|null
      * @throws Exception
      */
-    public function get(string $url, array $params = [])
+    public function get(string $url, array $params = []): ?object
     {
         $response = null;
         

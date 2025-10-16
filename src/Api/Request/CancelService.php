@@ -50,7 +50,7 @@ class CancelService
      * @return object|null
      * @throws Exception
      */
-    public function cancel(CancelRequest $cancelRequest)
+    public function cancel(CancelRequest $cancelRequest): ?object
     {
         return $this->apiRequest->post(
             self::CANCEL_API,

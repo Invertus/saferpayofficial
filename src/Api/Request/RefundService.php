@@ -50,7 +50,7 @@ class RefundService
      * @return object|null
      * @throws Exception
      */
-    public function refund(RefundRequest $refundRequest)
+    public function refund(RefundRequest $refundRequest): ?object
     {
         return $this->apiRequest->post(
             self::REFUND_API,

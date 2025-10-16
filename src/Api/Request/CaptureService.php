@@ -50,7 +50,7 @@ class CaptureService
      * @return object|null
      * @throws Exception
      */
-    public function capture(CaptureRequest $captureRequest)
+    public function capture(CaptureRequest $captureRequest): ?object
     {
         return $this->apiRequest->post(
             self::CAPTURE_API,

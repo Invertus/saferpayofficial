@@ -78,7 +78,7 @@ class AuthorizationService
      * @return object|null
      * @throws SaferPayApiException
      */
-    public function authorize(AuthorizationRequest $authorizationRequest)
+    public function authorize(AuthorizationRequest $authorizationRequest): ?object
     {
         try {
             return $this->apiRequest->post(
@@ -104,7 +104,7 @@ class AuthorizationService
         int $saferPayOrderId,
         int $customerId,
         int $selectedCardOption
-    ) {
+    ): AssertBody {
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
         $isPaymentSafe = $assertBody->getLiability()->getLiabilityShift();

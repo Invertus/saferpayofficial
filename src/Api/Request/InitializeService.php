@@ -53,7 +53,7 @@ class InitializeService
      * @return object|null
      * @throws Exception
      */
-    public function initialize(InitializeRequest $initializeRequest, bool $isBusinessLicence)
+    public function initialize(InitializeRequest $initializeRequest, bool $isBusinessLicence): ?object
     {
         $initializeApi = self::INITIALIZE_API_PAYMENT;
         if ($isBusinessLicence) {

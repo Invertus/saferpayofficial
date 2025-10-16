@@ -98,7 +98,7 @@ class LegacyContext
     /**
      * @return \Mobile_Detect
      */
-    public function getMobileDetect()
+    public function getMobileDetect(): \Mobile_Detect
     {
         return $this->getContext()->getMobileDetect();
     }
@@ -106,7 +106,7 @@ class LegacyContext
     /**
      * @return \Link
      */
-    public function getLink()
+    public function getLink(): \Link
     {
         return $this->getContext()->link;
     }
@@ -225,7 +225,7 @@ class LegacyContext
     /**
      * @return \Controller|\AdminController|\FrontController|null
      */
-    public function getController()
+    public function getController(): ?\Controller
     {
         return $this->getContext()->controller;
     }
@@ -267,7 +267,7 @@ class LegacyContext
      * @param bool|null $ssl
      * @return string
      */
-    public function getBaseLink($shopId = null, $ssl = null): string
+    public function getBaseLink(?int $shopId = null, ?bool $ssl = null): string
     {
         return (string) $this->getContext()->link->getBaseLink($shopId, $ssl);
     }
@@ -289,7 +289,7 @@ class LegacyContext
     /**
      * @return \Cart|null
      */
-    public function getCart()
+    public function getCart(): ?\Cart
     {
         return isset($this->getContext()->cart) ? $this->getContext()->cart : null;
     }
