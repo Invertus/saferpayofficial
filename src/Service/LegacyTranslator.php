@@ -45,12 +45,19 @@ class LegacyTranslator implements TranslatorInterface
         $this->module = $module->getModule();
     }
 
-    public function translate($key)
+    /**
+     * @param string $key
+     * @return string
+     */
+    public function translate($key): string
     {
         return isset($this->getTranslations()[$key]) ? $this->getTranslations()[$key] : $key;
     }
 
-    private function getTranslations()
+    /**
+     * @return array
+     */
+    private function getTranslations(): array
     {
         return [
             SaferPayConfig::PAYMENT_ALIPAY => $this->module->l('Alipay', self::FILE_NAME),
