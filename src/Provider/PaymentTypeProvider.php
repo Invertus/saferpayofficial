@@ -44,10 +44,9 @@ class PaymentTypeProvider
 
     /**
      * @param string $paymentMethod
-     *
      * @return string
      */
-    public function get($paymentMethod)
+    public function get($paymentMethod): string
     {
         if ($this->isHostedIframeRedirect($paymentMethod)) {
             return PaymentType::HOSTED_IFRAME;
@@ -62,10 +61,9 @@ class PaymentTypeProvider
 
     /**
      * @param string $paymentMethod
-     *
      * @return bool
      */
-    private function isIframeRedirect($paymentMethod)
+    private function isIframeRedirect($paymentMethod): bool
     {
         if (!in_array($paymentMethod, SaferPayConfig::TRANSACTION_METHODS)) {
             return false;
@@ -80,10 +78,9 @@ class PaymentTypeProvider
 
     /**
      * @param string $paymentMethod
-     *
      * @return bool
      */
-    private function isHostedIframeRedirect($paymentMethod)
+    private function isHostedIframeRedirect($paymentMethod): bool
     {
         if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
             return false;

@@ -31,51 +31,81 @@ if (!defined('_PS_VERSION_')) {
 
 class LegacyContext
 {
-    public function getContext()
+    /**
+     * @return Context
+     */
+    public function getContext(): Context
     {
         return Context::getContext();
     }
 
-    public function getShopId()
+    /**
+     * @return int
+     */
+    public function getShopId(): int
     {
         return (int) $this->getContext()->shop->id;
     }
 
-    public function getLanguageId()
+    /**
+     * @return int
+     */
+    public function getLanguageId(): int
     {
         return (int) $this->getContext()->language->id;
     }
 
-    public function getLanguageIso()
+    /**
+     * @return string
+     */
+    public function getLanguageIso(): string
     {
         return (string) $this->getContext()->language->iso_code ?: 'en';
     }
 
-    public function getCurrencyIsoCode()
+    /**
+     * @return string
+     */
+    public function getCurrencyIsoCode(): string
     {
         return $this->getContext()->currency->iso_code;
     }
 
-    public function getCountryIsoCode()
+    /**
+     * @return string
+     */
+    public function getCountryIsoCode(): string
     {
         return $this->getContext()->country->iso_code;
     }
 
-    public function getCountryId()
+    /**
+     * @return int
+     */
+    public function getCountryId(): int
     {
         return $this->getContext()->country->id;
     }
 
-    public function getCurrencyId()
+    /**
+     * @return int
+     */
+    public function getCurrencyId(): int
     {
         return $this->getContext()->currency->id;
     }
 
+    /**
+     * @return \Mobile_Detect
+     */
     public function getMobileDetect()
     {
         return $this->getContext()->getMobileDetect();
     }
 
+    /**
+     * @return \Link
+     */
     public function getLink()
     {
         return $this->getContext()->link;
@@ -84,23 +114,34 @@ class LegacyContext
     /**
      * @return int
      */
-    public function getDeviceDetect()
+    public function getDeviceDetect(): int
     {
         return (int) $this->getContext()->getDevice();
     }
 
-    public function getAdminLink($controllerName, array $params = [])
+    /**
+     * @param string $controllerName
+     * @param array $params
+     * @return string
+     */
+    public function getAdminLink(string $controllerName, array $params = []): string
     {
         /* @noinspection PhpMethodParametersCountMismatchInspection - its valid for PS1.7 */
         return (string) Context::getContext()->link->getAdminLink($controllerName, true, [], $params);
     }
 
-    public function getLanguageCode()
+    /**
+     * @return string
+     */
+    public function getLanguageCode(): string
     {
         return (string) $this->getContext()->language->language_code ?: 'en-us';
     }
 
-    public function getCurrencyIso()
+    /**
+     * @return string
+     */
+    public function getCurrencyIso(): string
     {
         if (!$this->getContext()->currency) {
             return '';
@@ -109,7 +150,10 @@ class LegacyContext
         return (string) $this->getContext()->currency->iso_code;
     }
 
-    public function getCountryIso()
+    /**
+     * @return string
+     */
+    public function getCountryIso(): string
     {
         if (!$this->getContext()->country) {
             return '';
@@ -118,12 +162,18 @@ class LegacyContext
         return (string) $this->getContext()->country->iso_code;
     }
 
+    /**
+     * @return \Currency
+     */
     public function getCurrency()
     {
         return $this->getContext()->currency;
     }
 
-    public function getCustomerId()
+    /**
+     * @return int
+     */
+    public function getCustomerId(): int
     {
         if (!$this->getContext()->customer) {
             return 0;
@@ -132,7 +182,10 @@ class LegacyContext
         return (int) $this->getContext()->customer->id;
     }
 
-    public function isCustomerLoggedIn()
+    /**
+     * @return bool
+     */
+    public function isCustomerLoggedIn(): bool
     {
         if (!$this->getContext()->customer) {
             return false;
@@ -141,7 +194,10 @@ class LegacyContext
         return (bool) $this->getContext()->customer->isLogged();
     }
 
-    public function getCustomerEmail()
+    /**
+     * @return string
+     */
+    public function getCustomerEmail(): string
     {
         if (!$this->getContext()->customer) {
             return '';
@@ -150,25 +206,36 @@ class LegacyContext
         return $this->getContext()->customer->email;
     }
 
-    public function getShopDomain()
+    /**
+     * @return string
+     */
+    public function getShopDomain(): string
     {
         return (string) $this->getContext()->shop->domain;
     }
 
-    public function getShopName()
+    /**
+     * @return string
+     */
+    public function getShopName(): string
     {
         return (string) $this->getContext()->shop->name;
     }
 
+    /**
+     * @return \Controller|\AdminController|\FrontController|null
+     */
     public function getController()
     {
         return $this->getContext()->controller;
     }
 
     /**
+     * @param \Cart $cart
+     * @return void
      * @throws \Throwable
      */
-    public function setCurrentCart(\Cart $cart)
+    public function setCurrentCart(\Cart $cart): void
     {
         $this->getContext()->cart = $cart;
         $this->getContext()->cart->update();
@@ -177,22 +244,38 @@ class LegacyContext
         $this->getContext()->cookie->write();
     }
 
-    public function setCountry(\Country $country)
+    /**
+     * @param \Country $country
+     * @return void
+     */
+    public function setCountry(\Country $country): void
     {
         $this->getContext()->country = $country;
     }
 
-    public function setCurrency(\Currency $currency)
+    /**
+     * @param \Currency $currency
+     * @return void
+     */
+    public function setCurrency(\Currency $currency): void
     {
         $this->getContext()->currency = $currency;
     }
 
-    public function getBaseLink($shopId = null, $ssl = null)
+    /**
+     * @param int|null $shopId
+     * @param bool|null $ssl
+     * @return string
+     */
+    public function getBaseLink($shopId = null, $ssl = null): string
     {
         return (string) $this->getContext()->link->getBaseLink($shopId, $ssl);
     }
 
-    public function getCartProducts()
+    /**
+     * @return array
+     */
+    public function getCartProducts(): array
     {
         $cart = $this->getContext()->cart;
 
@@ -203,17 +286,27 @@ class LegacyContext
         return $cart->getProducts();
     }
 
+    /**
+     * @return \Cart|null
+     */
     public function getCart()
     {
         return isset($this->getContext()->cart) ? $this->getContext()->cart : null;
     }
 
-    public function getShopThemeName()
+    /**
+     * @return string
+     */
+    public function getShopThemeName(): string
     {
         return $this->getContext()->shop->theme_name;
     }
 
-    public function updateCustomer(\Customer $customer)
+    /**
+     * @param \Customer $customer
+     * @return void
+     */
+    public function updateCustomer(\Customer $customer): void
     {
         $this->getContext()->updateCustomer($customer);
     }
