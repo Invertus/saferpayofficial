@@ -163,9 +163,9 @@ class LegacyContext
     }
 
     /**
-     * @return \Currency
+     * @return ?\Currency
      */
-    public function getCurrency()
+    public function getCurrency(): ?\Currency
     {
         return $this->getContext()->currency;
     }
