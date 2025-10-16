@@ -75,10 +75,10 @@ class AuthorizationService
 
     /**
      * @param AuthorizationRequest $authorizationRequest
-     * @return object|null
+     * @return \stdClass|null
      * @throws SaferPayApiException
      */
-    public function authorize(AuthorizationRequest $authorizationRequest): ?object
+    public function authorize(AuthorizationRequest $authorizationRequest): ?\stdClass
     {
         try {
             return $this->apiRequest->post(

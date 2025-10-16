@@ -47,10 +47,10 @@ class CaptureService
 
     /**
      * @param CaptureRequest $captureRequest
-     * @return object|null
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function capture(CaptureRequest $captureRequest): ?object
+    public function capture(CaptureRequest $captureRequest): ?\stdClass
     {
         return $this->apiRequest->post(
             self::CAPTURE_API,

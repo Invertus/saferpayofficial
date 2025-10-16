@@ -47,10 +47,10 @@ class CancelService
 
     /**
      * @param CancelRequest $cancelRequest
-     * @return object|null
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function cancel(CancelRequest $cancelRequest): ?object
+    public function cancel(CancelRequest $cancelRequest): ?\stdClass
     {
         return $this->apiRequest->post(
             self::CANCEL_API,

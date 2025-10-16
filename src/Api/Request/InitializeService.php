@@ -50,10 +50,10 @@ class InitializeService
     /**
      * @param InitializeRequest $initializeRequest
      * @param bool $isBusinessLicence
-     * @return object|null
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function initialize(InitializeRequest $initializeRequest, bool $isBusinessLicence): ?object
+    public function initialize(InitializeRequest $initializeRequest, bool $isBusinessLicence): ?\stdClass
     {
         $initializeApi = self::INITIALIZE_API_PAYMENT;
         if ($isBusinessLicence) {
