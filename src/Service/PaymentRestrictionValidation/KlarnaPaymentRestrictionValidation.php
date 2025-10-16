@@ -41,8 +41,10 @@ class KlarnaPaymentRestrictionValidation implements PaymentRestrictionValidation
 
     /**
      * @inheritdoc
+     * @param string $paymentName
+     * @return bool
      */
-    public function isValid($paymentName)
+    public function isValid($paymentName): bool
     {
         if (!$this->isContextCountryCodeSupported()) {
             return false;
@@ -55,7 +57,11 @@ class KlarnaPaymentRestrictionValidation implements PaymentRestrictionValidation
         return true;
     }
 
-    public function supports($paymentName)
+    /**
+     * @param string $paymentName
+     * @return bool
+     */
+    public function supports($paymentName): bool
     {
         return \Tools::strtoupper($paymentName) == SaferPayConfig::PAYMENT_KLARNA;
     }

@@ -43,21 +43,21 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
+     * @param string $paymentName
+     * @return bool
      */
-    public function isValid($paymentName)
+    public function isValid($paymentName): bool
     {
-        return $this->isIosDevice() || $this->isMacDesktop();
+        return true;
     }
 
     /**
-     * @inheritdoc
+     * @param string $paymentName
+     * @return bool
      */
-    public function supports($paymentName)
+    public function supports($paymentName): bool
     {
-        return \Tools::strtoupper($paymentName) == SaferPayConfig::PAYMENT_APPLEPAY;
-    }
-
     /**
      * ApplePay works in Test mode with all browsers and devices
      *
