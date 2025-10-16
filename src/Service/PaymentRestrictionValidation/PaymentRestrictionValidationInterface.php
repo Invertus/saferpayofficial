@@ -35,7 +35,7 @@ interface PaymentRestrictionValidationInterface
      * @param string $paymentName
      * @return bool
      */
-    public function isValid($paymentName): bool;
+    public function isValid(string $paymentName): bool;
 
     /**
      * Returns if payment restriction validator is supported by payment name
@@ -43,5 +43,5 @@ interface PaymentRestrictionValidationInterface
      * @param string $paymentName
      * @return bool
      */
-    public function supports($paymentName): bool;
+    public function supports(string $paymentName): bool;
 }
