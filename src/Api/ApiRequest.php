@@ -53,10 +53,10 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
-     * @return object|null
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function post(string $url, array $params = []): ?object
+    public function post(string $url, array $params = []): ?\stdClass
     {
         try {
             $response = Request::post(
@@ -87,13 +87,13 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
-     * @return object|null
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function get(string $url, array $params = []): ?object
+    public function get(string $url, array $params = []): ?\stdClass
     {
         $response = null;
-        
+
         try {
             $response = Request::get(
                 $this->getBaseUrl() . $url,
