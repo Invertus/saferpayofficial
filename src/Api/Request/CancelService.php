@@ -46,6 +46,8 @@ class CancelService
     }
 
     /**
+     * @param CancelRequest $cancelRequest
+     * @return object|null
      * @throws Exception
      */
     public function cancel(CancelRequest $cancelRequest)

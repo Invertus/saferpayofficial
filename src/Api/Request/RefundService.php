@@ -46,6 +46,8 @@ class RefundService
     }
 
     /**
+     * @param RefundRequest $refundRequest
+     * @return object|null
      * @throws Exception
      */
     public function refund(RefundRequest $refundRequest)

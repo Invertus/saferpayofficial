@@ -73,6 +73,11 @@ class AuthorizationService
         $this->aliasBuilder = $aliasBuilder;
     }
 
+    /**
+     * @param AuthorizationRequest $authorizationRequest
+     * @return object|null
+     * @throws SaferPayApiException
+     */
     public function authorize(AuthorizationRequest $authorizationRequest)
     {
         try {
@@ -95,10 +100,10 @@ class AuthorizationService
      * @throws Exception
      */
     public function createObjectsFromAuthorizationResponse(
-        $responseBody,
-        $saferPayOrderId,
-        $customerId,
-        $selectedCardOption
+        array $responseBody,
+        int $saferPayOrderId,
+        int $customerId,
+        int $selectedCardOption
     ) {
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);

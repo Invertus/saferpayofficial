@@ -46,6 +46,8 @@ class CaptureService
     }
 
     /**
+     * @param CaptureRequest $captureRequest
+     * @return object|null
      * @throws Exception
      */
     public function capture(CaptureRequest $captureRequest)
