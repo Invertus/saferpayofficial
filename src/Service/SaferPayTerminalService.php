@@ -142,9 +142,9 @@ class SaferPayTerminalService
 
         if (is_array($terminalsList)) {
             foreach ($terminalsList as $terminal) {
-                // Handle both array and object formats
-                $terminalId = is_array($terminal) ? ($terminal['TerminalId'] ?? null) : ($terminal->TerminalId ?? null);
-                $description = is_array($terminal) ? ($terminal['Description'] ?? null) : ($terminal->Description ?? null);
+                // Since json_decode is always called with true parameter, we only handle array format
+                $terminalId = $terminal['TerminalId'] ?? null;
+                $description = $terminal['Description'] ?? null;
 
                 if ($terminalId) {
                     $terminals[] = [
