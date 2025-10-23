@@ -399,6 +399,20 @@ class SaferPayConfig
     }
 
     /**
+     * Gets Fields JavaScript Library URL For Testing Or Live Environments.
+     *
+     * @return string
+     */
+    public static function getFieldsLibraryUrl()
+    {
+        if (Configuration::get(self::TEST_MODE)) {
+            return self::FIELDS_LIBRARY_TEST_DEFAULT_VALUE;
+        }
+
+        return self::FIELDS_LIBRARY_DEFAULT_VALUE;
+    }
+
+    /**
      * Gets Base API URL For Testing Or Live Environments.
      *
      * @return string
@@ -436,8 +450,6 @@ class SaferPayConfig
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
             SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => 1,
             SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION => self::SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE,
-            SaferPayConfig::FIELDS_LIBRARY => self::FIELDS_LIBRARY_DEFAULT_VALUE,
-            SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => self::FIELDS_LIBRARY_TEST_DEFAULT_VALUE,
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => 0,
             self::TEST_MODE => 1,
             self::HOSTED_FIELDS_TEMPLATE => self::HOSTED_FIELDS_TEMPLATE_DEFAULT,
@@ -476,8 +488,6 @@ class SaferPayConfig
             self::CREDIT_CARD_SAVE,
             self::FIELDS_ACCESS_TOKEN,
             self::FIELDS_ACCESS_TOKEN . self::TEST_SUFFIX,
-            self::FIELDS_LIBRARY,
-            self::FIELDS_LIBRARY . self::TEST_SUFFIX,
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION,
             self::SAFERPAY_SEND_ORDER_CONF_MAIL,
             self::SAFERPAY_GROUP_CARDS,
