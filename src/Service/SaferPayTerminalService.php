@@ -132,17 +132,14 @@ class SaferPayTerminalService
             return $terminals;
         }
 
-        // Convert stdClass to array if necessary
         if (is_object($responseBody)) {
             $responseBody = json_decode(json_encode($responseBody), true);
         }
 
-        // Response has a 'Terminals' property containing the array
         $terminalsList = $responseBody['Terminals'] ?? $responseBody;
 
         if (is_array($terminalsList)) {
             foreach ($terminalsList as $terminal) {
-                // Since json_decode is always called with true parameter, we only handle array format
                 $terminalId = $terminal['TerminalId'] ?? null;
                 $description = $terminal['Description'] ?? null;
 

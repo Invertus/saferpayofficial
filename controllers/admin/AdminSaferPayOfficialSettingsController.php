@@ -24,6 +24,7 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 use Invertus\SaferPay\Adapter\Configuration;
+use Invertus\SaferPay\Service\SaferPayTerminalService;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -75,16 +76,11 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             $this->errors[] = $this->module->l('Field Access Token is required to use business license');
         }
 
-        // Validate Terminal ID (soft validation - only if credentials are present)
         $this->validateTerminalId();
 
         return true;
     }
 
-    /**
-     * Validate Terminal ID against available terminals from SaferPay API
-     * This is a soft validation - if API is not accessible, validation passes
-     */
     private function validateTerminalId()
     {
         try {
@@ -93,7 +89,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
             $suffix = SaferPayConfig::getConfigSuffix();
 
-            // Get values from form input first, fall back to saved configuration
             $terminalId = Tools::getValue(SaferPayConfig::TERMINAL_ID . $suffix);
             $customerId = Tools::getValue(SaferPayConfig::CUSTOMER_ID . $suffix)
                 ?: $configuration->get(SaferPayConfig::CUSTOMER_ID . $suffix);
@@ -102,46 +97,38 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             $password = Tools::getValue(SaferPayConfig::PASSWORD . $suffix)
                 ?: $configuration->get(SaferPayConfig::PASSWORD . $suffix);
 
-            // Skip validation if terminal ID is empty or credentials are not set
             if (empty($terminalId) || empty($customerId) || empty($username) || empty($password)) {
                 return;
             }
 
-            // Store original values to restore later
             $originalCustomerId = \Configuration::get(SaferPayConfig::CUSTOMER_ID . $suffix);
             $originalUsername = \Configuration::get(SaferPayConfig::USERNAME . $suffix);
             $originalPassword = \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
 
             try {
-                // Temporarily set credentials for API call
                 \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $customerId);
                 \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $username);
                 \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $password);
 
-                /** @var \Invertus\SaferPay\Service\SaferPayTerminalService $terminalService */
-                $terminalService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayTerminalService::class);
+                /** @var SaferPayTerminalService $terminalService */
+                $terminalService = $this->module->getService(SaferPayTerminalService::class);
 
-                // Try to validate terminal ID
                 $isValid = $terminalService->isValidTerminal($terminalId);
 
                 if (!$isValid) {
-                    // Get available terminals to show in warning
                     $terminals = $terminalService->getAvailableTerminals();
 
                     if (!empty($terminals)) {
                         $this->warnings[] = $this->module->l('Warning: The Terminal ID you entered was not found in the list of available terminals. Please verify the Terminal ID is correct.');
                     }
-                    // If no terminals found, API might be down - skip validation silently
                 }
             } finally {
-                // Always restore original credentials
                 \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $originalCustomerId);
                 \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $originalUsername);
                 \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $originalPassword);
             }
         } catch (Exception $e) {
-            // Silently fail validation if there's an error - don't block saving
-            // Errors are already logged by the service
+            //
         }
     }
 
@@ -172,8 +159,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     }
 
     /**
-     * Get available terminals for a specific environment
-     *
      * @param string $environment 'test' or 'live'
      * @return array
      */
@@ -181,8 +166,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         $suffix = ($environment === 'test') ? SaferPayConfig::TEST_SUFFIX : '';
 
-        // Try to get credentials from form input first (for first-time setup)
-        // Fall back to database values if not in POST
         $customerId = Tools::getValue(SaferPayConfig::CUSTOMER_ID . $suffix)
             ?: \Configuration::get(SaferPayConfig::CUSTOMER_ID . $suffix);
         $username = Tools::getValue(SaferPayConfig::USERNAME . $suffix)
@@ -190,25 +173,22 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $password = Tools::getValue(SaferPayConfig::PASSWORD . $suffix)
             ?: \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
 
-        // If credentials are not present, return empty array
         if (empty($customerId) || empty($username) || empty($password)) {
             return [];
         }
 
-        // Store original values to restore later
         $originalCustomerId = \Configuration::get(SaferPayConfig::CUSTOMER_ID . $suffix);
         $originalUsername = \Configuration::get(SaferPayConfig::USERNAME . $suffix);
         $originalPassword = \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
         $originalTestMode = \Configuration::get(SaferPayConfig::TEST_MODE);
 
         try {
-            // Temporarily set credentials and test mode for API call
             \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $customerId);
             \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $username);
             \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $password);
             \Configuration::updateValue(SaferPayConfig::TEST_MODE, $environment === 'test' ? 1 : 0);
 
-            /** @var \Invertus\SaferPay\Service\SaferPayTerminalService $terminalService */
+            /** @var SaferPayTerminalService $terminalService */
             $terminalService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayTerminalService::class);
             $terminals = $terminalService->getAvailableTerminals($customerId);
 
@@ -216,7 +196,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         } catch (Exception $e) {
             return [];
         } finally {
-            // Always restore original credentials and test mode
             \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $originalCustomerId);
             \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $originalUsername);
             \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $originalPassword);
