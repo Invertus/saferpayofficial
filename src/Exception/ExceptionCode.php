@@ -39,6 +39,21 @@ class ExceptionCode
     const ORDER_FAILED_TO_FIND_ORDER = 7001;
     const ORDER_UNHANDLED_TRANSACTION_STATUS = 7002;
 
+    // Repository/Database related codes starts from 6***
+    const REPOSITORY_FAILED_TO_QUERY = 6001;
+    const REPOSITORY_FAILED_TO_CREATE_COLLECTION = 6002;
+    const REPOSITORY_ENTITY_NOT_FOUND = 6003;
+    const REPOSITORY_INVALID_CRITERIA = 6004;
+    const ENTITY_FAILED_TO_PERSIST = 6005;
+    const ENTITY_FAILED_TO_UPDATE = 6006;
+    const ENTITY_FAILED_TO_DELETE = 6007;
+    const ENTITY_INVALID_DATA = 6008;
+
+    // Email/Notification related codes starts from 8***
+    const EMAIL_FAILED_TO_SEND = 8001;
+    const EMAIL_TEMPLATE_NOT_FOUND = 8002;
+    const EMAIL_INVALID_RECIPIENT = 8003;
+
     // Any other unhandled codes should start with 9***
     const UNKNOWN_ERROR = 9001;
 }

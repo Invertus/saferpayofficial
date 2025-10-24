@@ -71,6 +71,23 @@ class CheckoutProcessor
         $this->saferPayOrderRepository = $saferPayOrderRepository;
     }
 
+    /**
+     * Process checkout flow for SaferPay payment
+     *
+     * This method orchestrates the entire checkout process including:
+     * - Cart validation
+     * - Order creation (if needed)
+     * - Payment initialization
+     * - SaferPay order entity creation
+     *
+     * @param CheckoutData $data - Checkout data containing cart, payment method, and configuration
+     *
+     * @return object|string - Payment initialization response or empty string for authorized orders
+     *
+     * @throws CouldNotProcessCheckout - If cart not found or SaferPay order creation fails
+     * @throws SaferPayApiException - If payment initialization API call fails
+     * @throws PrestaShopException - If PrestaShop order validation fails
+     */
     public function run(CheckoutData $data)
     {
         $cart = new Cart($data->getCartId());
@@ -78,10 +95,11 @@ class CheckoutProcessor
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        if (!$cart) {
-            $logger->debug(sprintf('%s - Cart not found', self::FILE_NAME), [
+        // Validate cart exists
+        if (!$cart || empty($cart->id)) {
+            $logger->error(sprintf('%s - Cart not found or invalid', self::FILE_NAME), [
                 'context' => [
-                    'cartId' => $data->getCartId(),
+                    'cart_id' => $data->getCartId(),
                 ],
             ]);
 
@@ -111,8 +129,32 @@ class CheckoutProcessor
                 $data->getSuccessController(),
                 $data->getIsWebhook()
             );
+        } catch (SaferPayApiException $exception) {
+            // Log API exception with full context
+            $logger->error(sprintf('%s - Payment initialization API call failed', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $data->getCartId(),
+                    'payment_method' => $data->getPaymentMethod(),
+                    'is_business_license' => $data->getIsBusinessLicense(),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+            // Re-throw the original API exception with context preserved
+            throw $exception;
         } catch (\Exception $exception) {
-            throw new SaferPayApiException('Failed to initialize payment API', SaferPayApiException::INITIALIZE);
+            // Log unexpected exception
+            $logger->error(sprintf('%s - Unexpected error during payment initialization', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $data->getCartId(),
+                    'payment_method' => $data->getPaymentMethod(),
+                ],
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+            // Wrap in SaferPayApiException
+            throw new SaferPayApiException(
+                sprintf('Failed to initialize payment API: %s', $exception->getMessage()),
+                SaferPayApiException::INITIALIZE
+            );
         }
 
         try {
@@ -122,10 +164,28 @@ class CheckoutProcessor
                 $cart->id_customer,
                 $data->getIsTransaction()
             );
+        } catch (CouldNotProcessCheckout $exception) {
+            // Log checkout exception with full context
+            $logger->error(sprintf('%s - %s', self::FILE_NAME, $exception->getMessage()), [
+                'context' => array_merge(
+                    [
+                        'cart_id' => $data->getCartId(),
+                        'customer_id' => $cart->id_customer,
+                        'is_transaction' => $data->getIsTransaction(),
+                    ],
+                    $exception->getContext()
+                ),
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+            // Re-throw the domain exception
+            throw $exception;
         } catch (\Exception $exception) {
-            $logger->error($exception->getMessage(), [
+            // Log unexpected exception with full details
+            $logger->error(sprintf('%s - Unexpected error creating SaferPay order', self::FILE_NAME), [
                 'context' => [
-                    'cartId' => $data->getCartId(),
+                    'cart_id' => $data->getCartId(),
+                    'customer_id' => $cart->id_customer ?? null,
+                    'is_transaction' => $data->getIsTransaction(),
                 ],
                 'exceptions' => ExceptionUtility::getExceptions($exception),
             ]);
@@ -137,10 +197,19 @@ class CheckoutProcessor
     }
 
     /**
-     * @param Cart $cart
-     * @param $paymentMethod
+     * Create PrestaShop order from cart if it doesn't exist
+     *
+     * This method handles the order creation process, including:
+     * - Checking if order already exists (idempotency)
+     * - Validating cart and customer
+     * - Creating order with awaiting payment status
+     *
+     * @param Cart $cart - PrestaShop cart object
+     * @param string $paymentMethod - Payment method name
+     *
      * @return void
-     * @throws PrestaShopException
+     *
+     * @throws PrestaShopException - If order validation fails
      */
     private function processCreateOrder(Cart $cart, $paymentMethod)
     {
@@ -150,11 +219,11 @@ class CheckoutProcessor
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
 
-        // Notify and return webhooks triggers together leading into order created previously
+        // Idempotency check: prevent duplicate order creation from webhooks/retries
         if ($cartAdapter->orderExists($cart->id)) {
-            $logger->debug(sprintf('%s - Order already exists, returning', self::FILE_NAME), [
+            $logger->debug(sprintf('%s - Order already exists for cart, skipping creation', self::FILE_NAME), [
                 'context' => [
-                    'cartId' => $cart->id,
+                    'cart_id' => $cart->id,
                 ],
             ]);
 
@@ -163,12 +232,15 @@ class CheckoutProcessor
 
         $customer = new \Customer($cart->id_customer);
 
-        $logger->debug(sprintf('%s - Creating order', self::FILE_NAME), [
+        $logger->debug(sprintf('%s - Creating PrestaShop order', self::FILE_NAME), [
             'context' => [
-                'cartId' => $cart->id,
+                'cart_id' => $cart->id,
+                'customer_id' => $customer->id,
+                'payment_method' => $paymentMethod,
             ],
         ]);
 
+        // Create order with "awaiting payment" status
         $this->module->validateOrder(
             $cart->id,
             \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
@@ -180,6 +252,13 @@ class CheckoutProcessor
             false,
             $customer->secure_key
         );
+
+        $logger->info(sprintf('%s - PrestaShop order created successfully', self::FILE_NAME), [
+            'context' => [
+                'cart_id' => $cart->id,
+                'order_id' => Order::getIdByCartId($cart->id),
+            ],
+        ]);
     }
 
     /**

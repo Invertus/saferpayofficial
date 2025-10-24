@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Repository;
 
 use Db;
 use DbQuery;
+use Invertus\SaferPay\Exception\CouldNotAccessDatabase;
 use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
@@ -35,70 +36,178 @@ class SaferPayOrderRepository
 {
 
     /**
-     * @param int $orderId
+     * Get SaferPay order by PrestaShop order ID
+     *
+     * @param int $orderId - PrestaShop order ID
      *
      * @return SaferPayOrder
+     *
+     * @throws CouldNotAccessDatabase - If database query fails or order not found
      */
     public function getByOrderId($orderId)
     {
-        return new SaferPayOrder($this->getIdByOrderId($orderId));
+        try {
+            $saferPayOrderId = $this->getIdByOrderId($orderId);
+
+            if (!$saferPayOrderId) {
+                throw CouldNotAccessDatabase::entityNotFound(
+                    'SaferPayOrder',
+                    ['id_order' => $orderId]
+                );
+            }
+
+            return new SaferPayOrder($saferPayOrderId);
+        } catch (CouldNotAccessDatabase $exception) {
+            throw $exception;
+        } catch (\Exception $exception) {
+            throw CouldNotAccessDatabase::failedToQuery(
+                'SaferPayOrder',
+                ['id_order' => $orderId],
+                $exception
+            );
+        }
     }
 
+    /**
+     * Get SaferPay order ID by PrestaShop order ID
+     *
+     * @param int $orderId - PrestaShop order ID
+     *
+     * @return int|false - SaferPay order ID or false if not found
+     *
+     * @throws CouldNotAccessDatabase - If database query fails
+     */
     public function getIdByOrderId($orderId)
     {
-        $query = new DbQuery();
-        $query->select('`id_saferpay_order`');
-        $query->from('saferpay_order');
-        $query->where('id_order = ' . (int) $orderId);
-        $query->orderBy('`id_saferpay_order` DESC');
+        try {
+            $query = new DbQuery();
+            $query->select('`id_saferpay_order`');
+            $query->from('saferpay_order');
+            $query->where('id_order = ' . (int) $orderId);
+            $query->orderBy('`id_saferpay_order` DESC');
 
-        return Db::getInstance()->getValue($query);
+            return Db::getInstance()->getValue($query);
+        } catch (\Exception $exception) {
+            throw CouldNotAccessDatabase::failedToQuery(
+                'SaferPayOrder',
+                ['id_order' => $orderId],
+                $exception
+            );
+        }
     }
 
+    /**
+     * Get SaferPay order ID by cart ID
+     *
+     * @param int $cartId - PrestaShop cart ID
+     *
+     * @return int|false - SaferPay order ID or false if not found
+     *
+     * @throws CouldNotAccessDatabase - If database query fails
+     */
     public function getIdByCartId($cartId)
     {
-        $query = new DbQuery();
-        $query->select('`id_saferpay_order`');
-        $query->from('saferpay_order');
-        $query->where('id_cart = ' . (int) $cartId);
-        $query->orderBy('`id_saferpay_order` DESC');
+        try {
+            $query = new DbQuery();
+            $query->select('`id_saferpay_order`');
+            $query->from('saferpay_order');
+            $query->where('id_cart = ' . (int) $cartId);
+            $query->orderBy('`id_saferpay_order` DESC');
 
-        return Db::getInstance()->getValue($query);
+            return Db::getInstance()->getValue($query);
+        } catch (\Exception $exception) {
+            throw CouldNotAccessDatabase::failedToQuery(
+                'SaferPayOrder',
+                ['id_cart' => $cartId],
+                $exception
+            );
+        }
     }
+
+    /**
+     * Get SaferPay assert ID by SaferPay order ID
+     *
+     * @param int $saferPayOrderId - SaferPay order ID
+     *
+     * @return int|false - Assert ID or false if not found
+     *
+     * @throws CouldNotAccessDatabase - If database query fails
+     */
     public function getAssertIdBySaferPayOrderId($saferPayOrderId)
     {
-        $query = new DbQuery();
-        $query->select('`id_saferpay_assert`');
-        $query->from('saferpay_assert');
-        $query->where('id_saferPay_order = ' . (int) $saferPayOrderId);
-        $query->orderBy('id_saferpay_assert DESC');
+        try {
+            $query = new DbQuery();
+            $query->select('`id_saferpay_assert`');
+            $query->from('saferpay_assert');
+            $query->where('id_saferPay_order = ' . (int) $saferPayOrderId);
+            $query->orderBy('id_saferpay_assert DESC');
 
-        return Db::getInstance()->getValue($query);
+            return Db::getInstance()->getValue($query);
+        } catch (\Exception $exception) {
+            throw CouldNotAccessDatabase::failedToQuery(
+                'SaferPayAssert',
+                ['id_saferPay_order' => $saferPayOrderId],
+                $exception
+            );
+        }
     }
 
-    /***
-     * @param $saferPayOrderId
-     * @return array
+    /**
+     * Get all refunds for a SaferPay order
+     *
+     * @param int $saferPayOrderId - SaferPay order ID
+     *
+     * @return array - Array of refund records
+     *
+     * @throws CouldNotAccessDatabase - If database query fails
      * @throws \PrestaShopDatabaseException
      */
     public function getOrderRefunds($saferPayOrderId)
     {
-        $query = new DbQuery();
-        $query->select('*');
-        $query->from('saferpay_order_refund');
-        $query->where('id_saferPay_order = ' . (int) $saferPayOrderId);
-        $query->orderBy('id_saferpay_order_refund DESC');
+        try {
+            $query = new DbQuery();
+            $query->select('*');
+            $query->from('saferpay_order_refund');
+            $query->where('id_saferPay_order = ' . (int) $saferPayOrderId);
+            $query->orderBy('id_saferpay_order_refund DESC');
 
-        return Db::getInstance()->executeS($query);
+            $result = Db::getInstance()->executeS($query);
+
+            // Return empty array if no results instead of false
+            return is_array($result) ? $result : [];
+        } catch (\Exception $exception) {
+            throw CouldNotAccessDatabase::failedToQuery(
+                'SaferPayOrderRefund',
+                ['id_saferPay_order' => $saferPayOrderId],
+                $exception
+            );
+        }
     }
 
+    /**
+     * Get payment brand by SaferPay order ID
+     *
+     * @param int $saferpayOrderId - SaferPay order ID
+     *
+     * @return string|false - Payment brand name or false if not found
+     *
+     * @throws CouldNotAccessDatabase - If database query fails
+     */
     public function getPaymentBrandBySaferpayOrderId($saferpayOrderId)
     {
-        $query = new DbQuery();
-        $query->select('`brand`');
-        $query->from('saferpay_assert');
-        $query->where('id_saferpay_order = ' . (int) $saferpayOrderId);
+        try {
+            $query = new DbQuery();
+            $query->select('`brand`');
+            $query->from('saferpay_assert');
+            $query->where('id_saferpay_order = ' . (int) $saferpayOrderId);
 
-        return Db::getInstance()->getValue($query);
+            return Db::getInstance()->getValue($query);
+        } catch (\Exception $exception) {
+            throw CouldNotAccessDatabase::failedToQuery(
+                'SaferPayAssert',
+                ['id_saferpay_order' => $saferpayOrderId],
+                $exception
+            );
+        }
     }
 }

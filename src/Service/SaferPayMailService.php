@@ -27,6 +27,8 @@ use Address;
 use Configuration;
 use Context;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Exception\CouldNotSendEmail;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Mail;
 use Module;
 use Order;
@@ -47,70 +49,193 @@ class SaferPayMailService
     private $context;
     /** @var \SaferPayOfficial  */
     private $module;
+    /** @var LoggerInterface|null */
+    private $logger;
 
-    public function __construct(\SaferPayOfficial $module)
+    public function __construct(\SaferPayOfficial $module, LoggerInterface $logger = null)
     {
         $this->module = $module;
         $this->context = Context::getContext();
+        $this->logger = $logger;
     }
 
     /**
-     * @param Order $order
-     * @param int $orderStateId
+     * Send order confirmation email to customer
      *
+     * @param Order $order - Order object
+     * @param int $orderStateId - Order state ID
+     *
+     * @throws CouldNotSendEmail - If email sending fails
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
     public function sendOrderConfMail(Order $order, $orderStateId)
     {
-        $data = $this->getOrderConfData($order, $orderStateId);
-        $fileAttachment = $this->getFileAttachment($orderStateId, $order);
-        $customer = $order->getCustomer();
+        try {
+            $data = $this->getOrderConfData($order, $orderStateId);
+            $fileAttachment = $this->getFileAttachment($orderStateId, $order);
+            $customer = $order->getCustomer();
 
-        Mail::Send(
-            (int) $order->id_lang,
-            'order_conf',
-            Mail::l('Order confirmation', (int) $order->id_lang),
-            $data,
-            $customer->email,
-            implode(' ', [$customer->firstname, $customer->lastname]),
-            null,
-            null,
-            $fileAttachment,
-            null,
-            _PS_MAIL_DIR_,
-            false,
-            (int) $order->id_shop
-        );
+            // Validate customer email before sending
+            if (empty($customer->email) || !\Validate::isEmail($customer->email)) {
+                throw CouldNotSendEmail::invalidRecipient(
+                    $customer->email ?? 'empty',
+                    'Customer email is empty or invalid'
+                );
+            }
+
+            $result = Mail::Send(
+                (int) $order->id_lang,
+                'order_conf',
+                Mail::l('Order confirmation', (int) $order->id_lang),
+                $data,
+                $customer->email,
+                implode(' ', [$customer->firstname, $customer->lastname]),
+                null,
+                null,
+                $fileAttachment,
+                null,
+                _PS_MAIL_DIR_,
+                false,
+                (int) $order->id_shop
+            );
+
+            // Mail::Send returns false on failure
+            if (!$result) {
+                throw CouldNotSendEmail::failedToSend(
+                    'order_conf',
+                    $customer->email,
+                    [
+                        'order_id' => $order->id,
+                        'order_state_id' => $orderStateId,
+                        'lang_id' => $order->id_lang,
+                    ]
+                );
+            }
+
+            // Log successful email send
+            if ($this->logger) {
+                $this->logger->info(sprintf('%s - Order confirmation email sent successfully', self::FILE_NAME), [
+                    'context' => [
+                        'order_id' => $order->id,
+                        'recipient' => $customer->email,
+                    ],
+                ]);
+            }
+        } catch (CouldNotSendEmail $exception) {
+            // Log the error
+            if ($this->logger) {
+                $this->logger->error(sprintf('%s - %s', self::FILE_NAME, $exception->getMessage()), [
+                    'context' => $exception->getContext(),
+                ]);
+            }
+            // Re-throw to let calling code handle it
+            throw $exception;
+        } catch (\Exception $exception) {
+            // Log unexpected errors
+            if ($this->logger) {
+                $this->logger->error(sprintf('%s - Unexpected error sending order confirmation email', self::FILE_NAME), [
+                    'context' => [
+                        'order_id' => $order->id ?? null,
+                        'error' => $exception->getMessage(),
+                    ],
+                ]);
+            }
+            // Wrap in our custom exception
+            throw CouldNotSendEmail::failedToSend(
+                'order_conf',
+                $customer->email ?? 'unknown',
+                ['order_id' => $order->id ?? null],
+                $exception
+            );
+        }
     }
 
     /**
-     * @param Order $order
-     * @param int $orderStateId
+     * Send new order notification email (via ps_emailalerts module)
      *
+     * @param Order $order - Order object
+     * @param int $orderStateId - Order state ID
+     *
+     * @throws CouldNotSendEmail - If email sending fails
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
     public function sendNewOrderMail(Order $order, $orderStateId)
     {
+        // Skip if email alerts module is not enabled
         if (!Module::isEnabled(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME)) {
+            if ($this->logger) {
+                $this->logger->debug(sprintf('%s - Email alerts module not enabled, skipping new order email', self::FILE_NAME), [
+                    'context' => ['order_id' => $order->id],
+                ]);
+            }
             return;
         }
 
-        $customer = $order->getCustomer();
+        try {
+            $customer = $order->getCustomer();
 
-        /** @var \Ps_EmailAlerts $emailAlertsModule */
-        $emailAlertsModule = Module::getInstanceByName(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME);
+            /** @var \Ps_EmailAlerts $emailAlertsModule */
+            $emailAlertsModule = Module::getInstanceByName(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME);
 
-        $emailAlertsModule->hookActionValidateOrder(
-            [
-                'currency' => $this->context->currency,
-                'order' => $order,
-                'customer' => $customer,
-                'cart' => $this->context->cart,
-                'orderStatus' => new OrderState($orderStateId),
-            ]
-        );
+            if (!$emailAlertsModule) {
+                throw CouldNotSendEmail::failedToSend(
+                    'new_order',
+                    'admin',
+                    [
+                        'order_id' => $order->id,
+                        'reason' => 'Email alerts module instance not found',
+                    ]
+                );
+            }
+
+            $emailAlertsModule->hookActionValidateOrder(
+                [
+                    'currency' => $this->context->currency,
+                    'order' => $order,
+                    'customer' => $customer,
+                    'cart' => $this->context->cart,
+                    'orderStatus' => new OrderState($orderStateId),
+                ]
+            );
+
+            // Log successful email send
+            if ($this->logger) {
+                $this->logger->info(sprintf('%s - New order notification email sent successfully', self::FILE_NAME), [
+                    'context' => [
+                        'order_id' => $order->id,
+                        'order_state_id' => $orderStateId,
+                    ],
+                ]);
+            }
+        } catch (CouldNotSendEmail $exception) {
+            // Log the error
+            if ($this->logger) {
+                $this->logger->error(sprintf('%s - %s', self::FILE_NAME, $exception->getMessage()), [
+                    'context' => $exception->getContext(),
+                ]);
+            }
+            // Re-throw to let calling code handle it
+            throw $exception;
+        } catch (\Exception $exception) {
+            // Log unexpected errors
+            if ($this->logger) {
+                $this->logger->error(sprintf('%s - Unexpected error sending new order notification email', self::FILE_NAME), [
+                    'context' => [
+                        'order_id' => $order->id ?? null,
+                        'error' => $exception->getMessage(),
+                    ],
+                ]);
+            }
+            // Wrap in our custom exception
+            throw CouldNotSendEmail::failedToSend(
+                'new_order',
+                'admin',
+                ['order_id' => $order->id ?? null],
+                $exception
+            );
+        }
     }
 
     private function getOrderConfData(Order $order, $orderStateId)

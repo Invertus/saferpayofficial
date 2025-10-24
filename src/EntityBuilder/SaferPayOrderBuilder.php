@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\EntityBuilder;
 
 use Cart;
 use Customer;
+use Invertus\SaferPay\Exception\CouldNotAccessDatabase;
 use Order;
 use SaferPayOrder;
 
@@ -34,40 +35,184 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderBuilder
 {
+    /**
+     * Create a new SaferPay order entity
+     *
+     * @param object $body - API response body containing token and redirect URL
+     * @param int $cartId - PrestaShop cart ID
+     * @param int $customerId - PrestaShop customer ID
+     * @param bool $isTransaction - Whether this is a transaction (true) or authorization (false)
+     *
+     * @return SaferPayOrder
+     *
+     * @throws CouldNotAccessDatabase - If entity validation or persistence fails
+     */
     public function create($body, $cartId, $customerId, $isTransaction)
     {
-        if (method_exists('Order', 'getIdByCartId')) {
-            $orderId = Order::getIdByCartId($cartId);
-        } else {
-            // For PrestaShop 1.6 use the alternative method
-            $orderId = Order::getOrderByCartId($cartId);
+        // Validate required input data
+        if (empty($body)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'API response body is required',
+                ['body' => null, 'cart_id' => $cartId]
+            );
         }
 
-        $saferPayOrder = new SaferPayOrder();
-        $saferPayOrder->token = $body->Token;
-        $saferPayOrder->id_order = $orderId ?: null;
-        $saferPayOrder->id_cart = $cartId;
-        $saferPayOrder->id_customer = $customerId;
-        $saferPayOrder->redirect_url = $this->getRedirectionUrl($body);
-        $saferPayOrder->is_transaction = $isTransaction;
+        if (!isset($body->Token) || empty($body->Token)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'Token is required in API response body',
+                ['body' => $body, 'cart_id' => $cartId]
+            );
+        }
 
-        $saferPayOrder->add();
+        if (empty($cartId)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'Cart ID is required',
+                ['cart_id' => $cartId]
+            );
+        }
 
-        return $saferPayOrder;
+        if (empty($customerId)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'Customer ID is required',
+                ['customer_id' => $customerId]
+            );
+        }
+
+        try {
+            // Get order ID from cart (may be null if order not created yet)
+            if (method_exists('Order', 'getIdByCartId')) {
+                $orderId = Order::getIdByCartId($cartId);
+            } else {
+                // For PrestaShop 1.6 use the alternative method
+                $orderId = Order::getOrderByCartId($cartId);
+            }
+
+            $saferPayOrder = new SaferPayOrder();
+            $saferPayOrder->token = $body->Token;
+            $saferPayOrder->id_order = $orderId ?: null;
+            $saferPayOrder->id_cart = $cartId;
+            $saferPayOrder->id_customer = $customerId;
+            $saferPayOrder->redirect_url = $this->getRedirectionUrl($body);
+            $saferPayOrder->is_transaction = $isTransaction;
+
+            // Attempt to persist the entity
+            if (!$saferPayOrder->add()) {
+                throw CouldNotAccessDatabase::failedToPersist(
+                    'SaferPayOrder',
+                    [
+                        'token' => $body->Token,
+                        'cart_id' => $cartId,
+                        'customer_id' => $customerId,
+                    ]
+                );
+            }
+
+            return $saferPayOrder;
+        } catch (CouldNotAccessDatabase $exception) {
+            // Re-throw our custom exceptions
+            throw $exception;
+        } catch (\Exception $exception) {
+            // Wrap any other exceptions
+            throw CouldNotAccessDatabase::failedToPersist(
+                'SaferPayOrder',
+                [
+                    'token' => $body->Token ?? null,
+                    'cart_id' => $cartId,
+                    'customer_id' => $customerId,
+                ],
+                $exception
+            );
+        }
     }
 
+    /**
+     * Create a direct SaferPay order (used for direct payment flows)
+     *
+     * @param object $body - API response body containing transaction details
+     * @param Cart $cart - PrestaShop cart object
+     * @param Customer $customer - PrestaShop customer object
+     * @param bool $isTransaction - Whether this is a transaction (true) or authorization (false)
+     *
+     * @return SaferPayOrder
+     *
+     * @throws CouldNotAccessDatabase - If entity validation or persistence fails
+     */
     public function createDirectOrder($body, Cart $cart, Customer $customer, $isTransaction)
     {
-        $orderId = Order::getOrderByCartId($cart->id);
-        $saferPayOrder = new SaferPayOrder();
-        $saferPayOrder->transaction_id = $body->Transaction->Id;
-        $saferPayOrder->id_order = $orderId;
-        $saferPayOrder->id_customer = $customer->id;
-        $saferPayOrder->is_transaction = $isTransaction;
-        $saferPayOrder->authorized = 1;
-        $saferPayOrder->add();
+        // Validate required input data
+        if (empty($body)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'API response body is required for direct order',
+                ['cart_id' => $cart->id ?? null]
+            );
+        }
 
-        return $saferPayOrder;
+        if (!isset($body->Transaction->Id) || empty($body->Transaction->Id)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'Transaction ID is required in API response body',
+                ['body' => $body, 'cart_id' => $cart->id ?? null]
+            );
+        }
+
+        if (!$cart || empty($cart->id)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'Valid cart object is required'
+            );
+        }
+
+        if (!$customer || empty($customer->id)) {
+            throw CouldNotAccessDatabase::invalidEntityData(
+                'SaferPayOrder',
+                'Valid customer object is required',
+                ['cart_id' => $cart->id]
+            );
+        }
+
+        try {
+            $orderId = Order::getOrderByCartId($cart->id);
+
+            $saferPayOrder = new SaferPayOrder();
+            $saferPayOrder->transaction_id = $body->Transaction->Id;
+            $saferPayOrder->id_order = $orderId;
+            $saferPayOrder->id_customer = $customer->id;
+            $saferPayOrder->is_transaction = $isTransaction;
+            $saferPayOrder->authorized = 1;
+
+            // Attempt to persist the entity
+            if (!$saferPayOrder->add()) {
+                throw CouldNotAccessDatabase::failedToPersist(
+                    'SaferPayOrder',
+                    [
+                        'transaction_id' => $body->Transaction->Id,
+                        'cart_id' => $cart->id,
+                        'customer_id' => $customer->id,
+                    ]
+                );
+            }
+
+            return $saferPayOrder;
+        } catch (CouldNotAccessDatabase $exception) {
+            // Re-throw our custom exceptions
+            throw $exception;
+        } catch (\Exception $exception) {
+            // Wrap any other exceptions
+            throw CouldNotAccessDatabase::failedToPersist(
+                'SaferPayOrder',
+                [
+                    'transaction_id' => $body->Transaction->Id ?? null,
+                    'cart_id' => $cart->id ?? null,
+                    'customer_id' => $customer->id ?? null,
+                ],
+                $exception
+            );
+        }
     }
 
     /**

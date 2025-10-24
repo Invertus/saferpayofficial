@@ -23,6 +23,7 @@
 
 namespace Invertus\SaferPay\Repository;
 
+use Invertus\SaferPay\Exception\CouldNotAccessDatabase;
 use ObjectModel;
 use PrestaShopCollection;
 use PrestaShopException;
@@ -46,29 +47,74 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
         $this->fullyClassifiedClassName = $fullyClassifiedClassName;
     }
 
+    /**
+     * Find all entities of the repository type
+     *
+     * @return PrestaShopCollection
+     *
+     * @throws CouldNotAccessDatabase
+     */
     public function findAll()
     {
-        return new PrestaShopCollection($this->fullyClassifiedClassName);
+        try {
+            return new PrestaShopCollection($this->fullyClassifiedClassName);
+        } catch (\Exception $exception) {
+            throw CouldNotAccessDatabase::failedToCreateCollection(
+                $this->fullyClassifiedClassName,
+                $exception
+            );
+        }
     }
 
     /**
-     * @param array $keyValueCriteria
+     * Find one entity by criteria
      *
-     * @return ObjectModel|null
+     * @param array $keyValueCriteria - Key-value pairs to filter by (e.g., ['id_order' => 123])
      *
-     * @throws PrestaShopException
+     * @return ObjectModel|null - Returns entity or null if not found
+     *
+     * @throws CouldNotAccessDatabase - If database query fails
+     * @throws PrestaShopException - If PrestaShop collection operations fail
      */
     public function findOneBy(array $keyValueCriteria)
     {
-        $psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
-
-        foreach ($keyValueCriteria as $field => $value) {
-            $psCollection = $psCollection->where($field, '=', $value);
+        // Validate criteria is not empty
+        if (empty($keyValueCriteria)) {
+            throw CouldNotAccessDatabase::invalidCriteria(
+                $keyValueCriteria,
+                'Search criteria cannot be empty'
+            );
         }
 
-        $first = $psCollection->getFirst();
+        try {
+            $psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
 
-        /* @phpstan-ignore-next-line */
-        return false === $first ? null : $first;
+            foreach ($keyValueCriteria as $field => $value) {
+                // Validate field name to prevent SQL injection attempts
+                if (!is_string($field) || empty($field)) {
+                    throw CouldNotAccessDatabase::invalidCriteria(
+                        $keyValueCriteria,
+                        sprintf('Invalid field name provided: %s', var_export($field, true))
+                    );
+                }
+
+                $psCollection = $psCollection->where($field, '=', $value);
+            }
+
+            $first = $psCollection->getFirst();
+
+            /* @phpstan-ignore-next-line */
+            return false === $first ? null : $first;
+        } catch (CouldNotAccessDatabase $exception) {
+            // Re-throw our custom exceptions
+            throw $exception;
+        } catch (\Exception $exception) {
+            // Wrap any other exceptions in our custom exception
+            throw CouldNotAccessDatabase::failedToQuery(
+                $this->fullyClassifiedClassName,
+                $keyValueCriteria,
+                $exception
+            );
+        }
     }
 }
