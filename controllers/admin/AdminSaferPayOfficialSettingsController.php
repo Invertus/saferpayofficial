@@ -189,7 +189,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             \Configuration::updateValue(SaferPayConfig::TEST_MODE, $environment === 'test' ? 1 : 0);
 
             /** @var SaferPayTerminalService $terminalService */
-            $terminalService = $this->module->getService(\Invertus\SaferPay\Service\SaferPayTerminalService::class);
+            $terminalService = $this->module->getService(SaferPayTerminalService::class);
             $terminals = $terminalService->getAvailableTerminals($customerId);
 
             return $terminals;
