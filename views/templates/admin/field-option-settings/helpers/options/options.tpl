@@ -67,4 +67,10 @@
         </div>
 
     {/if}
+
+    {if $field['type'] == 'terminal_selector'}
+        <div class="col-lg-5">
+            {include file="../../../partials/field-terminal-id.tpl"}
+        </div>
+    {/if}
 {/block}
