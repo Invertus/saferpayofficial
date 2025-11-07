@@ -402,16 +402,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'type' => 'text',
                     'class' => 'fixed-width-xxl',
                 ],
-                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-javascript-library-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('Field Javascript library url'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
                 SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX => [
                     'title' => $this->module->l('I have Business license'),
                     'validation' => 'isBool',
@@ -474,16 +464,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ],
                 SaferPayConfig::FIELDS_ACCESS_TOKEN => [
                     'title' => $this->module->l('Field Access Token'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-javascript-library-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY => [
-                    'title' => $this->module->l('Field Javascript library url'),
                     'type' => 'text',
                     'class' => 'fixed-width-xxl',
                 ],
