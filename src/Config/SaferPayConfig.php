@@ -265,7 +265,6 @@ class SaferPayConfig
     const FIELDS_ACCESS_TOKEN = 'SAFERPAY_FIELDS_ACCESS_TOKEN';
     const FIELDS_LIBRARY = 'SAFERPAY_FIELDS_JAVASCRIPT_LIBRARY';
     const FIELDS_LIBRARY_DEFAULT_VALUE = 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js';
-    const FIELDS_LIBRARY_TEST_DEFAULT_VALUE = 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js';
 
     const HOSTED_FIELDS_TEMPLATE_DEFAULT = 1;
     const HOSTED_FIELDS_TEMPLATE = 'SAFERPAY_HOSTED_FIELDS_TEMPLATE';
@@ -396,20 +395,6 @@ class SaferPayConfig
                 \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix()
             )
         );
-    }
-
-    /**
-     * Gets Fields JavaScript Library URL For Testing Or Live Environments.
-     *
-     * @return string
-     */
-    public static function getFieldsLibraryUrl()
-    {
-        if (Configuration::get(self::TEST_MODE)) {
-            return self::FIELDS_LIBRARY_TEST_DEFAULT_VALUE;
-        }
-
-        return self::FIELDS_LIBRARY_DEFAULT_VALUE;
     }
 
     /**
