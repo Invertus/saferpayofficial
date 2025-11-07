@@ -20,9 +20,6 @@
  *@license   SIX Payment Services
  *}
 <div class="saferpay-terminal-selector" data-environment="{$field['environment']|escape:'htmlall':'UTF-8'}">
-    <label class="control-label">
-        {l s='Terminal ID' mod='saferpayofficial'}
-    </label>
     <select
         name="{$key|escape:'htmlall':'UTF-8'}"
         id="{$key|escape:'htmlall':'UTF-8'}"
