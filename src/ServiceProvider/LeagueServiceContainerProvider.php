@@ -34,8 +34,37 @@ class LeagueServiceContainerProvider implements ServiceContainerProviderInterfac
 {
     private $extendedServices = [];
 
+    /**
+     * @var Container|null
+     */
+    private $container;
+
     /** {@inheritDoc} */
     public function getService($serviceName)
+    {
+        if (null === $this->container) {
+            $this->container = $this->buildContainer();
+        }
+
+        return $this->container->get((string) $serviceName);
+    }
+
+    public function extend($id, $concrete = null)
+    {
+        $this->extendedServices[$id] = $concrete;
+
+        // Reset container to rebuild with new extensions
+        $this->container = null;
+
+        return $this;
+    }
+
+    /**
+     * Build and configure the container
+     *
+     * @return Container
+     */
+    private function buildContainer()
     {
         $container = new Container();
 
@@ -45,13 +74,6 @@ class LeagueServiceContainerProvider implements ServiceContainerProviderInterfac
 
         (new BaseServiceProvider($this->extendedServices))->register($container);
 
-        return $container->get((string) $serviceName);
-    }
-
-    public function extend($id, $concrete = null)
-    {
-        $this->extendedServices[$id] = $concrete;
-
-        return $this;
+        return $container;
     }
 }

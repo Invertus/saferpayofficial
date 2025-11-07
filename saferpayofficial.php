@@ -22,29 +22,18 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader;
-use Invertus\SaferPay\Presenter\AdminOrderPagePresenter;
-use Invertus\SaferPay\Presenter\AssertPresenter;
-use Invertus\SaferPay\Provider\PaymentRedirectionProvider;
-use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
-use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use Invertus\SaferPay\Service\LegacyTranslator;
-use Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider;
-use Invertus\SaferPay\Utility\VersionUtility;
-use Invertus\SaferPay\Validation\ValidateIsAssetsRequired;
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Invertus\SaferPay\Service\CardPaymentGroupingService;
+use Invertus\SaferPay\Infrastructure\Hook\Action\AdminControllerSetMediaHook;
+use Invertus\SaferPay\Infrastructure\Hook\Action\EmailSendBeforeHook;
+use Invertus\SaferPay\Infrastructure\Hook\Action\FrontControllerSetMediaHook;
+use Invertus\SaferPay\Infrastructure\Hook\Action\ObjectOrderPaymentAddAfterHook;
+use Invertus\SaferPay\Infrastructure\Hook\Display\AdminOrderHook;
+use Invertus\SaferPay\Infrastructure\Hook\Display\CustomerAccountHook;
+use Invertus\SaferPay\Infrastructure\Hook\Display\OrderConfirmationHook;
+use Invertus\SaferPay\Infrastructure\Hook\Display\PaymentOptionsHook;
 use Invertus\SaferPay\Install\Installer;
 use Invertus\SaferPay\Install\Uninstaller;
-use Invertus\SaferPay\Service\SaferPayCartService;
-use Invertus\SaferPay\Provider\PaymentTypeProvider;
-use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
-use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Service\PaymentRestrictionValidation;
-use Invertus\SaferPay\Provider\CurrencyProvider;
-use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
-use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider;
+use Invertus\SaferPay\Utility\VersionUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -144,407 +133,144 @@ class SaferPayOfficial extends PaymentModule
         return $this->containerProvider->getService($service);
     }
 
+    /**
+     * Hook: Display order confirmation message
+     *
+     * @param array $params
+     * @return string
+     */
     public function hookDisplayOrderConfirmation($params)
     {
-        if (empty($params['order'])) {
-            return '';
-        }
+        /** @var OrderConfirmationHook $hook */
+        $hook = $this->getService(OrderConfirmationHook::class);
 
-        /** @var Order $psOrder */
-        $psOrder = $params['order'];
-
-        /** @var SaferPayOrderRepository $repository */
-        $repository = $this->getService(SaferPayOrderRepository::class);
-
-
-        $sfOrder = $repository->getByOrderId((int) $psOrder->id);
-        if (!$sfOrder->pending) {
-            return '';
-        }
-
-        return $this->l('Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
-Thank you for your patience!');
+        return $hook->handle($params);
     }
 
+    /**
+     * Hook: Update payment method name after order payment is added
+     *
+     * @param array $params
+     */
     public function hookActionObjectOrderPaymentAddAfter($params)
     {
-        if (!isset($params['object'])) {
-            return;
-        }
+        /** @var ObjectOrderPaymentAddAfterHook $hook */
+        $hook = $this->getService(ObjectOrderPaymentAddAfterHook::class);
 
-        /** @var OrderPayment $orderPayment */
-        $orderPayment = $params['object'];
-
-        if (!Validate::isLoadedObject($orderPayment)) {
-            return;
-        }
-
-        /** @var SaferPayOrderRepository $saferPayOrderRepository */
-        $saferPayOrderRepository = $this->getService(SaferPayOrderRepository::class);
-
-        $orders = Order::getByReference($orderPayment->order_reference);
-
-        /** @var Order|bool $order */
-        $order = $orders->getFirst();
-
-        if (!Validate::isLoadedObject($order)) {
-            return;
-        }
-
-        $saferPayOrderId = (int) $saferPayOrderRepository->getIdByOrderId($order->id);
-
-        if (!$saferPayOrderId) {
-            return;
-        }
-
-        $brand = $saferPayOrderRepository->getPaymentBrandBySaferpayOrderId($saferPayOrderId);
-
-        if (!$brand) {
-            return;
-        }
-
-        $orderPayment->payment_method = 'Saferpay - ' . $brand;
-        $orderPayment->update();
+        $hook->handle($params);
     }
 
+    /**
+     * Hook: Provide payment options on checkout page
+     *
+     * @param array $params
+     * @return array
+     */
     public function hookPaymentOptions($params)
     {
-        /** @var SaferPayCartService $cartService */
-        $cartService = $this->getService(SaferPayCartService::class);
-        if (!$cartService->isCurrencyAvailable($params['cart'])) {
-            return [];
-        }
+        /** @var PaymentOptionsHook $hook */
+        $hook = $this->getService(PaymentOptionsHook::class);
 
-        /** @var PaymentTypeProvider $paymentTypeProvider */
-        $paymentTypeProvider = $this->getService(PaymentTypeProvider::class);
-
-        /** @var SaferPayObtainPaymentMethods $obtainPaymentMethods */
-        $obtainPaymentMethods = $this->getService(SaferPayObtainPaymentMethods::class);
-        /** @var SaferPayPaymentRepository $paymentRepository */
-        $paymentRepository = $this->getService(SaferPayPaymentRepository::class);
-
-        try {
-            $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
-        } catch (SaferPayApiException $exception) {
-            return [];
-        }
-
-        $paymentOptions = [];
-
-        /** @var PaymentRestrictionValidation $paymentRestrictionValidation */
-        $paymentRestrictionValidation = $this->getService(
-            PaymentRestrictionValidation::class
-        );
-
-        $logosEnabled = $paymentRepository->getAllActiveLogosNames();
-        $logosEnabled = array_column($logosEnabled, 'name');
-
-        if (Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO)) {
-            $logosEnabled[] = SaferPayConfig::PAYMENT_CARDS;
-        }
-
-        /** @var CurrencyProvider $currencyProvider */
-        $currencyProvider = $this->getService(CurrencyProvider::class);
-
-        $allCurrencies = $currencyProvider->getAllCurrenciesInArray();
-
-        /** @var CardPaymentGroupingService $cardGroupingService */
-        $cardGroupingService = $this->getService(CardPaymentGroupingService::class);
-
-        if (Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS)) {
-            $paymentMethods = $cardGroupingService->group($paymentMethods, $allCurrencies);
-        }
-
-        // Services used in the loop - initialized once for performance
-        /** @var SaferPayCardAliasRepository $cardAliasRepository */
-        $cardAliasRepository = $this->getService(SaferPayCardAliasRepository::class);
-        /** @var PaymentRedirectionProvider $paymentRedirectionProvider */
-        $paymentRedirectionProvider = $this->getService(PaymentRedirectionProvider::class);
-        /** @var LegacyTranslator $translator */
-        $translator = $this->getService(LegacyTranslator::class);
-
-        $isBusinessLicenseEnabled = Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
-        $isCreditCardSavingEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
-
-        foreach ($paymentMethods as $paymentMethod) {
-            $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
-
-            if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
-                $paymentMethod['currencies'] = $currencyProvider->getAllCurrenciesInArray();
-            }
-
-            if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
-                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
-                continue;
-            }
-
-            if (!$paymentRestrictionValidation->isPaymentMethodValid($paymentMethod['paymentMethod'])) {
-                continue;
-            }
-
-            $imageUrl = (in_array($paymentMethod['paymentMethod'], $logosEnabled))
-                ? $paymentMethod['logoUrl'] : '';
-
-            $isCreditCard = in_array(
-                $paymentMethod['paymentMethod'],
-                SaferPayConfig::TRANSACTION_METHODS
-            );
-
-            $selectedCard = 0;
-            $isCreditCardSavingEnabledForUser = $isCreditCardSavingEnabled;
-
-            if ($this->context->customer->is_guest) {
-                $isCreditCardSavingEnabledForUser = false;
-                $selectedCard = -1;
-            }
-
-            $newOption = new PaymentOption();
-
-            $paymentMethodName = $translator->translate($paymentMethod['paymentMethod']);
-
-            $inputs = [
-                'saved_card_method' => [
-                    'name' => 'saved_card_method',
-                    'type' => 'hidden',
-                    'value' => $paymentMethod['paymentMethod'],
-                ],
-                'selectedCreditCard' => [
-                    'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
-                    'type' => 'hidden',
-                    'value' => $selectedCard,
-                ],
-            ];
-
-            if ($isCreditCardSavingEnabledForUser && $isCreditCard && $isBusinessLicenseEnabled) {
-                $currentDate = date('Y-m-d h:i:s');
-
-                $savedCards = $cardAliasRepository->getSavedValidCardsByUserIdAndPaymentMethod(
-                    $this->context->customer->id,
-                    $paymentMethod['paymentMethod'],
-                    $currentDate
-                );
-
-                $this->smarty->assign(
-                    [
-                        'savedCards' => $savedCards,
-                        'paymentMethod' => $paymentMethod['paymentMethod'],
-                    ]
-                );
-
-                if ($savedCards) {
-                    /** Select first card if any are saved **/
-
-                    $inputs['selectedCreditCard'] = [
-                        'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
-                        'type' => 'hidden',
-                        'value' => $savedCards[0]['id_saferpay_card_alias'],
-                    ];
-                }
-
-                $newOption->setAdditionalInformation(
-                    $this->display(__FILE__, 'front/saferpay_additional_info.tpl')
-                );
-            }
-
-            $inputs['type'] = [
-                'name' => 'saferpayPaymentType',
-                'type' => 'hidden',
-                'value' => $paymentTypeProvider->get($paymentMethod['paymentMethod']),
-            ];
-
-            $newOption->setModuleName($this->name)
-                ->setCallToActionText($translator->translate($paymentMethodName))
-                ->setAction($paymentRedirectionProvider->provideRedirectionLinkByPaymentMethod($paymentMethod['paymentMethod']))
-                ->setLogo($imageUrl)
-                ->setInputs($inputs);
-
-            $paymentOptions[] = $newOption;
-        }
-
-        return $paymentOptions;
+        return $hook->handle($params);
     }
 
+    /**
+     * Hook: Display admin order tab content (PS 1.7.7+)
+     *
+     * @param array $params
+     * @return string|bool
+     */
     public function hookDisplayAdminOrderTabContent(array $params)
     {
         if (!SaferPayConfig::isVersionAbove177()) {
             return false;
         }
 
-        return $this->displayInAdminOrderPage($params);
+        /** @var AdminOrderHook $hook */
+        $hook = $this->getService(AdminOrderHook::class);
+
+        return $hook->handle($params);
     }
 
-
+    /**
+     * Hook: Display admin order (Pre-1.7.7)
+     *
+     * @param array $params
+     * @return string|bool
+     */
     public function hookDisplayAdminOrder(array $params)
     {
         if (SaferPayConfig::isVersionAbove177()) {
             return false;
         }
 
-        return $this->displayInAdminOrderPage($params);
+        /** @var AdminOrderHook $hook */
+        $hook = $this->getService(AdminOrderHook::class);
+
+        return $hook->handle($params);
     }
 
+    /**
+     * Hook: Register front controller media (JS/CSS)
+     *
+     * @param array $params
+     */
     public function hookActionFrontControllerSetMedia()
     {
-        /** @var ValidateIsAssetsRequired $validateIsAssetsRequired */
-        $validateIsAssetsRequired = $this->getService(ValidateIsAssetsRequired::class);
+        /** @var FrontControllerSetMediaHook $hook */
+        $hook = $this->getService(FrontControllerSetMediaHook::class);
 
-        if (!$validateIsAssetsRequired->run($this->context->controller)) {
-            return;
-        }
-
-        /** @var PaymentFormAssetLoader $paymentFormAssetsLoader */
-        $paymentFormAssetsLoader = $this->getService(PaymentFormAssetLoader::class);
-
-        $paymentFormAssetsLoader->register($this->context->controller);
-
-        $paymentFormAssetsLoader->registerErrorBags();
+        $hook->handle([]);
     }
 
+    /**
+     * Hook: Display saved credit cards link in customer account
+     *
+     * @param array $params
+     * @return string
+     */
     public function hookDisplayCustomerAccount()
     {
-        if (!Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE)) {
-            return '';
-        }
+        /** @var CustomerAccountHook $hook */
+        $hook = $this->getService(CustomerAccountHook::class);
 
-        return $this->display(__FILE__, 'front/MyAccount.tpl');
+        return $hook->handle([]);
     }
 
+    /**
+     * Hook: Control email sending logic
+     *
+     * @param array $params
+     * @return bool
+     */
     public function hookActionEmailSendBefore($params)
     {
-        try {
-            /** @var SaferPayEmailTemplateControlServiceInterface $emailTemplateControlService */
-            $emailTemplateControlService = $this->getService(SaferPayEmailTemplateControlServiceInterface::class);
+        /** @var EmailSendBeforeHook $hook */
+        $hook = $this->getService(EmailSendBeforeHook::class);
 
-            return $emailTemplateControlService->shouldSendEmail($params);
-        } catch (\Throwable $e) {
-            /** @var LoggerInterface $logger */
-            $logger = $this->getService(LoggerInterface::class);
-
-            $logger->error(sprintf('%s - %s', $this->name, $e->getMessage()));
-
-            return true;
-        }
+        return $hook->handle($params);
     }
 
+    /**
+     * Hook: Register admin controller media and handle flash messages
+     *
+     * @param array $params
+     */
     public function hookActionAdminControllerSetMedia()
     {
-        if ('AdminOrders' === Tools::getValue('controller')
-            && (Tools::isSubmit('vieworder') || Tools::getValue('action') === 'vieworder')
-        ) {
-            $this->context->controller->addCSS(
-                'modules/' . $this->name . '/views/css/admin/saferpay_admin_order.css'
-            );
+        /** @var AdminControllerSetMediaHook $hook */
+        $hook = $this->getService(AdminControllerSetMediaHook::class);
 
-            $orderId = Tools::getValue('id_order');
-            $order = new Order($orderId);
-
-            /** @var SaferPayOrderRepository $orderRepo */
-            $orderRepo = $this->getService(SaferPayOrderRepository::class);
-
-            $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
-            $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
-            if ($order->module !== $this->name) {
-                return;
-            }
-
-            if (!$saferPayOrder->authorized) {
-                return;
-            }
-
-            if (isset($this->context->cookie->saferPayErrors)) {
-                $saferPayErrors = json_decode($this->context->cookie->saferPayErrors, true);
-                if (isset($saferPayErrors[$orderId])) {
-                    $this->addFlash($saferPayErrors[$orderId], 'error');
-                    unset($saferPayErrors[$orderId]);
-                    $this->context->cookie->saferPayErrors = json_encode($saferPayErrors);
-                }
-            }
-
-            if ($this->context->cookie->canceled) {
-                $this->addFlash($this->l('Saferpay payment was canceled successfully'), 'success');
-                $this->context->cookie->canceled = false;
-            }
-            if ($this->context->cookie->captured) {
-                $this->addFlash($this->l('Saferpay payment was captured successfully'), 'success');
-                $this->context->cookie->captured = false;
-            }
-
-            if ($this->context->cookie->refunded) {
-                if ($saferPayOrder->refunded) {
-                    $this->addFlash($this->l('Saferpay full refund was made successfully!'), 'success');
-                } else {
-                    $this->addFlash($this->l('Saferpay partial refund was made successfully!'), 'success');
-                }
-                $this->context->cookie->refunded = false;
-            }
-        }
+        $hook->handle([]);
     }
 
-    private function displayInAdminOrderPage(array $params)
-    {
-        $orderId = $params['id_order'];
-        $order = new \Order($orderId);
-
-        /** @var SaferPayOrderRepository $orderRepo */
-        $orderRepo = $this->getService(SaferPayOrderRepository::class);
-
-        $saferPayOrderId = $orderRepo->getIdByOrderId($orderId);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-
-        if ($order->module !== $this->name) {
-            return '';
-        }
-
-        if (!$saferPayOrder->authorized && !$saferPayOrder->captured) {
-            return '';
-        }
-
-        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')) {
-            $action = $this->context->link->getAdminLink(
-                self::ADMIN_ORDER_CONTROLLER,
-                true,
-                [],
-                ['orderId' => $orderId]
-            );
-        } else {
-            $action = $this->context->link->getAdminLink(
-                self::ADMIN_ORDER_CONTROLLER
-            ) . '&id_order=' . (int) $orderId;
-        }
-
-        $assertId = $orderRepo->getAssertIdBySaferPayOrderId($saferPayOrderId);
-        $assertData = new SaferPayAssert($assertId);
-        $assertPresenter = new AssertPresenter($this);
-        $assertData = $assertPresenter->present($assertData);
-        $supported3DsPaymentMethods = SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS;
-
-        // Note: This condition check or Payment method supports 3DS.
-        // If payment method does not supports 3DS , when we change 'liability_shift'
-        // to true , to hide 'failed security check ' message.
-        if ($assertData['liability_shift'] === "0"
-            && !in_array($assertData['paymentMethod'], $supported3DsPaymentMethods)) {
-            $assertData['liability_shift'] = true;
-        }
-
-        $this->context->smarty->assign($assertData);
-
-        $currency = new Currency($order->id_currency);
-        $adminOrderPagePresenter = new AdminOrderPagePresenter();
-        $orderPageData = $adminOrderPagePresenter->present(
-            $saferPayOrder,
-            $action,
-            SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API,
-            $currency->sign
-        );
-
-        $this->context->smarty->assign($orderPageData);
-
-        return $this->context->smarty->fetch(
-            $this->getLocalPath() . 'views/templates/hook/admin/saferpay_order.tpl'
-        );
-    }
-
+    /**
+     * Add flash message (for backward compatibility)
+     *
+     * @param string $msg
+     * @param string $type
+     * @return bool
+     */
     public function addFlash($msg, $type)
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')
