@@ -68,7 +68,8 @@ class SaferPayTerminalService
 
             $this->logger->debug(sprintf('%s - Fetching terminals from: %s', self::FILE_NAME, $url));
 
-            $response = Request::get($url, $headers);
+            $request = new Request();
+            $response = $request->get($url, $headers);
 
             $this->logger->debug(sprintf('%s - Terminal API response: %d', self::FILE_NAME, $response->code), [
                 'context' => [
