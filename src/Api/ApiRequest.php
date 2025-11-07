@@ -59,7 +59,8 @@ class ApiRequest
     public function post(string $url, array $params = []): ?\stdClass
     {
         try {
-            $response = Request::post(
+            $request = new Request();
+            $response = $request->post(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
                 json_encode($params)
@@ -95,7 +96,8 @@ class ApiRequest
         $response = null;
 
         try {
-            $response = Request::get(
+            $request = new Request();
+            $response = $request->get(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
                 $params

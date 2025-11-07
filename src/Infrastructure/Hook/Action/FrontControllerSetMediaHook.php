@@ -68,6 +68,11 @@ class FrontControllerSetMediaHook implements HookInterface
      */
     public function handle(array $params)
     {
+        // Check if controller is available
+        if (!$this->context->controller) {
+            return;
+        }
+
         if (!$this->validateIsAssetsRequired->run($this->context->controller)) {
             return;
         }

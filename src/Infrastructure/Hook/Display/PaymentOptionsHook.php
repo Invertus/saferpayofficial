@@ -205,6 +205,11 @@ class PaymentOptionsHook implements HookInterface
             $paymentMethod['currencies'] = $allCurrencies;
         }
 
+        // Check if currency is available
+        if (!$this->context->currency) {
+            return null;
+        }
+
         if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
             && !in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
             return null;
