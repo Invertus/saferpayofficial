@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Service\SaferPayTerminalService;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -113,14 +114,18 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 /** @var SaferPayTerminalService $terminalService */
                 $terminalService = $this->module->getService(SaferPayTerminalService::class);
 
-                $isValid = $terminalService->isValidTerminal($terminalId);
+                $terminals = $terminalService->getAvailableTerminals();
 
-                if (!$isValid) {
-                    $terminals = $terminalService->getAvailableTerminals();
-
-                    if (!empty($terminals)) {
-                        $this->warnings[] = $this->module->l('Warning: The Terminal ID you entered was not found in the list of available terminals. Please verify the Terminal ID is correct.');
+                $isValid = false;
+                foreach ($terminals as $terminal) {
+                    if ($terminal['TerminalId'] === $terminalId) {
+                        $isValid = true;
+                        break;
                     }
+                }
+
+                if (!$isValid && !empty($terminals)) {
+                    $this->warnings[] = $this->module->l('Warning: The Terminal ID you entered was not found in the list of available terminals. Please verify the Terminal ID is correct.');
                 }
             } finally {
                 \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $originalCustomerId);
@@ -128,7 +133,12 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $originalPassword);
             }
         } catch (Exception $e) {
-            //
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - Failed to validate terminal ID: %s', self::FILE_NAME, $e->getMessage()), [
+                'context' => [],
+                'exception' => $e,
+            ]);
         }
     }
 
@@ -194,6 +204,12 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
             return $terminals;
         } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - Failed to get terminals: %s', self::FILE_NAME, $e->getMessage()), [
+                'context' => [],
+                'exception' => $e,
+            ]);
             return [];
         } finally {
             \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $originalCustomerId);
