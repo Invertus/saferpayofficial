@@ -38,7 +38,7 @@ class SaferPayOrderRepository
      * @param int $orderId
      * @return SaferPayOrder
      */
-    public function getByOrderId($orderId)
+    public function getByOrderId(int $orderId): SaferPayOrder
     {
         return new SaferPayOrder($this->getIdByOrderId($orderId));
     }
@@ -47,7 +47,7 @@ class SaferPayOrderRepository
      * @param int $orderId
      * @return false|string|null
      */
-    public function getIdByOrderId($orderId)
+    public function getIdByOrderId(int $orderId)
     {
         $query = new DbQuery();
         $query->select('`id_saferpay_order`');
@@ -62,7 +62,7 @@ class SaferPayOrderRepository
      * @param int $cartId
      * @return false|string|null
      */
-    public function getIdByCartId($cartId)
+    public function getIdByCartId(int $cartId)
     {
         $query = new DbQuery();
         $query->select('`id_saferpay_order`');
@@ -77,7 +77,7 @@ class SaferPayOrderRepository
      * @param int $saferPayOrderId
      * @return false|string|null
      */
-    public function getAssertIdBySaferPayOrderId($saferPayOrderId)
+    public function getAssertIdBySaferPayOrderId(int $saferPayOrderId)
     {
         $query = new DbQuery();
         $query->select('`id_saferpay_assert`');
@@ -93,7 +93,7 @@ class SaferPayOrderRepository
      * @return array
      * @throws \PrestaShopDatabaseException
      */
-    public function getOrderRefunds($saferPayOrderId)
+    public function getOrderRefunds(int $saferPayOrderId): array
     {
         $query = new DbQuery();
         $query->select('*');
@@ -108,7 +108,7 @@ class SaferPayOrderRepository
      * @param int $saferpayOrderId
      * @return false|string|null
      */
-    public function getPaymentBrandBySaferpayOrderId($saferpayOrderId)
+    public function getPaymentBrandBySaferpayOrderId(int $saferpayOrderId)
     {
         $query = new DbQuery();
         $query->select('`brand`');

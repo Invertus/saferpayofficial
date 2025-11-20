@@ -49,7 +49,7 @@ class LegacyTranslator implements TranslatorInterface
      * @param string $key
      * @return string
      */
-    public function translate($key): string
+    public function translate(string $key): string
     {
         return isset($this->getTranslations()[$key]) ? $this->getTranslations()[$key] : $key;
     }
