@@ -19,6 +19,9 @@
         "prepend-autoloader": false,
         "platform": {
             "php": "7.1"
+        },
+        "audit": {
+            "ignore": ["PKSA-wws7-mr54-jsny"]
         }
     },
     "repositories": {
