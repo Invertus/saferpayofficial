@@ -200,3 +200,5 @@
 
 ## [2.0.3]
 - Optimized database performance
+- Dynamic termimal selection
+- Removed uneccesary inputs from admin settings
