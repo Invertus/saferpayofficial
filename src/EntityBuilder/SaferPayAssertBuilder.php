@@ -34,12 +34,12 @@ class SaferPayAssertBuilder
 {
     /**
      * @param AssertBody $assertBody
-     * @param $saferPayOrderId
+     * @param int $saferPayOrderId
      *
      * @return SaferPayAssert
      * @throws \Exception
      */
-    public function createAssert(AssertBody $assertBody, $saferPayOrderId)
+    public function createAssert(AssertBody $assertBody, int $saferPayOrderId): SaferPayAssert
     {
         $assert = new SaferPayAssert();
 

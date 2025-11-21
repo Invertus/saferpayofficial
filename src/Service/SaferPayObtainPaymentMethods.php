@@ -36,9 +36,17 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayObtainPaymentMethods
 {
     const FILE_NAME = 'SaferPayObtainPaymentMethods';
+    
+    /** @var ObtainPaymentMethodsService */
     private $obtainPaymentMethodsService;
+    
+    /** @var ObtainPaymentMethodsObjectCreator */
     private $obtainPaymentMethodsObjectCreator;
+    
+    /** @var SaferPayPaymentNotation */
     private $saferPayPaymentNotation;
+    
+    /** @var LoggerInterface */
     private $logger;
 
     public function __construct(

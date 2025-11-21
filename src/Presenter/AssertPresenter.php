@@ -45,7 +45,11 @@ class AssertPresenter
         $this->saferPay = $saferPay;
     }
 
-    public function present(SaferPayAssert $assert)
+    /**
+     * @param SaferPayAssert $assert
+     * @return array
+     */
+    public function present(SaferPayAssert $assert): array
     {
         $paymentMethod = $assert->payment_method;
 
