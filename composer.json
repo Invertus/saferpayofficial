@@ -18,7 +18,7 @@
     "config": {
         "prepend-autoloader": false,
         "platform": {
-            "php": "5.6"
+            "php": "7.1"
         }
     },
     "repositories": {
@@ -33,8 +33,8 @@
         }
     },
     "require": {
+        "php": ">=7.1",
         "vlucas/phpdotenv": "^3.6",
-
         "symfony/config": "^3.4",
         "symfony/dependency-injection": "^3.4",
         "symfony/filesystem": "^3.4",
@@ -45,10 +45,10 @@
         "invertus/knapsack": "^10.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "*",
-        "phpunit/phpunit": "*",
-        "behat/behat": "*",
-        "symfony/translation": "*",
+        "friendsofphp/php-cs-fixer": "^2.19",
+        "phpunit/phpunit": "^7.5",
+        "behat/behat": "^3.8",
+        "symfony/translation": "^3.4",
         "prestashop/php-dev-tools": "^3.16"
     },
     "scripts": {
