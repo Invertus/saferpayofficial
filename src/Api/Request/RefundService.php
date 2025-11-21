@@ -46,9 +46,11 @@ class RefundService
     }
 
     /**
+     * @param RefundRequest $refundRequest
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function refund(RefundRequest $refundRequest)
+    public function refund(RefundRequest $refundRequest): ?\stdClass
     {
         return $this->apiRequest->post(
             self::REFUND_API,

@@ -1,5 +1,4 @@
-<?php
-/**
+{**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -19,26 +18,7 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- */
-
-namespace Invertus\SaferPay\Service;
-
-if (!defined('_PS_VERSION_')) {
-    exit;
-}
-
-/**
- * TranslatorInterface.
- *
- */
-interface TranslatorInterface
-{
-    /**
-     * Translates the given message.
-     *
-     * @param string $key The array key
-     *
-     * @return string The translated string
-     */
-    public function translate(string $key): string;
-}
+ *}
+<div class="alert alert-info">
+    {l s='Saferpay Field Javascript library url can be found ' mod='saferpayofficial'}<b><a target="_blank" href="https://saferpay.github.io/sndbx/SaferpayFields.html#hf-integration">{l s='here' mod='saferpayofficial'}</a></b>
+</div>

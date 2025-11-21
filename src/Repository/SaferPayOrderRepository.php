@@ -36,15 +36,18 @@ class SaferPayOrderRepository
 
     /**
      * @param int $orderId
-     *
      * @return SaferPayOrder
      */
-    public function getByOrderId($orderId)
+    public function getByOrderId(int $orderId): SaferPayOrder
     {
         return new SaferPayOrder($this->getIdByOrderId($orderId));
     }
 
-    public function getIdByOrderId($orderId)
+    /**
+     * @param int $orderId
+     * @return false|string|null
+     */
+    public function getIdByOrderId(int $orderId)
     {
         $query = new DbQuery();
         $query->select('`id_saferpay_order`');
@@ -55,7 +58,11 @@ class SaferPayOrderRepository
         return Db::getInstance()->getValue($query);
     }
 
-    public function getIdByCartId($cartId)
+    /**
+     * @param int $cartId
+     * @return false|string|null
+     */
+    public function getIdByCartId(int $cartId)
     {
         $query = new DbQuery();
         $query->select('`id_saferpay_order`');
@@ -65,7 +72,12 @@ class SaferPayOrderRepository
 
         return Db::getInstance()->getValue($query);
     }
-    public function getAssertIdBySaferPayOrderId($saferPayOrderId)
+
+    /**
+     * @param int $saferPayOrderId
+     * @return false|string|null
+     */
+    public function getAssertIdBySaferPayOrderId(int $saferPayOrderId)
     {
         $query = new DbQuery();
         $query->select('`id_saferpay_assert`');
@@ -76,12 +88,12 @@ class SaferPayOrderRepository
         return Db::getInstance()->getValue($query);
     }
 
-    /***
-     * @param $saferPayOrderId
+    /**
+     * @param int $saferPayOrderId
      * @return array
      * @throws \PrestaShopDatabaseException
      */
-    public function getOrderRefunds($saferPayOrderId)
+    public function getOrderRefunds(int $saferPayOrderId): array
     {
         $query = new DbQuery();
         $query->select('*');
@@ -92,7 +104,11 @@ class SaferPayOrderRepository
         return Db::getInstance()->executeS($query);
     }
 
-    public function getPaymentBrandBySaferpayOrderId($saferpayOrderId)
+    /**
+     * @param int $saferpayOrderId
+     * @return false|string|null
+     */
+    public function getPaymentBrandBySaferpayOrderId(int $saferpayOrderId)
     {
         $query = new DbQuery();
         $query->select('`brand`');
