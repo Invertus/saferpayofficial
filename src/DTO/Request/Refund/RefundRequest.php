@@ -27,13 +27,14 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Payment;
 use Invertus\SaferPay\DTO\Request\PendingNotification;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
+use Invertus\SaferPay\DTO\Request\SaferPayRequestInterface;
 use Configuration;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class RefundRequest
+class RefundRequest implements SaferPayRequestInterface
 {
 
     /**

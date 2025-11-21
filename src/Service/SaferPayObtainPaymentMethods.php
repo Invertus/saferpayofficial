@@ -66,7 +66,7 @@ class SaferPayObtainPaymentMethods
         $paymentMethods = [];
 
         try {
-            // TODO: Fix this to return an object
+            /** @var \stdClass $paymentMethodsObject */
             $paymentMethodsObject = $this->obtainPaymentMethodsService->getPaymentMethods(
                 $this->obtainPaymentMethodsObjectCreator->create()
             );
@@ -91,7 +91,7 @@ class SaferPayObtainPaymentMethods
         }
 
         if (!empty($paymentMethodsObject->Wallets)) {
-            // TODO: Fix this to return an object (now error in IDE)
+            /** @var \stdClass $wallet */
             foreach ($paymentMethodsObject->Wallets as $wallet) {
                 $paymentMethods[$wallet->WalletName] = [
                     'paymentMethod' => $wallet->WalletName,

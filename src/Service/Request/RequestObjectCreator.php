@@ -70,8 +70,10 @@ class RequestObjectCreator
      */
     private $orderRepository;
 
-    //TODO extract logic to appropriate services.
-    /** @var IdempotencyProviderInterface */
+    /**
+     * @NOTE: Consider splitting this class into focused services (AddressBuilder, PaymentBuilder, etc.)
+     * @var IdempotencyProviderInterface
+     */
     private $idempotencyProvider;
 
     public function __construct(
@@ -86,7 +88,7 @@ class RequestObjectCreator
         $this->idempotencyProvider = $idempotencyProvider;
     }
 
-    public function createRequestHeader()
+    public function createRequestHeader(): RequestHeader
     {
         $specVersion = Configuration::get(RequestHeader::SPEC_VERSION);
         $customerId = Configuration::get(RequestHeader::CUSTOMER_ID . SaferPayConfig::getConfigSuffix());
@@ -105,7 +107,7 @@ class RequestObjectCreator
      * @return Payment|null
      * @throws \PrestaShopException
      */
-    public function createPayment(Cart $cart, $totalPrice)
+    public function createPayment(Cart $cart, string $totalPrice): ?Payment
     {
         $currency = \Currency::getCurrency($cart->id_currency);
         /** @var \Order|null $order */
@@ -130,29 +132,29 @@ class RequestObjectCreator
         return $payment;
     }
 
-    public function createReturnUrl($returnUrl)
+    public function createReturnUrl(string $returnUrl): ReturnUrl
     {
         return new ReturnUrl($returnUrl);
     }
 
-    public function createNotification($customerEmail, $notifyUrl)
+    public function createNotification(string $customerEmail, string $notifyUrl): SaferPayNotification
     {
         $payerEmail = $customerEmail;
         $merchantEmail = Configuration::get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::getConfigSuffix());
         return new SaferPayNotification($payerEmail, $merchantEmail, $notifyUrl);
     }
 
-    public function createDeliveryAddressForm()
+    public function createDeliveryAddressForm(): DeliveryAddressForm
     {
         return new DeliveryAddressForm(DeliveryAddressForm::MANDATORY_FIELDS, DeliveryAddressForm::ADDRESS_SOURCE);
     }
 
-    public function createAmount($value, $currencyCode)
+    public function createAmount(string $value, string $currencyCode): Amount
     {
         return new Amount($value, $currencyCode);
     }
 
-    public function createAddressObject(\Address $address, Customer $customer)
+    public function createAddressObject(\Address $address, Customer $customer): Address
     {
         $saferpayAddress = new Address();
         $saferpayAddress->setFirstName($address->firstname);
@@ -185,7 +187,7 @@ class RequestObjectCreator
      *
      * @return OrderItem
      */
-    public function buildOrderItem(array $product)
+    public function buildOrderItem(array $product): OrderItem
     {
         $orderItem = new OrderItem();
         $orderItem->setVariantId($product['id_product_attribute']);
@@ -199,7 +201,7 @@ class RequestObjectCreator
         return $orderItem;
     }
 
-    public function buildOrderItemShippingFee(Cart $cart)
+    public function buildOrderItemShippingFee(Cart $cart): OrderItem
     {
         $carrier = new Carrier($cart->id_carrier);
         $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_SHIPPING, false);
@@ -239,7 +241,7 @@ class RequestObjectCreator
      *
      * @return Order
      */
-    public function buildOrder(Cart $cart)
+    public function buildOrder(Cart $cart): Order
     {
         $order = new Order();
         $products = $cart->getProducts();
@@ -260,7 +262,7 @@ class RequestObjectCreator
      *
      * @return PayerProfile
      */
-    public function createPayerProfile(Customer $customer)
+    public function createPayerProfile(Customer $customer): PayerProfile
     {
         $payerProfile = new PayerProfile();
         $payerProfile->setCreationDate((new \DateTime($customer->date_add))->format(\DateTime::ISO8601));
