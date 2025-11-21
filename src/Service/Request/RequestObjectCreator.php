@@ -70,8 +70,10 @@ class RequestObjectCreator
      */
     private $orderRepository;
 
-    //TODO extract logic to appropriate services.
-    /** @var IdempotencyProviderInterface */
+    /**
+     * @NOTE: Consider splitting this class into focused services (AddressBuilder, PaymentBuilder, etc.)
+     * @var IdempotencyProviderInterface
+     */
     private $idempotencyProvider;
 
     public function __construct(

@@ -147,7 +147,10 @@ class SaferPayOrderStatusService
         $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
     }
 
-    /** TODO extract capture api code to different service like Assert for readability */
+    /**
+     * @NOTE: Consider extracting capture API logic to a dedicated service for improved readability.
+     * @see SaferPayTransactionAssertion for similar service pattern
+     */
     public function capture(Order $order, $refundedAmount = 0, $isRefund = false)
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
