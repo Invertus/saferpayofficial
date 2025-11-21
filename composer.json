@@ -43,7 +43,7 @@
         "symfony/filesystem": "^3.4",
         "apimatic/unirest-php": "^2.3",
         "symfony/yaml": "^3.4",
-        "league/container": "2.5.0",
+        "league/container": "^3.0",
         "invertus/lock": "^1.0.0",
         "invertus/knapsack": "^10.0"
     },
