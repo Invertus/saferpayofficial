@@ -121,7 +121,7 @@ class SaferPayOrderStatusService
         $this->logger = $logger;
     }
 
-    public function setPending(Order $order)
+    public function setPending(Order $order): void
     {
         $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
         $saferPayOrder->pending = 1;
@@ -130,7 +130,7 @@ class SaferPayOrderStatusService
         $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
     }
 
-    public function setComplete(Order $order)
+    public function setComplete(Order $order): void
     {
         $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
         $saferPayOrder->captured = 1;
@@ -151,7 +151,7 @@ class SaferPayOrderStatusService
      * @NOTE: Consider extracting capture API logic to a dedicated service for improved readability.
      * @see SaferPayTransactionAssertion for similar service pattern
      */
-    public function capture(Order $order, $refundedAmount = 0, $isRefund = false)
+    public function capture(Order $order, int $refundedAmount = 0, bool $isRefund = false): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
@@ -223,7 +223,7 @@ class SaferPayOrderStatusService
         $saferPayAssert->update();
     }
 
-    public function cancel(Order $order)
+    public function cancel(Order $order): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
@@ -251,7 +251,7 @@ class SaferPayOrderStatusService
         $saferPayAssert->update();
     }
 
-    public function refund(Order $order, $refundedAmount)
+    public function refund(Order $order, float $refundedAmount): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
