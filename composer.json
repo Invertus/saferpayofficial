@@ -45,10 +45,11 @@
         "invertus/knapsack": "^10.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.19",
+        "friendsofphp/php-cs-fixer": "^2.16.7",
         "phpunit/phpunit": "^7.5",
         "behat/behat": "^3.8",
         "symfony/translation": "^3.4",
+        "symfony/process": "^3.4",
         "prestashop/php-dev-tools": "^3.16"
     },
     "scripts": {
