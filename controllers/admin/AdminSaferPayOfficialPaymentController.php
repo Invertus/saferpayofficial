@@ -160,8 +160,10 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
         $restrictionRepository = $this->module->getService(SaferPayRestrictionRepository::class);
 
         $paymentMethods = $this->getPaymentMethods();
-        if (is_null($paymentMethods)) {
-            return;
+        if (is_null($paymentMethods) || empty($paymentMethods)) {
+            $this->errors[] = $this->module->l('No payment methods available. Please check your SaferPay account configuration.');
+
+            return '';
         }
 
         $this->initForm();
@@ -204,6 +206,12 @@ class AdminSaferPayOfficialPaymentController extends ModuleAdminController
                     $this->module->getLocalPath() . 'views/templates/admin/payment_method.tpl'
                 );
         }
+        $this->context->smarty->assign([
+            'countryOptions' => $this->getActiveCountriesList(),
+            'countrySelect' => [],
+            'currencyOptions' => [0 => $this->module->l('All')],
+            'currencySelect' => [],
+        ]);
         $referralOptionsForm->fields_value['all'] =
             $this->context->smarty->fetch(
                 $this->module->getLocalPath() . 'views/templates/admin/payment_method_all.tpl'
