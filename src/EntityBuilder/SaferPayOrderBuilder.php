@@ -41,7 +41,7 @@ class SaferPayOrderBuilder
      * @param bool $isTransaction
      * @return SaferPayOrder
      */
-    public function create(object $body, int $cartId, int $customerId, bool $isTransaction): SaferPayOrder
+    public function create($body, int $cartId, int $customerId, bool $isTransaction): SaferPayOrder
     {
         if (method_exists('Order', 'getIdByCartId')) {
             $orderId = Order::getIdByCartId($cartId);
@@ -70,7 +70,7 @@ class SaferPayOrderBuilder
      * @param bool $isTransaction
      * @return SaferPayOrder
      */
-    public function createDirectOrder(object $body, Cart $cart, Customer $customer, bool $isTransaction): SaferPayOrder
+    public function createDirectOrder($body, Cart $cart, Customer $customer, bool $isTransaction): SaferPayOrder
     {
         $orderId = Order::getOrderByCartId($cart->id);
         $saferPayOrder = new SaferPayOrder();
@@ -89,7 +89,7 @@ class SaferPayOrderBuilder
      *
      * @return string
      */
-    private function getRedirectionUrl(object $initializeBody): string
+    private function getRedirectionUrl($initializeBody): string
     {
         if (isset($initializeBody->RedirectUrl)) {
             return $initializeBody->RedirectUrl;
