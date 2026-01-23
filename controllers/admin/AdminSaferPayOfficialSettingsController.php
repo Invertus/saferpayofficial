@@ -51,7 +51,62 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
     public function initContent()
     {
+        if (Tools::getValue('ajax') && Tools::getValue('action') === 'getTerminals') {
+            $this->displayAjaxGetTerminals();
+            return;
+        }
+
         parent::initContent();
+    }
+
+    public function displayAjaxGetTerminals()
+    {
+        $environment = Tools::getValue('environment', 'live');
+        $customerId = Tools::getValue('customer_id');
+        $username = Tools::getValue('username');
+        $password = Tools::getValue('password');
+
+        if (empty($customerId) || empty($username) || empty($password)) {
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'error' => $this->module->l('Customer ID, Username, and Password are required', self::FILE_NAME),
+                'terminals' => [],
+            ]));
+            die();
+        }
+
+        $isTestMode = $environment === 'test';
+
+        try {
+            /** @var SaferPayTerminalService $terminalService */
+            $terminalService = $this->module->getService(SaferPayTerminalService::class);
+
+            $terminals = $terminalService->getAvailableTerminals($customerId, $username, $password, $isTestMode);
+
+            $this->ajaxRender(json_encode([
+                'success' => true,
+                'terminals' => $terminals,
+                'count' => count($terminals),
+            ]));
+            die();
+        } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - AJAX failed to get terminals: %s', self::FILE_NAME, $e->getMessage()), [
+                'context' => [
+                    'environment' => $environment,
+                    'customer_id' => $customerId,
+                ],
+                'exception' => $e,
+            ]);
+
+            $this->ajaxRender(json_encode([
+                'success' => false,
+                'error' => $this->module->l('Failed to fetch terminals. Please check your credentials and try again.', self::FILE_NAME),
+                'terminals' => [],
+            ]));
+            die();
+        }
     }
 
     public function postProcess()

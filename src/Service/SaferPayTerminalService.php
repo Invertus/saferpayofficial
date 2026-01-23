@@ -145,9 +145,9 @@ class SaferPayTerminalService
                 $description = $terminal['Description'] ?? null;
 
                 if ($terminalId) {
-                    $terminals[] = [
+                    $terminals[$terminalId] = [
                         'TerminalId' => $terminalId,
-                        'Description' => $description ?: $terminalId,
+                        'Description' => $description,
                     ];
                 }
             }
@@ -155,7 +155,7 @@ class SaferPayTerminalService
 
         $this->logger->debug(sprintf('%s - Parsed %d terminals', self::FILE_NAME, count($terminals)));
 
-        return $terminals;
+        return array_values($terminals);
     }
 
     /**
