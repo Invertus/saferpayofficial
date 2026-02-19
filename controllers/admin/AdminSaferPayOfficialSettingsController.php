@@ -142,6 +142,68 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         }
     }
 
+    public function displayAjaxGetTerminals()
+    {
+        header('Content-Type: application/json');
+
+        $environment = Tools::getValue('environment');
+        $customerId = Tools::getValue('customerId');
+        $username = Tools::getValue('username');
+        $password = Tools::getValue('password');
+
+        if (empty($customerId) || empty($username) || empty($password) || empty($environment)) {
+            die(json_encode([
+                'error' => true,
+                'message' => $this->module->l('Please fill in Customer ID, Username, and Password.', self::FILE_NAME),
+            ]));
+        }
+
+        $suffix = ($environment === 'test') ? SaferPayConfig::TEST_SUFFIX : '';
+
+        $decodedPlaceholder = html_entity_decode(SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER, ENT_QUOTES, 'UTF-8');
+        if ($password === SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER || $password === $decodedPlaceholder) {
+            $password = \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
+        }
+
+        $originalCustomerId = \Configuration::get(SaferPayConfig::CUSTOMER_ID . $suffix);
+        $originalUsername = \Configuration::get(SaferPayConfig::USERNAME . $suffix);
+        $originalPassword = \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
+        $originalTestMode = \Configuration::get(SaferPayConfig::TEST_MODE);
+
+        try {
+            \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $customerId);
+            \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $username);
+            \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $password);
+            \Configuration::updateValue(SaferPayConfig::TEST_MODE, $environment === 'test' ? 1 : 0);
+
+            /** @var SaferPayTerminalService $terminalService */
+            $terminalService = $this->module->getService(SaferPayTerminalService::class);
+            $terminals = $terminalService->getAvailableTerminals($customerId);
+
+            die(json_encode([
+                'error' => false,
+                'terminals' => $terminals,
+            ]));
+        } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - AJAX get terminals failed: %s', self::FILE_NAME, $e->getMessage()), [
+                'context' => [],
+                'exception' => $e,
+            ]);
+
+            die(json_encode([
+                'error' => true,
+                'message' => $this->module->l('Failed to fetch terminals. Please verify your credentials.', self::FILE_NAME),
+            ]));
+        } finally {
+            \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $originalCustomerId);
+            \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $originalUsername);
+            \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $originalPassword);
+            \Configuration::updateValue(SaferPayConfig::TEST_MODE, $originalTestMode);
+        }
+    }
+
     public function initOptions()
     {
         $this->context->smarty->assign(SaferPayConfig::PASSWORD, SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER);
@@ -165,7 +227,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
 
-        $this->addJS('modules/' . $this->module->name . '/views/js/admin/saferpay_settings.js');
+        Media::addJsDef([
+            'saferpayofficial_settings' => [
+                'settingsUrl' => $this->context->link->getAdminLink(\SaferPayOfficial::ADMIN_SETTINGS_CONTROLLER),
+            ],
+        ]);
+
+        $this->addJS('modules/' . $this->module->name . '/views/js/admin/saferpay_settings.js?v=' . $this->module->version);
     }
 
     /**

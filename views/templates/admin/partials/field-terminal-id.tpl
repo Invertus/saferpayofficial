@@ -35,13 +35,14 @@
             {/foreach}
         {/if}
     </select>
-    {if !isset($field['terminals']) || count($field['terminals']) == 0}
-        <p class="help-block text-muted">
-            {l s='Please configure Customer ID, Username, and Password to load terminals' mod='saferpayofficial'}
-        </p>
-    {else}
-        <p class="help-block">
+    <span class="saferpay-terminal-loading" style="display:none;">
+        <i class="icon-spinner icon-spin"></i> {l s='Loading terminals...' mod='saferpayofficial'}
+    </span>
+    <p class="help-block saferpay-terminal-help">
+        {if !isset($field['terminals']) || count($field['terminals']) == 0}
+            {l s='Terminals will load automatically when credentials are filled in' mod='saferpayofficial'}
+        {else}
             {l s='Select a terminal from the list' mod='saferpayofficial'}
-        </p>
-    {/if}
+        {/if}
+    </p>
 </div>
