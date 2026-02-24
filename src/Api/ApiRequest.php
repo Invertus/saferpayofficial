@@ -127,6 +127,60 @@ class ApiRequest
         }
     }
 
+    /**
+     * API Request Get Method with explicit credentials.
+     *
+     * @param string $url
+     * @param string $username
+     * @param string $password
+     * @param string $baseUrl
+     * @param array $params
+     * @return mixed
+     * @throws Exception
+     */
+    public function getWithCredentials($url, $username, $password, $baseUrl, $params = [])
+    {
+        $response = null;
+
+        try {
+            $credentials = base64_encode("$username:$password");
+            $headers = [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
+                'Saferpay-RequestId' => 'false',
+                'Authorization' => "Basic $credentials",
+            ];
+
+            $response = Request::get(
+                $baseUrl . $url,
+                $headers,
+                $params
+            );
+
+            $this->logger->debug(sprintf('%s - GET (credentials) response: %d', self::FILE_NAME, $response->code), [
+                'context' => [
+                    'uri' => $baseUrl . $url,
+                ],
+                'request' => $params,
+                'response' => $response->body,
+            ]);
+
+            $this->isValidResponse($response);
+
+            return json_decode($response->raw_body);
+        } catch (Exception $exception) {
+            $this->logger->error($exception->getMessage(), [
+                'context' => [],
+                'request' => $params,
+                'response' => $response ? json_decode($response->raw_body) : null,
+                'exceptions' => ExceptionUtility::getExceptions($exception),
+            ]);
+
+            throw $exception;
+        }
+    }
+
     private function getHeaders()
     {
         $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());

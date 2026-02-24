@@ -22,8 +22,22 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Repository\SaferPayFieldRepository;
+use Invertus\SaferPay\Repository\SaferPayLogoRepository;
+use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
+use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
-use Invertus\SaferPay\Adapter\Configuration;
+use Invertus\SaferPay\Adapter\Configuration as SaferPayConfiguration;
+use Invertus\SaferPay\Service\SaferPayFieldCreator;
+use Invertus\SaferPay\Service\SaferPayGetTerminals;
+use Invertus\SaferPay\Service\SaferPayLogoCreator;
+use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
+use Invertus\SaferPay\Service\SaferPayPaymentCreator;
+use Invertus\SaferPay\Service\SaferPayPaymentNotation;
+use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
+use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Exception\Restriction\RestrictionException;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -34,6 +48,7 @@ if (!defined('_PS_VERSION_')) {
 class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 {
     const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
+    const PASSWORD_PLACEHOLDER = '********';
 
     /** @var \SaferPayOfficial */
     public $module;
@@ -42,493 +57,511 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::__construct();
         $this->bootstrap = true;
+    }
 
-        $this->tpl_folder = 'field-option-settings/';
-        $this->initOptions();
+    public function setMedia($isNewTheme = false)
+    {
+        parent::setMedia($isNewTheme);
+
+        $distPath = 'modules/' . $this->module->name . '/views/js/admin/dist/';
+        $this->addJS($distPath . 'saferpay-settings.js');
+        $this->addCSS($distPath . 'saferpay-settings.css');
     }
 
     public function initContent()
     {
         parent::initContent();
+
+        $settingsData = $this->collectSettingsData();
+
+        $this->context->smarty->assign([
+            'settingsDataJson' => json_encode($settingsData),
+        ]);
+
+        $this->content .= $this->context->smarty->fetch(
+            $this->module->getLocalPath() . 'views/templates/admin/settings_react.tpl'
+        );
+        $this->context->smarty->assign('content', $this->content);
     }
 
     public function postProcess()
     {
-        parent::postProcess();
+        if (!$this->isAjax()) {
+            return parent::postProcess();
+        }
 
-        /** @var Configuration $configuration */
-        $configuration = $this->module->getService(Configuration::class);
+        $action = Tools::getValue('action');
+        if ($action) {
+            $methodName = 'ajaxProcess' . ucfirst($action);
+            if (method_exists($this, $methodName)) {
+                $this->{$methodName}();
+            }
+        }
+    }
 
-        $isCreditCardSaveEnabled = $configuration->get(SaferPayConfig::CREDIT_CARD_SAVE);
+    /**
+     * Check if current request is AJAX
+     */
+    private function isAjax()
+    {
+        return Tools::getValue('ajax') == 1;
+    }
 
-        if (!$isCreditCardSaveEnabled) {
+    /**
+     * AJAX: Save API credentials
+     */
+    public function ajaxProcessSaveCredentials()
+    {
+        $data = $this->getJsonInput();
+        if (!$data) {
+            $this->ajaxResponse(false, 'Invalid request data');
+            return;
+        }
+
+        /** @var SaferPayConfiguration $configuration */
+        $configuration = $this->module->getService(SaferPayConfiguration::class);
+
+        // Test mode
+        $configuration->set(SaferPayConfig::TEST_MODE, !empty($data['testMode']) ? 1 : 0);
+
+        // Test credentials
+        $configuration->set(SaferPayConfig::USERNAME . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testUsername'));
+        $testPassword = $this->getStringValue($data, 'testPassword');
+        if ($testPassword && $testPassword !== self::PASSWORD_PLACEHOLDER) {
+            $configuration->set(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX, $testPassword);
+        }
+        $configuration->set(SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testCustomerId'));
+        $configuration->set(SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testTerminalId'));
+        $configuration->set(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testMerchantEmails'));
+        $configuration->set(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testFieldAccessToken'));
+        $configuration->set(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testFieldJsUrl'));
+        $configuration->set(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX, !empty($data['testBusinessLicense']) ? 1 : 0);
+
+        // Live credentials
+        $configuration->set(SaferPayConfig::USERNAME, $this->getStringValue($data, 'liveUsername'));
+        $livePassword = $this->getStringValue($data, 'livePassword');
+        if ($livePassword && $livePassword !== self::PASSWORD_PLACEHOLDER) {
+            $configuration->set(SaferPayConfig::PASSWORD, $livePassword);
+        }
+        $configuration->set(SaferPayConfig::CUSTOMER_ID, $this->getStringValue($data, 'liveCustomerId'));
+        $configuration->set(SaferPayConfig::TERMINAL_ID, $this->getStringValue($data, 'liveTerminalId'));
+        $configuration->set(SaferPayConfig::MERCHANT_EMAILS, $this->getStringValue($data, 'liveMerchantEmails'));
+        $configuration->set(SaferPayConfig::FIELDS_ACCESS_TOKEN, $this->getStringValue($data, 'liveFieldAccessToken'));
+        $configuration->set(SaferPayConfig::FIELDS_LIBRARY, $this->getStringValue($data, 'liveFieldJsUrl'));
+        $configuration->set(SaferPayConfig::BUSINESS_LICENSE, !empty($data['liveBusinessLicense']) ? 1 : 0);
+
+        // Validate: business license requires field access token
+        $suffix = SaferPayConfig::getConfigSuffix();
+        $haveFieldToken = $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . $suffix);
+        $haveBusinessLicense = $configuration->get(SaferPayConfig::BUSINESS_LICENSE . $suffix);
+
+        if (!$haveFieldToken && $haveBusinessLicense) {
+            $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, 0);
+            $this->ajaxResponse(true, 'Saved, but Field Access Token is required to use business license. Business license was disabled.');
+            return;
+        }
+
+        $this->ajaxResponse(true, 'API Credentials saved successfully');
+    }
+
+    /**
+     * AJAX: Save payment processing settings
+     */
+    public function ajaxProcessSavePaymentProcessing()
+    {
+        $data = $this->getJsonInput();
+        if (!$data) {
+            $this->ajaxResponse(false, 'Invalid request data');
+            return;
+        }
+
+        /** @var SaferPayConfiguration $configuration */
+        $configuration = $this->module->getService(SaferPayConfiguration::class);
+
+        $configuration->set(SaferPayConfig::PAYMENT_BEHAVIOR, (int) $this->getIntValue($data, 'paymentBehavior'));
+        $configuration->set(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D, (int) $this->getIntValue($data, 'paymentBehaviorWithout3D'));
+        $configuration->set(SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT, (int) $this->getIntValue($data, 'restrictRefund'));
+        $configuration->set(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION, (int) $this->getIntValue($data, 'orderCreationAfterAuth'));
+        $configuration->set(SaferPayConfig::SAFERPAY_GROUP_CARDS, !empty($data['groupCards']) ? 1 : 0);
+        $configuration->set(SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO, !empty($data['groupCardsLogo']) ? 1 : 0);
+        $configuration->set(SaferPayConfig::CREDIT_CARD_SAVE, (int) $this->getIntValue($data, 'creditCardSave'));
+
+        // If credit card save disabled, clean up saved cards
+        if (empty($data['creditCardSave']) || (int) $data['creditCardSave'] === 0) {
             /** @var SaferPaySavedCreditCardRepository $cardRepo */
             $cardRepo = $this->module->getService(SaferPaySavedCreditCardRepository::class);
             $cardRepo->deleteAllSavedCreditCards();
         }
 
-        $haveFieldToken = $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::getConfigSuffix());
-        $haveBusinessLicense = $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
+        $this->ajaxResponse(true, 'Payment Processing saved successfully');
+    }
 
-        if (!$haveFieldToken && $haveBusinessLicense) {
-            $configuration->set(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix(), 0);
-            $this->errors[] = $this->module->l('Field Access Token is required to use business license');
+    /**
+     * AJAX: Save email settings
+     */
+    public function ajaxProcessSaveEmailSettings()
+    {
+        $data = $this->getJsonInput();
+        if (!$data) {
+            $this->ajaxResponse(false, 'Invalid request data');
+            return;
         }
 
-        return true;
-    }
+        /** @var SaferPayConfiguration $configuration */
+        $configuration = $this->module->getService(SaferPayConfiguration::class);
 
-    public function initOptions()
-    {
-        $this->context->smarty->assign(SaferPayConfig::PASSWORD, SaferPayConfig::WEB_SERVICE_PASSWORD_PLACEHOLDER);
+        $configuration->set(SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL, !empty($data['allowSaferpayMail']) ? 1 : 0);
+        $configuration->set(SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL, !empty($data['sendNewOrderMail']) ? 1 : 0);
+        $configuration->set(SaferPayConfig::SAFERPAY_SEND_ORDER_CONF_MAIL, !empty($data['sendOrderConfMail']) ? 1 : 0);
 
-        $this->fields_options[] = $this->displayEnvironmentSelectorConfiguration();
-        $this->fields_options[] = $this->displayLiveEnvironmentConfiguration();
-        $this->fields_options[] = $this->displayTestEnvironmentConfiguration();
-        $this->fields_options[] = $this->displayPaymentBehaviorConfiguration();
-        $this->fields_options[] = $this->displayStylingConfiguration();
-        $this->fields_options[] = $this->displaySavedCardsConfiguration();
-        $this->fields_options[] = $this->displayEmailSettings();
-        $this->fields_options[] = $this->getFieldOptionsOrderState();
-        $this->fields_options[] = $this->displayConfigurationSettings();
+        $this->ajaxResponse(true, 'Email settings saved successfully');
     }
 
     /**
-     * @param $isNewTheme
-     * @return void
+     * AJAX: Save general settings
      */
-    public function setMedia($isNewTheme = false)
+    public function ajaxProcessSaveGeneralSettings()
     {
-        parent::setMedia($isNewTheme);
+        $data = $this->getJsonInput();
+        if (!$data) {
+            $this->ajaxResponse(false, 'Invalid request data');
+            return;
+        }
 
-        $this->addJS('modules/' . $this->module->name . '/views/js/admin/saferpay_settings.js');
+        /** @var SaferPayConfiguration $configuration */
+        $configuration = $this->module->getService(SaferPayConfiguration::class);
+
+        $configuration->set(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT, (int) $this->getIntValue($data, 'orderStateAwaitingPayment'));
+        $configuration->set(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION, $this->getStringValue($data, 'paymentDescription'));
+        $configuration->set(SaferPayConfig::CONFIGURATION_NAME, $this->getStringValue($data, 'configurationName'));
+        $configuration->set(SaferPayConfig::SAFERPAY_DEBUG_MODE, !empty($data['debugMode']) ? 1 : 0);
+
+        $this->ajaxResponse(true, 'General settings saved successfully');
     }
 
     /**
-     * @return array
+     * AJAX: Save payment methods
      */
-    private function getFieldOptionsOrderState()
+    public function ajaxProcessSavePaymentMethods()
     {
-        return [
-            'title' => $this->module->l('Order state'),
-            'fields' => [
-                SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => [
-                    'title' => $this->module->l(
-                        sprintf(
-                            'Status for %s',
-                            Tools::ucfirst(Tools::strtolower(SaferPayConfig::SAFERPAY_PAYMENT_AWAITING))
-                        )
-                    ),
-                    'required' => false,
-                    'cast' => 'intval',
-                    'type' => 'select',
-                    'list' => OrderState::getOrderStates($this->context->language->id),
-                    'identifier' => 'id_order_state',
-                    'desc' => 'Default status on SaferPay order creation',
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
+        $data = $this->getJsonInput();
+        if (!$data || !isset($data['paymentMethods'])) {
+            $this->ajaxResponse(false, 'Invalid request data');
+            return;
+        }
+
+        // Refresh payments first
+        /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+        $refreshPaymentsService = $this->module->getService(SaferPayRefreshPaymentsService::class);
+        try {
+            $refreshPaymentsService->refreshPayments();
+        } catch (SaferPayApiException $exception) {
+            $this->ajaxResponse(false, $exception->getMessage());
+            return;
+        }
+
+        /** @var SaferPayPaymentCreator $paymentCreation */
+        $paymentCreation = $this->module->getService(SaferPayPaymentCreator::class);
+
+        /** @var SaferPayLogoCreator $logoCreation */
+        $logoCreation = $this->module->getService(SaferPayLogoCreator::class);
+
+        /** @var SaferPayFieldCreator $fieldCreation */
+        $fieldCreation = $this->module->getService(SaferPayFieldCreator::class);
+
+        /** @var SaferPayRestrictionCreator $restrictionCreator */
+        $restrictionCreator = $this->module->getService(SaferPayRestrictionCreator::class);
+
+        $success = true;
+        foreach ($data['paymentMethods'] as $method) {
+            $paymentName = $method['name'];
+            $success &= $paymentCreation->updatePayment($paymentName, !empty($method['enabled']));
+            $success &= $logoCreation->updateLogo($paymentName, !empty($method['showLogos']));
+            $success &= $fieldCreation->updateField($paymentName, !empty($method['showCustomForm']));
+
+            try {
+                $countries = isset($method['countries']) ? $method['countries'] : [];
+                $currencies = isset($method['currencies']) ? $method['currencies'] : [];
+
+                $success &= $restrictionCreator->updateRestriction(
+                    $paymentName,
+                    SaferPayRestrictionCreator::RESTRICTION_COUNTRY,
+                    $countries
+                );
+                $success &= $restrictionCreator->updateRestriction(
+                    $paymentName,
+                    SaferPayRestrictionCreator::RESTRICTION_CURRENCY,
+                    $currencies
+                );
+            } catch (RestrictionException $e) {
+                $this->ajaxResponse(false, 'Wrong restriction type');
+                return;
+            }
+        }
+
+        if (!$success) {
+            $this->ajaxResponse(false, 'Failed to update payment methods');
+            return;
+        }
+
+        $this->ajaxResponse(true, 'Payment methods saved successfully');
+    }
+
+    /**
+     * AJAX: Get terminals
+     */
+    public function ajaxProcessGetTerminals()
+    {
+        $data = $this->getJsonInput();
+        if (!$data) {
+            $this->ajaxResponse(false, 'Invalid request data');
+            return;
+        }
+
+        $username = isset($data['username']) ? $data['username'] : '';
+        $password = isset($data['password']) ? $data['password'] : '';
+        $customerId = isset($data['customerId']) ? $data['customerId'] : '';
+        $isTestMode = isset($data['env']) && $data['env'] === 'test';
+
+        if ($password === self::PASSWORD_PLACEHOLDER) {
+            $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
+            /** @var SaferPayConfiguration $configuration */
+            $configuration = $this->module->getService(SaferPayConfiguration::class);
+            $password = (string) $configuration->get(SaferPayConfig::PASSWORD . $suffix);
+        }
+
+        if (empty($username) || empty($password) || empty($customerId)) {
+            $this->ajaxResponse(false, 'Username, password and customer ID are required');
+            return;
+        }
+
+        try {
+            /** @var SaferPayGetTerminals $getTerminals */
+            $getTerminals = $this->module->getService(SaferPayGetTerminals::class);
+            $terminals = $getTerminals->fetchTerminalsWithCredentials($username, $password, $customerId, $isTestMode);
+
+            $this->ajaxDie(json_encode([
+                'success' => true,
+                'terminals' => $terminals,
+            ]));
+        } catch (\Exception $e) {
+            $this->ajaxResponse(false, 'Failed to fetch terminals: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * AJAX: Refresh all data
+     */
+    public function ajaxProcessRefreshData()
+    {
+        $settingsData = $this->collectSettingsData();
+        $this->ajaxDie(json_encode([
+            'success' => true,
+            'data' => $settingsData,
+        ]));
+    }
+
+    /**
+     * Collect all settings data to pass to the React app
+     */
+    private function collectSettingsData()
+    {
+        /** @var SaferPayConfiguration $configuration */
+        $configuration = $this->module->getService(SaferPayConfiguration::class);
+
+        $data = [
+            // Environment
+            'testMode' => (bool) $configuration->get(SaferPayConfig::TEST_MODE),
+
+            // Test credentials
+            'testUsername' => (string) $configuration->get(SaferPayConfig::USERNAME . SaferPayConfig::TEST_SUFFIX),
+            'testPassword' => $configuration->get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX) ? self::PASSWORD_PLACEHOLDER : '',
+            'testCustomerId' => (string) $configuration->get(SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX),
+            'testTerminalId' => (string) $configuration->get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX),
+            'testMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX),
+            'testFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX),
+            'testFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX),
+            'testBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX),
+
+            // Live credentials
+            'liveUsername' => (string) $configuration->get(SaferPayConfig::USERNAME),
+            'livePassword' => $configuration->get(SaferPayConfig::PASSWORD) ? self::PASSWORD_PLACEHOLDER : '',
+            'liveCustomerId' => (string) $configuration->get(SaferPayConfig::CUSTOMER_ID),
+            'liveTerminalId' => (string) $configuration->get(SaferPayConfig::TERMINAL_ID),
+            'liveMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS),
+            'liveFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN),
+            'liveFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY),
+            'liveBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE),
+
+            // Payment Processing
+            'paymentBehavior' => (int) $configuration->get(SaferPayConfig::PAYMENT_BEHAVIOR),
+            'paymentBehaviorWithout3D' => (int) $configuration->get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D),
+            'restrictRefund' => (int) $configuration->get(SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT),
+            'orderCreationAfterAuth' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION),
+            'groupCards' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_GROUP_CARDS),
+            'groupCardsLogo' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO),
+            'creditCardSave' => (int) $configuration->get(SaferPayConfig::CREDIT_CARD_SAVE),
+
+            // Email
+            'allowSaferpayMail' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL),
+            'sendNewOrderMail' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL),
+            'sendOrderConfMail' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_SEND_ORDER_CONF_MAIL),
+
+            // General
+            'orderStateAwaitingPayment' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
+            'paymentDescription' => (string) $configuration->get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION),
+            'configurationName' => (string) $configuration->get(SaferPayConfig::CONFIGURATION_NAME),
+            'debugMode' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_DEBUG_MODE),
+
+            // Reference data
+            'orderStates' => $this->getOrderStates(),
+            'countries' => $this->getCountries(),
+            'currencies' => $this->getCurrencies(),
+            'paymentMethods' => $this->getPaymentMethodsData(),
+
+            // Endpoints
+            'ajaxUrl' => $this->context->link->getAdminLink('AdminSaferPayOfficialSettings'),
+            'adminToken' => Tools::getAdminTokenLite('AdminSaferPayOfficialSettings'),
         ];
+
+        return $data;
     }
 
     /**
-     * @return array
+     * Get order states for dropdown
      */
-    private function displayConfigurationSettings()
+    private function getOrderStates()
     {
-        return [
-            'title' => $this->module->l('Configuration', self::FILE_NAME),
-            'fields' => [
-                SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION => [
-                    'title' => $this->module->l('Description', self::FILE_NAME),
-                    'type' => 'text',
-                    'desc' => 'This description is visible in payment page also in payment confirmation email',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::SAFERPAY_DEBUG_MODE => [
-                    'title' => $this->module->l('Debug mode', self::FILE_NAME),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'type' => 'bool',
-                    'desc' => $this->module->l('Enable debug mode to see more information in logs', self::FILE_NAME),
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save', self::FILE_NAME),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        $states = OrderState::getOrderStates($this->context->language->id);
+        $result = [];
+        foreach ($states as $state) {
+            $result[] = [
+                'id' => (int) $state['id_order_state'],
+                'name' => $state['name'],
+            ];
+        }
+        return $result;
     }
 
     /**
-     * @return array
+     * Get active countries
      */
-    private function displaySavedCardsConfiguration()
+    private function getCountries()
     {
-        return [
-            'title' => $this->module->l('Credit card saving'),
-            'icon' => 'icon-settings',
-            'fields' => [
-                SaferPayConfig::CREDIT_CARD_SAVE => [
-                    'type' => 'radio',
-                    'title' => $this->module->l('Credit card saving for customers'),
-                    'validation' => 'isInt',
-                    'choices' => [
-                        1 => $this->module->l('Enable'),
-                        0 => $this->module->l('Disable'),
-                    ],
-                    'desc' => $this->module->l('Allow customers to save credit card for faster purchase'),
-                    'form_group_class' => 'thumbs_chose',
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        $countries = Country::getCountries($this->context->language->id, true);
+        $result = [];
+        $result[] = ['id' => 0, 'name' => 'All'];
+        foreach ($countries as $key => $country) {
+            $result[] = [
+                'id' => (int) $key,
+                'name' => $country['name'],
+            ];
+        }
+        return $result;
     }
 
     /**
-     * @return array
+     * Get active currencies
      */
-    private function displayStylingConfiguration()
+    private function getCurrencies()
     {
-        return [
-            'title' => $this->module->l('Styling'),
-            'icon' => 'icon-settings',
-            'fields' => [
-                SaferPayConfig::CONFIGURATION_NAME => [
-                    'title' => $this->module->l('Payment Page configurations name'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xl',
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        $currencies = Currency::getCurrencies();
+        $result = [];
+        $result[] = ['id' => 0, 'iso_code' => 'All'];
+        foreach ($currencies as $currency) {
+            $result[] = [
+                'id' => (int) $currency['id_currency'],
+                'iso_code' => $currency['iso_code'],
+            ];
+        }
+        return $result;
     }
 
     /**
-     * @return array
+     * Get payment methods data with their current state
      */
-    private function displayEmailSettings()
+    private function getPaymentMethodsData()
     {
-        return [
-            'title' => $this->module->l('Email sending'),
-            'icon' => 'icon-settings',
-            'fields' => [
-                SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => [
-                    'title' => $this->module->l('Send an email from Saferpay on payment completion'),
-                    'desc' => $this->module->l('With this setting enabled an email from the Saferpay system will be sent to the customer'),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'type' => 'bool',
-                ],
-                SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL => [
-                    'title' => $this->module->l('Send new order mail on authorization'),
-                    'desc' => $this->module->l('Receive a notification when an order is authorized by Saferpay (Using the Mail alert module)'),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'type' => 'bool',
-                ],
-                SaferPayConfig::SAFERPAY_SEND_ORDER_CONF_MAIL => [
-                    'title' => $this->module->l('Send order confirmation mail on payment completion'),
-                    'desc' => $this->module->l('Send an email from Saferpay on payment completion'),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'type' => 'bool',
-                ],
-                SaferPayConfig::SAFERPAY_SEND_NEW_ORDER_MAIL . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-new-order-mail-desc.tpl',
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        try {
+            /** @var SaferPayObtainPaymentMethods $obtainMethods */
+            $obtainMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
+            $paymentMethods = $obtainMethods->obtainPaymentMethodsNamesAsArray();
+        } catch (SaferPayApiException $exception) {
+            return [];
+        }
+
+        /** @var SaferPayPaymentRepository $paymentRepository */
+        $paymentRepository = $this->module->getService(SaferPayPaymentRepository::class);
+
+        /** @var SaferPayLogoRepository $logoRepository */
+        $logoRepository = $this->module->getService(SaferPayLogoRepository::class);
+
+        /** @var SaferPayFieldRepository $fieldRepository */
+        $fieldRepository = $this->module->getService(SaferPayFieldRepository::class);
+
+        /** @var SaferPayRestrictionRepository $restrictionRepository */
+        $restrictionRepository = $this->module->getService(SaferPayRestrictionRepository::class);
+
+        /** @var SaferPayPaymentNotation $saferPayPaymentNotation */
+        $saferPayPaymentNotation = $this->module->getService(SaferPayPaymentNotation::class);
+
+        $result = [];
+        foreach ($paymentMethods as $paymentMethod) {
+            $result[] = [
+                'name' => $paymentMethod,
+                'displayName' => $saferPayPaymentNotation->getForDisplay($paymentMethod),
+                'enabled' => (bool) $paymentRepository->isActiveByName($paymentMethod),
+                'showLogos' => (bool) $logoRepository->isActiveByName($paymentMethod),
+                'showCustomForm' => (bool) $fieldRepository->isActiveByName($paymentMethod),
+                'hasCustomForm' => in_array($paymentMethod, SaferPayConfig::FIELD_SUPPORTED_PAYMENT_METHODS),
+                'countries' => $restrictionRepository->getSelectedIdsByName(
+                    $paymentMethod,
+                    SaferPayRestrictionCreator::RESTRICTION_COUNTRY
+                ),
+                'currencies' => $restrictionRepository->getSelectedIdsByName(
+                    $paymentMethod,
+                    SaferPayRestrictionCreator::RESTRICTION_CURRENCY
+                ),
+            ];
+        }
+
+        return $result;
     }
 
     /**
-     * @return array
+     * Get JSON input from request body
      */
-    private function displayPaymentBehaviorConfiguration()
+    private function getJsonInput()
     {
-        return [
-            'title' => $this->module->l('Payment behavior'),
-            'icon' => 'icon-settings',
-            'fields' => [
-                SaferPayConfig::PAYMENT_BEHAVIOR => [
-                    'type' => 'radio',
-                    'title' => $this->module->l('Default payment behavior'),
-                    'validation' => 'isInt',
-                    'choices' => [
-                        0 => $this->module->l('Capture'),
-                        1 => $this->module->l('Authorize'),
-                    ],
-                    'desc' => $this->module->l('How payment provider should behave when order is created'),
-                    'form_group_class' => 'thumbs_chose',
-                ],
-                SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => [
-                    'type' => 'radio',
-                    'title' => $this->module->l('Behaviour when 3D secure fails'),
-                    'validation' => 'isInt',
-                    'choices' => [
-                        SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL => $this->module->l('Cancel'),
-                        SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE => $this->module->l('Authorize'),
-                    ],
-                    'desc' => $this->module->l('Default payment behavior for payment without 3-D Secure'),
-                    'form_group_class' => 'thumbs_chose',
-                ],
-                SaferPayConfig::RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT => [
-                    'type' => 'radio',
-                    'title' => $this->module->l('Restrict RefundAmount To Captured Amount'),
-                    'validation' => 'isInt',
-                    'choices' => [
-                        1 => $this->module->l('Enable'),
-                        0 => $this->module->l('Disable'),
-                    ],
-                    'desc' => $this->module->l('If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.'),
-                    'form_group_class' => 'thumbs_chose',
-                ],
-                SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => [
-                    'type' => 'radio',
-                    'title' => $this->module->l('Order creation rule'),
-                    'validation' => 'isInt',
-                    'choices' => [
-                        1 => $this->module->l('After authorization'),
-                        0 => $this->module->l('Before authorization'),
-                    ],
-                    'desc' => $this->module->l('Select the option to determine whether the order should be created'),
-                    'form_group_class' => 'thumbs_chose',
-                ],
-                SaferPayConfig::SAFERPAY_GROUP_CARDS => [
-                    'type' => 'bool',
-                    'title' => $this->module->l("Group debit/credit cards as 'Cards' in checkout", self::FILE_NAME),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'desc' => $this->module->l("If enabled, all supported card brands (Visa, Mastercard, Amex, etc.) will be grouped and shown as a single 'Cards' payment method at checkout.", self::FILE_NAME),
-                ],
-                SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO => [
-                    'type' => 'bool',
-                    'title' => $this->module->l("Show 'Cards' payment method logo", self::FILE_NAME),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'desc' => $this->module->l("If enabled, a logo for the grouped 'Cards' payment method will be displayed at checkout.", self::FILE_NAME),
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+        return is_array($data) ? $data : null;
     }
 
     /**
-     * @return array
+     * Send AJAX JSON response
      */
-    private function displayTestEnvironmentConfiguration()
+    private function ajaxResponse($success, $message = '')
     {
-        return [
-            'title' => $this->module->l('Test environment'),
-            'icon' => 'icon-settings',
-            'fields' => [
-                SaferPayConfig::USERNAME . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('JSON API Username'),
-                    'type' => 'text',
-                    'validation' => 'isGenericName',
-                    'class' => 'fixed-width-xl',
-                ],
-                SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('JSON API Password'),
-                    'type' => 'password_input',
-                    'class' => 'fixed-width-xl',
-                    'value' => \Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
-                ],
-                SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('Customer ID'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xl',
-                    'size' => 3,
-                ],
-                SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('Terminal ID'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xl',
-                ],
-                SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('Merchant emails'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xl',
-                ],
-                SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-access-token-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('Field Access Token'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-javascript-library-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('Field Javascript library url'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('I have Business license'),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'type' => 'bool',
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        $this->ajaxDie(json_encode([
+            'success' => $success,
+            'message' => $message,
+        ]));
     }
 
     /**
-     * @return array
+     * Get string value from data array
      */
-    private function displayLiveEnvironmentConfiguration()
+    private function getStringValue($data, $key)
     {
-        return [
-            'title' => $this->module->l('Live environment'),
-            'icon' => 'icon-settings',
-            'fields' => [
-                SaferPayConfig::USERNAME => [
-                    'title' => $this->module->l('JSON API Username'),
-                    'type' => 'text',
-                    'validation' => 'isGenericName',
-                    'class' => 'fixed-width-xl',
-                ],
-                SaferPayConfig::PASSWORD => [
-                    'title' => $this->module->l('JSON API Password'),
-                    'type' => 'password_input',
-                    'class' => 'fixed-width-xl',
-                    'value' => \Configuration::get(SaferPayConfig::PASSWORD),
-                ],
-                SaferPayConfig::CUSTOMER_ID => [
-                    'title' => $this->module->l('Customer ID'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xl',
-                    'size' => 3,
-                ],
-                SaferPayConfig::TERMINAL_ID => [
-                    'title' => $this->module->l('Terminal ID'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xl',
-                ],
-                SaferPayConfig::MERCHANT_EMAILS => [
-                    'title' => $this->module->l('Merchant emails'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xl',
-                ],
-                SaferPayConfig::FIELDS_ACCESS_TOKEN . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-access-token-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_ACCESS_TOKEN => [
-                    'title' => $this->module->l('Field Access Token'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-javascript-library-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY => [
-                    'title' => $this->module->l('Field Javascript library url'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::BUSINESS_LICENSE => [
-                    'title' => $this->module->l('I have Business license'),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'type' => 'bool',
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        return isset($data[$key]) ? pSQL((string) $data[$key]) : '';
     }
 
     /**
-     * @return array
+     * Get int value from data array
      */
-    private function displayEnvironmentSelectorConfiguration()
+    private function getIntValue($data, $key)
     {
-        return [
-            'title' => $this->module->l('Select environment'),
-            'icon' => 'icon-settings',
-            'fields' => [
-                SaferPayConfig::TEST_MODE => [
-                    'title' => $this->module->l('Test mode'),
-                    'validation' => 'isBool',
-                    'cast' => 'intval',
-                    'type' => 'bool',
-                ],
-            ],
-            'buttons' => [
-                'save_and_connect' => [
-                    'title' => $this->module->l('Save'),
-                    'icon' => 'process-icon-save',
-                    'class' => 'btn btn-default pull-right',
-                    'type' => 'submit',
-                ],
-            ],
-        ];
+        return isset($data[$key]) ? (int) $data[$key] : 0;
     }
 }

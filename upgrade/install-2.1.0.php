@@ -21,20 +21,17 @@
  *@license   SIX Payment Services
  */
 
-require_once dirname(__FILE__) . '/../../vendor/autoload.php';
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AdminSaferPayOfficialPaymentController extends ModuleAdminController
+function upgrade_module_2_1_0()
 {
-    /** @var \SaferPayOfficial */
-    public $module;
-
-    public function init()
-    {
-        parent::init();
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminSaferPayOfficialSettings'));
+    $tabId = Tab::getIdFromClassName('AdminSaferPayOfficialPayment');
+    if ($tabId) {
+        $tab = new Tab($tabId);
+        $tab->delete();
     }
+
+    return true;
 }

@@ -21,20 +21,38 @@
  *@license   SIX Payment Services
  */
 
-require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+namespace Invertus\SaferPay\DTO\Request\GetTerminals;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AdminSaferPayOfficialPaymentController extends ModuleAdminController
+class GetTerminalsRequest
 {
-    /** @var \SaferPayOfficial */
-    public $module;
+    /** @var string */
+    private $customerId;
 
-    public function init()
+    /**
+     * @param string $customerId
+     */
+    public function __construct($customerId)
     {
-        parent::init();
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminSaferPayOfficialSettings'));
+        $this->customerId = $customerId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCustomerId()
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * @return string
+     */
+    public function generateRequestUrl()
+    {
+        return sprintf('rest/customers/%s/terminals', $this->customerId);
     }
 }

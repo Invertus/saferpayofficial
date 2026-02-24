@@ -21,20 +21,39 @@
  *@license   SIX Payment Services
  */
 
-require_once dirname(__FILE__) . '/../../vendor/autoload.php';
+namespace Invertus\SaferPay\Api\Request;
+
+use Invertus\SaferPay\Api\ApiRequest;
+use Invertus\SaferPay\DTO\Request\GetTerminals\GetTerminalsRequest;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AdminSaferPayOfficialPaymentController extends ModuleAdminController
+class GetTerminalsService
 {
-    /** @var \SaferPayOfficial */
-    public $module;
+    /** @var ApiRequest */
+    private $apiRequest;
 
-    public function init()
+    public function __construct(ApiRequest $apiRequest)
     {
-        parent::init();
-        Tools::redirectAdmin($this->context->link->getAdminLink('AdminSaferPayOfficialSettings'));
+        $this->apiRequest = $apiRequest;
+    }
+
+    /**
+     * @param GetTerminalsRequest $request
+     * @param string $username
+     * @param string $password
+     * @param string $baseUrl
+     * @return mixed
+     */
+    public function getTerminals(GetTerminalsRequest $request, $username, $password, $baseUrl)
+    {
+        return $this->apiRequest->getWithCredentials(
+            $request->generateRequestUrl(),
+            $username,
+            $password,
+            $baseUrl
+        );
     }
 }
