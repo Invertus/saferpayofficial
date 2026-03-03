@@ -88,6 +88,8 @@ class CheckoutProcessor
             throw CouldNotProcessCheckout::failedToFindCart($data->getCartId());
         }
 
+        $cartTotal = (int) round($cart->getOrderTotal(true) * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
+
         if (!$data->getCreateAfterAuthorization()) {
             $this->processCreateOrder($cart, $data->getPaymentMethod());
         }
@@ -109,7 +111,8 @@ class CheckoutProcessor
                 $data->getSelectedCard(),
                 $data->getFieldToken(),
                 $data->getSuccessController(),
-                $data->getIsWebhook()
+                $data->getIsWebhook(),
+                $cartTotal
             );
         } catch (\Exception $exception) {
             throw new SaferPayApiException('Failed to initialize payment API', SaferPayApiException::INITIALIZE);
@@ -196,7 +199,8 @@ class CheckoutProcessor
         $selectedCard,
         $fieldToken,
         $successController,
-        $isWebhook
+        $isWebhook,
+        $cartTotal = null
     ) {
         $request = $this->saferPayInitialize->buildRequest(
             $paymentMethod,
@@ -204,7 +208,8 @@ class CheckoutProcessor
             $selectedCard,
             $fieldToken,
             $successController,
-            $isWebhook
+            $isWebhook,
+            $cartTotal
         );
 
         return $this->saferPayInitialize->initialize($request, $isBusinessLicense);
