@@ -323,6 +323,7 @@ class SaferPayConfig
         $unsupportedCapturePayments = [
             self::PAYMENT_WECHATPAY,
             self::PAYMENT_ACCOUNTTOACCOUNT,
+            self::PAYMENT_GIFTCARD,
         ];
 
         return !in_array($paymentMethod, $unsupportedCapturePayments);
@@ -334,6 +335,7 @@ class SaferPayConfig
         $unsupportedCancelPayments = [
             self::PAYMENT_WECHATPAY,
             self::PAYMENT_ACCOUNTTOACCOUNT,
+            self::PAYMENT_GIFTCARD,
         ];
 
         return !in_array($paymentMethod, $unsupportedCancelPayments);
