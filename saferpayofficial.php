@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -65,7 +66,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '2.0.2';
+        $this->version = '2.1.0';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -257,8 +258,10 @@ Thank you for your patience!');
                 $paymentMethod['currencies'] = $currencyProvider->getAllCurrenciesInArray();
             }
 
-            if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
-                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            if (
+                !in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
+                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)
+            ) {
                 continue;
             }
 
@@ -424,7 +427,8 @@ Thank you for your patience!');
 
     public function hookActionAdminControllerSetMedia()
     {
-        if ('AdminOrders' === Tools::getValue('controller')
+        if (
+            'AdminOrders' === Tools::getValue('controller')
             && (Tools::isSubmit('vieworder') || Tools::getValue('action') === 'vieworder')
         ) {
             $this->context->controller->addCSS(
@@ -518,8 +522,10 @@ Thank you for your patience!');
         // Note: This condition check or Payment method supports 3DS.
         // If payment method does not supports 3DS , when we change 'liability_shift'
         // to true , to hide 'failed security check ' message.
-        if ($assertData['liability_shift'] === "0"
-            && !in_array($assertData['paymentMethod'], $supported3DsPaymentMethods)) {
+        if (
+            $assertData['liability_shift'] === "0"
+            && !in_array($assertData['paymentMethod'], $supported3DsPaymentMethods)
+        ) {
             $assertData['liability_shift'] = true;
         }
 
@@ -543,7 +549,8 @@ Thank you for your patience!');
 
     public function addFlash($msg, $type)
     {
-        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')
+        if (
+            VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')
             && VersionUtility::isPsVersionLessThan('9.0.0')
         ) {
             return $this->get('session')->getFlashBag()->add($type, $msg);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -49,7 +50,7 @@ class SaferPayConfig
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = '1.45';
+    const API_VERSION = '1.50';
 
     const HOOKS = [
         'paymentOptions',
@@ -71,7 +72,6 @@ class SaferPayConfig
         self::PAYMENT_DIRECTDEBIT,
         self::PAYMENT_EPRZELEWY,
         self::PAYMENT_EPS,
-        self::PAYMENT_GIROPAY,
         self::PAYMENT_IDEAL,
         self::PAYMENT_INVOICE,
         self::PAYMENT_JCB,
@@ -79,10 +79,8 @@ class SaferPayConfig
         self::PAYMENT_MASTERCARD,
         self::PAYMENT_MYONE,
         self::PAYMENT_PAYPAL,
-        self::PAYMENT_PAYDIREKT,
         self::PAYMENT_POSTCARD,
         self::PAYMENT_POSTFINANCE,
-        self::PAYMENT_SOFORT,
         self::PAYMENT_TWINT,
         self::PAYMENT_VISA,
         self::PAYMENT_VPAY,
@@ -93,6 +91,8 @@ class SaferPayConfig
         self::PAYMENT_CLICKTOPAY,
         self::PAYMENT_REKA,
         self::PAYMENT_CARDS,
+        self::PAYMENT_WERO,
+        self::PAYMENT_GIFTCARD,
     ];
 
     const PAYMENT_ALIPAY = 'ALIPAY';
@@ -130,6 +130,8 @@ class SaferPayConfig
     const PAYMENT_CLICKTOPAY = 'CLICKTOPAY';
     const PAYMENT_BLIK = 'BLIK';
     const PAYMENT_REKA = 'REKA';
+    const PAYMENT_WERO = 'WERO';
+    const PAYMENT_GIFTCARD = 'GIFTCARD';
 
     const WALLET_PAYMENT_METHODS = [
         self::PAYMENT_APPLEPAY,
@@ -148,14 +150,12 @@ class SaferPayConfig
         'MaestroInternational' => self::PAYMENT_MAESTRO,
         'Mastercard' => self::PAYMENT_MASTERCARD,
         'myOne' => self::PAYMENT_MYONE,
-        'paydirekt' => self::PAYMENT_PAYDIREKT,
         'PayPal' => self::PAYMENT_PAYPAL,
         'Twint' => self::PAYMENT_TWINT,
         'Visa' => self::PAYMENT_VISA,
         'Postcard' => self::PAYMENT_POSTCARD,
         'BonusCard' => self::PAYMENT_BONUS,
         'Lastschrift' => self::PAYMENT_LASTSCHRIFT,
-        'SOFORTUEBERWEISUNG' => self::PAYMENT_SOFORT,
         'AccountToAccount' => self::PAYMENT_ACCOUNTTOACCOUNT,
         'Payconiq' => self::PAYMENT_PAYCONIQ,
         'Cards' => self::PAYMENT_CARDS,
@@ -163,6 +163,8 @@ class SaferPayConfig
         'WeChatPay' => self::PAYMENT_WECHATPAY,
         'Blik' => self::PAYMENT_BLIK,
         'Reka' => self::PAYMENT_REKA,
+        'Wero' => self::PAYMENT_WERO,
+        'Giftcard' => self::PAYMENT_GIFTCARD,
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
@@ -347,11 +349,12 @@ class SaferPayConfig
             self::PAYMENT_TWINT,
             self::PAYMENT_POSTFINANCE_PAY,
             self::PAYMENT_DIRECTDEBIT,
-            self::PAYMENT_SOFORT,
             self::PAYMENT_PAYPAL,
             self::PAYMENT_CLICKTOPAY,
             self::PAYMENT_BLIK,
             self::PAYMENT_REKA,
+            self::PAYMENT_WERO,
+            self::PAYMENT_GIFTCARD,
         ];
 
         return in_array($paymentMethod, $paymentsAlwaysRedirect);
@@ -376,7 +379,7 @@ class SaferPayConfig
     {
         return Configuration::get(
             \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_ACCESS_TOKEN .
-            \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix()
+                \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix()
         );
     }
 
@@ -393,7 +396,7 @@ class SaferPayConfig
             \Invertus\SaferPay\Config\SaferPayConfig::getBaseUrl(),
             Configuration::get(
                 \Invertus\SaferPay\Config\SaferPayConfig::CUSTOMER_ID .
-                \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix()
+                    \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix()
             )
         );
     }

@@ -266,21 +266,6 @@ class SaferPayOrderStatusService
 
         $cart = new Cart($order->id_cart);
         $pendingNotification = null;
-        if ($saferPayAssert->payment_method === SaferPayConfig::PAYMENT_PAYDIREKT) {
-            $pendingNotify = $this->context->getLink()->getModuleLink(
-                $this->module->name,
-                ControllerName::PENDING_NOTIFY,
-                [
-                    'success' => 1,
-                    'cartId' => $cart->id,
-                    'orderId' => Order::getOrderByCartId($cart->id),
-                    'secureKey' => $cart->secure_key,
-                ],
-                true
-            );
-            $customer = new Customer($order->id_customer);
-            $pendingNotification = new PendingNotification($pendingNotify, [$customer->email]);
-        }
         $refundRequest = $this->refundRequestObjectCreator->create(
             $cart,
             $saferPayOrder->transaction_id,
