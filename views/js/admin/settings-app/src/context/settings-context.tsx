@@ -73,55 +73,55 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const saveCredentials = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(() => api.saveCredentials({
-      testMode: s.testMode,
-      testUsername: s.testUsername,
-      testPassword: s.testPassword,
-      testTerminalId: s.testTerminalId,
-      testMerchantEmails: s.testMerchantEmails,
-      testFieldAccessToken: s.testFieldAccessToken,
-      testFieldJsUrl: s.testFieldJsUrl,
-      testBusinessLicense: s.testBusinessLicense,
-      liveUsername: s.liveUsername,
-      livePassword: s.livePassword,
-      liveTerminalId: s.liveTerminalId,
-      liveMerchantEmails: s.liveMerchantEmails,
-      liveFieldAccessToken: s.liveFieldAccessToken,
-      liveFieldJsUrl: s.liveFieldJsUrl,
-      liveBusinessLicense: s.liveBusinessLicense,
+      testMode: currentSettings.testMode,
+      testUsername: currentSettings.testUsername,
+      testPassword: currentSettings.testPassword,
+      testTerminalId: currentSettings.testTerminalId,
+      testMerchantEmails: currentSettings.testMerchantEmails,
+      testFieldAccessToken: currentSettings.testFieldAccessToken,
+      testFieldJsUrl: currentSettings.testFieldJsUrl,
+      testBusinessLicense: currentSettings.testBusinessLicense,
+      liveUsername: currentSettings.liveUsername,
+      livePassword: currentSettings.livePassword,
+      liveTerminalId: currentSettings.liveTerminalId,
+      liveMerchantEmails: currentSettings.liveMerchantEmails,
+      liveFieldAccessToken: currentSettings.liveFieldAccessToken,
+      liveFieldJsUrl: currentSettings.liveFieldJsUrl,
+      liveBusinessLicense: currentSettings.liveBusinessLicense,
     }), 'API Credentials', 'credentials')
   }, [handleSave])
 
   const savePaymentProcessingFn = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(() => api.savePaymentProcessing({
-      paymentBehavior: s.paymentBehavior,
-      paymentBehaviorWithout3D: s.paymentBehaviorWithout3D,
-      restrictRefund: s.restrictRefund,
-      orderCreationAfterAuth: s.orderCreationAfterAuth,
-      groupCards: s.groupCards,
-      groupCardsLogo: s.groupCardsLogo,
-      creditCardSave: s.creditCardSave,
+      paymentBehavior: currentSettings.paymentBehavior,
+      paymentBehaviorWithout3D: currentSettings.paymentBehaviorWithout3D,
+      restrictRefund: currentSettings.restrictRefund,
+      orderCreationAfterAuth: currentSettings.orderCreationAfterAuth,
+      groupCards: currentSettings.groupCards,
+      groupCardsLogo: currentSettings.groupCardsLogo,
+      creditCardSave: currentSettings.creditCardSave,
     }), 'Payment Processing', 'paymentProcessing')
   }, [handleSave])
 
   const saveEmailSettingsFn = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(() => api.saveEmailSettings({
-      allowSaferpayMail: s.allowSaferpayMail,
-      sendNewOrderMail: s.sendNewOrderMail,
-      sendOrderConfMail: s.sendOrderConfMail,
+      allowSaferpayMail: currentSettings.allowSaferpayMail,
+      sendNewOrderMail: currentSettings.sendNewOrderMail,
+      sendOrderConfMail: currentSettings.sendOrderConfMail,
     }), 'Email Settings', 'emailSettings')
   }, [handleSave])
 
   const saveGeneralSettingsFn = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(() => api.saveGeneralSettings({
-      orderStateAwaitingPayment: s.orderStateAwaitingPayment,
-      paymentDescription: s.paymentDescription,
-      configurationName: s.configurationName,
-      debugMode: s.debugMode,
+      orderStateAwaitingPayment: currentSettings.orderStateAwaitingPayment,
+      paymentDescription: currentSettings.paymentDescription,
+      configurationName: currentSettings.configurationName,
+      debugMode: currentSettings.debugMode,
     }), 'General Settings', 'generalSettings')
   }, [handleSave])
 
