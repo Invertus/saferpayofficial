@@ -21,7 +21,6 @@ export interface SaferpaySettingsData {
   // Test credentials
   testUsername: string
   testPassword: string
-  testCustomerId: string
   testTerminalId: string
   testMerchantEmails: string
   testFieldAccessToken: string
@@ -31,7 +30,6 @@ export interface SaferpaySettingsData {
   // Live credentials
   liveUsername: string
   livePassword: string
-  liveCustomerId: string
   liveTerminalId: string
   liveMerchantEmails: string
   liveFieldAccessToken: string
@@ -67,6 +65,9 @@ export interface SaferpaySettingsData {
   // Endpoints
   ajaxUrl: string
   adminToken: string
+
+  // Translations
+  translations: Record<string, string>
 }
 
 declare global {

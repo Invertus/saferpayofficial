@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useState, useCallback } from 'react'
+import React, { createContext, useContext, useState, useCallback, useMemo, useRef } from 'react'
 import type { SaferpaySettingsData, PaymentMethodData, TerminalOption } from '@/types'
 import * as api from '@/api/client'
 import { toast } from '@/hooks/use-toast'
+import { t } from '@/utils/translations'
+
+type SavingSection = 'credentials' | 'paymentProcessing' | 'emailSettings' | 'generalSettings' | 'paymentMethods'
 
 interface SettingsContextValue {
   settings: SaferpaySettingsData
@@ -11,19 +14,28 @@ interface SettingsContextValue {
   saveEmailSettings: () => Promise<void>
   saveGeneralSettings: () => Promise<void>
   savePaymentMethods: () => Promise<void>
-  fetchTerminals: (env: string, username: string, password: string, customerId: string) => Promise<TerminalOption[]>
+  fetchTerminals: (env: string, username: string, password: string) => Promise<TerminalOption[]>
   refreshPaymentMethods: () => Promise<void>
   paymentMethods: PaymentMethodData[]
   updatePaymentMethod: (name: string, updates: Partial<PaymentMethodData>) => void
-  saving: boolean
+  savingSections: Set<SavingSection>
 }
 
 const SettingsContext = createContext<SettingsContextValue | null>(null)
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<SaferpaySettingsData>(() => window.saferpaySettingsData)
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>(() => window.saferpaySettingsData.paymentMethods || [])
-  const [saving, setSaving] = useState(false)
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>(() => {
+    const methods = window.saferpaySettingsData.paymentMethods
+    return Array.isArray(methods) ? methods : []
+  })
+  const [savingSections, setSavingSections] = useState<Set<SavingSection>>(new Set())
+
+  const settingsRef = useRef(settings)
+  settingsRef.current = settings
+
+  const paymentMethodsRef = useRef(paymentMethods)
+  paymentMethodsRef.current = paymentMethods
 
   const updateSettings = useCallback((updates: Partial<SaferpaySettingsData>) => {
     setSettings((prev) => ({ ...prev, ...updates }))
@@ -35,119 +47,151 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     )
   }, [])
 
-  const handleSave = useCallback(async (saveFn: () => Promise<{ success: boolean; message?: string }>, label: string) => {
-    setSaving(true)
+  const handleSave = useCallback(async (
+    saveFn: () => Promise<{ success: boolean; message?: string }>,
+    label: string,
+    section: SavingSection,
+  ) => {
+    setSavingSections((prev) => new Set(prev).add(section))
     try {
       const result = await saveFn()
       if (result.success) {
-        toast({ title: `${label} saved successfully`, variant: 'default' })
+        toast({ title: result.message || t('savedSuccessfully', label), variant: 'default' })
       } else {
-        toast({ title: result.message || `Failed to save ${label}`, variant: 'destructive' })
+        toast({ title: result.message || t('failedToSave', label), variant: 'destructive' })
       }
     } catch (e) {
-      toast({ title: `Error saving ${label}`, variant: 'destructive' })
+      const message = e instanceof Error ? e.message : 'Unknown error'
+      toast({ title: t('errorSaving', label, message), variant: 'destructive' })
     } finally {
-      setSaving(false)
+      setSavingSections((prev) => {
+        const next = new Set(prev)
+        next.delete(section)
+        return next
+      })
     }
   }, [])
 
   const saveCredentials = useCallback(async () => {
+    const s = settingsRef.current
     await handleSave(() => api.saveCredentials({
-      testMode: settings.testMode,
-      testUsername: settings.testUsername,
-      testPassword: settings.testPassword,
-      testCustomerId: settings.testCustomerId,
-      testTerminalId: settings.testTerminalId,
-      testMerchantEmails: settings.testMerchantEmails,
-      testFieldAccessToken: settings.testFieldAccessToken,
-      testFieldJsUrl: settings.testFieldJsUrl,
-      testBusinessLicense: settings.testBusinessLicense,
-      liveUsername: settings.liveUsername,
-      livePassword: settings.livePassword,
-      liveCustomerId: settings.liveCustomerId,
-      liveTerminalId: settings.liveTerminalId,
-      liveMerchantEmails: settings.liveMerchantEmails,
-      liveFieldAccessToken: settings.liveFieldAccessToken,
-      liveFieldJsUrl: settings.liveFieldJsUrl,
-      liveBusinessLicense: settings.liveBusinessLicense,
-    }), 'API Credentials')
-  }, [settings, handleSave])
+      testMode: s.testMode,
+      testUsername: s.testUsername,
+      testPassword: s.testPassword,
+      testTerminalId: s.testTerminalId,
+      testMerchantEmails: s.testMerchantEmails,
+      testFieldAccessToken: s.testFieldAccessToken,
+      testFieldJsUrl: s.testFieldJsUrl,
+      testBusinessLicense: s.testBusinessLicense,
+      liveUsername: s.liveUsername,
+      livePassword: s.livePassword,
+      liveTerminalId: s.liveTerminalId,
+      liveMerchantEmails: s.liveMerchantEmails,
+      liveFieldAccessToken: s.liveFieldAccessToken,
+      liveFieldJsUrl: s.liveFieldJsUrl,
+      liveBusinessLicense: s.liveBusinessLicense,
+    }), 'API Credentials', 'credentials')
+  }, [handleSave])
 
   const savePaymentProcessingFn = useCallback(async () => {
+    const s = settingsRef.current
     await handleSave(() => api.savePaymentProcessing({
-      paymentBehavior: settings.paymentBehavior,
-      paymentBehaviorWithout3D: settings.paymentBehaviorWithout3D,
-      restrictRefund: settings.restrictRefund,
-      orderCreationAfterAuth: settings.orderCreationAfterAuth,
-      groupCards: settings.groupCards,
-      groupCardsLogo: settings.groupCardsLogo,
-      creditCardSave: settings.creditCardSave,
-    }), 'Payment Processing')
-  }, [settings, handleSave])
+      paymentBehavior: s.paymentBehavior,
+      paymentBehaviorWithout3D: s.paymentBehaviorWithout3D,
+      restrictRefund: s.restrictRefund,
+      orderCreationAfterAuth: s.orderCreationAfterAuth,
+      groupCards: s.groupCards,
+      groupCardsLogo: s.groupCardsLogo,
+      creditCardSave: s.creditCardSave,
+    }), 'Payment Processing', 'paymentProcessing')
+  }, [handleSave])
 
   const saveEmailSettingsFn = useCallback(async () => {
+    const s = settingsRef.current
     await handleSave(() => api.saveEmailSettings({
-      allowSaferpayMail: settings.allowSaferpayMail,
-      sendNewOrderMail: settings.sendNewOrderMail,
-      sendOrderConfMail: settings.sendOrderConfMail,
-    }), 'Email Settings')
-  }, [settings, handleSave])
+      allowSaferpayMail: s.allowSaferpayMail,
+      sendNewOrderMail: s.sendNewOrderMail,
+      sendOrderConfMail: s.sendOrderConfMail,
+    }), 'Email Settings', 'emailSettings')
+  }, [handleSave])
 
   const saveGeneralSettingsFn = useCallback(async () => {
+    const s = settingsRef.current
     await handleSave(() => api.saveGeneralSettings({
-      orderStateAwaitingPayment: settings.orderStateAwaitingPayment,
-      paymentDescription: settings.paymentDescription,
-      configurationName: settings.configurationName,
-      debugMode: settings.debugMode,
-    }), 'General Settings')
-  }, [settings, handleSave])
+      orderStateAwaitingPayment: s.orderStateAwaitingPayment,
+      paymentDescription: s.paymentDescription,
+      configurationName: s.configurationName,
+      debugMode: s.debugMode,
+    }), 'General Settings', 'generalSettings')
+  }, [handleSave])
 
   const savePaymentMethodsFn = useCallback(async () => {
-    await handleSave(() => api.savePaymentMethods(paymentMethods), 'Payment Methods')
-  }, [paymentMethods, handleSave])
+    await handleSave(
+      () => api.savePaymentMethods(paymentMethodsRef.current),
+      'Payment Methods',
+      'paymentMethods',
+    )
+  }, [handleSave])
 
   const refreshPaymentMethods = useCallback(async () => {
     try {
       const result = await api.refreshData()
       if (result.success && result.data?.paymentMethods) {
-        setPaymentMethods(result.data.paymentMethods as PaymentMethodData[])
+        const methods = result.data.paymentMethods
+        if (Array.isArray(methods)) {
+          setPaymentMethods(methods as PaymentMethodData[])
+        }
       }
-    } catch {
-      // silently fail, user still has initial data
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Unknown error'
+      toast({ title: t('errorRefreshingPaymentMethods', message), variant: 'destructive' })
     }
   }, [])
 
-  const fetchTerminals = useCallback(async (env: string, username: string, password: string, customerId: string) => {
+  const fetchTerminals = useCallback(async (env: string, username: string, password: string) => {
     try {
-      const result = await api.getTerminals(env, username, password, customerId)
+      const result = await api.getTerminals(env, username, password)
       if (result.success) {
         return result.terminals
       }
-      toast({ title: 'Failed to fetch terminals', variant: 'destructive' })
+      toast({ title: t('failedToFetchTerminals'), variant: 'destructive' })
       return []
     } catch {
-      toast({ title: 'Error fetching terminals', variant: 'destructive' })
+      toast({ title: t('errorFetchingTerminals'), variant: 'destructive' })
       return []
     }
   }, [])
 
+  const value = useMemo<SettingsContextValue>(() => ({
+    settings,
+    updateSettings,
+    saveCredentials,
+    savePaymentProcessing: savePaymentProcessingFn,
+    saveEmailSettings: saveEmailSettingsFn,
+    saveGeneralSettings: saveGeneralSettingsFn,
+    savePaymentMethods: savePaymentMethodsFn,
+    fetchTerminals,
+    refreshPaymentMethods,
+    paymentMethods,
+    updatePaymentMethod,
+    savingSections,
+  }), [
+    settings,
+    updateSettings,
+    saveCredentials,
+    savePaymentProcessingFn,
+    saveEmailSettingsFn,
+    saveGeneralSettingsFn,
+    savePaymentMethodsFn,
+    fetchTerminals,
+    refreshPaymentMethods,
+    paymentMethods,
+    updatePaymentMethod,
+    savingSections,
+  ])
+
   return (
-    <SettingsContext.Provider
-      value={{
-        settings,
-        updateSettings,
-        saveCredentials,
-        savePaymentProcessing: savePaymentProcessingFn,
-        saveEmailSettings: saveEmailSettingsFn,
-        saveGeneralSettings: saveGeneralSettingsFn,
-        savePaymentMethods: savePaymentMethodsFn,
-        fetchTerminals,
-        refreshPaymentMethods,
-        paymentMethods,
-        updatePaymentMethod,
-        saving,
-      }}
-    >
+    <SettingsContext.Provider value={value}>
       {children}
     </SettingsContext.Provider>
   )

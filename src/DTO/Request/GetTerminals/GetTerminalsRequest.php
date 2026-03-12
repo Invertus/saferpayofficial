@@ -37,6 +37,10 @@ class GetTerminalsRequest
      */
     public function __construct($customerId)
     {
+        if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $customerId)) {
+            throw new \InvalidArgumentException('Invalid customer ID format');
+        }
+
         $this->customerId = $customerId;
     }
 

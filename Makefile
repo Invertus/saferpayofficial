@@ -147,6 +147,18 @@ test-e2e-headless-1786:
 build-react:
 	cd views/js/admin/settings-app && pnpm install && pnpm run build
 
+# target: dev-react			- Start React dev server with HMR
+dev-react:
+	cd views/js/admin/settings-app && pnpm dev
+
+# target: watch-react			- Build React app and watch for changes
+watch-react:
+	cd views/js/admin/settings-app && pnpm run build --watch
+
+# target: lint-react			- Run TypeScript type check
+lint-react:
+	cd views/js/admin/settings-app && pnpm run tsc --noEmit
+
 prepare-zip:
 	rm -rf vendor && \
 	composer install --no-dev --optimize-autoloader && \

@@ -4,9 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Mail, Info, Loader2 } from 'lucide-react'
 import { useSettings } from '@/context/settings-context'
+import { t } from '@/utils/translations'
 
 export function EmailNotifications() {
-  const { settings, updateSettings, saveEmailSettings, saving } = useSettings()
+  const { settings, updateSettings, saveEmailSettings, savingSections } = useSettings()
+  const saving = savingSections.has('emailSettings')
 
   return (
     <div className="sp-flex sp-flex-col sp-gap-6">
@@ -15,9 +17,9 @@ export function EmailNotifications() {
           <div className="sp-flex sp-items-center sp-gap-2">
             <Mail className="sp-h-5 sp-w-5 sp-text-muted-foreground" />
             <div className="sp-flex sp-flex-col sp-gap-1.5">
-              <CardTitle className="sp-text-base sp-font-semibold">Email Sending</CardTitle>
+              <CardTitle className="sp-text-base sp-font-semibold">{t('emailSending')}</CardTitle>
               <CardDescription>
-                Configure which emails are sent during the payment process.
+                {t('emailSendingDescription')}
               </CardDescription>
             </div>
           </div>
@@ -27,10 +29,10 @@ export function EmailNotifications() {
             <div className="sp-flex sp-items-center sp-justify-between sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-4 sp-py-3">
               <div className="sp-flex sp-flex-col sp-gap-0.5 sp-pr-4">
                 <Label htmlFor="email-completion" className="sp-font-medium sp-cursor-pointer">
-                  Send an email from Saferpay on payment completion
+                  {t('saferpayCustomerMail')}
                 </Label>
                 <p className="sp-text-xs sp-text-muted-foreground">
-                  With this setting enabled an email from the Saferpay system will be sent to the customer.
+                  {t('saferpayCustomerMailDescription')}
                 </p>
               </div>
               <Switch
@@ -43,10 +45,10 @@ export function EmailNotifications() {
             <div className="sp-flex sp-items-center sp-justify-between sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-4 sp-py-3">
               <div className="sp-flex sp-flex-col sp-gap-0.5 sp-pr-4">
                 <Label htmlFor="new-order-mail" className="sp-font-medium sp-cursor-pointer">
-                  Send new order mail on authorization
+                  {t('newOrderMail')}
                 </Label>
                 <p className="sp-text-xs sp-text-muted-foreground">
-                  Receive a notification when an order is authorized by Saferpay (Using the Mail alert module).
+                  {t('newOrderMailDescription')}
                 </p>
               </div>
               <Switch
@@ -59,10 +61,10 @@ export function EmailNotifications() {
             <div className="sp-flex sp-items-center sp-justify-between sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-4 sp-py-3">
               <div className="sp-flex sp-flex-col sp-gap-0.5 sp-pr-4">
                 <Label htmlFor="order-confirmation" className="sp-font-medium sp-cursor-pointer">
-                  Send order confirmation mail on payment completion
+                  {t('orderConfMail')}
                 </Label>
                 <p className="sp-text-xs sp-text-muted-foreground">
-                  Send an email from Saferpay on payment completion.
+                  {t('orderConfMailDescription')}
                 </p>
               </div>
               <Switch
@@ -76,10 +78,10 @@ export function EmailNotifications() {
               <Info className="sp-h-4 sp-w-4 sp-shrink-0 sp-text-[#294e57]" />
               <div className="sp-flex sp-flex-col sp-gap-1">
                 <p className="sp-mb-0">
-                  When this feature is enabled, a confirmation email will be only sent once the payment is authorized by Saferpay.
+                  {t('emailConfInfo')}
                 </p>
                 <p className="sp-mb-0 sp-text-muted-foreground">
-                  For this feature to be functioning you need to have the Mail Alert module configured.
+                  {t('emailConfMailAlert')}
                 </p>
               </div>
             </div>
@@ -89,7 +91,7 @@ export function EmailNotifications() {
 
       <div className="sp-flex sp-justify-end">
         <Button className="sp-min-w-[120px]" onClick={saveEmailSettings} disabled={saving}>
-          {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : 'Save Changes'}
+          {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>
     </div>
