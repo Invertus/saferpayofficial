@@ -59,9 +59,10 @@ export async function getTerminals(
   env: string,
   username: string,
   password: string,
-): Promise<{ success: boolean; terminals: TerminalOption[] }> {
+): Promise<{ success: boolean; message?: string; terminals: TerminalOption[] }> {
   return postAjax('getTerminals', { env, username, password }) as Promise<{
     success: boolean
+    message?: string
     terminals: TerminalOption[]
   }>
 }

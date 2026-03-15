@@ -25,10 +25,9 @@ const SettingsContext = createContext<SettingsContextValue | null>(null)
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<SaferpaySettingsData>(() => window.saferpaySettingsData)
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>(() => {
-    const methods = window.saferpaySettingsData.paymentMethods
-    return Array.isArray(methods) ? methods : []
-  })
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>(
+    () => Array.isArray(window.saferpaySettingsData.paymentMethods) ? window.saferpaySettingsData.paymentMethods : [],
+  )
   const [savingSections, setSavingSections] = useState<Set<SavingSection>>(new Set())
 
   const settingsRef = useRef(settings)
@@ -73,59 +72,64 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const saveCredentials = useCallback(async () => {
-    const currentSettings = settingsRef.current
-    await handleSave(() => api.saveCredentials({
-      testMode: currentSettings.testMode,
-      testUsername: currentSettings.testUsername,
-      testPassword: currentSettings.testPassword,
-      testTerminalId: currentSettings.testTerminalId,
-      testMerchantEmails: currentSettings.testMerchantEmails,
-      testFieldAccessToken: currentSettings.testFieldAccessToken,
-      testFieldJsUrl: currentSettings.testFieldJsUrl,
-      testBusinessLicense: currentSettings.testBusinessLicense,
-      liveUsername: currentSettings.liveUsername,
-      livePassword: currentSettings.livePassword,
-      liveTerminalId: currentSettings.liveTerminalId,
-      liveMerchantEmails: currentSettings.liveMerchantEmails,
-      liveFieldAccessToken: currentSettings.liveFieldAccessToken,
-      liveFieldJsUrl: currentSettings.liveFieldJsUrl,
-      liveBusinessLicense: currentSettings.liveBusinessLicense,
-    }), 'API Credentials', 'credentials')
+    const s = settingsRef.current
+    await handleSave(async () => {
+      const result = await api.saveCredentials({
+        testMode: s.testMode,
+        testUsername: s.testUsername,
+        testPassword: s.testPassword,
+        testTerminalId: s.testTerminalId,
+        testMerchantEmails: s.testMerchantEmails,
+        testFieldAccessToken: s.testFieldAccessToken,
+        testFieldJsUrl: s.testFieldJsUrl,
+        liveUsername: s.liveUsername,
+        livePassword: s.livePassword,
+        liveTerminalId: s.liveTerminalId,
+        liveMerchantEmails: s.liveMerchantEmails,
+        liveFieldAccessToken: s.liveFieldAccessToken,
+        liveFieldJsUrl: s.liveFieldJsUrl,
+      })
+      const data = result as unknown as Record<string, unknown>
+      if (result.success && typeof data.hasBusinessLicense === 'boolean') {
+        setSettings((prev) => ({ ...prev, hasBusinessLicense: data.hasBusinessLicense as boolean }))
+      }
+      return result
+    }, 'API Credentials', 'credentials')
   }, [handleSave])
 
-  const savePaymentProcessingFn = useCallback(async () => {
-    const currentSettings = settingsRef.current
+  const savePaymentProcessing = useCallback(async () => {
+    const s = settingsRef.current
     await handleSave(() => api.savePaymentProcessing({
-      paymentBehavior: currentSettings.paymentBehavior,
-      paymentBehaviorWithout3D: currentSettings.paymentBehaviorWithout3D,
-      restrictRefund: currentSettings.restrictRefund,
-      orderCreationAfterAuth: currentSettings.orderCreationAfterAuth,
-      groupCards: currentSettings.groupCards,
-      groupCardsLogo: currentSettings.groupCardsLogo,
-      creditCardSave: currentSettings.creditCardSave,
+      paymentBehavior: s.paymentBehavior,
+      paymentBehaviorWithout3D: s.paymentBehaviorWithout3D,
+      restrictRefund: s.restrictRefund,
+      orderCreationAfterAuth: s.orderCreationAfterAuth,
+      groupCards: s.groupCards,
+      groupCardsLogo: s.groupCardsLogo,
+      creditCardSave: s.creditCardSave,
     }), 'Payment Processing', 'paymentProcessing')
   }, [handleSave])
 
-  const saveEmailSettingsFn = useCallback(async () => {
-    const currentSettings = settingsRef.current
+  const saveEmailSettings = useCallback(async () => {
+    const s = settingsRef.current
     await handleSave(() => api.saveEmailSettings({
-      allowSaferpayMail: currentSettings.allowSaferpayMail,
-      sendNewOrderMail: currentSettings.sendNewOrderMail,
-      sendOrderConfMail: currentSettings.sendOrderConfMail,
+      allowSaferpayMail: s.allowSaferpayMail,
+      sendNewOrderMail: s.sendNewOrderMail,
+      sendOrderConfMail: s.sendOrderConfMail,
     }), 'Email Settings', 'emailSettings')
   }, [handleSave])
 
-  const saveGeneralSettingsFn = useCallback(async () => {
-    const currentSettings = settingsRef.current
+  const saveGeneralSettings = useCallback(async () => {
+    const s = settingsRef.current
     await handleSave(() => api.saveGeneralSettings({
-      orderStateAwaitingPayment: currentSettings.orderStateAwaitingPayment,
-      paymentDescription: currentSettings.paymentDescription,
-      configurationName: currentSettings.configurationName,
-      debugMode: currentSettings.debugMode,
+      orderStateAwaitingPayment: s.orderStateAwaitingPayment,
+      paymentDescription: s.paymentDescription,
+      configurationName: s.configurationName,
+      debugMode: s.debugMode,
     }), 'General Settings', 'generalSettings')
   }, [handleSave])
 
-  const savePaymentMethodsFn = useCallback(async () => {
+  const savePaymentMethods = useCallback(async () => {
     await handleSave(
       () => api.savePaymentMethods(paymentMethodsRef.current),
       'Payment Methods',
@@ -136,40 +140,30 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const refreshPaymentMethods = useCallback(async () => {
     try {
       const result = await api.refreshData()
-      if (result.success && result.data?.paymentMethods) {
-        const methods = result.data.paymentMethods
-        if (Array.isArray(methods)) {
-          setPaymentMethods(methods as PaymentMethodData[])
-        }
+      if (result.success && Array.isArray(result.data?.paymentMethods)) {
+        setPaymentMethods(result.data.paymentMethods as PaymentMethodData[])
       }
-    } catch (e) {
-      const message = e instanceof Error ? e.message : 'Unknown error'
-      toast({ title: t('errorRefreshingPaymentMethods', message), variant: 'destructive' })
+    } catch {
+      toast({ title: t('errorRefreshingPaymentMethods'), variant: 'destructive' })
     }
   }, [])
 
   const fetchTerminals = useCallback(async (env: string, username: string, password: string) => {
-    try {
-      const result = await api.getTerminals(env, username, password)
-      if (result.success) {
-        return result.terminals
-      }
-      toast({ title: t('failedToFetchTerminals'), variant: 'destructive' })
-      return []
-    } catch {
-      toast({ title: t('errorFetchingTerminals'), variant: 'destructive' })
-      return []
+    const result = await api.getTerminals(env, username, password)
+    if (!result.success) {
+      throw new Error(result.message || t('failedToFetchTerminals'))
     }
+    return result.terminals
   }, [])
 
   const value = useMemo<SettingsContextValue>(() => ({
     settings,
     updateSettings,
     saveCredentials,
-    savePaymentProcessing: savePaymentProcessingFn,
-    saveEmailSettings: saveEmailSettingsFn,
-    saveGeneralSettings: saveGeneralSettingsFn,
-    savePaymentMethods: savePaymentMethodsFn,
+    savePaymentProcessing,
+    saveEmailSettings,
+    saveGeneralSettings,
+    savePaymentMethods,
     fetchTerminals,
     refreshPaymentMethods,
     paymentMethods,
@@ -179,10 +173,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     settings,
     updateSettings,
     saveCredentials,
-    savePaymentProcessingFn,
-    saveEmailSettingsFn,
-    saveGeneralSettingsFn,
-    savePaymentMethodsFn,
+    savePaymentProcessing,
+    saveEmailSettings,
+    saveGeneralSettings,
+    savePaymentMethods,
     fetchTerminals,
     refreshPaymentMethods,
     paymentMethods,

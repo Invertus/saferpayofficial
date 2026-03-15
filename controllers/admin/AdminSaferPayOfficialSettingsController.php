@@ -29,6 +29,7 @@ use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 use Invertus\SaferPay\Adapter\Configuration as SaferPayConfiguration;
 use Invertus\SaferPay\Service\SaferPayFieldCreator;
+use Invertus\SaferPay\Service\SaferPayGetLicense;
 use Invertus\SaferPay\Service\SaferPayGetTerminals;
 use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
@@ -190,7 +191,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $configuration->set(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testMerchantEmails'));
         $configuration->set(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testFieldAccessToken'));
         $configuration->set(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testFieldJsUrl'));
-        $configuration->set(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX, !empty($data['testBusinessLicense']) ? 1 : 0);
 
         // Live credentials
         $liveUsername = $this->getStringValue($data, 'liveUsername');
@@ -204,28 +204,40 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $configuration->set(SaferPayConfig::MERCHANT_EMAILS, $this->getStringValue($data, 'liveMerchantEmails'));
         $configuration->set(SaferPayConfig::FIELDS_ACCESS_TOKEN, $this->getStringValue($data, 'liveFieldAccessToken'));
         $configuration->set(SaferPayConfig::FIELDS_LIBRARY, $this->getStringValue($data, 'liveFieldJsUrl'));
-        $configuration->set(SaferPayConfig::BUSINESS_LICENSE, !empty($data['liveBusinessLicense']) ? 1 : 0);
 
-        // Validate: business license requires field access token
-        $suffix = SaferPayConfig::getConfigSuffix();
-        $haveFieldToken = $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . $suffix);
-        $haveBusinessLicense = $configuration->get(SaferPayConfig::BUSINESS_LICENSE . $suffix);
-        $businessLicenseDisabled = false;
+        // Auto-detect license features from Saferpay Management API
+        $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
+        $licenseMessage = '';
+        $hasBusinessLicense = false;
 
-        if (!$haveFieldToken && $haveBusinessLicense) {
+        if (!empty($activeUsername) && !empty($activePassword) && !empty($activeCustomerId)) {
+            try {
+                /** @var SaferPayGetLicense $getLicense */
+                $getLicense = $this->module->getService(SaferPayGetLicense::class);
+                $licenseInfo = $getLicense->fetchLicenseWithCredentials(
+                    $activeUsername,
+                    $activePassword,
+                    $activeCustomerId,
+                    $isTestMode
+                );
+
+                $hasBusinessLicense = $licenseInfo['hasBusinessLicense'];
+                $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, $hasBusinessLicense ? 1 : 0);
+            } catch (\Exception $e) {
+                $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, 0);
+                $licenseMessage = ' ' . $this->module->l('Could not retrieve license information. Please verify your credentials.', self::FILE_NAME);
+            }
+        } else {
             $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, 0);
-            $businessLicenseDisabled = true;
         }
 
-        if ($businessLicenseDisabled) {
-            $this->ajaxResponse(
-                true,
-                $this->module->l('Credentials saved. Field Access Token is required for business license — it has been disabled.', self::FILE_NAME)
-            );
-            return;
-        }
-
-        $this->ajaxResponse(true, $this->module->l('API Credentials saved successfully', self::FILE_NAME));
+        $this->ajaxResponse(
+            true,
+            $this->module->l('API Credentials saved successfully', self::FILE_NAME) . $licenseMessage,
+            [
+                'hasBusinessLicense' => $hasBusinessLicense,
+            ]
+        );
     }
 
     /**
@@ -381,25 +393,21 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     public function ajaxProcessGetTerminals()
     {
         $data = $this->getJsonInput();
-        if (!$data) {
-            $this->ajaxResponse(false, $this->module->l('Invalid request data', self::FILE_NAME));
-            return;
-        }
+        $isTestMode = isset($data['env']) && $data['env'] === 'test';
+        $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
 
-        $username = isset($data['username']) ? $data['username'] : '';
+        $username = isset($data['username']) ? trim($data['username']) : '';
         $password = isset($data['password']) ? $data['password'] : '';
         $customerId = $this->parseCustomerIdFromUsername($username);
-        $isTestMode = isset($data['env']) && $data['env'] === 'test';
 
         if ($password === self::PASSWORD_PLACEHOLDER) {
-            $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
             /** @var SaferPayConfiguration $configuration */
             $configuration = $this->module->getService(SaferPayConfiguration::class);
             $password = (string) $configuration->get(SaferPayConfig::PASSWORD . $suffix);
         }
 
         if (empty($username) || empty($password) || empty($customerId)) {
-            $this->ajaxResponse(false, $this->module->l('Username and password are required', self::FILE_NAME));
+            $this->ajaxResponse(false, $this->module->l('Invalid credentials. Username format should be API_XXXXXX.', self::FILE_NAME));
             return;
         }
 
@@ -413,7 +421,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'terminals' => $terminals,
             ]);
         } catch (\Exception $e) {
-            $this->ajaxResponse(false, $this->module->l('Failed to fetch terminals. Please check your credentials.', self::FILE_NAME));
+            $this->ajaxResponse(false, $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME));
         }
     }
 
@@ -448,7 +456,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'testMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX) ?: (string) \Configuration::get('PS_SHOP_EMAIL'),
             'testFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX),
             'testFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX),
-            'testBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX),
 
             // Live credentials
             'liveUsername' => (string) $configuration->get(SaferPayConfig::USERNAME),
@@ -457,7 +464,10 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'liveMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS) ?: (string) \Configuration::get('PS_SHOP_EMAIL'),
             'liveFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN),
             'liveFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY),
-            'liveBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE),
+
+            // License (auto-detected)
+            'hasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix()),
+            'licensePackage' => '',
 
             // Payment Processing
             'paymentBehavior' => (int) $configuration->get(SaferPayConfig::PAYMENT_BEHAVIOR),
@@ -621,12 +631,12 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     /**
      * Send AJAX JSON response
      */
-    private function ajaxResponse($success, $message = '')
+    private function ajaxResponse($success, $message = '', $extraData = [])
     {
-        $this->sendJsonResponse([
+        $this->sendJsonResponse(array_merge([
             'success' => $success,
             'message' => $message,
-        ]);
+        ], $extraData));
     }
 
     /**
