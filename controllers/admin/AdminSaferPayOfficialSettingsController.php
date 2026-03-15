@@ -407,7 +407,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         }
 
         if (empty($username) || empty($password) || empty($customerId)) {
-            $this->ajaxResponse(false, $this->module->l('Invalid credentials. Username format should be API_XXXXXX.', self::FILE_NAME));
+            $this->ajaxResponse(false, $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME));
             return;
         }
 
@@ -467,7 +467,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
             // License (auto-detected)
             'hasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix()),
-            'licensePackage' => '',
 
             // Payment Processing
             'paymentBehavior' => (int) $configuration->get(SaferPayConfig::PAYMENT_BEHAVIOR),

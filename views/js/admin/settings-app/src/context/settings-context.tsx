@@ -72,22 +72,22 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const saveCredentials = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(async () => {
       const result = await api.saveCredentials({
-        testMode: s.testMode,
-        testUsername: s.testUsername,
-        testPassword: s.testPassword,
-        testTerminalId: s.testTerminalId,
-        testMerchantEmails: s.testMerchantEmails,
-        testFieldAccessToken: s.testFieldAccessToken,
-        testFieldJsUrl: s.testFieldJsUrl,
-        liveUsername: s.liveUsername,
-        livePassword: s.livePassword,
-        liveTerminalId: s.liveTerminalId,
-        liveMerchantEmails: s.liveMerchantEmails,
-        liveFieldAccessToken: s.liveFieldAccessToken,
-        liveFieldJsUrl: s.liveFieldJsUrl,
+        testMode: currentSettings.testMode,
+        testUsername: currentSettings.testUsername,
+        testPassword: currentSettings.testPassword,
+        testTerminalId: currentSettings.testTerminalId,
+        testMerchantEmails: currentSettings.testMerchantEmails,
+        testFieldAccessToken: currentSettings.testFieldAccessToken,
+        testFieldJsUrl: currentSettings.testFieldJsUrl,
+        liveUsername: currentSettings.liveUsername,
+        livePassword: currentSettings.livePassword,
+        liveTerminalId: currentSettings.liveTerminalId,
+        liveMerchantEmails: currentSettings.liveMerchantEmails,
+        liveFieldAccessToken: currentSettings.liveFieldAccessToken,
+        liveFieldJsUrl: currentSettings.liveFieldJsUrl,
       })
       const data = result as unknown as Record<string, unknown>
       if (result.success && typeof data.hasBusinessLicense === 'boolean') {
@@ -98,34 +98,34 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [handleSave])
 
   const savePaymentProcessing = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(() => api.savePaymentProcessing({
-      paymentBehavior: s.paymentBehavior,
-      paymentBehaviorWithout3D: s.paymentBehaviorWithout3D,
-      restrictRefund: s.restrictRefund,
-      orderCreationAfterAuth: s.orderCreationAfterAuth,
-      groupCards: s.groupCards,
-      groupCardsLogo: s.groupCardsLogo,
-      creditCardSave: s.creditCardSave,
+      paymentBehavior: currentSettings.paymentBehavior,
+      paymentBehaviorWithout3D: currentSettings.paymentBehaviorWithout3D,
+      restrictRefund: currentSettings.restrictRefund,
+      orderCreationAfterAuth: currentSettings.orderCreationAfterAuth,
+      groupCards: currentSettings.groupCards,
+      groupCardsLogo: currentSettings.groupCardsLogo,
+      creditCardSave: currentSettings.creditCardSave,
     }), 'Payment Processing', 'paymentProcessing')
   }, [handleSave])
 
   const saveEmailSettings = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(() => api.saveEmailSettings({
-      allowSaferpayMail: s.allowSaferpayMail,
-      sendNewOrderMail: s.sendNewOrderMail,
-      sendOrderConfMail: s.sendOrderConfMail,
+      allowSaferpayMail: currentSettings.allowSaferpayMail,
+      sendNewOrderMail: currentSettings.sendNewOrderMail,
+      sendOrderConfMail: currentSettings.sendOrderConfMail,
     }), 'Email Settings', 'emailSettings')
   }, [handleSave])
 
   const saveGeneralSettings = useCallback(async () => {
-    const s = settingsRef.current
+    const currentSettings = settingsRef.current
     await handleSave(() => api.saveGeneralSettings({
-      orderStateAwaitingPayment: s.orderStateAwaitingPayment,
-      paymentDescription: s.paymentDescription,
-      configurationName: s.configurationName,
-      debugMode: s.debugMode,
+      orderStateAwaitingPayment: currentSettings.orderStateAwaitingPayment,
+      paymentDescription: currentSettings.paymentDescription,
+      configurationName: currentSettings.configurationName,
+      debugMode: currentSettings.debugMode,
     }), 'General Settings', 'generalSettings')
   }, [handleSave])
 
