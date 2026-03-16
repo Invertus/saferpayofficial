@@ -233,7 +233,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         $this->ajaxResponse(
             true,
-            $this->module->l('API Credentials saved successfully', self::FILE_NAME) . $licenseMessage,
+            $this->module->l('Settings saved successfully.', self::FILE_NAME) . $licenseMessage,
             [
                 'hasBusinessLicense' => $hasBusinessLicense,
             ]
@@ -444,6 +444,32 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         /** @var SaferPayConfiguration $configuration */
         $configuration = $this->module->getService(SaferPayConfiguration::class);
+
+        // Re-fetch license from Saferpay Management API on every page load
+        $isTestMode = (bool) $configuration->get(SaferPayConfig::TEST_MODE);
+        $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
+        $activeUsername = (string) $configuration->get(SaferPayConfig::USERNAME . $suffix);
+        $activePassword = (string) $configuration->get(SaferPayConfig::PASSWORD . $suffix);
+        $activeCustomerId = (string) $configuration->get(SaferPayConfig::CUSTOMER_ID . $suffix);
+
+        if (!empty($activeUsername) && !empty($activePassword) && !empty($activeCustomerId)) {
+            try {
+                /** @var SaferPayGetLicense $getLicense */
+                $getLicense = $this->module->getService(SaferPayGetLicense::class);
+                $licenseInfo = $getLicense->fetchLicenseWithCredentials(
+                    $activeUsername,
+                    $activePassword,
+                    $activeCustomerId,
+                    $isTestMode
+                );
+                $configuration->set(
+                    SaferPayConfig::BUSINESS_LICENSE . $suffix,
+                    $licenseInfo['hasBusinessLicense'] ? 1 : 0
+                );
+            } catch (\Exception $e) {
+                // Silently fall back to stored value
+            }
+        }
 
         $data = [
             // Environment

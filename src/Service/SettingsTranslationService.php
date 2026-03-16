@@ -139,8 +139,6 @@ class SettingsTranslationService
             'invalidCredentials' => $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME),
             'saferpayFieldsIncluded' => $this->module->l('Saferpay Fields is included in your license', self::FILE_NAME),
             'saferpayFieldsIncludedDescription' => $this->module->l('You can use hosted payment fields for a seamless checkout experience.', self::FILE_NAME),
-            'saferpayFieldsNotIncluded' => $this->module->l('Saferpay Fields is not available', self::FILE_NAME),
-            'saferpayFieldsNotIncludedDescription' => $this->module->l('Save valid API credentials to detect your license, or upgrade your Saferpay plan to access this feature.', self::FILE_NAME),
         ];
     }
 
