@@ -6,15 +6,17 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertCircle, Eye, EyeOff, Key, Shield, Loader2, Info, CheckCircle2, Wand2, XCircle } from 'lucide-react'
 import { useSettings } from '@/context/settings-context'
+import { toast } from '@/hooks/use-toast'
 import { t } from '@/utils/translations'
 import type { TerminalOption } from '@/types'
 
 type CredentialStatus = 'idle' | 'checking' | 'valid' | 'invalid'
 
 export function ApiCredentials() {
-  const { settings, updateSettings, saveCredentials, fetchTerminals, savingSections } = useSettings()
+  const { settings, updateSettings, saveCredentials, fetchTerminals, generateFieldAccessToken, savingSections } = useSettings()
   const saving = savingSections.has('credentials')
   const [showApiPassword, setShowApiPassword] = useState(false)
+  const [generatingToken, setGeneratingToken] = useState(false)
   const [terminals, setTerminals] = useState<TerminalOption[]>([])
   const [credentialStatus, setCredentialStatus] = useState<CredentialStatus>('idle')
   const [credentialError, setCredentialError] = useState('')
@@ -240,7 +242,6 @@ export function ApiCredentials() {
         </CardContent>
       </Card>
 
-      {/* Saferpay Fields Configuration - only shown when business license detected */}
       {settings.hasBusinessLicense && <Card>
         <CardHeader>
           <CardTitle className="sp-text-base sp-font-semibold">{t('saferpayFields')}</CardTitle>
@@ -283,10 +284,26 @@ export function ApiCredentials() {
                   />
                   <Button
                     variant="outline"
-                    disabled={!hasCredentials}
+                    disabled={!hasCredentials || !terminalId || generatingToken}
                     className="sp-shrink-0"
+                    onClick={async () => {
+                      setGeneratingToken(true)
+                      try {
+                        await generateFieldAccessToken()
+                        toast({ title: t('tokenGeneratedSuccessfully'), variant: 'default' })
+                      } catch (e) {
+                        const message = e instanceof Error ? e.message : t('failedToGenerateToken')
+                        toast({ title: message, variant: 'destructive' })
+                      } finally {
+                        setGeneratingToken(false)
+                      }
+                    }}
                   >
-                    <Wand2 className="sp-h-4 sp-w-4 sp-mr-1.5" />
+                    {generatingToken ? (
+                      <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin sp-mr-1.5" />
+                    ) : (
+                      <Wand2 className="sp-h-4 sp-w-4 sp-mr-1.5" />
+                    )}
                     {t('generate')}
                   </Button>
                 </div>

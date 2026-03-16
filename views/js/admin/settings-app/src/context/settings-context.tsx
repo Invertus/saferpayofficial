@@ -15,6 +15,7 @@ interface SettingsContextValue {
   saveGeneralSettings: () => Promise<void>
   savePaymentMethods: () => Promise<void>
   fetchTerminals: (env: string, username: string, password: string) => Promise<TerminalOption[]>
+  generateFieldAccessToken: () => Promise<{ success: boolean; message?: string; token?: string }>
   refreshPaymentMethods: () => Promise<void>
   paymentMethods: PaymentMethodData[]
   updatePaymentMethod: (name: string, updates: Partial<PaymentMethodData>) => void
@@ -148,6 +149,26 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const generateFieldAccessToken = useCallback(async () => {
+    const s = settingsRef.current
+    const env = s.testMode ? 'test' : 'live'
+    const username = s.testMode ? s.testUsername : s.liveUsername
+    const password = s.testMode ? s.testPassword : s.livePassword
+    const terminalId = s.testMode ? s.testTerminalId : s.liveTerminalId
+
+    const result = await api.generateFieldAccessToken(env, username, password, terminalId)
+    if (!result.success) {
+      throw new Error(result.message || t('failedToGenerateToken'))
+    }
+
+    if (result.token) {
+      const fieldKey = s.testMode ? 'testFieldAccessToken' : 'liveFieldAccessToken'
+      setSettings((prev) => ({ ...prev, [fieldKey]: result.token }))
+    }
+
+    return result
+  }, [])
+
   const fetchTerminals = useCallback(async (env: string, username: string, password: string) => {
     const result = await api.getTerminals(env, username, password)
     if (!result.success) {
@@ -165,6 +186,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     saveGeneralSettings,
     savePaymentMethods,
     fetchTerminals,
+    generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
     updatePaymentMethod,
@@ -178,6 +200,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     saveGeneralSettings,
     savePaymentMethods,
     fetchTerminals,
+    generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
     updatePaymentMethod,

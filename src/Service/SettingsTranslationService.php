@@ -139,6 +139,8 @@ class SettingsTranslationService
             'invalidCredentials' => $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME),
             'saferpayFieldsIncluded' => $this->module->l('Saferpay Fields is included in your license', self::FILE_NAME),
             'saferpayFieldsIncludedDescription' => $this->module->l('You can use hosted payment fields for a seamless checkout experience.', self::FILE_NAME),
+            'tokenGeneratedSuccessfully' => $this->module->l('Access token generated successfully.', self::FILE_NAME),
+            'failedToGenerateToken' => $this->module->l('Failed to generate access token.', self::FILE_NAME),
         ];
     }
 

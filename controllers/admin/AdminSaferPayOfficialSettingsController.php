@@ -29,6 +29,7 @@ use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 use Invertus\SaferPay\Adapter\Configuration as SaferPayConfiguration;
 use Invertus\SaferPay\Service\SaferPayFieldCreator;
+use Invertus\SaferPay\Service\SaferPayGenerateFieldAccessToken;
 use Invertus\SaferPay\Service\SaferPayGetLicense;
 use Invertus\SaferPay\Service\SaferPayGetTerminals;
 use Invertus\SaferPay\Service\SaferPayLogoCreator;
@@ -58,6 +59,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         'saveGeneralSettings',
         'savePaymentMethods',
         'getTerminals',
+        'generateFieldAccessToken',
         'refreshData',
     ];
 
@@ -225,6 +227,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, $hasBusinessLicense ? 1 : 0);
             } catch (\Exception $e) {
                 $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, 0);
+
                 $licenseMessage = ' ' . $this->module->l('Could not retrieve license information. Please verify your credentials.', self::FILE_NAME);
             }
         } else {
@@ -426,6 +429,60 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     }
 
     /**
+     * AJAX: Generate Saferpay Fields access token
+     */
+    public function ajaxProcessGenerateFieldAccessToken()
+    {
+        $data = $this->getJsonInput();
+        $isTestMode = isset($data['env']) && $data['env'] === 'test';
+        $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
+
+        $username = isset($data['username']) ? trim($data['username']) : '';
+        $password = isset($data['password']) ? $data['password'] : '';
+        $terminalId = isset($data['terminalId']) ? trim($data['terminalId']) : '';
+        $customerId = $this->parseCustomerIdFromUsername($username);
+
+        if ($password === self::PASSWORD_PLACEHOLDER) {
+            /** @var SaferPayConfiguration $configuration */
+            $configuration = $this->module->getService(SaferPayConfiguration::class);
+            $password = (string) $configuration->get(SaferPayConfig::PASSWORD . $suffix);
+        }
+
+        if (empty($username) || empty($password) || empty($customerId) || empty($terminalId)) {
+            $this->ajaxResponse(false, $this->module->l('Please enter valid credentials and select a terminal first.', self::FILE_NAME));
+            return;
+        }
+
+        try {
+            /** @var SaferPayGenerateFieldAccessToken $tokenGenerator */
+            $tokenGenerator = $this->module->getService(SaferPayGenerateFieldAccessToken::class);
+            $shopUrl = $this->context->link->getBaseLink();
+            $token = $tokenGenerator->generateWithCredentials($username, $password, $customerId, $terminalId, $isTestMode, $shopUrl);
+
+            /** @var SaferPayConfiguration $configuration */
+            $configuration = $this->module->getService(SaferPayConfiguration::class);
+            $configuration->set(SaferPayConfig::FIELDS_ACCESS_TOKEN . $suffix, $token);
+
+            $this->sendJsonResponse([
+                'success' => true,
+                'message' => $this->module->l('Access token generated successfully.', self::FILE_NAME),
+                'token' => $token,
+            ]);
+        } catch (\Exception $e) {
+            \PrestaShopLogger::addLog(
+                'SaferPay: Failed to generate field access token - ' . $e->getMessage(),
+                3,
+                null,
+                null,
+                null,
+                true
+            );
+
+            $this->ajaxResponse(false, $this->module->l('Failed to generate access token.', self::FILE_NAME));
+        }
+    }
+
+    /**
      * AJAX: Refresh all data
      */
     public function ajaxProcessRefreshData()
@@ -444,32 +501,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         /** @var SaferPayConfiguration $configuration */
         $configuration = $this->module->getService(SaferPayConfiguration::class);
-
-        // Re-fetch license from Saferpay Management API on every page load
-        $isTestMode = (bool) $configuration->get(SaferPayConfig::TEST_MODE);
-        $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
-        $activeUsername = (string) $configuration->get(SaferPayConfig::USERNAME . $suffix);
-        $activePassword = (string) $configuration->get(SaferPayConfig::PASSWORD . $suffix);
-        $activeCustomerId = (string) $configuration->get(SaferPayConfig::CUSTOMER_ID . $suffix);
-
-        if (!empty($activeUsername) && !empty($activePassword) && !empty($activeCustomerId)) {
-            try {
-                /** @var SaferPayGetLicense $getLicense */
-                $getLicense = $this->module->getService(SaferPayGetLicense::class);
-                $licenseInfo = $getLicense->fetchLicenseWithCredentials(
-                    $activeUsername,
-                    $activePassword,
-                    $activeCustomerId,
-                    $isTestMode
-                );
-                $configuration->set(
-                    SaferPayConfig::BUSINESS_LICENSE . $suffix,
-                    $licenseInfo['hasBusinessLicense'] ? 1 : 0
-                );
-            } catch (\Exception $e) {
-                // Silently fall back to stored value
-            }
-        }
 
         $data = [
             // Environment
