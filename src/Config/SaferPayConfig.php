@@ -276,6 +276,7 @@ class SaferPayConfig
 
     const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
+    const PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE = 2;
 
     const SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE = 'MANDATORY';
     const SAFERPAY_DEBUG_MODE = 'SAFERPAY_DEBUG_MODE';
@@ -433,7 +434,7 @@ class SaferPayConfig
             RequestHeader::SPEC_REFUND_VERSION => SaferPayConfig::API_VERSION,
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
-            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
+            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 0,
             SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => 1,
             SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION => self::SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE,
             SaferPayConfig::FIELDS_LIBRARY => self::FIELDS_LIBRARY_DEFAULT_VALUE,
