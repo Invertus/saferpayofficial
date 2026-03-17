@@ -233,6 +233,10 @@ class SettingsTranslationService
             'description' => $this->module->l('Description', self::FILE_NAME),
             'enterDescription' => $this->module->l('Enter description', self::FILE_NAME),
             'descriptionHelp' => $this->module->l('This description is visible in payment page also in payment confirmation email.', self::FILE_NAME),
+            'orderReferenceOnPaymentPage' => $this->module->l('Order reference on payment page', self::FILE_NAME),
+            'usePrestaShopOrderReference' => $this->module->l('Use PrestaShop Order reference (default)', self::FILE_NAME),
+            'useDescriptionFieldValue' => $this->module->l('Use Description field value', self::FILE_NAME),
+            'orderReferenceFallbackInfo' => html_entity_decode($this->module->l('When "Use PrestaShop Order reference" is selected and the order is not yet created (e.g. order creation after authorization), the Description field value is used as fallback.', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
             'debugMode' => $this->module->l('Debug mode', self::FILE_NAME),
             'debugModeDescription' => $this->module->l('Enable debug mode to see more information in logs.', self::FILE_NAME),
         ];

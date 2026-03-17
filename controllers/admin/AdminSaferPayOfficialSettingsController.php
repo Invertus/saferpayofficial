@@ -313,6 +313,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $configuration->set(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT, $this->getIntValue($data, 'orderStateAwaitingPayment'));
         $configuration->set(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION, $this->getStringValue($data, 'paymentDescription'));
         $configuration->set(SaferPayConfig::CONFIGURATION_NAME, $this->getStringValue($data, 'configurationName'));
+        $configuration->set(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION, $this->getIntValue($data, 'orderIdOption'));
         $configuration->set(SaferPayConfig::SAFERPAY_DEBUG_MODE, !empty($data['debugMode']) ? 1 : 0);
 
         $this->ajaxResponse(true, $this->module->l('General settings saved successfully', self::FILE_NAME));
@@ -543,6 +544,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'orderStateAwaitingPayment' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
             'paymentDescription' => (string) $configuration->get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION),
             'configurationName' => (string) $configuration->get(SaferPayConfig::CONFIGURATION_NAME),
+            'orderIdOption' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION),
             'debugMode' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_DEBUG_MODE),
 
             // Reference data

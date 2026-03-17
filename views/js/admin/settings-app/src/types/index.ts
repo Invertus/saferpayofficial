@@ -54,6 +54,7 @@ export interface SaferpaySettingsData {
   orderStateAwaitingPayment: number
   paymentDescription: string
   configurationName: string
+  orderIdOption: number
   debugMode: boolean
 
   // Reference data
