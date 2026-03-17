@@ -312,7 +312,18 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         $configuration->set(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT, $this->getIntValue($data, 'orderStateAwaitingPayment'));
         $configuration->set(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION, $this->getStringValue($data, 'paymentDescription'));
-        $configuration->set(SaferPayConfig::CONFIGURATION_NAME, $this->getStringValue($data, 'configurationName'));
+
+        $configurationName = $this->getStringValue($data, 'configurationName');
+        if ($configurationName !== '' && (strlen($configurationName) > 20 || !preg_match('/^[A-Za-z0-9.:\-_]+$/', $configurationName))) {
+            $this->ajaxResponse(false, $this->module->l('Only letters, numbers, dots, colons, hyphens, and underscores are allowed. Max 20 characters.', self::FILE_NAME));
+            return;
+        }
+        $configuration->set(SaferPayConfig::CONFIGURATION_NAME, $configurationName);
+        $hostedFieldsTemplate = $this->getIntValue($data, 'hostedFieldsTemplate');
+        if ($hostedFieldsTemplate < 1 || $hostedFieldsTemplate > 3) {
+            $hostedFieldsTemplate = SaferPayConfig::HOSTED_FIELDS_TEMPLATE_DEFAULT;
+        }
+        $configuration->set(SaferPayConfig::HOSTED_FIELDS_TEMPLATE, $hostedFieldsTemplate);
         $configuration->set(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION, $this->getIntValue($data, 'orderIdOption'));
         $configuration->set(SaferPayConfig::SAFERPAY_DEBUG_MODE, !empty($data['debugMode']) ? 1 : 0);
 
@@ -544,6 +555,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'orderStateAwaitingPayment' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
             'paymentDescription' => (string) $configuration->get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION),
             'configurationName' => (string) $configuration->get(SaferPayConfig::CONFIGURATION_NAME),
+            'hostedFieldsTemplate' => (int) $configuration->get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE),
+            'modulePath' => $this->module->getPathUri(),
             'orderIdOption' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION),
             'debugMode' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_DEBUG_MODE),
 

@@ -72,13 +72,59 @@ export function GeneralSettings() {
             <Input
               id="page-config-name"
               type="text"
+              maxLength={20}
               placeholder={t('enterConfigName')}
               value={settings.configurationName}
-              onChange={(e) => updateSettings({ configurationName: e.target.value })}
+              onChange={(e) => {
+                const cleaned = e.target.value.replace(/[^A-Za-z0-9.:\-_]/g, '')
+                updateSettings({ configurationName: cleaned })
+              }}
             />
             <p className="sp-text-xs sp-text-muted-foreground">
               {t('configNameDescription')}
             </p>
+          </div>
+
+          {/* Hosted field info banner */}
+          <div className="sp-flex sp-items-center sp-justify-center sp-gap-3 sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-5 sp-py-4 sp-mt-4">
+            <Info className="sp-h-5 sp-w-5 sp-text-primary sp-shrink-0" />
+            <p className="sp-text-sm sp-text-foreground sp-m-0">
+              {t('hostedFieldInfo')}
+            </p>
+          </div>
+
+          {/* Hosted field style selector */}
+          <div className="sp-flex sp-gap-6 sp-mt-4">
+            <div className="sp-flex sp-flex-col sp-gap-2 sp-shrink-0">
+              <Label className="sp-text-sm sp-font-medium">{t('hostedFieldStyle')}</Label>
+              <Select
+                value={String(settings.hostedFieldsTemplate)}
+                onValueChange={(val) => updateSettings({ hostedFieldsTemplate: Number(val) })}
+              >
+                <SelectTrigger className="sp-w-[220px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">{t('classicLayout')}</SelectItem>
+                  <SelectItem value="2">{t('labeledLayout')}</SelectItem>
+                  <SelectItem value="3">{t('inlineLayoutWithCard')}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="sp-text-xs sp-text-muted-foreground sp-max-w-[220px]">
+                {t('hostedFieldStyleDescription')}
+              </p>
+            </div>
+            <div className="sp-flex-1 sp-flex sp-items-center sp-justify-center sp-rounded-lg sp-bg-secondary/30 sp-p-4">
+              <img
+                src={`${settings.modulePath}views/img/hosted-templates/template${settings.hostedFieldsTemplate}.jpg`}
+                alt={
+                  settings.hostedFieldsTemplate === 1 ? t('classicLayout') :
+                  settings.hostedFieldsTemplate === 2 ? t('labeledLayout') :
+                  t('inlineLayoutWithCard')
+                }
+                className="sp-max-w-full sp-h-auto sp-rounded"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

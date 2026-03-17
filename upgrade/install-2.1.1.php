@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -20,30 +21,17 @@
  *@license   SIX Payment Services
  */
 
-/* HIDE RADIO */
-[type=radio] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
-/* IMAGE STYLES */
-[type=radio] + img {
-    cursor: pointer;
-}
+function upgrade_module_2_1_1()
+{
+    $tabId = Tab::getIdFromClassName('AdminSaferPayOfficialFields');
+    if ($tabId) {
+        $tab = new Tab($tabId);
+        $tab->delete();
+    }
 
-/* CHECKED STYLES */
-[type=radio]:checked + img {
-    outline: 2px solid #f00;
-}
-
-.field-label {
-    flex: 0 0 23%;
-    margin-bottom:30px !important;
-}
-
-.field-container {
-    display: flex;
-    flex-wrap: wrap;
+    return true;
 }
