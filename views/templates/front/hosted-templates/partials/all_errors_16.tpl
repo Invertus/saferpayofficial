@@ -19,18 +19,18 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  *}
-<div style="display:none" class="alert alert-danger initialize-error" role="alert">
+<div style="display:none" class="alert alert-danger initialize-error" role="alert" aria-live="assertive">
     {include file="./initialize_error.tpl"}
 </div>
 
-<div style="display: none" class="alert alert-danger submission-error" role="alert">
+<div style="display: none" class="alert alert-danger submission-error" role="alert" aria-live="assertive">
     {include file="./submission_error.tpl"}
 </div>
 
-<div style="display:none" class="alert alert-danger internal-error" role="alert">
+<div style="display:none" class="alert alert-danger internal-error" role="alert" aria-live="assertive">
     {include file="./internal_error.tpl"}
 </div>
 
-<div style="display: none" class="alert alert-danger validation-error" role="alert">
+<div style="display: none" class="alert alert-danger validation-error" role="alert" aria-live="assertive">
     {include file="./validation_error.tpl"}
 </div>

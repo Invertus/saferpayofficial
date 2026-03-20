@@ -29,9 +29,11 @@
 {block name='page_content'}
     <div class="card">
         <table class="table">
+            <caption class="sr-only">{l s='Saved credit cards' mod='saferpayofficial'}</caption>
             <thead>
             <tr>
                 <th>
+                    <span class="sr-only">{l s='Card type' mod='saferpayofficial'}</span>
                 </th>
                 <th>
                     {l s='Credit card' mod='saferpayofficial'}
@@ -43,16 +45,18 @@
                     {l s='Valid till' mod='saferpayofficial'}
                 </th>
                 <th>
-                    {l s='Card' mod='saferpayofficial'}
+                    {l s='Card number' mod='saferpayofficial'}
                 </th>
                 <th>
                     {l s='Action' mod='saferpayofficial'}
                 </th>
             </tr>
             </thead>
+            <tbody>
             {foreach $rows as $row}
                 {$row|cleanHtml nofilter}
             {/foreach}
+            </tbody>
         </table>
     </div>
 {/block}

@@ -168,7 +168,7 @@ export function ApiCredentials() {
                   <button
                     type="button"
                     onClick={() => setShowApiPassword(!showApiPassword)}
-                    className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors"
+                    className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors sp-p-1 sp-min-w-[24px] sp-min-h-[24px] sp-flex sp-items-center sp-justify-center"
                     aria-label={showApiPassword ? t('hidePassword') : t('showPassword')}
                   >
                     {showApiPassword ? <EyeOff className="sp-h-4 sp-w-4" /> : <Eye className="sp-h-4 sp-w-4" />}
@@ -330,7 +330,7 @@ export function ApiCredentials() {
       </Card>}
 
       <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={saveCredentials} disabled={saving}>
+        <Button className="sp-min-w-[120px]" onClick={saveCredentials} disabled={saving} aria-label={saving ? t('saving') : undefined}>
           {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>

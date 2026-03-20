@@ -48,7 +48,7 @@ function MultiSelect({
         <button
           type="button"
           className="sp-flex sp-min-h-[36px] sp-w-full sp-items-center sp-justify-between sp-rounded-md sp-border sp-border-border sp-bg-card sp-px-3 sp-py-1.5 sp-text-left sp-text-sm sp-transition-colors hover:sp-bg-secondary/50 focus-visible:sp-outline-none focus-visible:sp-ring-2 focus-visible:sp-ring-ring"
-          aria-label={label}
+          aria-label={selected.length === 0 ? `${label}: ${placeholder}` : `${label}: ${selected.length} ${t('selected')}`}
         >
           {selected.length === 0 ? (
             <span className="sp-text-muted-foreground">{placeholder}</span>
@@ -293,7 +293,7 @@ export function PaymentMethods() {
 
       {paymentMethods.length > 0 && (
         <div className="sp-flex sp-justify-end">
-          <Button className="sp-min-w-[120px]" onClick={savePaymentMethods} disabled={saving}>
+          <Button className="sp-min-w-[120px]" onClick={savePaymentMethods} disabled={saving} aria-label={saving ? t('saving') : undefined}>
             {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
           </Button>
         </div>

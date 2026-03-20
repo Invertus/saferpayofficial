@@ -20,7 +20,8 @@
  *@license   SIX Payment Services
  *}
 <h2>{l s='Awaiting payment status' mod='saferpayofficial'}</h2>
-<div class="saferpay-spinner">
+<div class="saferpay-spinner" role="status" aria-live="polite">
+    <span class="sr-only">{l s='Loading, please wait' mod='saferpayofficial'}</span>
     <div class="rect1"></div>
     <div class="rect2"></div>
     <div class="rect3"></div>

@@ -21,17 +21,44 @@
  */
 
 $(document).ready(function () {
+    function closeModal($modal) {
+        $modal.removeClass('open');
+        var triggerButton = $modal.data('triggerButton');
+        if (triggerButton) {
+            triggerButton.focus();
+        }
+    }
+
     $('.log-modal-overlay').on('click', function (event) {
-        $('.modal.open').removeClass('open');
+        closeModal($(this).closest('.modal'));
         event.preventDefault();
+    });
+
+    $('.js-log-modal-close').on('click', function (event) {
+        closeModal($(this).closest('.modal'));
+        event.preventDefault();
+    });
+
+    $(document).on('keydown', function (event) {
+        if (event.key === 'Escape') {
+            var $openModal = $('.modal.open');
+            if ($openModal.length) {
+                closeModal($openModal);
+                event.preventDefault();
+            }
+        }
     });
 
     $('.js-log-button').on('click', function (event) {
         var logId = $(this).data('log-id');
         var informationType = $(this).data('information-type');
+        var $modal = $('#' + $(this).data('target'));
+
+        $modal.data('triggerButton', $(this));
 
         // NOTE: opening modal
-        $('#' + $(this).data('target')).addClass('open');
+        $modal.addClass('open');
+        $modal.find('.js-log-modal-close').focus();
 
         // NOTE: if information has been set already we don't need to call ajax again.
         if (!$('#log-modal-' + logId + '-' + informationType + ' .log-modal-content-data').hasClass('hidden')) {

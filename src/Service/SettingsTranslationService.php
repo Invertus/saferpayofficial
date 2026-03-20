@@ -85,6 +85,7 @@ class SettingsTranslationService
     {
         return [
             'saveChanges' => $this->module->l('Save Changes', self::FILE_NAME),
+            'saving' => $this->module->l('Saving...', self::FILE_NAME),
             'enable' => $this->module->l('Enable', self::FILE_NAME),
             'disable' => $this->module->l('Disable', self::FILE_NAME),
             'search' => $this->module->l('Search...', self::FILE_NAME),
