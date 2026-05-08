@@ -23,13 +23,3 @@
     display: inline-block;
     margin-left: 10px;
 }
-
-/* WCAG 2.1 AA contrast (white on PS .btn-primary teal is 2.6:1 — fails 4.5:1).
-   Scope override only to our admin form so global PS buttons are untouched. */
-#saferpay-admin-form .btn-primary,
-#saferpay-admin-form .btn-primary:focus,
-#saferpay-admin-form .btn-primary:hover{
-    background-color: #1c7c80;
-    border-color: #1c7c80;
-    color: #fff;
-}
