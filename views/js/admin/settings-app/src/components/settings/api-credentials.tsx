@@ -35,6 +35,7 @@ export function ApiCredentials() {
   const fieldJsUrl = isTest ? settings.testFieldJsUrl : settings.liveFieldJsUrl
 
   const hasCredentials = username.length > 0 && password.length > 0
+  const hasBusinessLicense = isTest ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
 
   const setField = (field: string, value: string | boolean) => {
     updateSettings({ [`${prefix}${field.charAt(0).toUpperCase() + field.slice(1)}`]: value } as Record<string, string | boolean>)
@@ -145,17 +146,23 @@ export function ApiCredentials() {
             {/* Username & Password */}
             <div className="sp-grid sp-gap-5 md:sp-grid-cols-2">
               <div className="sp-flex sp-flex-col sp-gap-2">
-                <Label htmlFor="api-username">{t('jsonApiUsername')}</Label>
+                <Label htmlFor="api-username">
+                  {t('jsonApiUsername')} <span className="sp-text-destructive" aria-hidden="true">*</span>
+                </Label>
                 <Input
                   id="api-username"
                   type="text"
                   placeholder={t('enterApiUsername', envLabel.toLowerCase())}
                   value={username}
                   onChange={(e) => setField('username', e.target.value)}
+                  required
+                  aria-required="true"
                 />
               </div>
               <div className="sp-flex sp-flex-col sp-gap-2">
-                <Label htmlFor="api-password">{t('jsonApiPassword')}</Label>
+                <Label htmlFor="api-password">
+                  {t('jsonApiPassword')} <span className="sp-text-destructive" aria-hidden="true">*</span>
+                </Label>
                 <div className="sp-relative">
                   <Input
                     id="api-password"
@@ -164,6 +171,8 @@ export function ApiCredentials() {
                     value={password}
                     onChange={(e) => setField('password', e.target.value)}
                     className="sp-pr-10"
+                    required
+                    aria-required="true"
                   />
                   <button
                     type="button"
@@ -242,7 +251,7 @@ export function ApiCredentials() {
         </CardContent>
       </Card>
 
-      {settings.hasBusinessLicense && <Card>
+      {hasBusinessLicense && <Card>
         <CardHeader>
           <CardTitle className="sp-text-base sp-font-semibold">{t('saferpayFields')}</CardTitle>
           <CardDescription>{t('saferpayFieldsDescription')}</CardDescription>
@@ -330,7 +339,12 @@ export function ApiCredentials() {
       </Card>}
 
       <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={saveCredentials} disabled={saving} aria-label={saving ? t('saving') : undefined}>
+        <Button
+          className="sp-min-w-[120px]"
+          onClick={saveCredentials}
+          disabled={saving || !hasCredentials || credentialStatus === 'invalid' || credentialStatus === 'checking'}
+          aria-label={saving ? t('saving') : undefined}
+        >
           {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>

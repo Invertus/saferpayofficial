@@ -40,6 +40,7 @@ use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Exception\Restriction\RestrictionException;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -209,8 +210,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         // Auto-detect license features from Saferpay Management API
         $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
-        $licenseMessage = '';
         $hasBusinessLicense = false;
+        $licenseFetchFailed = false;
 
         if (!empty($activeUsername) && !empty($activePassword) && !empty($activeCustomerId)) {
             try {
@@ -227,18 +228,29 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, $hasBusinessLicense ? 1 : 0);
             } catch (\Exception $e) {
                 $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, 0);
+                $licenseFetchFailed = true;
 
-                $licenseMessage = ' ' . $this->module->l('Could not retrieve license information. Please verify your credentials.', self::FILE_NAME);
+                /** @var LoggerInterface $logger */
+                $logger = $this->module->getService(LoggerInterface::class);
+                $logger->error('License fetch failed on credentials save: ' . $e->getMessage(), [
+                    'context' => ['exception_class' => get_class($e)],
+                ]);
             }
         } else {
             $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, 0);
         }
 
+        $message = $licenseFetchFailed
+            ? $this->module->l('Settings saved, but Saferpay Fields availability could not be confirmed. Please try again later or check the module Logs for details.', self::FILE_NAME)
+            : $this->module->l('Settings saved successfully.', self::FILE_NAME);
+
         $this->ajaxResponse(
             true,
-            $this->module->l('Settings saved successfully.', self::FILE_NAME) . $licenseMessage,
+            $message,
             [
-                'hasBusinessLicense' => $hasBusinessLicense,
+                'testHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX),
+                'liveHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE),
+                'warning' => $licenseFetchFailed,
             ]
         );
     }
@@ -534,8 +546,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'liveFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN),
             'liveFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY),
 
-            // License (auto-detected)
-            'hasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix()),
+            // License (auto-detected, per environment)
+            'testHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX),
+            'liveHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE),
 
             // Payment Processing
             'paymentBehavior' => (int) $configuration->get(SaferPayConfig::PAYMENT_BEHAVIOR),
