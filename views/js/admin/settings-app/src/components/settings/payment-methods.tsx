@@ -243,6 +243,7 @@ export function PaymentMethods() {
                       <Switch
                         checked={method.showLogos}
                         onCheckedChange={(checked) => updatePaymentMethod(method.name, { showLogos: checked })}
+                        aria-label={`${t('logos')} ${method.displayName}`}
                       />
                     </div>
                     {method.hasCustomForm && (
@@ -251,6 +252,7 @@ export function PaymentMethods() {
                         <Switch
                           checked={method.showCustomForm}
                           onCheckedChange={(checked) => updatePaymentMethod(method.name, { showCustomForm: checked })}
+                          aria-label={`${t('customForm')} ${method.displayName}`}
                         />
                       </div>
                     )}
