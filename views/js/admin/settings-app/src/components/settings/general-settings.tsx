@@ -101,7 +101,7 @@ export function GeneralSettings() {
                 value={String(settings.hostedFieldsTemplate)}
                 onValueChange={(val) => updateSettings({ hostedFieldsTemplate: Number(val) })}
               >
-                <SelectTrigger className="sp-w-[220px]">
+                <SelectTrigger className="sp-w-[220px]" aria-label={t('hostedFieldStyle')}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
