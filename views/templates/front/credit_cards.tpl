@@ -32,22 +32,22 @@
             <caption class="sr-only">{l s='Saved credit cards' mod='saferpayofficial'}</caption>
             <thead>
             <tr>
-                <th>
+                <th scope="col">
                     <span class="sr-only">{l s='Card type' mod='saferpayofficial'}</span>
                 </th>
-                <th>
+                <th scope="col">
                     {l s='Credit card' mod='saferpayofficial'}
                 </th>
-                <th>
+                <th scope="col">
                     {l s='Added date' mod='saferpayofficial'}
                 </th>
-                <th>
+                <th scope="col">
                     {l s='Valid till' mod='saferpayofficial'}
                 </th>
-                <th>
+                <th scope="col">
                     {l s='Card number' mod='saferpayofficial'}
                 </th>
-                <th>
+                <th scope="col">
                     {l s='Action' mod='saferpayofficial'}
                 </th>
             </tr>
