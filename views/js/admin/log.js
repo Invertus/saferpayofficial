@@ -40,10 +40,31 @@ $(document).ready(function () {
     });
 
     $(document).on('keydown', function (event) {
+        var $openModal = $('.modal.open');
+        if (!$openModal.length) {
+            return;
+        }
         if (event.key === 'Escape') {
-            var $openModal = $('.modal.open');
-            if ($openModal.length) {
-                closeModal($openModal);
+            closeModal($openModal);
+            event.preventDefault();
+            return;
+        }
+        if (event.key === 'Tab') {
+            var focusables = $openModal.find('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])').filter(':visible');
+            if (!focusables.length) {
+                event.preventDefault();
+                return;
+            }
+            var first = focusables.first()[0];
+            var last = focusables.last()[0];
+            if (event.shiftKey && document.activeElement === first) {
+                last.focus();
+                event.preventDefault();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                first.focus();
+                event.preventDefault();
+            } else if (!$openModal[0].contains(document.activeElement)) {
+                first.focus();
                 event.preventDefault();
             }
         }
