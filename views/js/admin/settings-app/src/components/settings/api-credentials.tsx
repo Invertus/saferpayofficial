@@ -185,7 +185,7 @@ export function ApiCredentials() {
               </div>
             )}
             {credentialStatus === 'valid' && (
-              <div className="sp-flex sp-items-center sp-gap-2 sp-text-sm sp-text-emerald-600">
+              <div className="sp-flex sp-items-center sp-gap-2 sp-text-sm sp-text-emerald-700">
                 <CheckCircle2 className="sp-h-4 sp-w-4" />
                 {t('credentialsValid')}
               </div>
@@ -250,12 +250,12 @@ export function ApiCredentials() {
         <CardContent>
           <div className="sp-grid sp-gap-5">
             <div className="sp-flex sp-items-center sp-gap-3 sp-rounded-lg sp-bg-emerald-50 sp-border sp-border-emerald-200 sp-px-4 sp-py-3">
-              <CheckCircle2 className="sp-h-5 sp-w-5 sp-shrink-0 sp-text-emerald-600" />
+              <CheckCircle2 className="sp-h-5 sp-w-5 sp-shrink-0 sp-text-emerald-700" />
               <div className="sp-flex sp-flex-col sp-gap-0.5">
                 <p className="sp-mb-0 sp-text-sm sp-font-medium sp-text-emerald-800">
                   {t('saferpayFieldsIncluded')}
                 </p>
-                <p className="sp-mb-0 sp-text-xs sp-text-emerald-600">
+                <p className="sp-mb-0 sp-text-xs sp-text-emerald-700">
                   {t('saferpayFieldsIncludedDescription')}
                 </p>
               </div>
