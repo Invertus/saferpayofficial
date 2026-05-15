@@ -144,11 +144,29 @@ e2eh1786: test-e2e-headless-1786
 test-e2e-headless-1786:
 	make e2e1786p
 
+build-react:
+	cd views/js/admin/settings-app && pnpm install && pnpm run build
+
+# target: dev-react			- Start React dev server with HMR
+dev-react:
+	cd views/js/admin/settings-app && pnpm dev
+
+# target: watch-react			- Build React app and watch for changes
+watch-react:
+	cd views/js/admin/settings-app && pnpm run build --watch
+
+# target: lint-react			- Run TypeScript type check
+lint-react:
+	cd views/js/admin/settings-app && pnpm run tsc --noEmit
+
 prepare-zip:
 	rm -rf vendor && \
 	composer install --no-dev --optimize-autoloader && \
 	cp .github/.htaccess vendor/.htaccess && \
+	cd views/js/admin/settings-app && pnpm install && pnpm run build && cd ../../../.. && \
 	rm -rf .git .github tests cypress .docker && \
+	rm -rf views/js/admin/settings-app/node_modules && \
+	rm -rf views/js/admin/settings-app/src && \
 	mkdir saferpayofficial && \
 	rsync -Rr ./ ./saferpayofficial && \
 	find . -maxdepth 1 ! -name saferpayofficial -exec mv {} saferpayofficial/ \; && \

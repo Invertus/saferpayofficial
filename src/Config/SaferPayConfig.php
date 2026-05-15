@@ -276,6 +276,9 @@ class SaferPayConfig
 
     const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
+    const PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE = 2;
+
+    const SAFERPAY_ORDER_ID_OPTION = 'SAFERPAY_ORDER_ID_OPTION';
 
     const SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE = 'MANDATORY';
     const SAFERPAY_DEBUG_MODE = 'SAFERPAY_DEBUG_MODE';
@@ -433,12 +436,13 @@ class SaferPayConfig
             RequestHeader::SPEC_REFUND_VERSION => SaferPayConfig::API_VERSION,
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
-            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
+            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 0,
             SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => 1,
             SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION => self::SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE,
             SaferPayConfig::FIELDS_LIBRARY => self::FIELDS_LIBRARY_DEFAULT_VALUE,
             SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => self::FIELDS_LIBRARY_TEST_DEFAULT_VALUE,
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => 0,
+            self::SAFERPAY_ORDER_ID_OPTION => 0,
             self::TEST_MODE => 1,
             self::HOSTED_FIELDS_TEMPLATE => self::HOSTED_FIELDS_TEMPLATE_DEFAULT,
             self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => (int) Configuration::get(
@@ -479,6 +483,7 @@ class SaferPayConfig
             self::FIELDS_LIBRARY,
             self::FIELDS_LIBRARY . self::TEST_SUFFIX,
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION,
+            self::SAFERPAY_ORDER_ID_OPTION,
             self::SAFERPAY_SEND_ORDER_CONF_MAIL,
             self::SAFERPAY_GROUP_CARDS,
         ];

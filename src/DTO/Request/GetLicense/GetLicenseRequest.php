@@ -1,3 +1,4 @@
+<?php
 /**
  *NOTICE OF LICENSE
  *
@@ -20,30 +21,42 @@
  *@license   SIX Payment Services
  */
 
-/* HIDE RADIO */
-[type=radio] {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
+namespace Invertus\SaferPay\DTO\Request\GetLicense;
+
+if (!defined('_PS_VERSION_')) {
+    exit;
 }
 
-/* IMAGE STYLES */
-[type=radio] + img {
-    cursor: pointer;
-}
+class GetLicenseRequest
+{
+    /** @var string */
+    private $customerId;
 
-/* CHECKED STYLES */
-[type=radio]:checked + img {
-    outline: 2px solid #f00;
-}
+    /**
+     * @param string $customerId
+     */
+    public function __construct($customerId)
+    {
+        if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $customerId)) {
+            throw new \InvalidArgumentException('Invalid customer ID format');
+        }
 
-.field-label {
-    flex: 0 0 23%;
-    margin-bottom:30px !important;
-}
+        $this->customerId = $customerId;
+    }
 
-.field-container {
-    display: flex;
-    flex-wrap: wrap;
+    /**
+     * @return string
+     */
+    public function generateRequestUrl()
+    {
+        return sprintf('rest/customers/%s/license', $this->customerId);
+    }
+
+    /**
+     * @return string
+     */
+    public function generateFallbackRequestUrl()
+    {
+        return sprintf('rest/customers/%s/license-configuration', $this->customerId);
+    }
 }
