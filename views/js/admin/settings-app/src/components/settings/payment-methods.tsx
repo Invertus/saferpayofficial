@@ -31,15 +31,28 @@ function MultiSelect({
     [options, search],
   )
 
+  const ALL_VALUE = 0
+
+  const validSelected = useMemo(
+    () => selected.filter((s) => s !== ALL_VALUE && options.some((o) => o.id === s)),
+    [selected, options],
+  )
+
+  const isAll = selected.includes(ALL_VALUE) || validSelected.length === 0
+
   const toggle = useCallback(
     (value: number) => {
-      onChange(
-        selected.includes(value)
-          ? selected.filter((s) => s !== value)
-          : [...selected, value],
-      )
+      if (value === ALL_VALUE) {
+        onChange([ALL_VALUE])
+        return
+      }
+      const base = isAll ? [] : validSelected
+      const next = base.includes(value)
+        ? base.filter((s) => s !== value)
+        : [...base, value]
+      onChange(next.length === 0 ? [ALL_VALUE] : next)
     },
-    [selected, onChange],
+    [validSelected, isAll, onChange],
   )
 
   return (
@@ -48,14 +61,18 @@ function MultiSelect({
         <button
           type="button"
           className="sp-flex sp-min-h-[36px] sp-w-full sp-items-center sp-justify-between sp-rounded-md sp-border sp-border-border sp-bg-card sp-px-3 sp-py-1.5 sp-text-left sp-text-sm sp-transition-colors hover:sp-bg-secondary/50 focus-visible:sp-outline-none focus-visible:sp-ring-2 focus-visible:sp-ring-ring"
-          aria-label={selected.length === 0 ? `${label}: ${placeholder}` : `${label}: ${selected.length} ${t('selected')}`}
+          aria-label={isAll ? `${label}: ${placeholder.replace(/^Select\s+/i, 'All ')}` : validSelected.length === 0 ? `${label}: ${placeholder}` : `${label}: ${validSelected.length} ${t('selected')}`}
         >
-          {selected.length === 0 ? (
+          {isAll ? (
+            <Badge variant="secondary" className="sp-text-xs sp-font-normal">
+              {placeholder.replace(/^Select\s+/i, 'All ')}
+            </Badge>
+          ) : validSelected.length === 0 ? (
             <span className="sp-text-muted-foreground">{placeholder}</span>
           ) : (
             <span className="sp-flex sp-flex-wrap sp-gap-1">
-              {selected.length <= 2 ? (
-                selected.map((s) => {
+              {validSelected.length <= 2 ? (
+                validSelected.map((s) => {
                   const opt = options.find((o) => o.id === s)
                   return (
                     <Badge key={s} variant="secondary" className="sp-text-xs sp-font-normal">
@@ -65,7 +82,7 @@ function MultiSelect({
                 })
               ) : (
                 <Badge variant="secondary" className="sp-text-xs sp-font-normal">
-                  {selected.length} {t('selected')}
+                  {validSelected.length} {t('selected')}
                 </Badge>
               )}
             </span>
@@ -92,7 +109,7 @@ function MultiSelect({
               className="sp-flex sp-cursor-pointer sp-items-center sp-gap-2 sp-rounded-sm sp-px-2 sp-py-1.5 sp-text-sm hover:sp-bg-accent"
             >
               <Checkbox
-                checked={selected.includes(option.id)}
+                checked={option.id === ALL_VALUE ? isAll : validSelected.includes(option.id)}
                 onCheckedChange={() => toggle(option.id)}
               />
               <span className="sp-text-sm">{option.name}</span>
@@ -104,11 +121,11 @@ function MultiSelect({
             </p>
           )}
         </div>
-        {selected.length > 0 && (
+        {validSelected.length > 0 && (
           <div className="sp-border-t sp-p-2">
             <button
               type="button"
-              onClick={() => onChange([])}
+              onClick={() => onChange([ALL_VALUE])}
               className="sp-w-full sp-rounded-sm sp-px-2 sp-py-1 sp-text-xs sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors"
             >
               {t('clearAll')}
