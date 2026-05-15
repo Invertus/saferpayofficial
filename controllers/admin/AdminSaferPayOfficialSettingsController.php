@@ -390,6 +390,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 $countries = isset($method['countries']) ? $method['countries'] : [];
                 $currencies = isset($method['currencies']) ? $method['currencies'] : [];
 
+                if (empty($countries)) {
+                    $countries = [SaferPayRestrictionCreator::RESTRICTION_ALL];
+                }
+                if (empty($currencies)) {
+                    $currencies = [SaferPayRestrictionCreator::RESTRICTION_ALL];
+                }
+
                 $success = $restrictionCreator->updateRestriction(
                     $paymentName,
                     SaferPayRestrictionCreator::RESTRICTION_COUNTRY,
