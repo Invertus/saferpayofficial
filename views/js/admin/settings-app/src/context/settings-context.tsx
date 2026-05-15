@@ -48,7 +48,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const handleSave = useCallback(async (
-    saveFn: () => Promise<{ success: boolean; message?: string }>,
+    saveFn: () => Promise<{ success: boolean; message?: string; warning?: boolean }>,
     label: string,
     section: SavingSection,
   ) => {
@@ -56,7 +56,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await saveFn()
       if (result.success) {
-        toast({ title: result.message || t('savedSuccessfully', label), variant: 'default' })
+        const variant = result.warning ? 'warning' : 'default'
+        toast({ title: result.message || t('savedSuccessfully', label), variant })
       } else {
         toast({ title: result.message || t('failedToSave', label), variant: 'destructive' })
       }
@@ -91,10 +92,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         liveFieldJsUrl: currentSettings.liveFieldJsUrl,
       })
       const data = result as unknown as Record<string, unknown>
-      if (result.success && typeof data.hasBusinessLicense === 'boolean') {
-        setSettings((prev) => ({ ...prev, hasBusinessLicense: data.hasBusinessLicense as boolean }))
+      if (result.success) {
+        setSettings((prev) => ({
+          ...prev,
+          ...(typeof data.testHasBusinessLicense === 'boolean' ? { testHasBusinessLicense: data.testHasBusinessLicense as boolean } : {}),
+          ...(typeof data.liveHasBusinessLicense === 'boolean' ? { liveHasBusinessLicense: data.liveHasBusinessLicense as boolean } : {}),
+        }))
       }
-      return result
+      return { ...result, warning: data.warning === true }
     }, 'API Credentials', 'credentials')
   }, [handleSave])
 

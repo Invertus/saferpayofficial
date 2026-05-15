@@ -35,6 +35,7 @@ export function ApiCredentials() {
   const fieldJsUrl = isTest ? settings.testFieldJsUrl : settings.liveFieldJsUrl
 
   const hasCredentials = username.length > 0 && password.length > 0
+  const hasBusinessLicense = isTest ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
 
   const setField = (field: string, value: string | boolean) => {
     updateSettings({ [`${prefix}${field.charAt(0).toUpperCase() + field.slice(1)}`]: value } as Record<string, string | boolean>)
@@ -250,7 +251,7 @@ export function ApiCredentials() {
         </CardContent>
       </Card>
 
-      {settings.hasBusinessLicense && <Card>
+      {hasBusinessLicense && <Card>
         <CardHeader>
           <CardTitle className="sp-text-base sp-font-semibold">{t('saferpayFields')}</CardTitle>
           <CardDescription>{t('saferpayFieldsDescription')}</CardDescription>
