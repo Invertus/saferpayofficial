@@ -37,6 +37,13 @@ export function ApiCredentials() {
   const hasCredentials = username.length > 0 && password.length > 0
   const hasBusinessLicense = isTest ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
 
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const invalidEmails = merchantEmails
+    .split(',')
+    .map(e => e.trim())
+    .filter(e => e.length > 0 && !EMAIL_RE.test(e))
+  const merchantEmailsInvalid = invalidEmails.length > 0
+
   const setField = (field: string, value: string | boolean) => {
     updateSettings({ [`${prefix}${field.charAt(0).toUpperCase() + field.slice(1)}`]: value } as Record<string, string | boolean>)
   }
@@ -242,7 +249,14 @@ export function ApiCredentials() {
                 placeholder={t('enterMerchantEmails')}
                 value={merchantEmails}
                 onChange={(e) => setField('merchantEmails', e.target.value)}
+                aria-invalid={merchantEmailsInvalid}
+                className={merchantEmailsInvalid ? 'sp-border-destructive focus-visible:sp-ring-destructive' : ''}
               />
+              {merchantEmailsInvalid && (
+                <p className="sp-text-xs sp-text-destructive">
+                  {t('invalidMerchantEmails')}: {invalidEmails.join(', ')}
+                </p>
+              )}
               <p className="sp-text-xs sp-text-muted-foreground">
                 {t('separateEmails')}
               </p>
@@ -342,7 +356,7 @@ export function ApiCredentials() {
         <Button
           className="sp-min-w-[120px]"
           onClick={saveCredentials}
-          disabled={saving || !hasCredentials || credentialStatus === 'invalid' || credentialStatus === 'checking'}
+          disabled={saving || !hasCredentials || credentialStatus === 'invalid' || credentialStatus === 'checking' || merchantEmailsInvalid}
           aria-label={saving ? t('saving') : undefined}
         >
           {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}

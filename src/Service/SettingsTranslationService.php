@@ -122,6 +122,7 @@ class SettingsTranslationService
             'merchantEmails' => $this->module->l('Merchant Emails', self::FILE_NAME),
             'enterMerchantEmails' => $this->module->l('Enter merchant email addresses (comma-separated)', self::FILE_NAME),
             'separateEmails' => $this->module->l('These email addresses receive payment notification emails directly from SaferPay. Separate multiple email addresses with commas.', self::FILE_NAME),
+            'invalidMerchantEmails' => $this->module->l('Invalid email address', self::FILE_NAME),
             'saferpayFields' => $this->module->l('Saferpay Fields', self::FILE_NAME),
             'saferpayFieldsDescription' => $this->module->l('Configure Saferpay Fields for inline payment form integration.', self::FILE_NAME),
             'fieldAccessTokenInfo' => $this->module->l('Saferpay Field Access Token can be found in Saferpay Backoffice, navigate to', self::FILE_NAME),
