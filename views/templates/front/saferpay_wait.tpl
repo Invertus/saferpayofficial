@@ -99,7 +99,7 @@
                 try {
                     var data = JSON.parse(request.responseText);
                     if (data.isFinished && data.href) {
-                        window.location.href = data.href;
+                        (window.top || window).location.href = data.href;
                         return;
                     }
                 } catch (e) {
