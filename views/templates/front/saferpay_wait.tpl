@@ -99,7 +99,11 @@
                 try {
                     var data = JSON.parse(request.responseText);
                     if (data.isFinished && data.href) {
-                        window.location.href = data.href;
+                        try {
+                            (window.top || window).location.replace(data.href);
+                        } catch (e) {
+                            window.location.replace(data.href);
+                        }
                         return;
                     }
                 } catch (e) {
