@@ -197,3 +197,4 @@
 - Remove WL Crypto payment method
 - Added setting to toggle order confirmation email sending
 - Added feature to group card payment methods into unified "Card" payment method
+- Fixed issue when customer was redirected to order history instead of cart after aborting a Saferpay transaction
