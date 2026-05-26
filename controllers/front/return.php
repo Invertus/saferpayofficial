@@ -341,7 +341,15 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
             if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL) {
                 $orderStatusService->cancel($order);
-            } elseif ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE
+
+                return;
+            }
+
+            if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE) {
+                return;
+            }
+
+            if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE
                 && SaferPayConfig::supportsOrderCapture($order->payment)
                 && $transactionStatus !== TransactionStatus::CAPTURED
             ) {
