@@ -199,3 +199,4 @@
 - Added feature to group card payment methods into unified "Card" payment method
 - Fixed issue when newly enabled payment methods did not appear in checkout because default "all countries/currencies" restriction was not created on save
 - Fixed issue when payment method country/currency dropdowns showed "0" instead of indicating that all countries/currencies are allowed
+- BO : Added validation for Merchant Emails field (frontend + backend) to prevent saving invalid addresses
