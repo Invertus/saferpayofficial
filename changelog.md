@@ -199,16 +199,7 @@
 - Added feature to group card payment methods into unified "Card" payment method
 
 ## [2.0.3]
-- Added Capture option to 3D Secure failure behavior setting
-- Added accessibility improvements for EAA compliance
-- Added "Card" payment method grouping toggle and dynamic terminal selection
-- Increased SaferPay API version to 1.50 and added new payment method, removed deprecated one
-- Improved settings UX: disabled Save when API credentials are empty or invalid, moved Hosted Field style to General settings with a clarified info banner, added validation for ConfigSet fields, dropdowns now show "All" instead of 0 for default country/currency restrictions
-- Improved logs: license fetch failures now produce an honest warning toast on save instead of a silent error
-- Fixed SaferPay Fields visibility per active environment licence
-- Fixed iframe redirect on payment status to break out of the SaferPay iframe to the top window
-- Fixed redirect to cart (instead of order history) after a SaferPay transaction abort
-- Fixed undefined countryOptions error on the payment method admin page
-- Fixed gift card handling
-- Removed unnecessary inputs from admin settings
-- Optimized database performance and overall module stability
+- Optimized database performance
+- Dynamic termimal selection
+- Removed uneccesary inputs from admin settings
+- Checked overall module stability
