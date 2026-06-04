@@ -20,6 +20,25 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: views/js/admin/settings-app/pnpm-lock.yaml
+
+      - name: Build React settings app
+        run: |
+          cd views/js/admin/settings-app
+          pnpm install --frozen-lockfile
+          pnpm run build
+          rm -rf node_modules src
+
       - name: Build module ZIP
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
