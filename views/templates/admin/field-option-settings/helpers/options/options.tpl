@@ -27,11 +27,11 @@
         <div class="col-lg-5">
             <input
                     type="password"
-                    {if isset($field['id'])} id="{$field['id']}"{/if}
-                    class="{if isset($field['class'])}{$field['class']}{/if}"
+                    {if isset($field['id'])} id="{$field['id']|escape:'htmlall':'UTF-8'}"{/if}
+                    class="{if isset($field['class'])}{$field['class']|escape:'htmlall':'UTF-8'}{/if}"
                     size="{if isset($field['size'])}{$field['size']|intval}{else}5{/if}"
-                    name="{$key}"
-                    value="{$field['value']}"
+                    name="{$key|escape:'htmlall':'UTF-8'}"
+                    value="{$field['value']|escape:'htmlall':'UTF-8'}"
                     {if isset($field['autocomplete']) && !$field['autocomplete']} autocomplete="off"{/if} />
         </div>
     {/if}
@@ -66,5 +66,11 @@
             {/foreach}
         </div>
 
+    {/if}
+
+    {if $field['type'] == 'terminal_selector'}
+        <div class="col-lg-5">
+            {include file="../../../partials/field-terminal-id.tpl"}
+        </div>
     {/if}
 {/block}

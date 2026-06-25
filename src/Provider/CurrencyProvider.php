@@ -30,7 +30,10 @@ if (!defined('_PS_VERSION_')) {
 }
 class CurrencyProvider
 {
-    public function getAllCurrenciesInArray()
+    /**
+     * @return array
+     */
+    public function getAllCurrenciesInArray(): array
     {
         $currencies = [];
         

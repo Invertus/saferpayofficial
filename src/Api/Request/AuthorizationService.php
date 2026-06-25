@@ -73,7 +73,12 @@ class AuthorizationService
         $this->aliasBuilder = $aliasBuilder;
     }
 
-    public function authorize(AuthorizationRequest $authorizationRequest)
+    /**
+     * @param AuthorizationRequest $authorizationRequest
+     * @return \stdClass|null
+     * @throws SaferPayApiException
+     */
+    public function authorize(AuthorizationRequest $authorizationRequest): ?\stdClass
     {
         try {
             return $this->apiRequest->post(
@@ -95,11 +100,11 @@ class AuthorizationService
      * @throws Exception
      */
     public function createObjectsFromAuthorizationResponse(
-        $responseBody,
-        $saferPayOrderId,
-        $customerId,
-        $selectedCardOption
-    ) {
+        array $responseBody,
+        int $saferPayOrderId,
+        int $customerId,
+        int $selectedCardOption
+    ): AssertBody {
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
         $isPaymentSafe = $assertBody->getLiability()->getLiabilityShift();

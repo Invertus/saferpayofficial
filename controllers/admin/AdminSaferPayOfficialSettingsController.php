@@ -24,6 +24,8 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 use Invertus\SaferPay\Adapter\Configuration;
+use Invertus\SaferPay\Service\SaferPayTerminalService;
+use Invertus\SaferPay\Logger\LoggerInterface;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -75,7 +77,69 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             $this->errors[] = $this->module->l('Field Access Token is required to use business license');
         }
 
+        $this->validateTerminalId();
+
         return true;
+    }
+
+    private function validateTerminalId()
+    {
+        try {
+            /** @var Configuration $configuration */
+            $configuration = $this->module->getService(Configuration::class);
+
+            $suffix = SaferPayConfig::getConfigSuffix();
+
+            $terminalId = Tools::getValue(SaferPayConfig::TERMINAL_ID . $suffix);
+            $customerId = Tools::getValue(SaferPayConfig::CUSTOMER_ID . $suffix)
+                ?: $configuration->get(SaferPayConfig::CUSTOMER_ID . $suffix);
+            $username = Tools::getValue(SaferPayConfig::USERNAME . $suffix)
+                ?: $configuration->get(SaferPayConfig::USERNAME . $suffix);
+            $password = Tools::getValue(SaferPayConfig::PASSWORD . $suffix)
+                ?: $configuration->get(SaferPayConfig::PASSWORD . $suffix);
+
+            if (empty($terminalId) || empty($customerId) || empty($username) || empty($password)) {
+                return;
+            }
+
+            $originalCustomerId = \Configuration::get(SaferPayConfig::CUSTOMER_ID . $suffix);
+            $originalUsername = \Configuration::get(SaferPayConfig::USERNAME . $suffix);
+            $originalPassword = \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
+
+            try {
+                \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $customerId);
+                \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $username);
+                \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $password);
+
+                /** @var SaferPayTerminalService $terminalService */
+                $terminalService = $this->module->getService(SaferPayTerminalService::class);
+
+                $terminals = $terminalService->getAvailableTerminals();
+
+                $isValid = false;
+                foreach ($terminals as $terminal) {
+                    if ($terminal['TerminalId'] === $terminalId) {
+                        $isValid = true;
+                        break;
+                    }
+                }
+
+                if (!$isValid && !empty($terminals)) {
+                    $this->warnings[] = $this->module->l('Warning: The Terminal ID you entered was not found in the list of available terminals. Please verify the Terminal ID is correct.');
+                }
+            } finally {
+                \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $originalCustomerId);
+                \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $originalUsername);
+                \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $originalPassword);
+            }
+        } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - Failed to validate terminal ID: %s', self::FILE_NAME, $e->getMessage()), [
+                'context' => [],
+                'exception' => $e,
+            ]);
+        }
     }
 
     public function initOptions()
@@ -102,6 +166,57 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         parent::setMedia($isNewTheme);
 
         $this->addJS('modules/' . $this->module->name . '/views/js/admin/saferpay_settings.js');
+    }
+
+    /**
+     * @param string $environment 'test' or 'live'
+     * @return array
+     */
+    private function getTerminalsForEnvironment($environment = 'live')
+    {
+        $suffix = ($environment === 'test') ? SaferPayConfig::TEST_SUFFIX : '';
+
+        $customerId = Tools::getValue(SaferPayConfig::CUSTOMER_ID . $suffix)
+            ?: \Configuration::get(SaferPayConfig::CUSTOMER_ID . $suffix);
+        $username = Tools::getValue(SaferPayConfig::USERNAME . $suffix)
+            ?: \Configuration::get(SaferPayConfig::USERNAME . $suffix);
+        $password = Tools::getValue(SaferPayConfig::PASSWORD . $suffix)
+            ?: \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
+
+        if (empty($customerId) || empty($username) || empty($password)) {
+            return [];
+        }
+
+        $originalCustomerId = \Configuration::get(SaferPayConfig::CUSTOMER_ID . $suffix);
+        $originalUsername = \Configuration::get(SaferPayConfig::USERNAME . $suffix);
+        $originalPassword = \Configuration::get(SaferPayConfig::PASSWORD . $suffix);
+        $originalTestMode = \Configuration::get(SaferPayConfig::TEST_MODE);
+
+        try {
+            \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $customerId);
+            \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $username);
+            \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $password);
+            \Configuration::updateValue(SaferPayConfig::TEST_MODE, $environment === 'test' ? 1 : 0);
+
+            /** @var SaferPayTerminalService $terminalService */
+            $terminalService = $this->module->getService(SaferPayTerminalService::class);
+            $terminals = $terminalService->getAvailableTerminals($customerId);
+
+            return $terminals;
+        } catch (Exception $e) {
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error(sprintf('%s - Failed to get terminals: %s', self::FILE_NAME, $e->getMessage()), [
+                'context' => [],
+                'exception' => $e,
+            ]);
+            return [];
+        } finally {
+            \Configuration::updateValue(SaferPayConfig::CUSTOMER_ID . $suffix, $originalCustomerId);
+            \Configuration::updateValue(SaferPayConfig::USERNAME . $suffix, $originalUsername);
+            \Configuration::updateValue(SaferPayConfig::PASSWORD . $suffix, $originalPassword);
+            \Configuration::updateValue(SaferPayConfig::TEST_MODE, $originalTestMode);
+        }
     }
 
     /**
@@ -384,8 +499,11 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ],
                 SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX => [
                     'title' => $this->module->l('Terminal ID'),
-                    'type' => 'text',
+                    'type' => 'terminal_selector',
                     'class' => 'fixed-width-xl',
+                    'value' => \Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX),
+                    'environment' => 'test',
+                    'terminals' => $this->getTerminalsForEnvironment('test'),
                 ],
                 SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX => [
                     'title' => $this->module->l('Merchant emails'),
@@ -399,16 +517,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ],
                 SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX => [
                     'title' => $this->module->l('Field Access Token'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-javascript-library-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX => [
-                    'title' => $this->module->l('Field Javascript library url'),
                     'type' => 'text',
                     'class' => 'fixed-width-xxl',
                 ],
@@ -459,8 +567,11 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ],
                 SaferPayConfig::TERMINAL_ID => [
                     'title' => $this->module->l('Terminal ID'),
-                    'type' => 'text',
+                    'type' => 'terminal_selector',
                     'class' => 'fixed-width-xl',
+                    'value' => \Configuration::get(SaferPayConfig::TERMINAL_ID),
+                    'environment' => 'live',
+                    'terminals' => $this->getTerminalsForEnvironment('live'),
                 ],
                 SaferPayConfig::MERCHANT_EMAILS => [
                     'title' => $this->module->l('Merchant emails'),
@@ -474,16 +585,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ],
                 SaferPayConfig::FIELDS_ACCESS_TOKEN => [
                     'title' => $this->module->l('Field Access Token'),
-                    'type' => 'text',
-                    'class' => 'fixed-width-xxl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY . '_description' => [
-                    'type' => 'desc',
-                    'class' => 'col-lg-12',
-                    'template' => 'field-javascript-library-desc.tpl',
-                ],
-                SaferPayConfig::FIELDS_LIBRARY => [
-                    'title' => $this->module->l('Field Javascript library url'),
                     'type' => 'text',
                     'class' => 'fixed-width-xxl',
                 ],

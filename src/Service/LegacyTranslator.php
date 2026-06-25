@@ -45,12 +45,19 @@ class LegacyTranslator implements TranslatorInterface
         $this->module = $module->getModule();
     }
 
-    public function translate($key)
+    /**
+     * @param string $key
+     * @return string
+     */
+    public function translate(string $key): string
     {
         return isset($this->getTranslations()[$key]) ? $this->getTranslations()[$key] : $key;
     }
 
-    private function getTranslations()
+    /**
+     * @return array
+     */
+    private function getTranslations(): array
     {
         return [
             SaferPayConfig::PAYMENT_ALIPAY => $this->module->l('Alipay', self::FILE_NAME),
@@ -60,17 +67,14 @@ class LegacyTranslator implements TranslatorInterface
             SaferPayConfig::PAYMENT_DIRECTDEBIT => $this->module->l('Directdebit', self::FILE_NAME),
             SaferPayConfig::PAYMENT_EPRZELEWY => $this->module->l('Eprzelewy', self::FILE_NAME),
             SaferPayConfig::PAYMENT_EPS => $this->module->l('Eps', self::FILE_NAME),
-            SaferPayConfig::PAYMENT_GIROPAY => $this->module->l('Giropay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_IDEAL => $this->module->l('Ideal', self::FILE_NAME),
             SaferPayConfig::PAYMENT_INVOICE => $this->module->l('Invoice', self::FILE_NAME),
             SaferPayConfig::PAYMENT_JCB => $this->module->l('Jcb', self::FILE_NAME),
             SaferPayConfig::PAYMENT_MAESTRO => $this->module->l('Maestro', self::FILE_NAME),
             SaferPayConfig::PAYMENT_MASTERCARD => $this->module->l('Mastercard', self::FILE_NAME),
             SaferPayConfig::PAYMENT_MYONE => $this->module->l('Myone', self::FILE_NAME),
-            SaferPayConfig::PAYMENT_PAYDIREKT => $this->module->l('Paydirect', self::FILE_NAME),
             SaferPayConfig::PAYMENT_POSTCARD => $this->module->l('Postcard', self::FILE_NAME),
             SaferPayConfig::PAYMENT_POSTFINANCE => $this->module->l('Postfinance', self::FILE_NAME),
-            SaferPayConfig::PAYMENT_SOFORT => $this->module->l('Sofort', self::FILE_NAME),
             SaferPayConfig::PAYMENT_TWINT => $this->module->l('Twint', self::FILE_NAME),
             SaferPayConfig::PAYMENT_VISA => $this->module->l('Visa', self::FILE_NAME),
             SaferPayConfig::PAYMENT_VPAY => $this->module->l('Vpay', self::FILE_NAME),
@@ -85,6 +89,8 @@ class LegacyTranslator implements TranslatorInterface
             SaferPayConfig::PAYMENT_GOOGLEPAY => $this->module->l('Googlepay'),
             SaferPayConfig::PAYMENT_CLICKTOPAY => $this->module->l('Clicktopay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_REKA => $this->module->l('Reka', self::FILE_NAME),
+            SaferPayConfig::PAYMENT_WERO => $this->module->l('Wero', self::FILE_NAME),
+            SaferPayConfig::PAYMENT_GIFTCARD => $this->module->l('Giftcard', self::FILE_NAME),
         ];
     }
 }

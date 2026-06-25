@@ -70,8 +70,10 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
 
     /**
      * @inheritDoc
+     * @param string $paymentName
+     * @return bool
      */
-    public function isValid($paymentName)
+    public function isValid(string $paymentName): bool
     {
         if ($paymentName === SaferPayConfig::PAYMENT_CARDS) {
             return true;
@@ -94,8 +96,10 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
 
     /**
      * @inheritDoc
+     * @param string $paymentName
+     * @return bool
      */
-    public function supports($paymentName)
+    public function supports(string $paymentName): bool
     {
         return true;
     }
