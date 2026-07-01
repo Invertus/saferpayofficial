@@ -56,6 +56,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
     public function postProcess()
     {
+        $this->keepExistingPasswordWhenSubmittedEmpty(SaferPayConfig::PASSWORD);
+        $this->keepExistingPasswordWhenSubmittedEmpty(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX);
+
         parent::postProcess();
 
         /** @var Configuration $configuration */
@@ -80,6 +83,15 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $this->validateTerminalId();
 
         return true;
+    }
+
+    private function keepExistingPasswordWhenSubmittedEmpty($key)
+    {
+        if (!isset($_POST[$key]) || $_POST[$key] !== '') {
+            return;
+        }
+
+        $_POST[$key] = \Configuration::get($key);
     }
 
     private function validateTerminalId()
@@ -489,7 +501,10 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('JSON API Password'),
                     'type' => 'password_input',
                     'class' => 'fixed-width-xl',
-                    'value' => \Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX),
+                    'autocomplete' => false,
+                    'placeholder' => \Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX)
+                        ? $this->module->l('Leave empty to keep the saved password')
+                        : '',
                 ],
                 SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX => [
                     'title' => $this->module->l('Customer ID'),
@@ -557,7 +572,10 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                     'title' => $this->module->l('JSON API Password'),
                     'type' => 'password_input',
                     'class' => 'fixed-width-xl',
-                    'value' => \Configuration::get(SaferPayConfig::PASSWORD),
+                    'autocomplete' => false,
+                    'placeholder' => \Configuration::get(SaferPayConfig::PASSWORD)
+                        ? $this->module->l('Leave empty to keep the saved password')
+                        : '',
                 ],
                 SaferPayConfig::CUSTOMER_ID => [
                     'title' => $this->module->l('Customer ID'),
