@@ -31,7 +31,8 @@
                     class="{if isset($field['class'])}{$field['class']|escape:'htmlall':'UTF-8'}{/if}"
                     size="{if isset($field['size'])}{$field['size']|intval}{else}5{/if}"
                     name="{$key|escape:'htmlall':'UTF-8'}"
-                    value="{$field['value']|escape:'htmlall':'UTF-8'}"
+                    value=""
+                    {if isset($field['placeholder']) && $field['placeholder']} placeholder="{$field['placeholder']|escape:'htmlall':'UTF-8'}"{/if}
                     {if isset($field['autocomplete']) && !$field['autocomplete']} autocomplete="off"{/if} />
         </div>
     {/if}
