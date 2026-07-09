@@ -64,12 +64,6 @@ abstract class AbstractInstaller
                 'visible' => false,
             ],
             [
-                'name' => $this->module->l('Fields'),
-                'class_name' => SaferPayOfficial::ADMIN_FIELDS_CONTROLLER,
-                'parent_class_name' => SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
-                'module_tab' => true,
-            ],
-            [
                 'name' => $this->module->l('Order'),
                 'class_name' => SaferPayOfficial::ADMIN_ORDER_CONTROLLER,
                 'parent_class_name' => SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,

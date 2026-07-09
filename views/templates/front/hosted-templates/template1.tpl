@@ -34,21 +34,25 @@
 
     <div class="container" id="main">
         <div class="form-group">
-            <input class="form-control" id="fields-holder-name" readonly placeholder="{l s='Holder name' mod='saferpayofficial'}">
+            <label for="fields-holder-name" class="sr-only">{l s='Holder name' mod='saferpayofficial'}</label>
+            <input class="form-control" id="fields-holder-name" readonly placeholder="{l s='Holder name' mod='saferpayofficial'}" aria-label="{l s='Holder name' mod='saferpayofficial'}">
         </div>
 
         <div class="form-group row">
             <div class="col-sm-12">
-                <input class="form-control" id="fields-card-number" readonly placeholder="{l s='0000 0000 0000 0000' mod='saferpayofficial'}">
+                <label for="fields-card-number" class="sr-only">{l s='Card number' mod='saferpayofficial'}</label>
+                <input class="form-control" id="fields-card-number" readonly placeholder="{l s='0000 0000 0000 0000' mod='saferpayofficial'}" aria-label="{l s='Card number' mod='saferpayofficial'}">
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-6 col-xs-12 form-group">
-                <input class="form-control" id="fields-expiration" readonly placeholder="{l s='MM/YYYY' mod='saferpayofficial'}">
+                <label for="fields-expiration" class="sr-only">{l s='Expiration date' mod='saferpayofficial'}</label>
+                <input class="form-control" id="fields-expiration" readonly placeholder="{l s='MM/YYYY' mod='saferpayofficial'}" aria-label="{l s='Expiration date' mod='saferpayofficial'}">
             </div>
             <div class="col-sm-6 col-xs-12 form-group">
-                <input class="form-control" id="fields-cvc" readonly placeholder="{l s='000' mod='saferpayofficial'}">
+                <label for="fields-cvc" class="sr-only">{l s='CVC code' mod='saferpayofficial'}</label>
+                <input class="form-control" id="fields-cvc" readonly placeholder="{l s='000' mod='saferpayofficial'}" aria-label="{l s='CVC code' mod='saferpayofficial'}">
             </div>
         </div>
 
@@ -67,21 +71,25 @@
 
     <div class="container" id="main">
         <div class="form-group">
-            <input class="form-control" id="fields-holder-name" readonly placeholder="{l s='Holder name' mod='saferpayofficial'}">
+            <label for="fields-holder-name" class="sr-only">{l s='Holder name' mod='saferpayofficial'}</label>
+            <input class="form-control" id="fields-holder-name" readonly placeholder="{l s='Holder name' mod='saferpayofficial'}" aria-label="{l s='Holder name' mod='saferpayofficial'}">
         </div>
 
         <div class="form-group row">
             <div class="col-sm-12">
-                <input class="form-control" id="fields-card-number" readonly placeholder="{l s='0000 0000 0000 0000' mod='saferpayofficial'}">
+                <label for="fields-card-number" class="sr-only">{l s='Card number' mod='saferpayofficial'}</label>
+                <input class="form-control" id="fields-card-number" readonly placeholder="{l s='0000 0000 0000 0000' mod='saferpayofficial'}" aria-label="{l s='Card number' mod='saferpayofficial'}">
             </div>
         </div>
 
         <div class="row">
             <div class="col-sm-6 col-xs-12 form-group">
-                <input class="form-control" id="fields-expiration" readonly placeholder="{l s='MM/YYYY' mod='saferpayofficial'}">
+                <label for="fields-expiration" class="sr-only">{l s='Expiration date' mod='saferpayofficial'}</label>
+                <input class="form-control" id="fields-expiration" readonly placeholder="{l s='MM/YYYY' mod='saferpayofficial'}" aria-label="{l s='Expiration date' mod='saferpayofficial'}">
             </div>
             <div class="col-sm-6 col-xs-12 form-group">
-                <input class="form-control" id="fields-cvc" readonly placeholder="{l s='000' mod='saferpayofficial'}">
+                <label for="fields-cvc" class="sr-only">{l s='CVC code' mod='saferpayofficial'}</label>
+                <input class="form-control" id="fields-cvc" readonly placeholder="{l s='000' mod='saferpayofficial'}" aria-label="{l s='CVC code' mod='saferpayofficial'}">
             </div>
         </div>
 

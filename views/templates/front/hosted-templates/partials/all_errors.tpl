@@ -19,18 +19,18 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  *}
-<div style="display:none" class="alert alert-danger initialize-error" role="alert">
+<div style="display:none" class="alert alert-danger initialize-error" role="alert" aria-live="assertive">
     {include file="module:saferpayofficial/views/templates/front/hosted-templates/partials/initialize_error.tpl"}
 </div>
 
-<div style="display: none" class="alert alert-danger submission-error" role="alert">
+<div style="display: none" class="alert alert-danger submission-error" role="alert" aria-live="assertive">
     {include file="module:saferpayofficial/views/templates/front/hosted-templates/partials/submission_error.tpl"}
 </div>
 
-<div style="display:none" class="alert alert-danger internal-error" role="alert">
+<div style="display:none" class="alert alert-danger internal-error" role="alert" aria-live="assertive">
     {include file="module:saferpayofficial/views/templates/front/hosted-templates/partials/internal_error.tpl"}
 </div>
 
-<div style="display: none" class="alert alert-danger validation-error" role="alert">
+<div style="display: none" class="alert alert-danger validation-error" role="alert" aria-live="assertive">
     {include file="module:saferpayofficial/views/templates/front/hosted-templates/partials/validation_error.tpl"}
 </div>

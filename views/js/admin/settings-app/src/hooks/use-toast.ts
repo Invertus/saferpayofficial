@@ -7,7 +7,7 @@ export interface ToasterToast {
   id: string
   title?: string
   description?: string
-  variant?: 'default' | 'destructive'
+  variant?: 'default' | 'destructive' | 'warning'
 }
 
 type Action =

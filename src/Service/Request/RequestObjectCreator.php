@@ -118,14 +118,19 @@ class RequestObjectCreator
         $payment = new Payment();
         $payment->setValue($totalPrice);
         $payment->setCurrencyCode($currency['iso_code']);
-        $payment->setDescription((string) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION));
 
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION) && empty($order)) {
-            return $payment;
+        $description = (string) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION);
+        $orderIdOption = (int) Configuration::get(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION);
+
+        if ($orderIdOption === 0 && !empty($order)) {
+            $payment->setDescription($order->reference);
+        } else {
+            $payment->setDescription($description);
         }
 
-        /** This param is not mandatory, but recommended **/
-        $payment->setOrderReference($order->reference);
+        if (!empty($order)) {
+            $payment->setOrderReference($order->reference);
+        }
 
         return $payment;
     }
