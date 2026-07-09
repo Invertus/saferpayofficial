@@ -6,15 +6,17 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { AlertCircle, Eye, EyeOff, Key, Shield, Loader2, Info, CheckCircle2, Wand2, XCircle } from 'lucide-react'
 import { useSettings } from '@/context/settings-context'
+import { toast } from '@/hooks/use-toast'
 import { t } from '@/utils/translations'
 import type { TerminalOption } from '@/types'
 
 type CredentialStatus = 'idle' | 'checking' | 'valid' | 'invalid'
 
 export function ApiCredentials() {
-  const { settings, updateSettings, saveCredentials, fetchTerminals, savingSections } = useSettings()
+  const { settings, updateSettings, saveCredentials, fetchTerminals, generateFieldAccessToken, savingSections } = useSettings()
   const saving = savingSections.has('credentials')
   const [showApiPassword, setShowApiPassword] = useState(false)
+  const [generatingToken, setGeneratingToken] = useState(false)
   const [terminals, setTerminals] = useState<TerminalOption[]>([])
   const [credentialStatus, setCredentialStatus] = useState<CredentialStatus>('idle')
   const [credentialError, setCredentialError] = useState('')
@@ -33,6 +35,14 @@ export function ApiCredentials() {
   const fieldJsUrl = isTest ? settings.testFieldJsUrl : settings.liveFieldJsUrl
 
   const hasCredentials = username.length > 0 && password.length > 0
+  const hasBusinessLicense = isTest ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
+
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  const invalidEmails = merchantEmails
+    .split(',')
+    .map(e => e.trim())
+    .filter(e => e.length > 0 && !EMAIL_RE.test(e))
+  const merchantEmailsInvalid = invalidEmails.length > 0
 
   const setField = (field: string, value: string | boolean) => {
     updateSettings({ [`${prefix}${field.charAt(0).toUpperCase() + field.slice(1)}`]: value } as Record<string, string | boolean>)
@@ -143,17 +153,23 @@ export function ApiCredentials() {
             {/* Username & Password */}
             <div className="sp-grid sp-gap-5 md:sp-grid-cols-2">
               <div className="sp-flex sp-flex-col sp-gap-2">
-                <Label htmlFor="api-username">{t('jsonApiUsername')}</Label>
+                <Label htmlFor="api-username">
+                  {t('jsonApiUsername')} <span className="sp-text-destructive" aria-hidden="true">*</span>
+                </Label>
                 <Input
                   id="api-username"
                   type="text"
                   placeholder={t('enterApiUsername', envLabel.toLowerCase())}
                   value={username}
                   onChange={(e) => setField('username', e.target.value)}
+                  required
+                  aria-required="true"
                 />
               </div>
               <div className="sp-flex sp-flex-col sp-gap-2">
-                <Label htmlFor="api-password">{t('jsonApiPassword')}</Label>
+                <Label htmlFor="api-password">
+                  {t('jsonApiPassword')} <span className="sp-text-destructive" aria-hidden="true">*</span>
+                </Label>
                 <div className="sp-relative">
                   <Input
                     id="api-password"
@@ -162,11 +178,13 @@ export function ApiCredentials() {
                     value={password}
                     onChange={(e) => setField('password', e.target.value)}
                     className="sp-pr-10"
+                    required
+                    aria-required="true"
                   />
                   <button
                     type="button"
                     onClick={() => setShowApiPassword(!showApiPassword)}
-                    className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors"
+                    className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors sp-p-1 sp-min-w-[24px] sp-min-h-[24px] sp-flex sp-items-center sp-justify-center"
                     aria-label={showApiPassword ? t('hidePassword') : t('showPassword')}
                   >
                     {showApiPassword ? <EyeOff className="sp-h-4 sp-w-4" /> : <Eye className="sp-h-4 sp-w-4" />}
@@ -183,7 +201,7 @@ export function ApiCredentials() {
               </div>
             )}
             {credentialStatus === 'valid' && (
-              <div className="sp-flex sp-items-center sp-gap-2 sp-text-sm sp-text-emerald-600">
+              <div className="sp-flex sp-items-center sp-gap-2 sp-text-sm sp-text-emerald-700">
                 <CheckCircle2 className="sp-h-4 sp-w-4" />
                 {t('credentialsValid')}
               </div>
@@ -231,7 +249,14 @@ export function ApiCredentials() {
                 placeholder={t('enterMerchantEmails')}
                 value={merchantEmails}
                 onChange={(e) => setField('merchantEmails', e.target.value)}
+                aria-invalid={merchantEmailsInvalid}
+                className={merchantEmailsInvalid ? 'sp-border-destructive focus-visible:sp-ring-destructive' : ''}
               />
+              {merchantEmailsInvalid && (
+                <p className="sp-text-xs sp-text-destructive">
+                  {t('invalidMerchantEmails')}: {invalidEmails.join(', ')}
+                </p>
+              )}
               <p className="sp-text-xs sp-text-muted-foreground">
                 {t('separateEmails')}
               </p>
@@ -240,39 +265,24 @@ export function ApiCredentials() {
         </CardContent>
       </Card>
 
-      {/* Saferpay Fields Configuration */}
-      <Card>
+      {hasBusinessLicense && <Card>
         <CardHeader>
           <CardTitle className="sp-text-base sp-font-semibold">{t('saferpayFields')}</CardTitle>
           <CardDescription>{t('saferpayFieldsDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="sp-grid sp-gap-5">
-            {settings.hasBusinessLicense ? (
-              <div className="sp-flex sp-items-center sp-gap-3 sp-rounded-lg sp-bg-emerald-50 sp-border sp-border-emerald-200 sp-px-4 sp-py-3">
-                <CheckCircle2 className="sp-h-5 sp-w-5 sp-shrink-0 sp-text-emerald-600" />
-                <div className="sp-flex sp-flex-col sp-gap-0.5">
-                  <p className="sp-mb-0 sp-text-sm sp-font-medium sp-text-emerald-800">
-                    {t('saferpayFieldsIncluded')}
-                  </p>
-                  <p className="sp-mb-0 sp-text-xs sp-text-emerald-600">
-                    {t('saferpayFieldsIncludedDescription')}
-                  </p>
-                </div>
+            <div className="sp-flex sp-items-center sp-gap-3 sp-rounded-lg sp-bg-emerald-50 sp-border sp-border-emerald-200 sp-px-4 sp-py-3">
+              <CheckCircle2 className="sp-h-5 sp-w-5 sp-shrink-0 sp-text-emerald-700" />
+              <div className="sp-flex sp-flex-col sp-gap-0.5">
+                <p className="sp-mb-0 sp-text-sm sp-font-medium sp-text-emerald-800">
+                  {t('saferpayFieldsIncluded')}
+                </p>
+                <p className="sp-mb-0 sp-text-xs sp-text-emerald-700">
+                  {t('saferpayFieldsIncludedDescription')}
+                </p>
               </div>
-            ) : (
-              <div className="sp-flex sp-items-center sp-gap-3 sp-rounded-lg sp-bg-amber-50 sp-border sp-border-amber-200 sp-px-4 sp-py-3">
-                <AlertCircle className="sp-h-5 sp-w-5 sp-shrink-0 sp-text-amber-600" />
-                <div className="sp-flex sp-flex-col sp-gap-0.5">
-                  <p className="sp-mb-0 sp-text-sm sp-font-medium sp-text-amber-800">
-                    {t('saferpayFieldsNotIncluded')}
-                  </p>
-                  <p className="sp-mb-0 sp-text-xs sp-text-amber-600">
-                    {t('saferpayFieldsNotIncludedDescription')}
-                  </p>
-                </div>
-              </div>
-            )}
+            </div>
 
             <div className="sp-flex sp-items-center sp-gap-3 sp-rounded-lg sp-bg-[#294e57]/5 sp-border sp-border-[#294e57]/30 sp-border-l-[3px] sp-border-l-[#294e57] sp-px-4 sp-py-3 sp-text-sm sp-text-foreground">
               <Info className="sp-h-4 sp-w-4 sp-shrink-0 sp-text-[#294e57]" />
@@ -293,15 +303,30 @@ export function ApiCredentials() {
                     placeholder={t('enterFieldAccessToken')}
                     value={fieldAccessToken}
                     onChange={(e) => setField('fieldAccessToken', e.target.value)}
-                    disabled={!settings.hasBusinessLicense}
                     className="sp-flex-1"
                   />
                   <Button
                     variant="outline"
-                    disabled={!settings.hasBusinessLicense || !hasCredentials}
+                    disabled={!hasCredentials || !terminalId || generatingToken}
                     className="sp-shrink-0"
+                    onClick={async () => {
+                      setGeneratingToken(true)
+                      try {
+                        await generateFieldAccessToken()
+                        toast({ title: t('tokenGeneratedSuccessfully'), variant: 'default' })
+                      } catch (e) {
+                        const message = e instanceof Error ? e.message : t('failedToGenerateToken')
+                        toast({ title: message, variant: 'destructive' })
+                      } finally {
+                        setGeneratingToken(false)
+                      }
+                    }}
                   >
-                    <Wand2 className="sp-h-4 sp-w-4 sp-mr-1.5" />
+                    {generatingToken ? (
+                      <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin sp-mr-1.5" />
+                    ) : (
+                      <Wand2 className="sp-h-4 sp-w-4 sp-mr-1.5" />
+                    )}
                     {t('generate')}
                   </Button>
                 </div>
@@ -317,7 +342,6 @@ export function ApiCredentials() {
                   placeholder="https://www.saferpay.com/Fields/lib/1/"
                   value={fieldJsUrl}
                   onChange={(e) => setField('fieldJsUrl', e.target.value)}
-                  disabled={!settings.hasBusinessLicense}
                 />
                 <a href="https://docs.saferpay.com/home/integration-guide/licences-and-interfaces/saferpay-fields#javascript-library-url" target="_blank" rel="noopener noreferrer" className="sp-text-xs sp-text-[#294e57] sp-underline hover:sp-no-underline">
                   {t('findLibraryUrlHere')}
@@ -326,10 +350,15 @@ export function ApiCredentials() {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card>}
 
       <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={saveCredentials} disabled={saving}>
+        <Button
+          className="sp-min-w-[120px]"
+          onClick={saveCredentials}
+          disabled={saving || !hasCredentials || credentialStatus === 'invalid' || credentialStatus === 'checking' || merchantEmailsInvalid}
+          aria-label={saving ? t('saving') : undefined}
+        >
           {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>

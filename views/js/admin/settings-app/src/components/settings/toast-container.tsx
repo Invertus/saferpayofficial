@@ -15,7 +15,9 @@ export function ToastContainer() {
           className={`sp-rounded-lg sp-border sp-px-4 sp-py-3 sp-shadow-lg sp-text-sm sp-animate-in sp-slide-in-from-bottom-2 ${
             t.variant === 'destructive'
               ? 'sp-bg-destructive sp-text-destructive-foreground sp-border-destructive'
-              : 'sp-bg-emerald-600 sp-text-white sp-border-emerald-700'
+              : t.variant === 'warning'
+                ? 'sp-bg-amber-500 sp-text-white sp-border-amber-600'
+                : 'sp-bg-emerald-600 sp-text-white sp-border-emerald-700'
           }`}
         >
           {t.title && <div className="sp-font-medium">{t.title}</div>}

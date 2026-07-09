@@ -39,18 +39,21 @@
             <div class="input-container">
                 <div class="form-group row col-sm-7 input-box">
                     <div class="col col-sm-12 col-md-6">
-                        <input type="input" class="saferpay-input form-control" id="fields-card-number""
-                        placeholder="{l s='Card number' mod='saferpayofficial'}" readonly>
+                        <label for="fields-card-number" class="sr-only">{l s='Card number' mod='saferpayofficial'}</label>
+                        <input type="input" class="saferpay-input form-control" id="fields-card-number"
+                        placeholder="{l s='Card number' mod='saferpayofficial'}" aria-label="{l s='Card number' mod='saferpayofficial'}" readonly>
                     </div>
 
                     <div class="col col-sm-12 col-md-3">
+                        <label for="fields-expiration" class="sr-only">{l s='Expiration date' mod='saferpayofficial'}</label>
                         <input type="input" class="saferpay-input form-control" id="fields-expiration"
-                               placeholder="{l s='Exp' mod='saferpayofficial'}" readonly>
+                               placeholder="{l s='Exp' mod='saferpayofficial'}" aria-label="{l s='Expiration date' mod='saferpayofficial'}" readonly>
                     </div>
 
                     <div class="col col-sm-12 col-md-3">
+                        <label for="fields-cvc" class="sr-only">{l s='CVC code' mod='saferpayofficial'}</label>
                         <input type="input" class="saferpay-input form-control" id="fields-cvc"
-                               placeholder="{l s='Cvc' mod='saferpayofficial'}" readonly>
+                               placeholder="{l s='Cvc' mod='saferpayofficial'}" aria-label="{l s='CVC code' mod='saferpayofficial'}" readonly>
                     </div>
                 </div>
             </div>
@@ -64,7 +67,7 @@
 
             <div class="credit-card-container">
                 <div class="image-container">
-                    <div id="credit-card" class="credit-card-image img-fluid"></div>
+                    <div id="credit-card" class="credit-card-image img-fluid" role="img" aria-label="{l s='Credit card preview' mod='saferpayofficial'}"></div>
                 </div>
             </div>
 
@@ -85,18 +88,21 @@
             <div class="input-container">
                 <div class="form-group row col-sm-7 input-box">
                     <div class="col col-sm-12 col-md-6">
-                        <input type="input" class="saferpay-input form-control" id="fields-card-number""
-                        placeholder="{l s='Card number' mod='saferpayofficial'}" readonly>
+                        <label for="fields-card-number" class="sr-only">{l s='Card number' mod='saferpayofficial'}</label>
+                        <input type="input" class="saferpay-input form-control" id="fields-card-number"
+                        placeholder="{l s='Card number' mod='saferpayofficial'}" aria-label="{l s='Card number' mod='saferpayofficial'}" readonly>
                     </div>
 
                     <div class="col col-sm-12 col-md-3">
+                        <label for="fields-expiration" class="sr-only">{l s='Expiration date' mod='saferpayofficial'}</label>
                         <input type="input" class="saferpay-input form-control" id="fields-expiration"
-                               placeholder="{l s='Exp' mod='saferpayofficial'}" readonly>
+                               placeholder="{l s='Exp' mod='saferpayofficial'}" aria-label="{l s='Expiration date' mod='saferpayofficial'}" readonly>
                     </div>
 
                     <div class="col col-sm-12 col-md-3">
+                        <label for="fields-cvc" class="sr-only">{l s='CVC code' mod='saferpayofficial'}</label>
                         <input type="input" class="saferpay-input form-control" id="fields-cvc"
-                               placeholder="{l s='Cvc' mod='saferpayofficial'}" readonly>
+                               placeholder="{l s='Cvc' mod='saferpayofficial'}" aria-label="{l s='CVC code' mod='saferpayofficial'}" readonly>
                     </div>
                 </div>
             </div>
@@ -110,7 +116,7 @@
 
             <div class="credit-card-container">
                 <div class="image-container">
-                    <div id="credit-card" class="credit-card-image img-fluid"></div>
+                    <div id="credit-card" class="credit-card-image img-fluid" role="img" aria-label="{l s='Credit card preview' mod='saferpayofficial'}"></div>
                 </div>
             </div>
 

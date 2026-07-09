@@ -15,6 +15,7 @@ interface SettingsContextValue {
   saveGeneralSettings: () => Promise<void>
   savePaymentMethods: () => Promise<void>
   fetchTerminals: (env: string, username: string, password: string) => Promise<TerminalOption[]>
+  generateFieldAccessToken: () => Promise<{ success: boolean; message?: string; token?: string }>
   refreshPaymentMethods: () => Promise<void>
   paymentMethods: PaymentMethodData[]
   updatePaymentMethod: (name: string, updates: Partial<PaymentMethodData>) => void
@@ -47,7 +48,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const handleSave = useCallback(async (
-    saveFn: () => Promise<{ success: boolean; message?: string }>,
+    saveFn: () => Promise<{ success: boolean; message?: string; warning?: boolean }>,
     label: string,
     section: SavingSection,
   ) => {
@@ -55,7 +56,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await saveFn()
       if (result.success) {
-        toast({ title: result.message || t('savedSuccessfully', label), variant: 'default' })
+        const variant = result.warning ? 'warning' : 'default'
+        toast({ title: result.message || t('savedSuccessfully', label), variant })
       } else {
         toast({ title: result.message || t('failedToSave', label), variant: 'destructive' })
       }
@@ -90,10 +92,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         liveFieldJsUrl: currentSettings.liveFieldJsUrl,
       })
       const data = result as unknown as Record<string, unknown>
-      if (result.success && typeof data.hasBusinessLicense === 'boolean') {
-        setSettings((prev) => ({ ...prev, hasBusinessLicense: data.hasBusinessLicense as boolean }))
+      if (result.success) {
+        setSettings((prev) => ({
+          ...prev,
+          ...(typeof data.testHasBusinessLicense === 'boolean' ? { testHasBusinessLicense: data.testHasBusinessLicense as boolean } : {}),
+          ...(typeof data.liveHasBusinessLicense === 'boolean' ? { liveHasBusinessLicense: data.liveHasBusinessLicense as boolean } : {}),
+        }))
       }
-      return result
+      return { ...result, warning: data.warning === true }
     }, 'API Credentials', 'credentials')
   }, [handleSave])
 
@@ -125,6 +131,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       orderStateAwaitingPayment: currentSettings.orderStateAwaitingPayment,
       paymentDescription: currentSettings.paymentDescription,
       configurationName: currentSettings.configurationName,
+      hostedFieldsTemplate: currentSettings.hostedFieldsTemplate,
+      orderIdOption: currentSettings.orderIdOption,
       debugMode: currentSettings.debugMode,
     }), 'General Settings', 'generalSettings')
   }, [handleSave])
@@ -148,6 +156,26 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const generateFieldAccessToken = useCallback(async () => {
+    const s = settingsRef.current
+    const env = s.testMode ? 'test' : 'live'
+    const username = s.testMode ? s.testUsername : s.liveUsername
+    const password = s.testMode ? s.testPassword : s.livePassword
+    const terminalId = s.testMode ? s.testTerminalId : s.liveTerminalId
+
+    const result = await api.generateFieldAccessToken(env, username, password, terminalId)
+    if (!result.success) {
+      throw new Error(result.message || t('failedToGenerateToken'))
+    }
+
+    if (result.token) {
+      const fieldKey = s.testMode ? 'testFieldAccessToken' : 'liveFieldAccessToken'
+      setSettings((prev) => ({ ...prev, [fieldKey]: result.token }))
+    }
+
+    return result
+  }, [])
+
   const fetchTerminals = useCallback(async (env: string, username: string, password: string) => {
     const result = await api.getTerminals(env, username, password)
     if (!result.success) {
@@ -165,6 +193,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     saveGeneralSettings,
     savePaymentMethods,
     fetchTerminals,
+    generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
     updatePaymentMethod,
@@ -178,6 +207,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     saveGeneralSettings,
     savePaymentMethods,
     fetchTerminals,
+    generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
     updatePaymentMethod,

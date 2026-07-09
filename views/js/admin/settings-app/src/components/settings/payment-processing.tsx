@@ -113,6 +113,20 @@ export function PaymentProcessing() {
                     <span className="sp-text-xs sp-text-muted-foreground">{t('continueWithout3ds')}</span>
                   </div>
                 </label>
+                <label
+                  htmlFor="3ds-capture"
+                  className={`sp-flex sp-flex-1 sp-cursor-pointer sp-items-center sp-gap-3 sp-rounded-lg sp-border sp-px-4 sp-py-3 sp-transition-colors ${
+                    settings.paymentBehaviorWithout3D === 2
+                      ? 'sp-border-primary sp-bg-primary/5'
+                      : 'sp-border-border hover:sp-bg-secondary/50'
+                  }`}
+                >
+                  <RadioGroupItem value="2" id="3ds-capture" />
+                  <div className="sp-flex sp-flex-col">
+                    <span className="sp-text-sm sp-font-medium">{t('capture')}</span>
+                    <span className="sp-text-xs sp-text-muted-foreground">{t('captureWithout3ds')}</span>
+                  </div>
+                </label>
               </RadioGroup>
             </div>
 
@@ -291,7 +305,7 @@ export function PaymentProcessing() {
       </Card>
 
       <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={savePaymentProcessing} disabled={saving}>
+        <Button className="sp-min-w-[120px]" onClick={savePaymentProcessing} disabled={saving} aria-label={saving ? t('saving') : undefined}>
           {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>

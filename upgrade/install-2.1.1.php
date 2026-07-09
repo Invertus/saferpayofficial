@@ -1,4 +1,5 @@
-{**
+<?php
+/**
  *NOTICE OF LICENSE
  *
  *This source file is subject to the Open Software License (OSL 3.0)
@@ -18,7 +19,19 @@
  *@author INVERTUS UAB www.invertus.eu  <support@invertus.eu>
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
- *}
-<div class="alert alert-info">
-    {l s='Choose which hosted field will be displayed on payment option selection with supported payment methods' mod='saferpayofficial'}
-</div>
+ */
+
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+function upgrade_module_2_1_1()
+{
+    $tabId = Tab::getIdFromClassName('AdminSaferPayOfficialFields');
+    if ($tabId) {
+        $tab = new Tab($tabId);
+        $tab->delete();
+    }
+
+    return true;
+}

@@ -55,7 +55,6 @@ class SaferPayOfficial extends PaymentModule
     const ADMIN_SAFERPAY_MODULE_CONTROLLER = 'AdminSaferPayOfficialModule';
     const ADMIN_SETTINGS_CONTROLLER = 'AdminSaferPayOfficialSettings';
     const ADMIN_PAYMENTS_CONTROLLER = 'AdminSaferPayOfficialPayment';
-    const ADMIN_FIELDS_CONTROLLER = 'AdminSaferPayOfficialFields';
     const ADMIN_ORDER_CONTROLLER = 'AdminSaferPayOfficialOrder';
     const ADMIN_LOGS_CONTROLLER = 'AdminSaferPayOfficialLogs';
 
@@ -65,7 +64,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '2.0.2';
+        $this->version = '2.1.1';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
