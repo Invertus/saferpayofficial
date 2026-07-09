@@ -101,7 +101,7 @@ export function GeneralSettings() {
                 value={String(settings.hostedFieldsTemplate)}
                 onValueChange={(val) => updateSettings({ hostedFieldsTemplate: Number(val) })}
               >
-                <SelectTrigger className="sp-w-[220px]">
+                <SelectTrigger className="sp-w-[220px]" aria-label={t('hostedFieldStyle')}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -221,7 +221,7 @@ export function GeneralSettings() {
       </Card>
 
       <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={saveGeneralSettings} disabled={saving}>
+        <Button className="sp-min-w-[120px]" onClick={saveGeneralSettings} disabled={saving} aria-label={saving ? t('saving') : undefined}>
           {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>

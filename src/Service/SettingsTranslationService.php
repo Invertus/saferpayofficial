@@ -85,6 +85,7 @@ class SettingsTranslationService
     {
         return [
             'saveChanges' => $this->module->l('Save Changes', self::FILE_NAME),
+            'saving' => $this->module->l('Saving...', self::FILE_NAME),
             'enable' => $this->module->l('Enable', self::FILE_NAME),
             'disable' => $this->module->l('Disable', self::FILE_NAME),
             'search' => $this->module->l('Search...', self::FILE_NAME),
@@ -121,6 +122,7 @@ class SettingsTranslationService
             'merchantEmails' => $this->module->l('Merchant Emails', self::FILE_NAME),
             'enterMerchantEmails' => $this->module->l('Enter merchant email addresses (comma-separated)', self::FILE_NAME),
             'separateEmails' => $this->module->l('These email addresses receive payment notification emails directly from SaferPay. Separate multiple email addresses with commas.', self::FILE_NAME),
+            'invalidMerchantEmails' => $this->module->l('Invalid email address', self::FILE_NAME),
             'saferpayFields' => $this->module->l('Saferpay Fields', self::FILE_NAME),
             'saferpayFieldsDescription' => $this->module->l('Configure Saferpay Fields for inline payment form integration.', self::FILE_NAME),
             'fieldAccessTokenInfo' => $this->module->l('Saferpay Field Access Token can be found in Saferpay Backoffice, navigate to', self::FILE_NAME),
@@ -228,7 +230,7 @@ class SettingsTranslationService
             'configName' => $this->module->l('Payment Page configurations name', self::FILE_NAME),
             'enterConfigName' => $this->module->l('Enter configuration name', self::FILE_NAME),
             'configNameDescription' => html_entity_decode($this->module->l('Name of the Payment Page Configuration created in Saferpay Backoffice (Settings > Payment Page Configuration). Max 20 characters. Allowed: letters, numbers, dots, colons, hyphens, underscores.', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
-            'hostedFieldInfo' => $this->module->l('Choose which hosted field will be displayed on payment option selection with supported payment methods.', self::FILE_NAME),
+            'hostedFieldInfo' => html_entity_decode($this->module->l('This style applies only to payment methods with "Custom form" enabled in the Payment Methods list. Methods without Custom form or paid with saved cards use the Saferpay-hosted payment page, whose appearance is controlled by "Payment Page configurations name".', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
             'hostedFieldStyle' => $this->module->l('Hosted field style', self::FILE_NAME),
             'hostedFieldStyleDescription' => $this->module->l('Select the card input form layout for the payment page.', self::FILE_NAME),
             'classicLayout' => $this->module->l('Classic Layout', self::FILE_NAME),

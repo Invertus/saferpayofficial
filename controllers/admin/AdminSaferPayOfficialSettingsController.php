@@ -179,6 +179,17 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             }
         }
 
+        $testMerchantEmails = $this->getStringValue($data, 'testMerchantEmails');
+        $liveMerchantEmails = $this->getStringValue($data, 'liveMerchantEmails');
+        $invalidEmail = $this->findInvalidEmail($testMerchantEmails) ?: $this->findInvalidEmail($liveMerchantEmails);
+        if ($invalidEmail !== null) {
+            $this->ajaxResponse(false, sprintf(
+                $this->module->l('Invalid merchant email address: %s', self::FILE_NAME),
+                $invalidEmail
+            ));
+            return;
+        }
+
         // Credentials validated — now save
         $configuration->set(SaferPayConfig::TEST_MODE, $isTestMode ? 1 : 0);
 
@@ -248,7 +259,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             true,
             $message,
             [
-                'hasBusinessLicense' => $hasBusinessLicense,
+                'testHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX),
+                'liveHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE),
                 'warning' => $licenseFetchFailed,
             ]
         );
@@ -388,6 +400,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             try {
                 $countries = isset($method['countries']) ? $method['countries'] : [];
                 $currencies = isset($method['currencies']) ? $method['currencies'] : [];
+
+                if (empty($countries)) {
+                    $countries = [SaferPayRestrictionCreator::RESTRICTION_ALL];
+                }
+                if (empty($currencies)) {
+                    $currencies = [SaferPayRestrictionCreator::RESTRICTION_ALL];
+                }
 
                 $success = $restrictionCreator->updateRestriction(
                     $paymentName,
@@ -545,8 +564,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'liveFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN),
             'liveFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY),
 
-            // License (auto-detected)
-            'hasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix()),
+            // License (auto-detected, per environment)
+            'testHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX),
+            'liveHasBusinessLicense' => (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE),
 
             // Payment Processing
             'paymentBehavior' => (int) $configuration->get(SaferPayConfig::PAYMENT_BEHAVIOR),
@@ -782,5 +802,25 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     private function getIntValue($data, $key)
     {
         return isset($data[$key]) ? (int) $data[$key] : 0;
+    }
+
+    /**
+     * Returns the first invalid email in a comma-separated list, or null if all are valid.
+     */
+    private function findInvalidEmail($emails)
+    {
+        if ($emails === '') {
+            return null;
+        }
+        foreach (explode(',', $emails) as $email) {
+            $email = trim($email);
+            if ($email === '') {
+                continue;
+            }
+            if (!\Validate::isEmail($email)) {
+                return $email;
+            }
+        }
+        return null;
     }
 }

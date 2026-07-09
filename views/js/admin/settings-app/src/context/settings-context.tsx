@@ -92,8 +92,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         liveFieldJsUrl: currentSettings.liveFieldJsUrl,
       })
       const data = result as unknown as Record<string, unknown>
-      if (result.success && typeof data.hasBusinessLicense === 'boolean') {
-        setSettings((prev) => ({ ...prev, hasBusinessLicense: data.hasBusinessLicense as boolean }))
+      if (result.success) {
+        setSettings((prev) => ({
+          ...prev,
+          ...(typeof data.testHasBusinessLicense === 'boolean' ? { testHasBusinessLicense: data.testHasBusinessLicense as boolean } : {}),
+          ...(typeof data.liveHasBusinessLicense === 'boolean' ? { liveHasBusinessLicense: data.liveHasBusinessLicense as boolean } : {}),
+        }))
       }
       return { ...result, warning: data.warning === true }
     }, 'API Credentials', 'credentials')

@@ -114,14 +114,16 @@ class ApiRequest
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $this->logger->error($exception->getMessage(), [
-                'context' => [
-                    'headers' => $this->getHeaders(),
-                ],
-                'request' => $params,
-                'response' => json_decode($response->raw_body),
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
+            if ($response === null) {
+                $this->logger->error($exception->getMessage(), [
+                    'context' => [
+                        'headers' => $this->getHeaders(),
+                    ],
+                    'request' => $params,
+                    'response' => null,
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
+            }
 
             throw $exception;
         }
@@ -170,12 +172,14 @@ class ApiRequest
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $this->logger->error($exception->getMessage(), [
-                'context' => [],
-                'request' => $params,
-                'response' => $response ? json_decode($response->raw_body) : null,
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
+            if ($response === null) {
+                $this->logger->error($exception->getMessage(), [
+                    'context' => [],
+                    'request' => $params,
+                    'response' => null,
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
+            }
 
             throw $exception;
         }
@@ -226,12 +230,14 @@ class ApiRequest
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $this->logger->error($exception->getMessage(), [
-                'context' => [],
-                'request' => $params,
-                'response' => $response ? json_decode($response->raw_body) : null,
-                'exceptions' => ExceptionUtility::getExceptions($exception),
-            ]);
+            if ($response === null) {
+                $this->logger->error($exception->getMessage(), [
+                    'context' => [],
+                    'request' => $params,
+                    'response' => null,
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
+            }
 
             throw $exception;
         }

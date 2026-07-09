@@ -25,20 +25,26 @@
     {$selected = 1}
     {foreach $savedCards as $savedCard}
         <div class="saved_credit_cards">
-            <input type="radio" name="saved_card_{$paymentMethod|escape:'htmlall':'UTF-8'}" value="{$savedCard['id_saferpay_card_alias']|escape:'htmlall':'UTF-8'}"
-                   {if $selected }checked="checked" {$selected = 0}{/if}
-            >
-            <span>{$savedCard['card_number']|escape:'htmlall':'UTF-8'}</span>
+            <label>
+                <input type="radio" name="saved_card_{$paymentMethod|escape:'htmlall':'UTF-8'}" value="{$savedCard['id_saferpay_card_alias']|escape:'htmlall':'UTF-8'}"
+                       {if $selected }checked="checked" {$selected = 0}{/if}
+                >
+                <span>{$savedCard['card_number']|escape:'htmlall':'UTF-8'}</span>
+            </label>
         </div>
     {/foreach}
     <div class="saved_credit_cards">
-        <input type="radio" name="saved_card_{$paymentMethod|escape:'htmlall':'UTF-8'}" value="0"
-               {if $selected }checked="checked"{/if}
-        >
-        <span>{l s='Use new card and save it' mod='saferpayofficial'}</span>
+        <label>
+            <input type="radio" name="saved_card_{$paymentMethod|escape:'htmlall':'UTF-8'}" value="0"
+                   {if $selected }checked="checked"{/if}
+            >
+            <span>{l s='Use new card and save it' mod='saferpayofficial'}</span>
+        </label>
     </div>
     <div class="saved_credit_cards">
-        <input type="radio" name="saved_card_{$paymentMethod|escape:'htmlall':'UTF-8'}" value="-1">
-        <span>{l s='Use new card once' mod='saferpayofficial'}</span>
+        <label>
+            <input type="radio" name="saved_card_{$paymentMethod|escape:'htmlall':'UTF-8'}" value="-1">
+            <span>{l s='Use new card once' mod='saferpayofficial'}</span>
+        </label>
     </div>
 </div>
