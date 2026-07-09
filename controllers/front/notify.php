@@ -158,7 +158,19 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                     ]);
 
                     die($this->module->l('Liability shift is false', self::FILE_NAME));
-                } elseif ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE
+                }
+
+                if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE) {
+                    $logger->debug(sprintf('%s - Liability shift is false, order left authorized', self::FILE_NAME), [
+                        'context' => [
+                            'id_order' => $order->id,
+                        ],
+                    ]);
+
+                    die($this->module->l('Liability shift is false, order left authorized', self::FILE_NAME));
+                }
+
+                if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE
                     && SaferPayConfig::supportsOrderCapture($order->payment)
                     && $transactionStatus !== TransactionStatus::CAPTURED
                 ) {
@@ -169,6 +181,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                             'id_order' => $order->id,
                         ],
                     ]);
+
+                    die($this->module->l('Liability shift is false, capturing order', self::FILE_NAME));
                 }
             }
 

@@ -33,8 +33,9 @@ export interface SaferpaySettingsData {
   liveFieldAccessToken: string
   liveFieldJsUrl: string
 
-  // License (read-only, auto-detected from API)
-  hasBusinessLicense: boolean
+  // License (read-only, auto-detected from API, per environment)
+  testHasBusinessLicense: boolean
+  liveHasBusinessLicense: boolean
 
   // Payment Processing
   paymentBehavior: number
@@ -54,6 +55,8 @@ export interface SaferpaySettingsData {
   orderStateAwaitingPayment: number
   paymentDescription: string
   configurationName: string
+  hostedFieldsTemplate: number
+  modulePath: string
   orderIdOption: number
   debugMode: boolean
 

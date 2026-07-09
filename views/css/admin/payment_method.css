@@ -43,6 +43,12 @@
     width: 0;
 }
 
+/* Visible focus indicator for keyboard navigation */
+.container-checkbox input:focus ~ .checkmark {
+    outline: 2px solid #2196F3;
+    outline-offset: 2px;
+}
+
 /* Create a custom checkbox */
 .checkmark {
     position: absolute;

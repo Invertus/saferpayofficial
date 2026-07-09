@@ -305,7 +305,7 @@ export function PaymentProcessing() {
       </Card>
 
       <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={savePaymentProcessing} disabled={saving}>
+        <Button className="sp-min-w-[120px]" onClick={savePaymentProcessing} disabled={saving} aria-label={saving ? t('saving') : undefined}>
           {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>

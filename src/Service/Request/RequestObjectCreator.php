@@ -128,11 +128,9 @@ class RequestObjectCreator
             $payment->setDescription($description);
         }
 
-        if ((int) \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION) && empty($order)) {
-            return $payment;
+        if (!empty($order)) {
+            $payment->setOrderReference($order->reference);
         }
-
-        $payment->setOrderReference($order->reference);
 
         return $payment;
     }
