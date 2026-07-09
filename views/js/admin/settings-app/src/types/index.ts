@@ -25,8 +25,6 @@ export interface SaferpaySettingsData {
   testMerchantEmails: string
   testFieldAccessToken: string
   testFieldJsUrl: string
-  testBusinessLicense: boolean
-
   // Live credentials
   liveUsername: string
   livePassword: string
@@ -34,7 +32,10 @@ export interface SaferpaySettingsData {
   liveMerchantEmails: string
   liveFieldAccessToken: string
   liveFieldJsUrl: string
-  liveBusinessLicense: boolean
+
+  // License (read-only, auto-detected from API, per environment)
+  testHasBusinessLicense: boolean
+  liveHasBusinessLicense: boolean
 
   // Payment Processing
   paymentBehavior: number
@@ -54,6 +55,9 @@ export interface SaferpaySettingsData {
   orderStateAwaitingPayment: number
   paymentDescription: string
   configurationName: string
+  hostedFieldsTemplate: number
+  modulePath: string
+  orderIdOption: number
   debugMode: boolean
 
   // Reference data

@@ -59,10 +59,24 @@ export async function getTerminals(
   env: string,
   username: string,
   password: string,
-): Promise<{ success: boolean; terminals: TerminalOption[] }> {
+): Promise<{ success: boolean; message?: string; terminals: TerminalOption[] }> {
   return postAjax('getTerminals', { env, username, password }) as Promise<{
     success: boolean
+    message?: string
     terminals: TerminalOption[]
+  }>
+}
+
+export async function generateFieldAccessToken(
+  env: string,
+  username: string,
+  password: string,
+  terminalId: string,
+): Promise<{ success: boolean; message?: string; token?: string }> {
+  return postAjax('generateFieldAccessToken', { env, username, password, terminalId }) as Promise<{
+    success: boolean
+    message?: string
+    token?: string
   }>
 }
 

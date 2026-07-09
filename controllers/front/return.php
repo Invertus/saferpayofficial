@@ -274,7 +274,9 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
      */
     private function getRedirectionToControllerUrl($controllerName)
     {
-        $cartId = $this->context->cart->id ? $this->context->cart->id : Tools::getValue('cartId');
+        $cartId = (int) Tools::getValue('cartId') ?: (int) $this->context->cart->id;
+        $cart = new Cart($cartId);
+        $secureKey = Validate::isLoadedObject($cart) ? $cart->secure_key : $this->context->cart->secure_key;
 
         return $this->context->link->getModuleLink(
             $this->module->name,
@@ -282,7 +284,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             [
                 'cartId' => $cartId,
                 'orderId' => Order::getIdByCartId($cartId),
-                'secureKey' => $this->context->cart->secure_key,
+                'secureKey' => $secureKey,
                 'moduleId' => $this->module->id,
             ]
         );
@@ -329,19 +331,39 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $orderId = Order::getIdByCartId($cartId);
 
         $order = new Order($orderId);
+        $paymentBehaviorWithout3D = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
+
         if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
-            in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-            (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+            in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
         ) {
             /** @var SaferPayOrderStatusService $orderStatusService */
             $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-            $orderStatusService->cancel($order);
+
+            if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL) {
+                $orderStatusService->cancel($order);
+
+                return;
+            }
+
+            if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE) {
+                return;
+            }
+
+            if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE
+                && SaferPayConfig::supportsOrderCapture($order->payment)
+                && $transactionStatus !== TransactionStatus::CAPTURED
+            ) {
+                $orderStatusService->capture($order);
+
+                return;
+            }
         }
 
         //NOTE to get latest information possible and not override new information.
 
-        $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();// if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
+        $paymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
 
+        // if payment does not support order capture, it means it always auto-captures it (at least with accountToAccount payment),
         // so in this case if status comes back "captured" we just update the order state accordingly
         if (!SaferPayConfig::supportsOrderCapture($paymentMethod) &&
             $transactionStatus === TransactionStatus::CAPTURED

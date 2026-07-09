@@ -15,6 +15,7 @@ interface SettingsContextValue {
   saveGeneralSettings: () => Promise<void>
   savePaymentMethods: () => Promise<void>
   fetchTerminals: (env: string, username: string, password: string) => Promise<TerminalOption[]>
+  generateFieldAccessToken: () => Promise<{ success: boolean; message?: string; token?: string }>
   refreshPaymentMethods: () => Promise<void>
   paymentMethods: PaymentMethodData[]
   updatePaymentMethod: (name: string, updates: Partial<PaymentMethodData>) => void
@@ -25,10 +26,9 @@ const SettingsContext = createContext<SettingsContextValue | null>(null)
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<SaferpaySettingsData>(() => window.saferpaySettingsData)
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>(() => {
-    const methods = window.saferpaySettingsData.paymentMethods
-    return Array.isArray(methods) ? methods : []
-  })
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodData[]>(
+    () => Array.isArray(window.saferpaySettingsData.paymentMethods) ? window.saferpaySettingsData.paymentMethods : [],
+  )
   const [savingSections, setSavingSections] = useState<Set<SavingSection>>(new Set())
 
   const settingsRef = useRef(settings)
@@ -48,7 +48,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const handleSave = useCallback(async (
-    saveFn: () => Promise<{ success: boolean; message?: string }>,
+    saveFn: () => Promise<{ success: boolean; message?: string; warning?: boolean }>,
     label: string,
     section: SavingSection,
   ) => {
@@ -56,7 +56,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await saveFn()
       if (result.success) {
-        toast({ title: result.message || t('savedSuccessfully', label), variant: 'default' })
+        const variant = result.warning ? 'warning' : 'default'
+        toast({ title: result.message || t('savedSuccessfully', label), variant })
       } else {
         toast({ title: result.message || t('failedToSave', label), variant: 'destructive' })
       }
@@ -74,26 +75,35 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const saveCredentials = useCallback(async () => {
     const currentSettings = settingsRef.current
-    await handleSave(() => api.saveCredentials({
-      testMode: currentSettings.testMode,
-      testUsername: currentSettings.testUsername,
-      testPassword: currentSettings.testPassword,
-      testTerminalId: currentSettings.testTerminalId,
-      testMerchantEmails: currentSettings.testMerchantEmails,
-      testFieldAccessToken: currentSettings.testFieldAccessToken,
-      testFieldJsUrl: currentSettings.testFieldJsUrl,
-      testBusinessLicense: currentSettings.testBusinessLicense,
-      liveUsername: currentSettings.liveUsername,
-      livePassword: currentSettings.livePassword,
-      liveTerminalId: currentSettings.liveTerminalId,
-      liveMerchantEmails: currentSettings.liveMerchantEmails,
-      liveFieldAccessToken: currentSettings.liveFieldAccessToken,
-      liveFieldJsUrl: currentSettings.liveFieldJsUrl,
-      liveBusinessLicense: currentSettings.liveBusinessLicense,
-    }), 'API Credentials', 'credentials')
+    await handleSave(async () => {
+      const result = await api.saveCredentials({
+        testMode: currentSettings.testMode,
+        testUsername: currentSettings.testUsername,
+        testPassword: currentSettings.testPassword,
+        testTerminalId: currentSettings.testTerminalId,
+        testMerchantEmails: currentSettings.testMerchantEmails,
+        testFieldAccessToken: currentSettings.testFieldAccessToken,
+        testFieldJsUrl: currentSettings.testFieldJsUrl,
+        liveUsername: currentSettings.liveUsername,
+        livePassword: currentSettings.livePassword,
+        liveTerminalId: currentSettings.liveTerminalId,
+        liveMerchantEmails: currentSettings.liveMerchantEmails,
+        liveFieldAccessToken: currentSettings.liveFieldAccessToken,
+        liveFieldJsUrl: currentSettings.liveFieldJsUrl,
+      })
+      const data = result as unknown as Record<string, unknown>
+      if (result.success) {
+        setSettings((prev) => ({
+          ...prev,
+          ...(typeof data.testHasBusinessLicense === 'boolean' ? { testHasBusinessLicense: data.testHasBusinessLicense as boolean } : {}),
+          ...(typeof data.liveHasBusinessLicense === 'boolean' ? { liveHasBusinessLicense: data.liveHasBusinessLicense as boolean } : {}),
+        }))
+      }
+      return { ...result, warning: data.warning === true }
+    }, 'API Credentials', 'credentials')
   }, [handleSave])
 
-  const savePaymentProcessingFn = useCallback(async () => {
+  const savePaymentProcessing = useCallback(async () => {
     const currentSettings = settingsRef.current
     await handleSave(() => api.savePaymentProcessing({
       paymentBehavior: currentSettings.paymentBehavior,
@@ -106,7 +116,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }), 'Payment Processing', 'paymentProcessing')
   }, [handleSave])
 
-  const saveEmailSettingsFn = useCallback(async () => {
+  const saveEmailSettings = useCallback(async () => {
     const currentSettings = settingsRef.current
     await handleSave(() => api.saveEmailSettings({
       allowSaferpayMail: currentSettings.allowSaferpayMail,
@@ -115,17 +125,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }), 'Email Settings', 'emailSettings')
   }, [handleSave])
 
-  const saveGeneralSettingsFn = useCallback(async () => {
+  const saveGeneralSettings = useCallback(async () => {
     const currentSettings = settingsRef.current
     await handleSave(() => api.saveGeneralSettings({
       orderStateAwaitingPayment: currentSettings.orderStateAwaitingPayment,
       paymentDescription: currentSettings.paymentDescription,
       configurationName: currentSettings.configurationName,
+      hostedFieldsTemplate: currentSettings.hostedFieldsTemplate,
+      orderIdOption: currentSettings.orderIdOption,
       debugMode: currentSettings.debugMode,
     }), 'General Settings', 'generalSettings')
   }, [handleSave])
 
-  const savePaymentMethodsFn = useCallback(async () => {
+  const savePaymentMethods = useCallback(async () => {
     await handleSave(
       () => api.savePaymentMethods(paymentMethodsRef.current),
       'Payment Methods',
@@ -136,41 +148,52 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const refreshPaymentMethods = useCallback(async () => {
     try {
       const result = await api.refreshData()
-      if (result.success && result.data?.paymentMethods) {
-        const methods = result.data.paymentMethods
-        if (Array.isArray(methods)) {
-          setPaymentMethods(methods as PaymentMethodData[])
-        }
+      if (result.success && Array.isArray(result.data?.paymentMethods)) {
+        setPaymentMethods(result.data.paymentMethods as PaymentMethodData[])
       }
-    } catch (e) {
-      const message = e instanceof Error ? e.message : 'Unknown error'
-      toast({ title: t('errorRefreshingPaymentMethods', message), variant: 'destructive' })
+    } catch {
+      toast({ title: t('errorRefreshingPaymentMethods'), variant: 'destructive' })
     }
   }, [])
 
-  const fetchTerminals = useCallback(async (env: string, username: string, password: string) => {
-    try {
-      const result = await api.getTerminals(env, username, password)
-      if (result.success) {
-        return result.terminals
-      }
-      toast({ title: t('failedToFetchTerminals'), variant: 'destructive' })
-      return []
-    } catch {
-      toast({ title: t('errorFetchingTerminals'), variant: 'destructive' })
-      return []
+  const generateFieldAccessToken = useCallback(async () => {
+    const s = settingsRef.current
+    const env = s.testMode ? 'test' : 'live'
+    const username = s.testMode ? s.testUsername : s.liveUsername
+    const password = s.testMode ? s.testPassword : s.livePassword
+    const terminalId = s.testMode ? s.testTerminalId : s.liveTerminalId
+
+    const result = await api.generateFieldAccessToken(env, username, password, terminalId)
+    if (!result.success) {
+      throw new Error(result.message || t('failedToGenerateToken'))
     }
+
+    if (result.token) {
+      const fieldKey = s.testMode ? 'testFieldAccessToken' : 'liveFieldAccessToken'
+      setSettings((prev) => ({ ...prev, [fieldKey]: result.token }))
+    }
+
+    return result
+  }, [])
+
+  const fetchTerminals = useCallback(async (env: string, username: string, password: string) => {
+    const result = await api.getTerminals(env, username, password)
+    if (!result.success) {
+      throw new Error(result.message || t('failedToFetchTerminals'))
+    }
+    return result.terminals
   }, [])
 
   const value = useMemo<SettingsContextValue>(() => ({
     settings,
     updateSettings,
     saveCredentials,
-    savePaymentProcessing: savePaymentProcessingFn,
-    saveEmailSettings: saveEmailSettingsFn,
-    saveGeneralSettings: saveGeneralSettingsFn,
-    savePaymentMethods: savePaymentMethodsFn,
+    savePaymentProcessing,
+    saveEmailSettings,
+    saveGeneralSettings,
+    savePaymentMethods,
     fetchTerminals,
+    generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
     updatePaymentMethod,
@@ -179,11 +202,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     settings,
     updateSettings,
     saveCredentials,
-    savePaymentProcessingFn,
-    saveEmailSettingsFn,
-    saveGeneralSettingsFn,
-    savePaymentMethodsFn,
+    savePaymentProcessing,
+    saveEmailSettings,
+    saveGeneralSettings,
+    savePaymentMethods,
     fetchTerminals,
+    generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
     updatePaymentMethod,
