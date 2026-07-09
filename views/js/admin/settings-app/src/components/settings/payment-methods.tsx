@@ -9,6 +9,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Wallet, ChevronDown, Search, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useSettings } from '@/context/settings-context'
+import { t } from '@/utils/translations'
 
 function MultiSelect({
   options,
@@ -30,15 +31,28 @@ function MultiSelect({
     [options, search],
   )
 
+  const ALL_VALUE = 0
+
+  const validSelected = useMemo(
+    () => selected.filter((s) => s !== ALL_VALUE && options.some((o) => o.id === s)),
+    [selected, options],
+  )
+
+  const isAll = selected.includes(ALL_VALUE) || validSelected.length === 0
+
   const toggle = useCallback(
     (value: number) => {
-      onChange(
-        selected.includes(value)
-          ? selected.filter((s) => s !== value)
-          : [...selected, value],
-      )
+      if (value === ALL_VALUE) {
+        onChange([ALL_VALUE])
+        return
+      }
+      const base = isAll ? [] : validSelected
+      const next = base.includes(value)
+        ? base.filter((s) => s !== value)
+        : [...base, value]
+      onChange(next.length === 0 ? [ALL_VALUE] : next)
     },
-    [selected, onChange],
+    [validSelected, isAll, onChange],
   )
 
   return (
@@ -47,14 +61,18 @@ function MultiSelect({
         <button
           type="button"
           className="sp-flex sp-min-h-[36px] sp-w-full sp-items-center sp-justify-between sp-rounded-md sp-border sp-border-border sp-bg-card sp-px-3 sp-py-1.5 sp-text-left sp-text-sm sp-transition-colors hover:sp-bg-secondary/50 focus-visible:sp-outline-none focus-visible:sp-ring-2 focus-visible:sp-ring-ring"
-          aria-label={label}
+          aria-label={isAll ? `${label}: ${placeholder.replace(/^Select\s+/i, 'All ')}` : validSelected.length === 0 ? `${label}: ${placeholder}` : `${label}: ${validSelected.length} ${t('selected')}`}
         >
-          {selected.length === 0 ? (
+          {isAll ? (
+            <Badge variant="secondary" className="sp-text-xs sp-font-normal">
+              {placeholder.replace(/^Select\s+/i, 'All ')}
+            </Badge>
+          ) : validSelected.length === 0 ? (
             <span className="sp-text-muted-foreground">{placeholder}</span>
           ) : (
             <span className="sp-flex sp-flex-wrap sp-gap-1">
-              {selected.length <= 2 ? (
-                selected.map((s) => {
+              {validSelected.length <= 2 ? (
+                validSelected.map((s) => {
                   const opt = options.find((o) => o.id === s)
                   return (
                     <Badge key={s} variant="secondary" className="sp-text-xs sp-font-normal">
@@ -64,7 +82,7 @@ function MultiSelect({
                 })
               ) : (
                 <Badge variant="secondary" className="sp-text-xs sp-font-normal">
-                  {selected.length} selected
+                  {validSelected.length} {t('selected')}
                 </Badge>
               )}
             </span>
@@ -79,7 +97,7 @@ function MultiSelect({
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
+              placeholder={t('search')}
               className="sp-h-8 sp-pl-7 sp-text-xs"
             />
           </div>
@@ -91,7 +109,7 @@ function MultiSelect({
               className="sp-flex sp-cursor-pointer sp-items-center sp-gap-2 sp-rounded-sm sp-px-2 sp-py-1.5 sp-text-sm hover:sp-bg-accent"
             >
               <Checkbox
-                checked={selected.includes(option.id)}
+                checked={option.id === ALL_VALUE ? isAll : validSelected.includes(option.id)}
                 onCheckedChange={() => toggle(option.id)}
               />
               <span className="sp-text-sm">{option.name}</span>
@@ -99,18 +117,18 @@ function MultiSelect({
           ))}
           {filteredOptions.length === 0 && (
             <p className="sp-px-2 sp-py-4 sp-text-center sp-text-xs sp-text-muted-foreground">
-              No results found.
+              {t('noResultsFound')}
             </p>
           )}
         </div>
-        {selected.length > 0 && (
+        {validSelected.length > 0 && (
           <div className="sp-border-t sp-p-2">
             <button
               type="button"
-              onClick={() => onChange([])}
+              onClick={() => onChange([ALL_VALUE])}
               className="sp-w-full sp-rounded-sm sp-px-2 sp-py-1 sp-text-xs sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors"
             >
-              Clear all
+              {t('clearAll')}
             </button>
           </div>
         )}
@@ -120,13 +138,14 @@ function MultiSelect({
 }
 
 export function PaymentMethods() {
-  const { paymentMethods, updatePaymentMethod, savePaymentMethods, saving, settings, refreshPaymentMethods } = useSettings()
+  const { paymentMethods, updatePaymentMethod, savePaymentMethods, savingSections, settings, refreshPaymentMethods } = useSettings()
+  const saving = savingSections.has('paymentMethods')
 
   useEffect(() => {
     if (paymentMethods.length === 0) {
       refreshPaymentMethods()
     }
-  }, [])
+  }, [paymentMethods.length, refreshPaymentMethods])
 
   const enabledCount = paymentMethods.filter((m) => m.enabled).length
 
@@ -138,15 +157,15 @@ export function PaymentMethods() {
             <div className="sp-flex sp-items-center sp-gap-2">
               <Wallet className="sp-h-5 sp-w-5 sp-text-muted-foreground" />
               <div className="sp-flex sp-flex-col sp-gap-1.5">
-                <CardTitle className="sp-text-base sp-font-semibold">Payment Methods</CardTitle>
+                <CardTitle className="sp-text-base sp-font-semibold">{t('paymentMethods')}</CardTitle>
                 <CardDescription>
-                  Enable and configure available payment methods for your checkout.
+                  {t('paymentMethodsDescription')}
                 </CardDescription>
               </div>
             </div>
             {enabledCount > 0 && (
               <Badge variant="secondary" className="sp-bg-primary/10 sp-text-primary sp-border-0">
-                {enabledCount} active
+                {enabledCount} {t('active')}
               </Badge>
             )}
           </div>
@@ -154,12 +173,12 @@ export function PaymentMethods() {
         <CardContent>
           {/* Header row */}
           <div className="sp-mb-3 sp-hidden sp-items-center sp-gap-3 sp-rounded-lg sp-bg-muted sp-px-4 sp-py-2.5 sp-text-xs sp-font-medium sp-text-muted-foreground md:sp-grid md:sp-grid-cols-[1fr_80px_80px_100px_1fr_1fr]">
-            <span>Payment method</span>
-            <span className="sp-text-center">Enabled</span>
-            <span className="sp-text-center">Logos</span>
-            <span className="sp-text-center">Custom form</span>
-            <span>Countries</span>
-            <span>Currencies</span>
+            <span>{t('paymentMethod')}</span>
+            <span className="sp-text-center">{t('enabled')}</span>
+            <span className="sp-text-center">{t('logos')}</span>
+            <span className="sp-text-center">{t('customForm')}</span>
+            <span>{t('countries')}</span>
+            <span>{t('currencies')}</span>
           </div>
 
           {/* Payment method rows */}
@@ -183,7 +202,7 @@ export function PaymentMethods() {
                     <Switch
                       checked={method.enabled}
                       onCheckedChange={(checked) => updatePaymentMethod(method.name, { enabled: checked })}
-                      aria-label={`Enable ${method.displayName}`}
+                      aria-label={`${t('enable')} ${method.displayName}`}
                     />
                   </div>
 
@@ -191,7 +210,7 @@ export function PaymentMethods() {
                     <Switch
                       checked={method.showLogos}
                       onCheckedChange={(checked) => updatePaymentMethod(method.name, { showLogos: checked })}
-                      aria-label={`Show logos for ${method.displayName}`}
+                      aria-label={`${t('logos')} ${method.displayName}`}
                     />
                   </div>
 
@@ -200,7 +219,7 @@ export function PaymentMethods() {
                       <Switch
                         checked={method.showCustomForm}
                         onCheckedChange={(checked) => updatePaymentMethod(method.name, { showCustomForm: checked })}
-                        aria-label={`Show custom form for ${method.displayName}`}
+                        aria-label={`${t('customForm')} ${method.displayName}`}
                       />
                     ) : (
                       <span className="sp-text-xs sp-text-muted-foreground">--</span>
@@ -211,16 +230,16 @@ export function PaymentMethods() {
                     options={settings.countries}
                     selected={method.countries}
                     onChange={(countries) => updatePaymentMethod(method.name, { countries })}
-                    placeholder="Select countries"
-                    label={`Countries for ${method.displayName}`}
+                    placeholder={t('selectCountries')}
+                    label={`${t('countries')} ${method.displayName}`}
                   />
 
                   <MultiSelect
                     options={settings.currencies.map((c) => ({ id: c.id, name: c.iso_code }))}
                     selected={method.currencies}
                     onChange={(currencies) => updatePaymentMethod(method.name, { currencies })}
-                    placeholder="Select currencies"
-                    label={`Currencies for ${method.displayName}`}
+                    placeholder={t('selectCurrencies')}
+                    label={`${t('currencies')} ${method.displayName}`}
                   />
                 </div>
 
@@ -231,24 +250,26 @@ export function PaymentMethods() {
                     <Switch
                       checked={method.enabled}
                       onCheckedChange={(checked) => updatePaymentMethod(method.name, { enabled: checked })}
-                      aria-label={`Enable ${method.displayName}`}
+                      aria-label={`${t('enable')} ${method.displayName}`}
                     />
                   </div>
 
                   <div className="sp-grid sp-grid-cols-2 sp-gap-2">
                     <div className="sp-flex sp-items-center sp-justify-between sp-rounded-md sp-border sp-bg-secondary/50 sp-px-3 sp-py-2">
-                      <Label className="sp-text-xs sp-text-muted-foreground">Logos</Label>
+                      <Label className="sp-text-xs sp-text-muted-foreground">{t('logos')}</Label>
                       <Switch
                         checked={method.showLogos}
                         onCheckedChange={(checked) => updatePaymentMethod(method.name, { showLogos: checked })}
+                        aria-label={`${t('logos')} ${method.displayName}`}
                       />
                     </div>
                     {method.hasCustomForm && (
                       <div className="sp-flex sp-items-center sp-justify-between sp-rounded-md sp-border sp-bg-secondary/50 sp-px-3 sp-py-2">
-                        <Label className="sp-text-xs sp-text-muted-foreground">Custom form</Label>
+                        <Label className="sp-text-xs sp-text-muted-foreground">{t('customForm')}</Label>
                         <Switch
                           checked={method.showCustomForm}
                           onCheckedChange={(checked) => updatePaymentMethod(method.name, { showCustomForm: checked })}
+                          aria-label={`${t('customForm')} ${method.displayName}`}
                         />
                       </div>
                     )}
@@ -256,23 +277,23 @@ export function PaymentMethods() {
 
                   <div className="sp-grid sp-grid-cols-2 sp-gap-2">
                     <div className="sp-flex sp-flex-col sp-gap-1">
-                      <Label className="sp-text-xs sp-text-muted-foreground">Countries</Label>
+                      <Label className="sp-text-xs sp-text-muted-foreground">{t('countries')}</Label>
                       <MultiSelect
                         options={settings.countries}
                         selected={method.countries}
                         onChange={(countries) => updatePaymentMethod(method.name, { countries })}
-                        placeholder="Select"
-                        label={`Countries for ${method.displayName}`}
+                        placeholder={t('select')}
+                        label={`${t('countries')} ${method.displayName}`}
                       />
                     </div>
                     <div className="sp-flex sp-flex-col sp-gap-1">
-                      <Label className="sp-text-xs sp-text-muted-foreground">Currencies</Label>
+                      <Label className="sp-text-xs sp-text-muted-foreground">{t('currencies')}</Label>
                       <MultiSelect
                         options={settings.currencies.map((c) => ({ id: c.id, name: c.iso_code }))}
                         selected={method.currencies}
                         onChange={(currencies) => updatePaymentMethod(method.name, { currencies })}
-                        placeholder="Select"
-                        label={`Currencies for ${method.displayName}`}
+                        placeholder={t('select')}
+                        label={`${t('currencies')} ${method.displayName}`}
                       />
                     </div>
                   </div>
@@ -282,18 +303,20 @@ export function PaymentMethods() {
 
             {paymentMethods.length === 0 && (
               <div className="sp-rounded-lg sp-border sp-border-dashed sp-p-8 sp-text-center sp-text-sm sp-text-muted-foreground">
-                No payment methods available. Please configure your API credentials first.
+                {t('noPaymentMethods')}
               </div>
             )}
           </div>
         </CardContent>
       </Card>
 
-      <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={savePaymentMethods} disabled={saving}>
-          {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : 'Save Changes'}
-        </Button>
-      </div>
+      {paymentMethods.length > 0 && (
+        <div className="sp-flex sp-justify-end">
+          <Button className="sp-min-w-[120px]" onClick={savePaymentMethods} disabled={saving} aria-label={saving ? t('saving') : undefined}>
+            {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

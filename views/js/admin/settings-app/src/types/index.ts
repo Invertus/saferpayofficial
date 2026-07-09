@@ -21,22 +21,21 @@ export interface SaferpaySettingsData {
   // Test credentials
   testUsername: string
   testPassword: string
-  testCustomerId: string
   testTerminalId: string
   testMerchantEmails: string
   testFieldAccessToken: string
   testFieldJsUrl: string
-  testBusinessLicense: boolean
-
   // Live credentials
   liveUsername: string
   livePassword: string
-  liveCustomerId: string
   liveTerminalId: string
   liveMerchantEmails: string
   liveFieldAccessToken: string
   liveFieldJsUrl: string
-  liveBusinessLicense: boolean
+
+  // License (read-only, auto-detected from API, per environment)
+  testHasBusinessLicense: boolean
+  liveHasBusinessLicense: boolean
 
   // Payment Processing
   paymentBehavior: number
@@ -56,6 +55,9 @@ export interface SaferpaySettingsData {
   orderStateAwaitingPayment: number
   paymentDescription: string
   configurationName: string
+  hostedFieldsTemplate: number
+  modulePath: string
+  orderIdOption: number
   debugMode: boolean
 
   // Reference data
@@ -67,6 +69,9 @@ export interface SaferpaySettingsData {
   // Endpoints
   ajaxUrl: string
   adminToken: string
+
+  // Translations
+  translations: Record<string, string>
 }
 
 declare global {

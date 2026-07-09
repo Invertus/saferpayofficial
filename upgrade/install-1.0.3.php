@@ -57,12 +57,5 @@ function upgrade_module_1_0_3($module)
         ADD COLUMN `authorized` TINYINT(1) DEFAULT 0'
     );
 
-    $installer = new \Invertus\SaferPay\Install\Installer($module);
-    $installer->installTab(
-        SaferPayOfficial::ADMIN_FIELDS_CONTROLLER,
-        SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
-        $module->l('Fields')
-    );
-
     return $result;
 }

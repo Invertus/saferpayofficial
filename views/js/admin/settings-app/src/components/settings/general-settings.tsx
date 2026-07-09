@@ -3,12 +3,15 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Settings2, Paintbrush, ClipboardList, Loader2 } from 'lucide-react'
+import { Settings2, Paintbrush, ClipboardList, Loader2, Info } from 'lucide-react'
 import { useSettings } from '@/context/settings-context'
+import { t } from '@/utils/translations'
 
 export function GeneralSettings() {
-  const { settings, updateSettings, saveGeneralSettings, saving } = useSettings()
+  const { settings, updateSettings, saveGeneralSettings, savingSections } = useSettings()
+  const saving = savingSections.has('generalSettings')
 
   return (
     <div className="sp-flex sp-flex-col sp-gap-6">
@@ -18,22 +21,22 @@ export function GeneralSettings() {
           <div className="sp-flex sp-items-center sp-gap-2">
             <ClipboardList className="sp-h-5 sp-w-5 sp-text-muted-foreground" />
             <div className="sp-flex sp-flex-col sp-gap-1.5">
-              <CardTitle className="sp-text-base sp-font-semibold">Order State</CardTitle>
+              <CardTitle className="sp-text-base sp-font-semibold">{t('orderState')}</CardTitle>
               <CardDescription>
-                Define the default order status for Saferpay payments.
+                {t('orderStateDescription')}
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="sp-flex sp-flex-col sp-gap-2">
-            <Label htmlFor="order-status">Status for Saferpay payment awaiting</Label>
+            <Label htmlFor="order-status">{t('statusAwaitingPayment')}</Label>
             <Select
               value={String(settings.orderStateAwaitingPayment)}
               onValueChange={(val) => updateSettings({ orderStateAwaitingPayment: Number(val) })}
             >
               <SelectTrigger id="order-status">
-                <SelectValue placeholder="Select order status" />
+                <SelectValue placeholder={t('selectOrderStatus')} />
               </SelectTrigger>
               <SelectContent>
                 {settings.orderStates.map((state) => (
@@ -44,7 +47,7 @@ export function GeneralSettings() {
               </SelectContent>
             </Select>
             <p className="sp-text-xs sp-text-muted-foreground">
-              Default status on SaferPay order creation.
+              {t('defaultStatusDescription')}
             </p>
           </div>
         </CardContent>
@@ -56,26 +59,72 @@ export function GeneralSettings() {
           <div className="sp-flex sp-items-center sp-gap-2">
             <Paintbrush className="sp-h-5 sp-w-5 sp-text-muted-foreground" />
             <div className="sp-flex sp-flex-col sp-gap-1.5">
-              <CardTitle className="sp-text-base sp-font-semibold">Styling</CardTitle>
+              <CardTitle className="sp-text-base sp-font-semibold">{t('styling')}</CardTitle>
               <CardDescription>
-                Customize the appearance of the payment page.
+                {t('stylingDescription')}
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="sp-flex sp-flex-col sp-gap-2">
-            <Label htmlFor="page-config-name">Payment Page configurations name</Label>
+            <Label htmlFor="page-config-name">{t('configName')}</Label>
             <Input
               id="page-config-name"
               type="text"
-              placeholder="Enter configuration name"
+              maxLength={20}
+              placeholder={t('enterConfigName')}
               value={settings.configurationName}
-              onChange={(e) => updateSettings({ configurationName: e.target.value })}
+              onChange={(e) => {
+                const cleaned = e.target.value.replace(/[^A-Za-z0-9.:\-_]/g, '')
+                updateSettings({ configurationName: cleaned })
+              }}
             />
             <p className="sp-text-xs sp-text-muted-foreground">
-              This name is visible in payment page and also in payment confirmation email.
+              {t('configNameDescription')}
             </p>
+          </div>
+
+          {/* Hosted field info banner */}
+          <div className="sp-flex sp-items-center sp-justify-center sp-gap-3 sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-5 sp-py-4 sp-mt-4">
+            <Info className="sp-h-5 sp-w-5 sp-text-primary sp-shrink-0" />
+            <p className="sp-text-sm sp-text-foreground sp-m-0">
+              {t('hostedFieldInfo')}
+            </p>
+          </div>
+
+          {/* Hosted field style selector */}
+          <div className="sp-flex sp-gap-6 sp-mt-4">
+            <div className="sp-flex sp-flex-col sp-gap-2 sp-shrink-0">
+              <Label className="sp-text-sm sp-font-medium">{t('hostedFieldStyle')}</Label>
+              <Select
+                value={String(settings.hostedFieldsTemplate)}
+                onValueChange={(val) => updateSettings({ hostedFieldsTemplate: Number(val) })}
+              >
+                <SelectTrigger className="sp-w-[220px]" aria-label={t('hostedFieldStyle')}>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">{t('classicLayout')}</SelectItem>
+                  <SelectItem value="2">{t('labeledLayout')}</SelectItem>
+                  <SelectItem value="3">{t('inlineLayoutWithCard')}</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="sp-text-xs sp-text-muted-foreground sp-max-w-[220px]">
+                {t('hostedFieldStyleDescription')}
+              </p>
+            </div>
+            <div className="sp-flex-1 sp-flex sp-items-center sp-justify-center sp-rounded-lg sp-bg-secondary/30 sp-p-4">
+              <img
+                src={`${settings.modulePath}views/img/hosted-templates/template${settings.hostedFieldsTemplate}.jpg`}
+                alt={
+                  settings.hostedFieldsTemplate === 1 ? t('classicLayout') :
+                  settings.hostedFieldsTemplate === 2 ? t('labeledLayout') :
+                  t('inlineLayoutWithCard')
+                }
+                className="sp-max-w-full sp-h-auto sp-rounded"
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -86,36 +135,79 @@ export function GeneralSettings() {
           <div className="sp-flex sp-items-center sp-gap-2">
             <Settings2 className="sp-h-5 sp-w-5 sp-text-muted-foreground" />
             <div className="sp-flex sp-flex-col sp-gap-1.5">
-              <CardTitle className="sp-text-base sp-font-semibold">Configuration</CardTitle>
+              <CardTitle className="sp-text-base sp-font-semibold">{t('configuration')}</CardTitle>
               <CardDescription>
-                General module configuration settings.
+                {t('configurationDescription')}
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <div className="sp-grid sp-gap-5">
-            <div className="sp-flex sp-flex-col sp-gap-2">
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                type="text"
-                placeholder="Enter description"
-                value={settings.paymentDescription}
-                onChange={(e) => updateSettings({ paymentDescription: e.target.value })}
-              />
-              <p className="sp-text-xs sp-text-muted-foreground">
-                This description is visible in payment page also in payment confirmation email.
+            {/* Order reference on payment page */}
+            <div className="sp-flex sp-flex-col sp-gap-3">
+              <Label className="sp-text-sm sp-font-medium">{t('orderReferenceOnPaymentPage')}</Label>
+              <RadioGroup
+                value={String(settings.orderIdOption)}
+                onValueChange={(val) => updateSettings({ orderIdOption: Number(val) })}
+                className="sp-flex sp-flex-col sp-gap-3"
+              >
+                <label
+                  htmlFor="order-id-prestashop"
+                  className={`sp-flex sp-cursor-pointer sp-items-center sp-gap-3 sp-rounded-lg sp-border sp-px-4 sp-py-3 sp-transition-colors ${
+                    settings.orderIdOption === 0
+                      ? 'sp-border-primary sp-bg-primary/5'
+                      : 'sp-border-border hover:sp-bg-secondary/50'
+                  }`}
+                >
+                  <RadioGroupItem value="0" id="order-id-prestashop" />
+                  <span className="sp-text-sm sp-font-medium">{t('usePrestaShopOrderReference')}</span>
+                </label>
+                <label
+                  htmlFor="order-id-description"
+                  className={`sp-flex sp-cursor-pointer sp-items-center sp-gap-3 sp-rounded-lg sp-border sp-px-4 sp-py-3 sp-transition-colors ${
+                    settings.orderIdOption === 1
+                      ? 'sp-border-primary sp-bg-primary/5'
+                      : 'sp-border-border hover:sp-bg-secondary/50'
+                  }`}
+                >
+                  <RadioGroupItem value="1" id="order-id-description" />
+                  <span className="sp-text-sm sp-font-medium">{t('useDescriptionFieldValue')}</span>
+                </label>
+              </RadioGroup>
+            </div>
+
+            {settings.orderIdOption === 1 && (
+              <div className="sp-flex sp-flex-col sp-gap-2">
+                <Label htmlFor="description">{t('description')}</Label>
+                <Input
+                  id="description"
+                  type="text"
+                  placeholder={t('enterDescription')}
+                  value={settings.paymentDescription}
+                  onChange={(e) => updateSettings({ paymentDescription: e.target.value })}
+                />
+                <p className="sp-text-xs sp-text-muted-foreground">
+                  {t('descriptionHelp')}
+                </p>
+              </div>
+            )}
+
+            {/* Info banner */}
+            <div className="sp-flex sp-items-center sp-justify-center sp-gap-3 sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-5 sp-py-4">
+              <Info className="sp-h-5 sp-w-5 sp-text-primary sp-shrink-0" />
+              <p className="sp-text-sm sp-text-foreground">
+                {t('orderReferenceFallbackInfo')}
               </p>
             </div>
 
             <div className="sp-flex sp-items-center sp-justify-between sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-4 sp-py-3">
               <div className="sp-flex sp-flex-col sp-gap-0.5">
                 <Label htmlFor="debug-mode" className="sp-font-medium sp-cursor-pointer">
-                  Debug mode
+                  {t('debugMode')}
                 </Label>
                 <p className="sp-text-xs sp-text-muted-foreground">
-                  Enable debug mode to see more information in logs.
+                  {t('debugModeDescription')}
                 </p>
               </div>
               <Switch
@@ -129,8 +221,8 @@ export function GeneralSettings() {
       </Card>
 
       <div className="sp-flex sp-justify-end">
-        <Button className="sp-min-w-[120px]" onClick={saveGeneralSettings} disabled={saving}>
-          {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : 'Save Changes'}
+        <Button className="sp-min-w-[120px]" onClick={saveGeneralSettings} disabled={saving} aria-label={saving ? t('saving') : undefined}>
+          {saving ? <Loader2 className="sp-h-4 sp-w-4 sp-animate-spin" /> : t('saveChanges')}
         </Button>
       </div>
     </div>

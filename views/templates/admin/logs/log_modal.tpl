@@ -19,7 +19,8 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  *}
-<div
+<button
+        type="button"
         class="btn btn-default button js-log-button"
         data-toggle="modal"
         data-log-id="{$log_id|escape:'htmlall':'UTF-8'}"
@@ -27,14 +28,14 @@
         data-target="log-modal-{$log_id|escape:'htmlall':'UTF-8'}-{$log_information_type|escape:'htmlall':'UTF-8'}"
 >
     {l s='View' mod='saferpayofficial'}
-</div>
+</button>
 
-<div id="log-modal-{$log_id|escape:'htmlall':'UTF-8'}-{$log_information_type|escape:'htmlall':'UTF-8'}" class="modal">
+<div id="log-modal-{$log_id|escape:'htmlall':'UTF-8'}-{$log_information_type|escape:'htmlall':'UTF-8'}" class="modal" role="dialog" aria-modal="true" aria-labelledby="log-modal-title-{$log_id|escape:'htmlall':'UTF-8'}-{$log_information_type|escape:'htmlall':'UTF-8'}">
     <div class="log-modal-overlay"></div>
 
     <div class="log-modal-window">
         <div class="log-modal-title">
-            <h4>
+            <h4 id="log-modal-title-{$log_id|escape:'htmlall':'UTF-8'}-{$log_information_type|escape:'htmlall':'UTF-8'}">
                 {if $log_information_type === 'request'}
                     {$log_id|escape:'htmlall':'UTF-8'}: {l s='Request data' mod='saferpayofficial'}
                 {elseif $log_information_type === 'response'}
@@ -43,10 +44,11 @@
                     {$log_id|escape:'htmlall':'UTF-8'}: {l s='Context data' mod='saferpayofficial'}
                 {/if}
             </h4>
+            <button type="button" class="log-modal-close js-log-modal-close" aria-label="{l s='Close' mod='saferpayofficial'}">&times;</button>
         </div>
 
         <div class="log-modal-content">
-            <div class="log-modal-content-spinner hidden"></div>
+            <div class="log-modal-content-spinner hidden" role="status" aria-label="{l s='Loading' mod='saferpayofficial'}"></div>
             <pre class="log-modal-content-data hidden"></pre>
         </div>
     </div>

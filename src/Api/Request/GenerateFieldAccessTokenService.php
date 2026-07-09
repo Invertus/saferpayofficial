@@ -21,42 +21,41 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\DTO\Request\GetTerminals;
+namespace Invertus\SaferPay\Api\Request;
+
+use Invertus\SaferPay\Api\ApiRequest;
+use Invertus\SaferPay\DTO\Request\GenerateFieldAccessToken\GenerateFieldAccessTokenRequest;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class GetTerminalsRequest
+class GenerateFieldAccessTokenService
 {
-    /** @var string */
-    private $customerId;
+    /** @var ApiRequest */
+    private $apiRequest;
 
-    /**
-     * @param string $customerId
-     */
-    public function __construct($customerId)
+    public function __construct(ApiRequest $apiRequest)
     {
-        if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $customerId)) {
-            throw new \InvalidArgumentException('Invalid customer ID format');
-        }
-
-        $this->customerId = $customerId;
+        $this->apiRequest = $apiRequest;
     }
 
     /**
-     * @return string
+     * @param GenerateFieldAccessTokenRequest $request
+     * @param string $username
+     * @param string $password
+     * @param string $baseUrl
+     * @param array|null $params
+     * @return mixed
      */
-    public function getCustomerId()
+    public function generateToken(GenerateFieldAccessTokenRequest $request, $username, $password, $baseUrl, $params = null)
     {
-        return $this->customerId;
-    }
-
-    /**
-     * @return string
-     */
-    public function generateRequestUrl()
-    {
-        return sprintf('rest/customers/%s/terminals', $this->customerId);
+        return $this->apiRequest->postWithCredentials(
+            $request->generateRequestUrl(),
+            $username,
+            $password,
+            $baseUrl,
+            $params
+        );
     }
 }

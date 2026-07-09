@@ -21,35 +21,36 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\DTO\Request\GetTerminals;
+namespace Invertus\SaferPay\DTO\Request\GenerateFieldAccessToken;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class GetTerminalsRequest
+class GenerateFieldAccessTokenRequest
 {
     /** @var string */
     private $customerId;
 
+    /** @var string */
+    private $terminalId;
+
     /**
      * @param string $customerId
+     * @param string $terminalId
      */
-    public function __construct($customerId)
+    public function __construct($customerId, $terminalId)
     {
         if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $customerId)) {
             throw new \InvalidArgumentException('Invalid customer ID format');
         }
 
-        $this->customerId = $customerId;
-    }
+        if (!preg_match('/^[a-zA-Z0-9\-_]+$/', $terminalId)) {
+            throw new \InvalidArgumentException('Invalid terminal ID format');
+        }
 
-    /**
-     * @return string
-     */
-    public function getCustomerId()
-    {
-        return $this->customerId;
+        $this->customerId = $customerId;
+        $this->terminalId = $terminalId;
     }
 
     /**
@@ -57,6 +58,10 @@ class GetTerminalsRequest
      */
     public function generateRequestUrl()
     {
-        return sprintf('rest/customers/%s/terminals', $this->customerId);
+        return sprintf(
+            'rest/customers/%s/terminals/%s/fields-access-tokens',
+            $this->customerId,
+            $this->terminalId
+        );
     }
 }

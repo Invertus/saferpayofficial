@@ -30,13 +30,13 @@
 
 {block name='content'}
     <div>
-        <iframe id="saferpay-iframe" src="{$redirect|escape:'htmlall':'UTF-8'}"></iframe>
+        <iframe id="saferpay-iframe" src="{$redirect|escape:'htmlall':'UTF-8'}" title="{l s='Saferpay payment form' mod='saferpayofficial'}"></iframe>
     </div>
 {/block}
 
 {block name='checkout_process'}
     <div>
-        <iframe id="saferpay-iframe" src="{$redirect|escape:'htmlall':'UTF-8'}"></iframe>
+        <iframe id="saferpay-iframe" src="{$redirect|escape:'htmlall':'UTF-8'}" title="{l s='Saferpay payment form' mod='saferpayofficial'}"></iframe>
     </div>
 {/block}
 
