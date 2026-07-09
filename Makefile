@@ -144,6 +144,7 @@ e2eh1786: test-e2e-headless-1786
 test-e2e-headless-1786:
 	make e2e1786p
 
+# target: build-react			- Install deps and build the React admin settings app
 build-react:
 	cd views/js/admin/settings-app && pnpm install && pnpm run build
 

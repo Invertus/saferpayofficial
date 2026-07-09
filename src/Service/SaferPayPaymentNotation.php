@@ -38,7 +38,11 @@ class SaferPayPaymentNotation
         'MAESTRO' => 'Maestro-Intl.',
     ];
 
-    public function getForDisplay($payment)
+    /**
+     * @param string $payment
+     * @return string
+     */
+    public function getForDisplay($payment): string
     {
         if (array_key_exists($payment, self::PAYMENTS)) {
             return self::PAYMENTS[$payment];
@@ -50,7 +54,11 @@ class SaferPayPaymentNotation
         return $notation;
     }
 
-    public function getShortName($payment)
+    /**
+     * @param string $payment
+     * @return string
+     */
+    public function getShortName($payment): string
     {
         $paymentNotation = str_replace(' ', '', $payment);
 

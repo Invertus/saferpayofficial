@@ -58,7 +58,10 @@ class SaferPayOfficial extends PaymentModule
     const ADMIN_ORDER_CONTROLLER = 'AdminSaferPayOfficialOrder';
     const ADMIN_LOGS_CONTROLLER = 'AdminSaferPayOfficialLogs';
 
-    const DISABLE_CACHE = true;
+    /**
+     * @var LeagueServiceContainerProvider|null
+     */
+    private $containerProvider;
 
     public function __construct($name = null)
     {
@@ -86,17 +89,13 @@ class SaferPayOfficial extends PaymentModule
 
     public function install()
     {
-        $installer = new \Invertus\SaferPay\Install\Installer($this);
-
         if (!parent::install()) {
             return false;
         }
 
-        if (!$installer->install()) {
-            return false;
-        }
+        $installer = new Installer($this);
 
-        return true;
+        return $installer->install();
     }
 
     public function uninstall()
@@ -128,11 +127,20 @@ class SaferPayOfficial extends PaymentModule
     {
         require $this->getLocalPath() . 'saferpay.config.php';
     }
+
+    /**
+     * Get a service from the container.
+     *
+     * @param string $service
+     * @return mixed
+     */
     public function getService($service)
     {
-        $containerProvider = new LeagueServiceContainerProvider();
+        if (null === $this->containerProvider) {
+            $this->containerProvider = new LeagueServiceContainerProvider();
+        }
 
-        return $containerProvider->getService($service);
+        return $this->containerProvider->getService($service);
     }
 
     public function hookDisplayOrderConfirmation($params)
@@ -178,7 +186,7 @@ Thank you for your patience!');
         /** @var Order|bool $order */
         $order = $orders->getFirst();
 
-        if (!Validate::isLoadedObject($order) || !$order) {
+        if (!Validate::isLoadedObject($order)) {
             return;
         }
 
@@ -234,9 +242,6 @@ Thank you for your patience!');
             $logosEnabled[] = SaferPayConfig::PAYMENT_CARDS;
         }
 
-        $activePaymentMethods = $paymentRepository->getActivePaymentMethodsNames();
-        $activePaymentMethods = array_column($activePaymentMethods, 'name');
-
         /** @var CurrencyProvider $currencyProvider */
         $currencyProvider = $this->getService(CurrencyProvider::class);
 
@@ -249,6 +254,17 @@ Thank you for your patience!');
             $paymentMethods = $cardGroupingService->group($paymentMethods, $allCurrencies);
         }
 
+        // Services used in the loop - initialized once for performance
+        /** @var SaferPayCardAliasRepository $cardAliasRepository */
+        $cardAliasRepository = $this->getService(SaferPayCardAliasRepository::class);
+        /** @var PaymentRedirectionProvider $paymentRedirectionProvider */
+        $paymentRedirectionProvider = $this->getService(PaymentRedirectionProvider::class);
+        /** @var LegacyTranslator $translator */
+        $translator = $this->getService(LegacyTranslator::class);
+
+        $isBusinessLicenseEnabled = Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
+        $isCreditCardSavingEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
+
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
@@ -256,8 +272,10 @@ Thank you for your patience!');
                 $paymentMethod['currencies'] = $currencyProvider->getAllCurrenciesInArray();
             }
 
-            if (!in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
-                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            if (
+                !in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
+                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)
+            ) {
                 continue;
             }
 
@@ -272,26 +290,16 @@ Thank you for your patience!');
                 $paymentMethod['paymentMethod'],
                 SaferPayConfig::TRANSACTION_METHODS
             );
-            $isBusinessLicenseEnabled = Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
 
-            /** @var SaferPayCardAliasRepository $cardAliasRep */
-            $cardAliasRep = $this->getService(SaferPayCardAliasRepository::class);
-
-            $isCreditCardSavingEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
             $selectedCard = 0;
+            $isCreditCardSavingEnabledForUser = $isCreditCardSavingEnabled;
+
             if ($this->context->customer->is_guest) {
-                $isCreditCardSavingEnabled = false;
+                $isCreditCardSavingEnabledForUser = false;
                 $selectedCard = -1;
             }
 
-            /** @var PaymentRedirectionProvider $paymentRedirectionProvider */
-            $paymentRedirectionProvider = $this->getService(PaymentRedirectionProvider::class);
-
             $newOption = new PaymentOption();
-
-            $translator = $this->getService(
-                LegacyTranslator::class
-            );
 
             $paymentMethodName = $translator->translate($paymentMethod['paymentMethod']);
 
@@ -308,10 +316,10 @@ Thank you for your patience!');
                 ],
             ];
 
-            if ($isCreditCardSavingEnabled && $isCreditCard && $isBusinessLicenseEnabled) {
+            if ($isCreditCardSavingEnabledForUser && $isCreditCard && $isBusinessLicenseEnabled) {
                 $currentDate = date('Y-m-d h:i:s');
 
-                $savedCards = $cardAliasRep->getSavedValidCardsByUserIdAndPaymentMethod(
+                $savedCards = $cardAliasRepository->getSavedValidCardsByUserIdAndPaymentMethod(
                     $this->context->customer->id,
                     $paymentMethod['paymentMethod'],
                     $currentDate
@@ -417,13 +425,12 @@ Thank you for your patience!');
 
             return true;
         }
-
-        return true;
     }
 
     public function hookActionAdminControllerSetMedia()
     {
-        if ('AdminOrders' === Tools::getValue('controller')
+        if (
+            'AdminOrders' === Tools::getValue('controller')
             && (Tools::isSubmit('vieworder') || Tools::getValue('action') === 'vieworder')
         ) {
             $this->context->controller->addCSS(
@@ -517,8 +524,10 @@ Thank you for your patience!');
         // Note: This condition check or Payment method supports 3DS.
         // If payment method does not supports 3DS , when we change 'liability_shift'
         // to true , to hide 'failed security check ' message.
-        if ($assertData['liability_shift'] === "0"
-            && !in_array($assertData['paymentMethod'], $supported3DsPaymentMethods)) {
+        if (
+            $assertData['liability_shift'] === "0"
+            && !in_array($assertData['paymentMethod'], $supported3DsPaymentMethods)
+        ) {
             $assertData['liability_shift'] = true;
         }
 
@@ -542,7 +551,8 @@ Thank you for your patience!');
 
     public function addFlash($msg, $type)
     {
-        if (VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')
+        if (
+            VersionUtility::isPsVersionGreaterOrEqualTo('1.7.7.0')
             && VersionUtility::isPsVersionLessThan('9.0.0')
         ) {
             return $this->get('session')->getFlashBag()->add($type, $msg);

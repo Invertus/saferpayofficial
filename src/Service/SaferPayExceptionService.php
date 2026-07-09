@@ -46,7 +46,10 @@ class SaferPayExceptionService
         $this->module = $module->getModule();
     }
 
-    public function getErrorMessages()
+    /**
+     * @return array
+     */
+    public function getErrorMessages(): array
     {
         //todo: test translations
         return [
@@ -68,7 +71,12 @@ class SaferPayExceptionService
         ];
     }
 
-    public function getErrorMessageForException(Exception $exception, array $messages)
+    /**
+     * @param Exception $exception
+     * @param array $messages
+     * @return string
+     */
+    public function getErrorMessageForException(Exception $exception, array $messages): string
     {
         $exceptionType = get_class($exception);
         $exceptionCode = $exception->getCode();

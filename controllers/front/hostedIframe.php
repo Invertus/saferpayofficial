@@ -80,7 +80,7 @@ class SaferPayOfficialHostedIframeModuleFrontController extends ModuleFrontContr
 
         $this->context->controller->registerJavascript(
             'remote-saferpay-fields-js-lib',
-            Configuration::get(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::getConfigSuffix()),
+            SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE,
             ['server' => 'remote', 'position' => 'bottom', 'priority' => 20]
         );
 

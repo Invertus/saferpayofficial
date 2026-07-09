@@ -39,7 +39,7 @@ function upgrade_module_1_0_3($module)
     Configuration::updateValue(
         \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY .
         \Invertus\SaferPay\Config\SaferPayConfig::TEST_SUFFIX,
-        \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY_TEST_DEFAULT_VALUE
+        \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE
     );
     Configuration::updateValue(
         \Invertus\SaferPay\Config\SaferPayConfig::HOSTED_FIELDS_TEMPLATE,

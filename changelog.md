@@ -200,3 +200,16 @@
 - Fixed issue when newly enabled payment methods did not appear in checkout because default "all countries/currencies" restriction was not created on save
 - Fixed issue when payment method country/currency dropdowns showed "0" instead of indicating that all countries/currencies are allowed
 - BO : Added validation for Merchant Emails field (frontend + backend) to prevent saving invalid addresses
+
+## [2.0.3]
+- Optimized database performance
+- Dynamic termimal selection
+- Removed uneccesary inputs from admin settings
+- Checked overall module stability
+
+## [2.1.1]
+- BO : Redesigned back-office settings into a React single-page admin
+- BO : Conditionally show/hide Saferpay Fields settings based on account license
+- BO/FO : Accessibility improvements for EAA / WCAG 2.1 AA compliance
+- Added configurable payment description and order reference on payment page
+- API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT

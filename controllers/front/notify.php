@@ -136,8 +136,8 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             $orderId = Order::getIdByCartId($cartId);
 
-            //TODO look into pipeline design pattern to use when object is modified in multiple places to avoid this issue.
-            //NOTE must be left below assert action to get newest information.
+            // @NOTE: Pipeline design pattern could improve readability when order is modified in multiple places.
+            // Must be left below assert action to get newest information.
             $order = new Order($orderId);
 
             $paymentBehaviorWithout3D = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);

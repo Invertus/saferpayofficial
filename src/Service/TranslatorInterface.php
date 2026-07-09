@@ -40,5 +40,5 @@ interface TranslatorInterface
      *
      * @return string The translated string
      */
-    public function translate($key);
+    public function translate(string $key): string;
 }

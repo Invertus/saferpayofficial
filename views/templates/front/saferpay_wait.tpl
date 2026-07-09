@@ -20,6 +20,7 @@
  *@license   SIX Payment Services
  *}
 <h2>{l s='Awaiting payment status' mod='saferpayofficial'}</h2>
+<div id="saferpay-await-config" data-status-endpoint="{$checkStatusEndpoint|escape:'htmlall':'UTF-8'}"></div>
 <div class="saferpay-spinner" role="status" aria-live="polite">
     <span class="sr-only">{l s='Loading, please wait' mod='saferpayofficial'}</span>
     <div class="rect1"></div>
@@ -91,8 +92,8 @@
     (function awaitSaferpayPaymentStatus() {
         var timeout = 3000;
         var request = new XMLHttpRequest();
-        // nofilter is needed for url with variables
-        request.open('GET', '{$checkStatusEndpoint|escape:'javascript':'UTF-8' nofilter}', true);
+        var endpoint = document.getElementById('saferpay-await-config').getAttribute('data-status-endpoint');
+        request.open('GET', endpoint, true);
 
         request.onload = function() {
             if (request.status >= 200 && request.status < 400) {

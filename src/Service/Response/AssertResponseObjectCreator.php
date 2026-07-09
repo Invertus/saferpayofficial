@@ -32,11 +32,11 @@ if (!defined('_PS_VERSION_')) {
 class AssertResponseObjectCreator extends ResponseObjectCreator
 {
     /**
-     * @param $responseBody
+     * @param object|array $responseBody
      *
      * @return AssertBody
      */
-    public function createAssertObject($responseBody)
+    public function createAssertObject($responseBody): AssertBody
     {
         $assertBody = new AssertBody();
 

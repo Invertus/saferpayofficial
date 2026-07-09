@@ -21,31 +21,16 @@
  *@license   SIX Payment Services
  */
 
-namespace Invertus\SaferPay\Service\Request;
-
-use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
+namespace Invertus\SaferPay\DTO\Request;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class AssertRefundRequestObjectCreator
+interface SaferPayRequestInterface
 {
     /**
-     * @var RequestObjectCreator
+     * @return array
      */
-    private $requestObjectCreator;
-
-    public function __construct(
-        RequestObjectCreator $requestObjectCreator
-    ) {
-        $this->requestObjectCreator = $requestObjectCreator;
-    }
-
-    public function create($transactionId)
-    {
-        $requestHeader = $this->requestObjectCreator->createRequestHeader();
-
-        return new AssertRefundRequest($requestHeader, $transactionId);
-    }
+    public function getAsArray();
 }
