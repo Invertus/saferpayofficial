@@ -166,8 +166,7 @@ prepare-zip:
 	cp .github/.htaccess vendor/.htaccess && \
 	cd views/js/admin/settings-app && pnpm install && pnpm run build && cd ../../../.. && \
 	rm -rf .git .github tests cypress .docker && \
-	rm -rf views/js/admin/settings-app/node_modules && \
-	rm -rf views/js/admin/settings-app/src && \
+	rm -rf views/js/admin/settings-app && \
 	mkdir saferpayofficial && \
 	rsync -Rr ./ ./saferpayofficial && \
 	find . -maxdepth 1 ! -name saferpayofficial -exec mv {} saferpayofficial/ \; && \

@@ -64,6 +64,18 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         'refreshData',
     ];
 
+    /**
+     * AJAX actions that change state and therefore require 'edit' permission.
+     */
+    const STATE_CHANGING_AJAX_ACTIONS = [
+        'saveCredentials',
+        'savePaymentProcessing',
+        'saveEmailSettings',
+        'saveGeneralSettings',
+        'savePaymentMethods',
+        'generateFieldAccessToken',
+    ];
+
     /** @var \SaferPayOfficial */
     public $module;
 
@@ -112,6 +124,13 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $action = Tools::getValue('action');
         if (!$action || !in_array($action, self::ALLOWED_AJAX_ACTIONS)) {
             $this->ajaxResponse(false, $this->module->l('Invalid action', self::FILE_NAME));
+            return;
+        }
+
+        // Bypassing parent::postProcess() skips PrestaShop's native permission checks,
+        // so state-changing actions must explicitly require 'edit' permission.
+        if (in_array($action, self::STATE_CHANGING_AJAX_ACTIONS) && !$this->access('edit')) {
+            $this->ajaxResponse(false, $this->module->l('You do not have permission to edit these settings.', self::FILE_NAME));
             return;
         }
 
