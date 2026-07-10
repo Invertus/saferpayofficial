@@ -48,32 +48,14 @@ class PaymentTypeProvider
      */
     public function get(string $paymentMethod): string
     {
+        // Custom Form ON (Saferpay Fields, Business licence) => Saferpay Fields.
+        // Anything else (Custom Form OFF, non-Business) => Saferpay Payment Page.
+        // The legacy Transaction Interface (IFRAME) is no longer selectable (SL-374).
         if ($this->isHostedIframeRedirect($paymentMethod)) {
             return PaymentType::HOSTED_IFRAME;
         }
 
-        if ($this->isIframeRedirect($paymentMethod)) {
-            return PaymentType::IFRAME;
-        }
-
         return PaymentType::BASIC;
-    }
-
-    /**
-     * @param string $paymentMethod
-     * @return bool
-     */
-    private function isIframeRedirect(string $paymentMethod): bool
-    {
-        if (!in_array($paymentMethod, SaferPayConfig::TRANSACTION_METHODS)) {
-            return false;
-        }
-
-        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

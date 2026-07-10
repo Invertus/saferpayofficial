@@ -66,15 +66,6 @@ class PaymentRedirectionProvider
             );
         }
 
-        if ($paymentType === PaymentType::IFRAME) {
-            return $this->context->getLink()->getModuleLink(
-                'saferpayofficial',
-                ControllerName::IFRAME,
-                ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
-                true
-            );
-        }
-
         return $this->context->getLink()->getModuleLink(
             'saferpayofficial',
             ControllerName::VALIDATION,
