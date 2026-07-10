@@ -112,8 +112,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /** @var PaymentTypeProvider $paymentTypeProvider */
         $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
 
-        if ($paymentTypeProvider->get($orderPayment) === PaymentType::IFRAME
-            || $paymentTypeProvider->get($orderPayment) === PaymentType::HOSTED_IFRAME) {
+        if ($paymentTypeProvider->get($orderPayment) === PaymentType::HOSTED_IFRAME) {
             $order = new Order(Order::getIdByCartId($cartId));
 
             try {
@@ -235,17 +234,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard)
     {
-        $successController = ControllerName::SUCCESS;
-
-        if ($isBusinessLicence) {
-            $successController = ControllerName::SUCCESS_IFRAME;
-        }
-
         if ($fieldToken || $usingSavedCard) {
-            $successController = ControllerName::SUCCESS_HOSTED;
+            return ControllerName::SUCCESS_HOSTED;
         }
 
-        return $successController;
+        return ControllerName::SUCCESS;
     }
 
     /**
@@ -389,29 +382,8 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
 
     private function getFailController($orderPayment)
     {
-        /** @var PaymentTypeProvider $paymentTypeProvider */
-        $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
-
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
-
-        $logger->debug('Getting fail controller', [
-            'context' => [],
-            'controller' => self::FILE_NAME,
-            'order_payment' => $orderPayment,
-        ]);
-
-        $paymentRedirectType = $paymentTypeProvider->get($orderPayment);
-
-        if ($paymentRedirectType === PaymentType::IFRAME) {
-            $logger->debug('Fail controller is FAIL_IFRAME', [
-                'context' => [],
-                'controller' => self::FILE_NAME,
-                'order_payment' => $orderPayment,
-            ]);
-
-            return ControllerName::FAIL_IFRAME;
-        }
 
         $logger->debug('Fail controller is FAIL', [
             'context' => [],

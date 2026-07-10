@@ -60,7 +60,6 @@ class PaymentFormAssetLoader
             'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
             'saferpay_payment_types' => [
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
-                'iframe' => PaymentType::IFRAME,
                 'basic' => PaymentType::BASIC,
             ],
         ]);
@@ -154,7 +153,51 @@ class PaymentFormAssetLoader
 
         $controller->registerStylesheet(
             $this->module->name . '-checkout',
-            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
+            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css',
+            ['version' => $this->module->version]
+        );
+
+        $this->registerInlineFieldsAssets($controller);
+    }
+
+    /**
+     * Registers the Saferpay Fields SDK + inline renderer so Custom-Form cards show their
+     * card form inline in the default checkout instead of redirecting to a hosted page.
+     * Only relevant when the account has Fields (Business licence) and a field access token.
+     *
+     * @param OrderControllerCore $controller
+     */
+    private function registerInlineFieldsAssets($controller)
+    {
+        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
+            return;
+        }
+
+        if (!SaferPayConfig::getFieldAccessToken()) {
+            return;
+        }
+
+        Media::addJsDef([
+            'saferpay_field_access_token' => SaferPayConfig::getFieldAccessToken(),
+            'saferpay_field_url' => SaferPayConfig::getFieldUrl(),
+            'holder_name' => $this->module->l('Holder name', 'PaymentFormAssetLoader'),
+            'saferpay_internal_error' => $this->module->l('An error occurred while processing the card, please try again.', 'PaymentFormAssetLoader'),
+            'saferpay_fields_incomplete_error' => $this->module->l('Please check the following:', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_cardnumber' => $this->module->l('Card number', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_expiration' => $this->module->l('Expiry date', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_cvc' => $this->module->l('CVC', 'PaymentFormAssetLoader'),
+        ]);
+
+        $controller->registerJavascript(
+            'remote-saferpay-fields-js-lib',
+            SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE,
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 20]
+        );
+
+        $controller->registerJavascript(
+            $this->module->name . '-inline-fields',
+            'modules/' . $this->module->name . '/views/js/front/inline-fields.js',
+            ['position' => 'bottom', 'priority' => 21, 'version' => $this->module->version]
         );
     }
 

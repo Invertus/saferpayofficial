@@ -26,7 +26,6 @@ namespace Invertus\SaferPay\Provider;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
-use Invertus\SaferPay\Enum\PaymentType;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -39,13 +38,9 @@ class PaymentRedirectionProvider
      */
     private $context;
 
-    /** @var PaymentTypeProvider */
-    private $paymentTypeProvider;
-
-    public function __construct(LegacyContext $context, PaymentTypeProvider $paymentTypeProvider)
+    public function __construct(LegacyContext $context)
     {
         $this->context = $context;
-        $this->paymentTypeProvider = $paymentTypeProvider;
     }
 
     /**
@@ -55,26 +50,10 @@ class PaymentRedirectionProvider
      */
     public function provideRedirectionLinkByPaymentMethod($paymentMethod)
     {
-        $paymentType = $this->paymentTypeProvider->get($paymentMethod);
-
-        if ($paymentType === PaymentType::HOSTED_IFRAME) {
-            return $this->context->getLink()->getModuleLink(
-                'saferpayofficial',
-                ControllerName::HOSTED_IFRAME,
-                ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
-                true
-            );
-        }
-
-        if ($paymentType === PaymentType::IFRAME) {
-            return $this->context->getLink()->getModuleLink(
-                'saferpayofficial',
-                ControllerName::IFRAME,
-                ['saved_card_method' => $paymentMethod, SaferPayConfig::IS_BUSINESS_LICENCE => true],
-                true
-            );
-        }
-
+        // Card Fields render inline in the checkout (see inline-fields.js), which intercepts
+        // the submit. This redirect is only the no-JS fallback, so every method falls back to
+        // the Saferpay Payment Page. The legacy Transaction Interface and the hosted Fields
+        // page are no longer used.
         return $this->context->getLink()->getModuleLink(
             'saferpayofficial',
             ControllerName::VALIDATION,
