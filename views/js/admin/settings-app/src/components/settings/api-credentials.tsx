@@ -46,6 +46,10 @@ export function ApiCredentials() {
   const hasCredentials = username.length > 0 && password.length > 0
   const hasBusinessLicense = isTest ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
 
+  // The show/hide toggle only appears once the merchant has typed a real password: the field
+  // must be non-empty and hold something other than the stored mask.
+  const showPasswordToggle = password.length > 0 && !isStoredPasswordMasked
+
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const invalidEmails = merchantEmails
     .split(',')
@@ -202,7 +206,7 @@ export function ApiCredentials() {
                 <div className="sp-relative">
                   <Input
                     id="api-password"
-                    type={showApiPassword && !isStoredPasswordMasked ? 'text' : 'password'}
+                    type={showPasswordToggle && showApiPassword ? 'text' : 'password'}
                     placeholder={t('enterApiPassword', envLabel.toLowerCase())}
                     value={password}
                     onChange={(e) => setField('password', e.target.value)}
@@ -210,7 +214,7 @@ export function ApiCredentials() {
                     required
                     aria-required="true"
                   />
-                  {!isStoredPasswordMasked && (
+                  {showPasswordToggle && (
                     <button
                       type="button"
                       onClick={() => setShowApiPassword(!showApiPassword)}

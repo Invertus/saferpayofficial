@@ -215,13 +215,13 @@ export function PaymentProcessing() {
         </CardContent>
       </Card>
 
-      {/* Card Display & Saving */}
+      {/* Card Display */}
       <Card>
         <CardHeader>
           <div className="sp-flex sp-items-center sp-gap-2">
             <CreditCard className="sp-h-5 sp-w-5 sp-text-muted-foreground" />
             <div className="sp-flex sp-flex-col sp-gap-1.5">
-              <CardTitle className="sp-text-base sp-font-semibold">{t('cardDisplaySaving')}</CardTitle>
+              <CardTitle className="sp-text-base sp-font-semibold">{t('cardDisplay')}</CardTitle>
               <CardDescription>
                 {t('cardDisplayDescription')}
               </CardDescription>
@@ -263,14 +263,26 @@ export function PaymentProcessing() {
                 />
               </div>
             )}
+          </div>
+        </CardContent>
+      </Card>
 
-            <div className="sp-flex sp-flex-col sp-gap-3 sp-pt-2">
-              <div className="sp-flex sp-flex-col sp-gap-1">
-                <Label className="sp-text-sm sp-font-medium">{t('creditCardSaving')}</Label>
-                <p className="sp-text-xs sp-text-muted-foreground">
-                  {t('creditCardSavingDescription')}
-                </p>
-              </div>
+      {/* Card Saving for Customers */}
+      <Card>
+        <CardHeader>
+          <div className="sp-flex sp-items-center sp-gap-2">
+            <CreditCard className="sp-h-5 sp-w-5 sp-text-muted-foreground" />
+            <div className="sp-flex sp-flex-col sp-gap-1.5">
+              <CardTitle className="sp-text-base sp-font-semibold">{t('cardSavingForCustomers')}</CardTitle>
+              <CardDescription>
+                {t('creditCardSavingDescription')}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="sp-grid sp-gap-4">
+            <div className="sp-flex sp-flex-col sp-gap-3">
               <RadioGroup
                 value={String(settings.creditCardSave)}
                 onValueChange={(val) => updateSettings({ creditCardSave: Number(val) })}
