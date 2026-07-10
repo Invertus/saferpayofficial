@@ -153,7 +153,8 @@ class PaymentFormAssetLoader
 
         $controller->registerStylesheet(
             $this->module->name . '-checkout',
-            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
+            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css',
+            ['version' => $this->module->version]
         );
 
         $this->registerInlineFieldsAssets($controller);
@@ -181,6 +182,10 @@ class PaymentFormAssetLoader
             'saferpay_field_url' => SaferPayConfig::getFieldUrl(),
             'holder_name' => $this->module->l('Holder name', 'PaymentFormAssetLoader'),
             'saferpay_internal_error' => $this->module->l('An error occurred while processing the card, please try again.', 'PaymentFormAssetLoader'),
+            'saferpay_fields_incomplete_error' => $this->module->l('Please check the following:', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_cardnumber' => $this->module->l('Card number', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_expiration' => $this->module->l('Expiry date', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_cvc' => $this->module->l('CVC', 'PaymentFormAssetLoader'),
         ]);
 
         $controller->registerJavascript(
@@ -192,7 +197,7 @@ class PaymentFormAssetLoader
         $controller->registerJavascript(
             $this->module->name . '-inline-fields',
             'modules/' . $this->module->name . '/views/js/front/inline-fields.js',
-            ['position' => 'bottom', 'priority' => 21]
+            ['position' => 'bottom', 'priority' => 21, 'version' => $this->module->version]
         );
     }
 

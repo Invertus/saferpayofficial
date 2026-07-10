@@ -51,3 +51,25 @@ input[type="radio"][name^="saved_card_"] {
     vertical-align: middle !important;
     margin: 0 !important;
 }
+
+/* The Saferpay Fields card inputs are cross-origin iframes. Their inner input border is
+   removed via the SDK "style" option, so this is the single visible field border. */
+.saferpay-inline-fields iframe {
+    display: block;
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 3px;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+/* Focus feedback: the SDK's own focus styling is cleared (it shrank the field), so we
+   highlight the iframe border instead while a field is active. */
+.saferpay-inline-fields .form-group.is-focused iframe {
+    border-color: #2fb5d2;
+}
+
+/* Highlight a field whose contents are invalid/missing (takes precedence over focus). */
+.saferpay-inline-fields .form-group.has-error iframe {
+    border-color: #e74c3c;
+}
