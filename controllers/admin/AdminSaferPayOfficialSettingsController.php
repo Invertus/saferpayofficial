@@ -693,16 +693,27 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
      */
     private function getPaymentMethodsData()
     {
+        /** @var SaferPayPaymentRepository $paymentRepository */
+        $paymentRepository = $this->module->getService(SaferPayPaymentRepository::class);
+
         try {
+            // Re-read the account and reconcile the stored list when the Payment Methods
+            // settings open, so methods added/removed on the Saferpay account are reflected
+            // (and persisted for the front office) without requiring a Save click. Enabled
+            // flags are preserved by the refresh; newly added methods default to disabled.
+            /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+            $refreshPaymentsService = $this->module->getService(SaferPayRefreshPaymentsService::class);
+            $refreshPaymentsService->refreshPayments();
+
             /** @var SaferPayObtainPaymentMethods $obtainMethods */
             $obtainMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
             $paymentMethods = $obtainMethods->obtainPaymentMethodsNamesAsArray();
         } catch (SaferPayApiException $exception) {
-            return ['error' => $this->module->l('Failed to load payment methods. Please verify your API credentials.', self::FILE_NAME)];
+            // Account unreachable (bad credentials / offline): keep the last-known stored
+            // list rather than wiping the page. Credential validity is surfaced separately
+            // on the Credentials tab. Never clears stored configuration.
+            $paymentMethods = array_column($paymentRepository->getAllPaymentMethodsNames(), 'name');
         }
-
-        /** @var SaferPayPaymentRepository $paymentRepository */
-        $paymentRepository = $this->module->getService(SaferPayPaymentRepository::class);
 
         /** @var SaferPayLogoRepository $logoRepository */
         $logoRepository = $this->module->getService(SaferPayLogoRepository::class);

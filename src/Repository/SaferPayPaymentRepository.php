@@ -110,6 +110,21 @@ class SaferPayPaymentRepository
         return $result;
     }
 
+    public function getAllPaymentMethodsNames()
+    {
+        $query = new DbQuery();
+        $query->select('name');
+        $query->from('saferpay_payment');
+
+        $result = Db::getInstance()->executeS($query);
+
+        if (!$result) {
+            return [];
+        }
+
+        return $result;
+    }
+
     public function truncateTable()
     {
         $query = 'TRUNCATE TABLE ' . _DB_PREFIX_ . 'saferpay_payment;';
