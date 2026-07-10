@@ -134,17 +134,11 @@ class SaferPayOfficialAjaxModuleFrontController extends AbstractSaferPayControll
 
     private function getSuccessControllerName($isBusinessLicence, $fieldToken)
     {
-        $successController = ControllerName::SUCCESS;
-
-        if ($isBusinessLicence) {
-            $successController = ControllerName::SUCCESS_IFRAME;
-        }
-
         if ($fieldToken) {
-            $successController = ControllerName::SUCCESS_HOSTED;
+            return ControllerName::SUCCESS_HOSTED;
         }
 
-        return $successController;
+        return ControllerName::SUCCESS;
     }
 
     private function submitHostedFields()

@@ -60,7 +60,6 @@ class PaymentFormAssetLoader
             'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
             'saferpay_payment_types' => [
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
-                'iframe' => PaymentType::IFRAME,
                 'basic' => PaymentType::BASIC,
             ],
         ]);
