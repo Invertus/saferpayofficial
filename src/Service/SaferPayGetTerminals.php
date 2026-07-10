@@ -98,11 +98,11 @@ class SaferPayGetTerminals
      */
     private function getTerminalType($terminal)
     {
-        if (isset($terminal->Type)) {
+        if (isset($terminal->Type) && is_scalar($terminal->Type)) {
             return strtoupper((string) $terminal->Type);
         }
 
-        if (isset($terminal->TerminalType)) {
+        if (isset($terminal->TerminalType) && is_scalar($terminal->TerminalType)) {
             return strtoupper((string) $terminal->TerminalType);
         }
 
