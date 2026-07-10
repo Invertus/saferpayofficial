@@ -64,11 +64,19 @@ class PaymentTypeProvider
      */
     private function isHostedIframeRedirect(string $paymentMethod): bool
     {
-        if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
+        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
             return false;
         }
 
-        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
+        // Grouped cards render a single inline Fields form under the "Cards" option.
+        if ($paymentMethod === SaferPayConfig::PAYMENT_CARDS
+            && \Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS)
+        ) {
+            return true;
+        }
+
+        // Individual cards use Fields when their "Custom form" toggle is on.
+        if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
             return false;
         }
 
