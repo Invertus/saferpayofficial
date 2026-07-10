@@ -33,6 +33,11 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayGetTerminals
 {
+    /**
+     * Terminal types that must never be offered for selection (not usable by this module).
+     */
+    const EXCLUDED_TERMINAL_TYPES = ['MPO', 'SPG'];
+
     /** @var GetTerminalsService */
     private $getTerminalsService;
 
@@ -64,17 +69,43 @@ class SaferPayGetTerminals
         $terminalList = isset($response->Terminals) ? $response->Terminals : [];
         if (is_array($terminalList)) {
             foreach ($terminalList as $terminal) {
-                if (isset($terminal->TerminalId)) {
-                    $terminals[] = [
-                        'id' => $terminal->TerminalId,
-                        'name' => isset($terminal->Description)
-                            ? $terminal->Description . ' (' . $terminal->TerminalId . ')'
-                            : $terminal->TerminalId,
-                    ];
+                if (!isset($terminal->TerminalId)) {
+                    continue;
                 }
+
+                if (in_array($this->getTerminalType($terminal), self::EXCLUDED_TERMINAL_TYPES, true)) {
+                    continue;
+                }
+
+                $terminals[] = [
+                    'id' => $terminal->TerminalId,
+                    'name' => isset($terminal->Description)
+                        ? $terminal->Description . ' (' . $terminal->TerminalId . ')'
+                        : $terminal->TerminalId,
+                ];
             }
         }
 
         return $terminals;
+    }
+
+    /**
+     * Reads the terminal type defensively: the Management API has been seen to expose it
+     * either as "Type" or "TerminalType". Returns an uppercased value (empty when absent).
+     *
+     * @param \stdClass $terminal
+     * @return string
+     */
+    private function getTerminalType($terminal)
+    {
+        if (isset($terminal->Type) && is_scalar($terminal->Type)) {
+            return strtoupper((string) $terminal->Type);
+        }
+
+        if (isset($terminal->TerminalType) && is_scalar($terminal->TerminalType)) {
+            return strtoupper((string) $terminal->TerminalType);
+        }
+
+        return '';
     }
 }
