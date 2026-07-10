@@ -693,16 +693,35 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
      */
     private function getPaymentMethodsData()
     {
-        try {
-            /** @var SaferPayObtainPaymentMethods $obtainMethods */
-            $obtainMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
-            $paymentMethods = $obtainMethods->obtainPaymentMethodsNamesAsArray();
-        } catch (SaferPayApiException $exception) {
-            return ['error' => $this->module->l('Failed to load payment methods. Please verify your API credentials.', self::FILE_NAME)];
-        }
-
         /** @var SaferPayPaymentRepository $paymentRepository */
         $paymentRepository = $this->module->getService(SaferPayPaymentRepository::class);
+
+        try {
+            // Re-read the account and reconcile the stored list when the Payment Methods
+            // settings open, so methods added/removed on the Saferpay account are reflected
+            // (and persisted for the front office) without requiring a Save click. Enabled
+            // flags are preserved by the refresh; newly added methods default to disabled.
+            /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+            $refreshPaymentsService = $this->module->getService(SaferPayRefreshPaymentsService::class);
+            $refreshPaymentsService->refreshPayments();
+
+            // The refresh persists the account's methods, so read them back from storage
+            // instead of calling the API a second time.
+            $paymentMethods = array_column($paymentRepository->getAllPaymentMethodsNames(), 'name');
+
+            // refreshPayments() is a no-op when nothing is active yet (e.g. a fresh setup),
+            // so fall back to the live account list to still surface newly available methods.
+            if (empty($paymentMethods)) {
+                /** @var SaferPayObtainPaymentMethods $obtainMethods */
+                $obtainMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
+                $paymentMethods = $obtainMethods->obtainPaymentMethodsNamesAsArray();
+            }
+        } catch (SaferPayApiException $exception) {
+            // Account unreachable (bad credentials / offline): keep the last-known stored
+            // list rather than wiping the page. Credential validity is surfaced separately
+            // on the Credentials tab. Never clears stored configuration.
+            $paymentMethods = array_column($paymentRepository->getAllPaymentMethodsNames(), 'name');
+        }
 
         /** @var SaferPayLogoRepository $logoRepository */
         $logoRepository = $this->module->getService(SaferPayLogoRepository::class);
