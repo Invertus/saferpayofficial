@@ -37,6 +37,7 @@
 
     var SLOT_ID = 'saferpay-inline-fields';
     var initialised = false;
+    var safeHolderName = typeof holder_name !== 'undefined' ? holder_name : 'Holder name';
 
     function fieldsFormMarkup() {
         return '' +
@@ -51,8 +52,8 @@
             '    ' + (typeof saferpay_internal_error !== 'undefined' ? saferpay_internal_error : 'An error occurred, please try again.') +
             '  </div>' +
             '  <div class="form-group">' +
-            '    <label for="fields-holder-name" class="sr-only">' + holder_name + '</label>' +
-            '    <input class="form-control" id="fields-holder-name" readonly placeholder="' + holder_name + '" aria-label="' + holder_name + '">' +
+            '    <label for="fields-holder-name" class="sr-only">' + safeHolderName + '</label>' +
+            '    <input class="form-control" id="fields-holder-name" readonly placeholder="' + safeHolderName + '" aria-label="' + safeHolderName + '">' +
             '  </div>' +
             '  <div class="form-group">' +
             '    <label for="fields-card-number" class="sr-only">Card number</label>' +
@@ -95,7 +96,7 @@
             accessToken: saferpay_field_access_token,
             url: saferpay_field_url,
             placeholders: {
-                holdername: holder_name,
+                holdername: safeHolderName,
                 cardnumber: '0000 0000 0000 0000',
                 expiration: 'MM/YYYY',
                 cvc: '000'
@@ -145,7 +146,13 @@
                     },
                     success: function (response) {
                         try {
-                            window.location = JSON.parse(response).url;
+                            // jQuery may already have parsed a JSON response into an object.
+                            var data = typeof response === 'string' ? JSON.parse(response) : response;
+                            if (data && data.url) {
+                                window.location = data.url;
+                            } else {
+                                $('#' + SLOT_ID + ' .internal-error').show();
+                            }
                         } catch (e) {
                             $('#' + SLOT_ID + ' .internal-error').show();
                         }
@@ -177,6 +184,10 @@
                 hide();
             }
         });
+
+        // Handle a payment option that is already selected on load (e.g. single option or
+        // themes that pre-select) — the change event would not fire on its own.
+        $('input[name="payment-option"]:checked').trigger('change');
 
         // Intercept the place-order submit for inline Fields (new card) options.
         $('body').on('submit', '[id^=pay-with-][id$=-form] form', function (event) {
