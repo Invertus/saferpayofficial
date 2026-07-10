@@ -12,6 +12,10 @@ import type { TerminalOption } from '@/types'
 
 type CredentialStatus = 'idle' | 'checking' | 'valid' | 'invalid'
 
+// Mirrors AdminSaferPayOfficialSettingsController::PASSWORD_PLACEHOLDER. The real
+// password is never sent to the browser; a stored credential arrives as this mask.
+const PASSWORD_PLACEHOLDER = '********'
+
 export function ApiCredentials() {
   const { settings, updateSettings, saveCredentials, fetchTerminals, generateFieldAccessToken, savingSections } = useSettings()
   const saving = savingSections.has('credentials')
@@ -26,9 +30,14 @@ export function ApiCredentials() {
   const prefix = isTest ? 'test' : 'live'
   const envLabel = isTest ? t('test') : t('live')
   const environment = isTest ? 'test' : 'live'
+  const backofficeUrl = isTest ? 'https://test.saferpay.com/bo/login' : 'https://www.saferpay.com/bo/login'
+  const jsonApiBasicAuthDocsUrl = 'https://docs.saferpay.com/home/interfaces/backoffice/settings/json-api-basic-client-certificate-authentication#basic-authentication'
 
   const username = isTest ? settings.testUsername : settings.liveUsername
   const password = isTest ? settings.testPassword : settings.livePassword
+  // While the field still holds the untouched stored-credential mask there is nothing
+  // to reveal, so the show/hide toggle is hidden until the user types a new password.
+  const isStoredPasswordMasked = password === PASSWORD_PLACEHOLDER
   const terminalId = isTest ? settings.testTerminalId : settings.liveTerminalId
   const merchantEmails = isTest ? settings.testMerchantEmails : settings.liveMerchantEmails
   const fieldAccessToken = isTest ? settings.testFieldAccessToken : settings.liveFieldAccessToken
@@ -37,11 +46,9 @@ export function ApiCredentials() {
   const hasCredentials = username.length > 0 && password.length > 0
   const hasBusinessLicense = isTest ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
 
-  // A saved password is delivered as this mask, never the real secret. While the field still
-  // holds the mask there is nothing meaningful to reveal, so the show/hide toggle is hidden.
-  // It appears only once the merchant types a new value that differs from the mask.
-  const PASSWORD_PLACEHOLDER = '********'
-  const showPasswordToggle = password.length > 0 && password !== PASSWORD_PLACEHOLDER
+  // The show/hide toggle only appears once the merchant has typed a real password: the field
+  // must be non-empty and hold something other than the stored mask.
+  const showPasswordToggle = password.length > 0 && !isStoredPasswordMasked
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const invalidEmails = merchantEmails
@@ -156,6 +163,26 @@ export function ApiCredentials() {
         </CardHeader>
         <CardContent>
           <div className="sp-grid sp-gap-5">
+            {/* Credentials generation hint */}
+            <div className="sp-flex sp-items-center sp-gap-3 sp-rounded-lg sp-bg-[#294e57]/5 sp-border sp-border-[#294e57]/30 sp-border-l-[3px] sp-border-l-[#294e57] sp-px-4 sp-py-3 sp-text-sm sp-text-foreground">
+              <Info className="sp-h-4 sp-w-4 sp-shrink-0 sp-text-[#294e57]" />
+              <p className="sp-mb-0">
+                {t('credentialsHint').split(/(\[backoffice_link\]|\[more_info_link\])/).map((part, index) => {
+                  if (part === '[backoffice_link]') {
+                    return (
+                      <a key={index} href={backofficeUrl} target="_blank" rel="noopener noreferrer" className="sp-text-[#294e57] sp-underline hover:sp-no-underline">{t('credentialsBackofficeLinkText')}</a>
+                    )
+                  }
+                  if (part === '[more_info_link]') {
+                    return (
+                      <a key={index} href={jsonApiBasicAuthDocsUrl} target="_blank" rel="noopener noreferrer" className="sp-text-[#294e57] sp-underline hover:sp-no-underline">{t('credentialsMoreInfoLinkText')}</a>
+                    )
+                  }
+                  return part
+                })}
+              </p>
+            </div>
+
             {/* Username & Password */}
             <div className="sp-grid sp-gap-5 md:sp-grid-cols-2">
               <div className="sp-flex sp-flex-col sp-gap-2">
@@ -183,7 +210,7 @@ export function ApiCredentials() {
                     placeholder={t('enterApiPassword', envLabel.toLowerCase())}
                     value={password}
                     onChange={(e) => setField('password', e.target.value)}
-                    className="sp-pr-10"
+                    className={isStoredPasswordMasked ? undefined : 'sp-pr-10'}
                     required
                     aria-required="true"
                   />
@@ -351,7 +378,7 @@ export function ApiCredentials() {
                   value={fieldJsUrl}
                   onChange={(e) => setField('fieldJsUrl', e.target.value)}
                 />
-                <a href="https://docs.saferpay.com/home/integration-guide/licences-and-interfaces/saferpay-fields#javascript-library-url" target="_blank" rel="noopener noreferrer" className="sp-text-xs sp-text-[#294e57] sp-underline hover:sp-no-underline">
+                <a href="https://docs.saferpay.com/home/integration-guide/licences-and-interfaces/saferpay-fields#include-the-saferpay-fields-javascript-library-into-your-site" target="_blank" rel="noopener noreferrer" className="sp-text-xs sp-text-[#294e57] sp-underline hover:sp-no-underline">
                   {t('findLibraryUrlHere')}
                 </a>
               </div>
