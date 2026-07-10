@@ -12,6 +12,10 @@ import type { TerminalOption } from '@/types'
 
 type CredentialStatus = 'idle' | 'checking' | 'valid' | 'invalid'
 
+// Mirrors AdminSaferPayOfficialSettingsController::PASSWORD_PLACEHOLDER. The real
+// password is never sent to the browser; a stored credential arrives as this mask.
+const PASSWORD_PLACEHOLDER = '********'
+
 export function ApiCredentials() {
   const { settings, updateSettings, saveCredentials, fetchTerminals, generateFieldAccessToken, savingSections } = useSettings()
   const saving = savingSections.has('credentials')
@@ -31,6 +35,9 @@ export function ApiCredentials() {
 
   const username = isTest ? settings.testUsername : settings.liveUsername
   const password = isTest ? settings.testPassword : settings.livePassword
+  // While the field still holds the untouched stored-credential mask there is nothing
+  // to reveal, so the show/hide toggle is hidden until the user types a new password.
+  const isStoredPasswordMasked = password === PASSWORD_PLACEHOLDER
   const terminalId = isTest ? settings.testTerminalId : settings.liveTerminalId
   const merchantEmails = isTest ? settings.testMerchantEmails : settings.liveMerchantEmails
   const fieldAccessToken = isTest ? settings.testFieldAccessToken : settings.liveFieldAccessToken
@@ -195,22 +202,24 @@ export function ApiCredentials() {
                 <div className="sp-relative">
                   <Input
                     id="api-password"
-                    type={showApiPassword ? 'text' : 'password'}
+                    type={showApiPassword && !isStoredPasswordMasked ? 'text' : 'password'}
                     placeholder={t('enterApiPassword', envLabel.toLowerCase())}
                     value={password}
                     onChange={(e) => setField('password', e.target.value)}
-                    className="sp-pr-10"
+                    className={isStoredPasswordMasked ? undefined : 'sp-pr-10'}
                     required
                     aria-required="true"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowApiPassword(!showApiPassword)}
-                    className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors sp-p-1 sp-min-w-[24px] sp-min-h-[24px] sp-flex sp-items-center sp-justify-center"
-                    aria-label={showApiPassword ? t('hidePassword') : t('showPassword')}
-                  >
-                    {showApiPassword ? <EyeOff className="sp-h-4 sp-w-4" /> : <Eye className="sp-h-4 sp-w-4" />}
-                  </button>
+                  {!isStoredPasswordMasked && (
+                    <button
+                      type="button"
+                      onClick={() => setShowApiPassword(!showApiPassword)}
+                      className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors sp-p-1 sp-min-w-[24px] sp-min-h-[24px] sp-flex sp-items-center sp-justify-center"
+                      aria-label={showApiPassword ? t('hidePassword') : t('showPassword')}
+                    >
+                      {showApiPassword ? <EyeOff className="sp-h-4 sp-w-4" /> : <Eye className="sp-h-4 sp-w-4" />}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
