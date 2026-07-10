@@ -37,6 +37,12 @@ export function ApiCredentials() {
   const hasCredentials = username.length > 0 && password.length > 0
   const hasBusinessLicense = isTest ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
 
+  // A saved password is delivered as this mask, never the real secret. While the field still
+  // holds the mask there is nothing meaningful to reveal, so the show/hide toggle is hidden.
+  // It appears only once the merchant types a new value that differs from the mask.
+  const PASSWORD_PLACEHOLDER = '********'
+  const showPasswordToggle = password.length > 0 && password !== PASSWORD_PLACEHOLDER
+
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   const invalidEmails = merchantEmails
     .split(',')
@@ -173,7 +179,7 @@ export function ApiCredentials() {
                 <div className="sp-relative">
                   <Input
                     id="api-password"
-                    type={showApiPassword ? 'text' : 'password'}
+                    type={showPasswordToggle && showApiPassword ? 'text' : 'password'}
                     placeholder={t('enterApiPassword', envLabel.toLowerCase())}
                     value={password}
                     onChange={(e) => setField('password', e.target.value)}
@@ -181,14 +187,16 @@ export function ApiCredentials() {
                     required
                     aria-required="true"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowApiPassword(!showApiPassword)}
-                    className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors sp-p-1 sp-min-w-[24px] sp-min-h-[24px] sp-flex sp-items-center sp-justify-center"
-                    aria-label={showApiPassword ? t('hidePassword') : t('showPassword')}
-                  >
-                    {showApiPassword ? <EyeOff className="sp-h-4 sp-w-4" /> : <Eye className="sp-h-4 sp-w-4" />}
-                  </button>
+                  {showPasswordToggle && (
+                    <button
+                      type="button"
+                      onClick={() => setShowApiPassword(!showApiPassword)}
+                      className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors sp-p-1 sp-min-w-[24px] sp-min-h-[24px] sp-flex sp-items-center sp-justify-center"
+                      aria-label={showApiPassword ? t('hidePassword') : t('showPassword')}
+                    >
+                      {showApiPassword ? <EyeOff className="sp-h-4 sp-w-4" /> : <Eye className="sp-h-4 sp-w-4" />}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
