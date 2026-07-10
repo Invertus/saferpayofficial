@@ -230,7 +230,7 @@ class SettingsTranslationService
             'configName' => $this->module->l('Payment Page configurations name', self::FILE_NAME),
             'enterConfigName' => $this->module->l('Enter configuration name', self::FILE_NAME),
             'configNameDescription' => html_entity_decode($this->module->l('Name of the Payment Page Configuration created in Saferpay Backoffice (Settings > Payment Page Configuration). Max 20 characters. Allowed: letters, numbers, dots, colons, hyphens, underscores.', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
-            'hostedFieldInfo' => html_entity_decode($this->module->l('This style applies only to payment methods with "Custom form" enabled in the Payment Methods list. Methods without Custom form or paid with saved cards use the Saferpay-hosted payment page, whose appearance is controlled by "Payment Page configurations name".', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
+            'hostedFieldInfo' => html_entity_decode($this->module->l('"Hosted field style" sets how the card input form looks on the Saferpay-hosted payment page. It doesn\'t affect the custom form or saved-card payments.', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
             'hostedFieldStyle' => $this->module->l('Hosted field style', self::FILE_NAME),
             'hostedFieldStyleDescription' => $this->module->l('Select the card input form layout for the payment page.', self::FILE_NAME),
             'classicLayout' => $this->module->l('Classic Layout', self::FILE_NAME),
