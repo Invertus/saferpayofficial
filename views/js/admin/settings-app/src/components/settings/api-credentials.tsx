@@ -156,10 +156,19 @@ export function ApiCredentials() {
             <div className="sp-flex sp-items-center sp-gap-3 sp-rounded-lg sp-bg-[#294e57]/5 sp-border sp-border-[#294e57]/30 sp-border-l-[3px] sp-border-l-[#294e57] sp-px-4 sp-py-3 sp-text-sm sp-text-foreground">
               <Info className="sp-h-4 sp-w-4 sp-shrink-0 sp-text-[#294e57]" />
               <p className="sp-mb-0">
-                {t('credentialsHintPrefix')}{' '}
-                <a href={backofficeUrl} target="_blank" rel="noopener noreferrer" className="sp-text-[#294e57] sp-underline hover:sp-no-underline">{t('credentialsBackofficeLinkText')}</a>{' '}
-                {t('credentialsHintMiddle')}{' '}
-                <a href={jsonApiBasicAuthDocsUrl} target="_blank" rel="noopener noreferrer" className="sp-text-[#294e57] sp-underline hover:sp-no-underline">{t('credentialsMoreInfoLinkText')}</a>
+                {t('credentialsHint').split(/(\[backoffice_link\]|\[more_info_link\])/).map((part, index) => {
+                  if (part === '[backoffice_link]') {
+                    return (
+                      <a key={index} href={backofficeUrl} target="_blank" rel="noopener noreferrer" className="sp-text-[#294e57] sp-underline hover:sp-no-underline">{t('credentialsBackofficeLinkText')}</a>
+                    )
+                  }
+                  if (part === '[more_info_link]') {
+                    return (
+                      <a key={index} href={jsonApiBasicAuthDocsUrl} target="_blank" rel="noopener noreferrer" className="sp-text-[#294e57] sp-underline hover:sp-no-underline">{t('credentialsMoreInfoLinkText')}</a>
+                    )
+                  }
+                  return part
+                })}
               </p>
             </div>
 

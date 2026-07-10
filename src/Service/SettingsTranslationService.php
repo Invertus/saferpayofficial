@@ -109,9 +109,8 @@ class SettingsTranslationService
             'live' => $this->module->l('Live', self::FILE_NAME),
             'apiCredentials' => $this->module->l('API Credentials', self::FILE_NAME),
             'enterSaferpayCredentials' => $this->module->l('Enter your Saferpay %s environment API credentials.', self::FILE_NAME),
-            'credentialsHintPrefix' => $this->module->l('You can generate your API credentials inside the', self::FILE_NAME),
+            'credentialsHint' => html_entity_decode($this->module->l('You can generate your API credentials inside the [backoffice_link] under Settings > JSON API Basic authentication. [more_info_link]', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
             'credentialsBackofficeLinkText' => $this->module->l('Saferpay Backoffice', self::FILE_NAME),
-            'credentialsHintMiddle' => html_entity_decode($this->module->l('under Settings > JSON API Basic authentication.', self::FILE_NAME), ENT_QUOTES, 'UTF-8'),
             'credentialsMoreInfoLinkText' => $this->module->l('More information', self::FILE_NAME),
             'jsonApiUsername' => $this->module->l('JSON API Username', self::FILE_NAME),
             'enterApiUsername' => $this->module->l('Enter %s API username', self::FILE_NAME),
@@ -209,7 +208,7 @@ class SettingsTranslationService
     {
         return [
             'emailSending' => $this->module->l('Email Sending', self::FILE_NAME),
-            'emailSendingDescription' => $this->module->l('Configure which emails are sent during the payment process. Merchant notifications sent by Saferpay use the Merchant Email(s) field on the Credentials tab.', self::FILE_NAME),
+            'emailSendingDescription' => $this->module->l('Configure which emails are sent during the payment process. Merchant notifications sent by Saferpay use the Merchant Email(s) field on the API Credentials tab.', self::FILE_NAME),
             'saferpayCustomerMail' => $this->module->l('Send an email from Saferpay on payment completion', self::FILE_NAME),
             'saferpayCustomerMailDescription' => $this->module->l('Saferpay sends a payment confirmation email directly to the customer.', self::FILE_NAME),
             'newOrderMail' => $this->module->l('Send new order mail on authorization', self::FILE_NAME),
