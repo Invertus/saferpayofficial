@@ -9,7 +9,11 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Wallet, ChevronDown, Search, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { useSettings } from '@/context/settings-context'
+import { toast } from '@/hooks/use-toast'
 import { t } from '@/utils/translations'
+
+// Module-level so tab switches (which remount the component) don't re-toast.
+let fetchFailedToastShown = false
 
 function MultiSelect({
   options,
@@ -146,6 +150,15 @@ export function PaymentMethods() {
       refreshPaymentMethods()
     }
   }, [paymentMethods.length, refreshPaymentMethods])
+
+  // The account check runs while the page bootstraps, so a failure arrives via
+  // the initial settings data rather than a refresh response.
+  useEffect(() => {
+    if (settings.paymentMethodsFetchFailed && !fetchFailedToastShown) {
+      fetchFailedToastShown = true
+      toast({ title: t('paymentMethodsUnreachable'), variant: 'warning' })
+    }
+  }, [settings.paymentMethodsFetchFailed])
 
   const enabledCount = paymentMethods.filter((m) => m.enabled).length
 

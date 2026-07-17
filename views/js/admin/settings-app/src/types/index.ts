@@ -63,6 +63,7 @@ export interface SaferpaySettingsData {
   countries: Array<{ id: number; name: string }>
   currencies: Array<{ id: number; iso_code: string }>
   paymentMethods: PaymentMethodData[]
+  paymentMethodsFetchFailed?: boolean
 
   // Endpoints
   ajaxUrl: string

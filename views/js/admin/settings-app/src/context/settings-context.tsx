@@ -150,6 +150,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       if (result.success && Array.isArray(result.data?.paymentMethods)) {
         setPaymentMethods(result.data.paymentMethods as PaymentMethodData[])
       }
+      if (result.data?.paymentMethodsFetchFailed === true) {
+        toast({ title: t('paymentMethodsUnreachable'), variant: 'warning' })
+      }
     } catch {
       toast({ title: t('errorRefreshingPaymentMethods'), variant: 'destructive' })
     }

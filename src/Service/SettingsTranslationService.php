@@ -258,6 +258,7 @@ class SettingsTranslationService
             'failedToSave' => $this->module->l('Failed to save %s', self::FILE_NAME),
             'errorSaving' => $this->module->l('Error saving %s: %s', self::FILE_NAME),
             'errorRefreshingPaymentMethods' => $this->module->l('Error refreshing payment methods: %s', self::FILE_NAME),
+            'paymentMethodsUnreachable' => $this->module->l('Could not reach your Saferpay account. Please check the error logs for more details', self::FILE_NAME),
         ];
     }
 }

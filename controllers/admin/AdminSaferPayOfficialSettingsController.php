@@ -79,6 +79,14 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     /** @var \SaferPayOfficial */
     public $module;
 
+    /**
+     * Set when the Saferpay account could not be reached while building the
+     * payment methods list, so the response can surface it to the merchant.
+     *
+     * @var bool
+     */
+    private $paymentMethodsFetchFailed = false;
+
     public function __construct()
     {
         parent::__construct();
@@ -608,6 +616,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'countries' => $this->getCountries(),
             'currencies' => $this->getCurrencies(),
             'paymentMethods' => $this->getPaymentMethodsData(),
+            'paymentMethodsFetchFailed' => $this->paymentMethodsFetchFailed,
 
             // Endpoints
             'ajaxUrl' => $this->context->link->getAdminLink('AdminSaferPayOfficialSettings'),
@@ -714,6 +723,14 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             // list rather than wiping the page. Credential validity is surfaced separately
             // on the Credentials tab. Never clears stored configuration.
             $paymentMethods = array_column($paymentRepository->getAllPaymentMethodsNames(), 'name');
+
+            $this->paymentMethodsFetchFailed = true;
+
+            /** @var LoggerInterface $logger */
+            $logger = $this->module->getService(LoggerInterface::class);
+            $logger->error('Failed to refresh payment methods from Saferpay account: ' . $exception->getMessage(), [
+                'context' => ['exception_class' => get_class($exception)],
+            ]);
         }
 
         /** @var SaferPayLogoRepository $logoRepository */
