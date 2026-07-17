@@ -55,8 +55,6 @@ export interface SaferpaySettingsData {
   orderStateAwaitingPayment: number
   paymentDescription: string
   configurationName: string
-  hostedFieldsTemplate: number
-  modulePath: string
   orderIdOption: number
   debugMode: boolean
 

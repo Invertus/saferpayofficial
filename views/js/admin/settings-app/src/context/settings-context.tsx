@@ -131,7 +131,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       orderStateAwaitingPayment: currentSettings.orderStateAwaitingPayment,
       paymentDescription: currentSettings.paymentDescription,
       configurationName: currentSettings.configurationName,
-      hostedFieldsTemplate: currentSettings.hostedFieldsTemplate,
       orderIdOption: currentSettings.orderIdOption,
       debugMode: currentSettings.debugMode,
     }), 'General Settings', 'generalSettings')

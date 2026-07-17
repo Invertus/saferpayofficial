@@ -361,11 +361,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             return;
         }
         $configuration->set(SaferPayConfig::CONFIGURATION_NAME, $configurationName);
-        $hostedFieldsTemplate = $this->getIntValue($data, 'hostedFieldsTemplate');
-        if ($hostedFieldsTemplate < 1 || $hostedFieldsTemplate > 2) {
-            $hostedFieldsTemplate = SaferPayConfig::HOSTED_FIELDS_TEMPLATE_DEFAULT;
-        }
-        $configuration->set(SaferPayConfig::HOSTED_FIELDS_TEMPLATE, $hostedFieldsTemplate);
         $configuration->set(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION, $this->getIntValue($data, 'orderIdOption'));
         $configuration->set(SaferPayConfig::SAFERPAY_DEBUG_MODE, !empty($data['debugMode']) ? 1 : 0);
 
@@ -605,8 +600,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'orderStateAwaitingPayment' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
             'paymentDescription' => (string) $configuration->get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION),
             'configurationName' => (string) $configuration->get(SaferPayConfig::CONFIGURATION_NAME),
-            'hostedFieldsTemplate' => $this->getHostedFieldsTemplateForDisplay($configuration),
-            'modulePath' => $this->module->getPathUri(),
             'orderIdOption' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION),
             'debugMode' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_DEBUG_MODE),
 
@@ -625,24 +618,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         ];
 
         return $data;
-    }
-
-    /**
-     * Hosted-field style "3" (Inline Layout with Card) has been removed; clamp any
-     * legacy stored value to a still-supported style so the settings UI stays valid.
-     *
-     * @param SaferPayConfiguration $configuration
-     * @return int
-     */
-    private function getHostedFieldsTemplateForDisplay($configuration)
-    {
-        $template = (int) $configuration->get(SaferPayConfig::HOSTED_FIELDS_TEMPLATE);
-
-        if ($template < 1 || $template > 2) {
-            return SaferPayConfig::HOSTED_FIELDS_TEMPLATE_DEFAULT;
-        }
-
-        return $template;
     }
 
     /**
