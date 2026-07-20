@@ -88,9 +88,28 @@
         return labels[fieldType] || fieldType;
     }
 
+    // Each card field is a fieldset whose legend sits in a notch on the top border —
+    // the Saferpay payment-page outlined style. The legend/label is our own element
+    // (outside the cross-origin iframe), so it can be styled freely; the SDK replaces
+    // the placeholder inside with its iframe. The placeholder is a bare div (not a
+    // readonly input) so the theme's input styling and browser password-manager icons
+    // cannot flash while the SDK loads; its CSS height matches the iframe that replaces
+    // it, so the form does not shift when the fields initialise.
+    function fieldMarkup(elementId, label, extraClass) {
+        return '' +
+            '<fieldset class="form-group saferpay-field' + (extraClass ? ' ' + extraClass : '') + '">' +
+            '  <legend>' + label + '</legend>' +
+            '  <div class="saferpay-field-placeholder" id="' + elementId + '" title="' + label + '"></div>' +
+            '</fieldset>';
+    }
+
+    // The slot starts in the "loading" state: the field iframes are kept invisible until
+    // the SDK reports successful initialisation, because each iframe first paints with the
+    // SDK's default input styling and only then applies our injected stylesheet — showing
+    // it earlier flashes an unstyled square input inside the outlined field.
     function fieldsFormMarkup() {
         return '' +
-            '<div id="' + SLOT_ID + '" class="saferpay-inline-fields">' +
+            '<div id="' + SLOT_ID + '" class="saferpay-inline-fields saferpay-fields-loading">' +
             '  <div style="display:none" class="alert alert-danger initialize-error" role="alert" aria-live="assertive">' +
             '    <span class="initialize-error-message"></span>' +
             '  </div>' +
@@ -100,22 +119,14 @@
             '  <div style="display:none" class="alert alert-danger internal-error" role="alert" aria-live="assertive">' +
             '    ' + safeInternalError +
             '  </div>' +
-            '  <div class="form-group">' +
-            '    <label for="fields-holder-name" class="sr-only">' + safeHolderName + '</label>' +
-            '    <input class="form-control" id="fields-holder-name" readonly placeholder="' + safeHolderName + '" aria-label="' + safeHolderName + '">' +
-            '  </div>' +
-            '  <div class="form-group">' +
-            '    <label for="fields-card-number" class="sr-only">Card number</label>' +
-            '    <input class="form-control" id="fields-card-number" readonly placeholder="0000 0000 0000 0000" aria-label="Card number">' +
-            '  </div>' +
+            fieldMarkup('fields-holder-name', safeHolderName) +
+            fieldMarkup('fields-card-number', fieldLabel('cardnumber')) +
             '  <div class="row">' +
-            '    <div class="col-sm-6 col-xs-12 form-group">' +
-            '      <label for="fields-expiration" class="sr-only">Expiration date</label>' +
-            '      <input class="form-control" id="fields-expiration" readonly placeholder="MM/YYYY" aria-label="Expiration date">' +
+            '    <div class="col-sm-6 col-xs-12">' +
+            fieldMarkup('fields-expiration', fieldLabel('expiration')) +
             '    </div>' +
-            '    <div class="col-sm-6 col-xs-12 form-group">' +
-            '      <label for="fields-cvc" class="sr-only">CVC code</label>' +
-            '      <input class="form-control" id="fields-cvc" readonly placeholder="000" aria-label="CVC code">' +
+            '    <div class="col-sm-6 col-xs-12">' +
+            fieldMarkup('fields-cvc', fieldLabel('cvc')) +
             '    </div>' +
             '  </div>' +
             '  <input id="token" readonly type="hidden" />' +
@@ -158,27 +169,39 @@
         SaferpayFields.init({
             accessToken: saferpay_field_access_token,
             url: saferpay_field_url,
+            // Visible labels sit in the field border notch (see fieldMarkup), so the inputs
+            // themselves stay placeholder-free like Saferpay's own payment page.
             placeholders: {
-                holdername: safeHolderName,
-                cardnumber: '0000 0000 0000 0000',
-                expiration: 'MM/YYYY',
-                cvc: '000'
+                holdername: ' ',
+                cardnumber: ' ',
+                expiration: ' ',
+                cvc: ' '
             },
             // The card inputs render inside cross-origin iframes; module CSS cannot reach
-            // them. Drop the SDK's default per-field input border (the single visible border
-            // is drawn on the iframe by saferpay_checkout.css), normalise the height so all
-            // four fields match, and vertically centre the text via line-height. The :focus
-            // rule repeats the sizing and clears the SDK's focus border/outline so the field
-            // does not shrink or gain a stray outline when active — focus feedback is instead
-            // shown on the iframe border via the onFocus/onBlur handlers below.
-            // Let the input size to its content and centre the text via equal top/bottom
-            // padding (native single-line centering). Forcing an explicit height/line-height
-            // fought the SDK's own iframe sizing and pushed the text off-centre.
+            // them, only these rules do. They are passed inline (not via cssUrl) on purpose:
+            // a cssUrl stylesheet is fetched through Saferpay's server after the iframes
+            // render, briefly flashing the SDK's default input styling; the style object
+            // travels with the init config, so the default look never paints.
+            //
+            // The visible field outline and label are drawn OUTSIDE the iframe, on the
+            // fieldset/legend wrapping it (see saferpay_checkout.css), so the inner input
+            // stays borderless and transparent, with no horizontal padding (the fieldset
+            // provides it). The input sizes to its content via top/bottom padding — an
+            // explicit height/line-height fights the SDK's own iframe sizing and pushes the
+            // text off-centre. The :focus rule clears the SDK's default focus border/outline
+            // so the field does not shrink or gain a stray outline when active — focus
+            // feedback is shown on the fieldset outline instead.
             style: {
-                '.form-control': 'box-sizing: border-box; width: 100%; margin: 0; padding: 8px 12px; line-height: normal; font-size: 14px; border: none; background: transparent;',
+                '.form-control': 'box-sizing: border-box; width: 100%; margin: 0; padding: 4px 0 12px; border: none; outline: none; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; font-size: 17px; line-height: normal; color: #1f2426; caret-color: rgb(39, 119, 119);',
                 '.form-control:focus': 'border: none; outline: none; box-shadow: none;'
             },
+            // Reveal the field iframes only once the SDK reports them fully loaded (inner
+            // stylesheet included) — see the loading-state note on fieldsFormMarkup.
+            onSuccess: function () {
+                $('#' + SLOT_ID).removeClass('saferpay-fields-loading');
+            },
             onError: function (evt) {
+                $('#' + SLOT_ID).removeClass('saferpay-fields-loading');
                 $('#' + SLOT_ID + ' .initialize-error-message').text(evt.message);
                 $('#' + SLOT_ID + ' .initialize-error').show();
             },
