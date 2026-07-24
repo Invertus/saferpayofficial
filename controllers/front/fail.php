@@ -145,24 +145,27 @@ class SaferPayOfficialFailModuleFrontController extends AbstractSaferPayControll
 
         if ($orderId && $failedStatus) {
             $order = new Order($orderId);
-            $currentState = (int) $order->current_state;
 
-            $authorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
-            $capturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
+            if (Validate::isLoadedObject($order)) {
+                $currentState = (int) $order->current_state;
 
-            // Do not override a success state, and avoid duplicate history entries if already failed.
-            if ($currentState !== $authorizedStatus
-                && $currentState !== $capturedStatus
-                && $currentState !== $failedStatus
-            ) {
-                $order->setCurrentState($failedStatus);
+                $authorizedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_AUTHORIZED);
+                $capturedStatus = (int) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_COMPLETED);
 
-                $logger->debug(sprintf('%s - Order transitioned to authorization failed', self::FILE_NAME), [
-                    'context' => [
-                        'id_order' => $orderId,
-                        'id_cart' => $this->id_cart,
-                    ],
-                ]);
+                // Do not override a success state, and avoid duplicate history entries if already failed.
+                if ($currentState !== $authorizedStatus
+                    && $currentState !== $capturedStatus
+                    && $currentState !== $failedStatus
+                ) {
+                    $order->setCurrentState($failedStatus);
+
+                    $logger->debug(sprintf('%s - Order transitioned to authorization failed', self::FILE_NAME), [
+                        'context' => [
+                            'id_order' => $orderId,
+                            'id_cart' => $this->id_cart,
+                        ],
+                    ]);
+                }
             }
         }
 
