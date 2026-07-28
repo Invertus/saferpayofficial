@@ -158,7 +158,7 @@ class SettingsTranslationService
             'paymentMethod' => $this->module->l('Payment method', self::FILE_NAME),
             'enabled' => $this->module->l('Enabled', self::FILE_NAME),
             'logos' => $this->module->l('Logos', self::FILE_NAME),
-            'customForm' => $this->module->l('Custom form', self::FILE_NAME),
+            'customForm' => $this->module->l('Saferpay Fields', self::FILE_NAME),
             'countries' => $this->module->l('Countries', self::FILE_NAME),
             'currencies' => $this->module->l('Currencies', self::FILE_NAME),
             'selectCountries' => $this->module->l('Select countries', self::FILE_NAME),

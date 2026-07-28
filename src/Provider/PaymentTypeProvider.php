@@ -75,7 +75,7 @@ class PaymentTypeProvider
             return true;
         }
 
-        // Individual cards use Fields when their "Custom form" toggle is on.
+        // Individual cards use Fields when their "Saferpay Fields" toggle is on.
         if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
             return false;
         }
