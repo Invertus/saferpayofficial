@@ -207,7 +207,7 @@
 - Removed uneccesary inputs from admin settings
 - Checked overall module stability
 
-## [2.1.1]
+## [2.1.0]
 - BO : Redesigned back-office settings into a React single-page admin
 - BO : Conditionally show/hide Saferpay Fields settings based on account license
 - BO : Renamed the "Custom form" column in Payment methods to "Saferpay Fields"
