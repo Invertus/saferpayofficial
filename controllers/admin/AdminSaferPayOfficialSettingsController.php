@@ -126,24 +126,29 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         if (!$this->validateAjaxToken()) {
             $this->ajaxResponse(false, $this->module->l('Invalid security token', self::FILE_NAME));
-            return;
+
+            return false;
         }
 
         $action = Tools::getValue('action');
         if (!$action || !in_array($action, self::ALLOWED_AJAX_ACTIONS)) {
             $this->ajaxResponse(false, $this->module->l('Invalid action', self::FILE_NAME));
-            return;
+
+            return false;
         }
 
         // Bypassing parent::postProcess() skips PrestaShop's native permission checks,
         // so state-changing actions must explicitly require 'edit' permission.
         if (in_array($action, self::STATE_CHANGING_AJAX_ACTIONS) && !$this->access('edit')) {
             $this->ajaxResponse(false, $this->module->l('You do not have permission to edit these settings.', self::FILE_NAME));
-            return;
+
+            return false;
         }
 
         $methodName = 'ajaxProcess' . ucfirst($action);
         $this->{$methodName}();
+
+        return true;
     }
 
     /**
