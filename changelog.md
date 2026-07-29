@@ -216,3 +216,4 @@
 - API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT
 - BO : Fixed issue when a freshly installed module logged an account error before any API credentials were entered
 - BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
+- Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
