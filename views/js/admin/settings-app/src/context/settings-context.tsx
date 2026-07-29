@@ -150,8 +150,17 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       if (result.success && Array.isArray(result.data?.paymentMethods)) {
         setPaymentMethods(result.data.paymentMethods as PaymentMethodData[])
       }
-      if (result.data?.paymentMethodsFetchFailed === true) {
-        toast({ title: t('paymentMethodsUnreachable'), variant: 'warning' })
+
+      // Mirror the refreshed outcome onto the bootstrap flag, otherwise a failure from
+      // page load keeps warning after a later refresh has already succeeded. Only a
+      // response that actually reports the flag may clear it.
+      if (result.data && 'paymentMethodsFetchFailed' in result.data) {
+        const fetchFailed = result.data.paymentMethodsFetchFailed === true
+        setSettings((prev) => ({ ...prev, paymentMethodsFetchFailed: fetchFailed }))
+
+        if (fetchFailed) {
+          toast({ title: t('paymentMethodsUnreachable'), variant: 'warning' })
+        }
       }
     } catch {
       toast({ title: t('errorRefreshingPaymentMethods'), variant: 'destructive' })

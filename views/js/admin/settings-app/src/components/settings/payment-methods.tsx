@@ -154,7 +154,14 @@ export function PaymentMethods() {
   // The account check runs while the page bootstraps, so a failure arrives via
   // the initial settings data rather than a refresh response.
   useEffect(() => {
-    if (settings.paymentMethodsFetchFailed && !fetchFailedToastShown) {
+    // Clearing the latch keeps a later, genuine failure from being swallowed.
+    if (!settings.paymentMethodsFetchFailed) {
+      fetchFailedToastShown = false
+
+      return
+    }
+
+    if (!fetchFailedToastShown) {
       fetchFailedToastShown = true
       toast({ title: t('paymentMethodsUnreachable'), variant: 'warning' })
     }
