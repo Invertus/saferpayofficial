@@ -1,7 +1,6 @@
 /.idea
 /config*.xml
 /vendor
-composer.lock
 .php_cs.cache
 tests/.env
 /node_modules
