@@ -27,8 +27,14 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_2_1_0()
 {
-    $tabId = Tab::getIdFromClassName('AdminSaferPayOfficialPayment');
-    if ($tabId) {
+    $removedTabs = ['AdminSaferPayOfficialPayment', 'AdminSaferPayOfficialFields'];
+
+    foreach ($removedTabs as $className) {
+        $tabId = Tab::getIdFromClassName($className);
+        if (!$tabId) {
+            continue;
+        }
+
         $tab = new Tab($tabId);
         $tab->delete();
     }
