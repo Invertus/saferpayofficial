@@ -566,6 +566,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         /** @var SaferPayConfiguration $configuration */
         $configuration = $this->module->getService(SaferPayConfiguration::class);
 
+        // Resolved before the payload is built because it sets $paymentMethodsFetchFailed.
+        $paymentMethodsData = $this->getPaymentMethodsData();
+
         $data = [
             // Environment
             'testMode' => (bool) $configuration->get(SaferPayConfig::TEST_MODE),
@@ -615,7 +618,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'orderStates' => $this->getOrderStates(),
             'countries' => $this->getCountries(),
             'currencies' => $this->getCurrencies(),
-            'paymentMethods' => $this->getPaymentMethodsData(),
+            'paymentMethods' => $paymentMethodsData,
             'paymentMethodsFetchFailed' => $this->paymentMethodsFetchFailed,
 
             // Endpoints
@@ -698,14 +701,21 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         /** @var SaferPayPaymentRepository $paymentRepository */
         $paymentRepository = $this->module->getService(SaferPayPaymentRepository::class);
 
+        // A fresh install has no credentials yet, so calling the account would fail and
+        // write a misleading error to the merchant's log. Skip the account entirely until
+        // the credentials needed to build the request are present.
+        $hasCredentials = $this->hasApiCredentials();
+
         try {
             // Re-read the account and reconcile the stored list when the Payment Methods
             // settings open, so methods added/removed on the Saferpay account are reflected
             // (and persisted for the front office) without requiring a Save click. Enabled
             // flags are preserved by the refresh; newly added methods default to disabled.
-            /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
-            $refreshPaymentsService = $this->module->getService(SaferPayRefreshPaymentsService::class);
-            $refreshPaymentsService->refreshPayments();
+            if ($hasCredentials) {
+                /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+                $refreshPaymentsService = $this->module->getService(SaferPayRefreshPaymentsService::class);
+                $refreshPaymentsService->refreshPayments();
+            }
 
             // The refresh persists the account's methods, so read them back from storage
             // instead of calling the API a second time.
@@ -713,7 +723,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
             // refreshPayments() is a no-op when nothing is active yet (e.g. a fresh setup),
             // so fall back to the live account list to still surface newly available methods.
-            if (empty($paymentMethods)) {
+            if (empty($paymentMethods) && $hasCredentials) {
                 /** @var SaferPayObtainPaymentMethods $obtainMethods */
                 $obtainMethods = $this->module->getService(SaferPayObtainPaymentMethods::class);
                 $paymentMethods = $obtainMethods->obtainPaymentMethodsNamesAsArray();
@@ -766,6 +776,31 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         }
 
         return $result;
+    }
+
+    /**
+     * Whether every credential the payment methods request is built from is configured
+     * for the active environment.
+     *
+     * @return bool
+     */
+    private function hasApiCredentials()
+    {
+        $suffix = SaferPayConfig::getConfigSuffix();
+        $required = [
+            SaferPayConfig::USERNAME,
+            SaferPayConfig::PASSWORD,
+            SaferPayConfig::CUSTOMER_ID,
+            SaferPayConfig::TERMINAL_ID,
+        ];
+
+        foreach ($required as $key) {
+            if (!Configuration::get($key . $suffix)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

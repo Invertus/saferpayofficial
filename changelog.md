@@ -214,3 +214,5 @@
 - BO/FO : Accessibility improvements for EAA / WCAG 2.1 AA compliance
 - Added configurable payment description and order reference on payment page
 - API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT
+- BO : Fixed issue when a freshly installed module logged an account error before any API credentials were entered
+- BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
