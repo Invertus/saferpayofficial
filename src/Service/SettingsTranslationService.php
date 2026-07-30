@@ -118,6 +118,8 @@ class SettingsTranslationService
             'enterApiPassword' => $this->module->l('Enter %s API password', self::FILE_NAME),
             'hidePassword' => $this->module->l('Hide password', self::FILE_NAME),
             'showPassword' => $this->module->l('Show password', self::FILE_NAME),
+            'changePassword' => $this->module->l('Change password', self::FILE_NAME),
+            'passwordSavedHint' => $this->module->l('Password saved. Click the pencil icon to enter a new one.', self::FILE_NAME),
             'terminalId' => $this->module->l('Terminal ID', self::FILE_NAME),
             'selectTerminal' => $this->module->l('Select a terminal', self::FILE_NAME),
             'refreshTerminals' => $this->module->l('Refresh terminals', self::FILE_NAME),
