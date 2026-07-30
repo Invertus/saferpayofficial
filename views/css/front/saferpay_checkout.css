@@ -106,9 +106,33 @@ input[type="radio"][name^="saved_card_"] {
 
 /* While the SDK initialises, each iframe briefly paints with its default input styling
    before our injected stylesheet applies — keep the iframes invisible until the SDK's
-   init onSuccess lifts this class, leaving the outlined fieldsets as loading skeleton. */
+   init onSuccess lifts this class, leaving the outlined fieldsets as loading skeleton.
+   An invisible iframe still takes clicks and keystrokes, so without pointer-events a
+   customer clicking a field during init focuses and types into a field they cannot see:
+   no caret, no characters, and the field reads as broken. */
 .saferpay-inline-fields.saferpay-fields-loading iframe {
     opacity: 0;
+    pointer-events: none;
+}
+
+/* Two states where a field is drawn but cannot be typed into: while the SDK initialises, and
+   while the SDK holds the CVC disabled until the card number passes its CheckCard lookup (the
+   inner input is muted through the injected :disabled rule, see inline-fields.js). Muting the
+   outline and label too means the field reads as unavailable before it is clicked instead of
+   after. Declared ahead of the focus/error rules below so both still take precedence. */
+.saferpay-inline-fields.saferpay-fields-loading .saferpay-field,
+.saferpay-inline-fields .saferpay-field.is-locked {
+    border-color: #e0e0e0;
+    background: #f7f8f8;
+}
+
+.saferpay-inline-fields.saferpay-fields-loading .saferpay-field legend,
+.saferpay-inline-fields .saferpay-field.is-locked legend {
+    color: #9aa4a8;
+}
+
+.saferpay-inline-fields.saferpay-fields-loading .saferpay-field {
+    cursor: progress;
 }
 
 /* Focus feedback: the SDK's own focus styling is cleared (it shrank the field), so the

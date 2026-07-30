@@ -47,6 +47,13 @@
     // rebuild+re-init when the same option fires a spurious change event.
     var renderedContainerId = null;
 
+    // The loading state makes the fields inert, so it must not outlive an init callback that
+    // never arrives: a silently failed SDK init would otherwise leave a form nobody can type
+    // into. Generous on purpose: it is a last resort, not the normal path (init is well under
+    // a second), and lifting it early would show the fields before they are styled.
+    var LOADING_TIMEOUT = 10000;
+    var loadingTimeout = null;
+
     // The customer-entered card inputs live in cross-origin Saferpay iframes, so their
     // validity is only known through the SDK's onValidated callback. It fires when a field
     // loses focus; an untouched field never fires it. We therefore default every required
@@ -103,10 +110,12 @@
             '</fieldset>';
     }
 
-    // The slot starts in the "loading" state: the field iframes are kept invisible until
-    // the SDK reports successful initialisation, because each iframe first paints with the
-    // SDK's default input styling and only then applies our injected stylesheet — showing
-    // it earlier flashes an unstyled square input inside the outlined field.
+    // The slot starts in the "loading" state: the field iframes are kept invisible and inert
+    // until the SDK reports successful initialisation, because each iframe first paints with
+    // the SDK's default input styling and only then applies our injected stylesheet, so
+    // showing it earlier flashes an unstyled square input inside the outlined field. The
+    // fieldsets render muted while it lasts (see saferpay_checkout.css), because a field that
+    // looks ready but silently drops the click reads as broken.
     function fieldsFormMarkup() {
         return '' +
             '<div id="' + SLOT_ID + '" class="saferpay-inline-fields saferpay-fields-loading">' +
@@ -146,7 +155,16 @@
         return parseInt($form.find('[name="selectedCreditCard_' + method + '"]').val(), 10) || 0;
     }
 
+    function stopLoading() {
+        if (loadingTimeout) {
+            clearTimeout(loadingTimeout);
+            loadingTimeout = null;
+        }
+        $('#' + SLOT_ID).removeClass('saferpay-fields-loading');
+    }
+
     function removeSlot() {
+        stopLoading();
         $('#' + SLOT_ID).remove();
         renderedContainerId = null;
     }
@@ -165,6 +183,7 @@
 
         $container.append(fieldsFormMarkup());
         renderedContainerId = containerId;
+        loadingTimeout = setTimeout(stopLoading, LOADING_TIMEOUT);
 
         SaferpayFields.init({
             accessToken: saferpay_field_access_token,
@@ -193,15 +212,22 @@
             // feedback is shown on the fieldset outline instead.
             style: {
                 '.form-control': 'box-sizing: border-box; width: 100%; margin: 0; padding: 4px 0 12px; border: none; outline: none; background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; font-size: 17px; line-height: normal; color: #1f2426; caret-color: rgb(39, 119, 119);',
-                '.form-control:focus': 'border: none; outline: none; box-shadow: none;'
+                '.form-control:focus': 'border: none; outline: none; box-shadow: none;',
+                // The SDK keeps the CVC input disabled until the card number passes its
+                // CheckCard lookup. Without this rule the .form-control declarations above
+                // apply to it unchanged, so a disabled field is indistinguishable from an
+                // editable one: text cursor on hover, live caret colour, normal text colour.
+                // Customers click it, get no caret, and read the field as broken. Blink and
+                // WebKit override `color` on a disabled input, hence -webkit-text-fill-color.
+                '.form-control:disabled': 'cursor: not-allowed; color: #9aa4a8; -webkit-text-fill-color: #9aa4a8; caret-color: transparent;'
             },
             // Reveal the field iframes only once the SDK reports them fully loaded (inner
             // stylesheet included) — see the loading-state note on fieldsFormMarkup.
             onSuccess: function () {
-                $('#' + SLOT_ID).removeClass('saferpay-fields-loading');
+                stopLoading();
             },
             onError: function (evt) {
-                $('#' + SLOT_ID).removeClass('saferpay-fields-loading');
+                stopLoading();
                 $('#' + SLOT_ID + ' .initialize-error-message').text(evt.message);
                 $('#' + SLOT_ID + ' .initialize-error').show();
             },
@@ -213,10 +239,26 @@
                     fieldValidity[evt.fieldType] = !!evt.isValid;
                 }
                 toggleFieldClass(evt.fieldType, 'has-error', !evt.isValid);
+
+                // The SDK disables the CVC input whenever the card number fails its CheckCard
+                // lookup, and exposes no callback for that. Card-number validity is the same
+                // condition it gates on, so it stands in as the lock signal. An untouched
+                // card number leaves the CVC enabled, which is why this only reacts to
+                // onValidated and the field is not rendered locked.
+                if (evt.fieldType === 'cardnumber') {
+                    toggleFieldClass('cvc', 'is-locked', !evt.isValid);
+                }
             },
             onFocus: function (evt) {
                 if (evt) {
                     toggleFieldClass(evt.fieldType, 'is-focused', true);
+
+                    // A disabled input cannot take focus, so reaching the CVC field proves
+                    // the SDK has unlocked it. The card number may not have blurred yet,
+                    // which is what onValidated waits for.
+                    if (evt.fieldType === 'cvc') {
+                        toggleFieldClass('cvc', 'is-locked', false);
+                    }
                 }
             },
             onBlur: function (evt) {

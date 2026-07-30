@@ -217,3 +217,5 @@
 - BO : Fixed issue when a freshly installed module logged an account error before any API credentials were entered
 - BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
 - Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
+- FO : Fixed issue when the Saferpay Fields CVC field looked editable while the card number was incomplete, showing no cursor and accepting no input
+- FO : Fixed issue when the Saferpay Fields card form accepted clicks and keystrokes while it was still loading, so the first characters typed were invisible and appeared to be lost
