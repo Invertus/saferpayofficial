@@ -197,9 +197,24 @@
 - Remove WL Crypto payment method
 - Added setting to toggle order confirmation email sending
 - Added feature to group card payment methods into unified "Card" payment method
+- Fixed issue when newly enabled payment methods did not appear in checkout because default "all countries/currencies" restriction was not created on save
+- Fixed issue when payment method country/currency dropdowns showed "0" instead of indicating that all countries/currencies are allowed
+- BO : Added validation for Merchant Emails field (frontend + backend) to prevent saving invalid addresses
 
 ## [2.0.3]
 - Optimized database performance
 - Dynamic termimal selection
 - Removed uneccesary inputs from admin settings
 - Checked overall module stability
+
+## [2.1.0]
+- BO : Redesigned back-office settings into a React single-page admin
+- BO : Conditionally show/hide Saferpay Fields settings based on account license
+- BO : Renamed the "Custom form" column in Payment methods to "Saferpay Fields"
+- BO/FO : Accessibility improvements for EAA / WCAG 2.1 AA compliance
+- Added configurable payment description and order reference on payment page
+- API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT
+- BO : Fixed issue when a freshly installed module logged an account error before any API credentials were entered
+- BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
+- Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
+- BO : Fixed issue when a saved API password offered no visible way to enter a new one, and browser password manager icons covered the show/hide password control

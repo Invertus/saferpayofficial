@@ -18,8 +18,9 @@ jobs:
     env:
       # Change these values depending on project.
       ps-module-name: saferpayofficial
-      project-workspace-dir: ${{ github.workspace }}/../workspace
+      container-name: ps-lint
     strategy:
+      fail-fast: false
       matrix:
         PS: [ 1.7.8-7.4 ]
         testsuite: [ lint, phpstan ]
@@ -33,59 +34,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set Swap Space
-        uses: Invertus/set-swap-space@master
-        with:
-          swap-size-gb: 10
-
-      - name: Set up workspace
-        shell: bash
+      # lint and phpstan need the PrestaShop sources on disk and the matching PHP
+      # version, but no running shop, so the public image is started idle with the
+      # checked-out module mounted in place.
+      - name: Start PrestaShop container
         run: |
-          eval `ssh-agent -s`
-          ssh-add - <<< "${{ secrets.PS_MODULE_WORKSPACE_SAFERPAY_PRIVATE_KEY }}"
-          git clone git@github.com:Invertus/ps-module-workspace.git ${{ env.project-workspace-dir }}
-          cd ${{ env.project-workspace-dir }}
-          sed 's/PROJECT_NAME=.*/PROJECT_NAME=${{ env.ps-module-name }}/g' < .env.dist |
-          sed 's/PS_VERSION_TAG=.*/PS_VERSION_TAG=${{ matrix.PS }}/g' > .env
-          make create-modules-dir
-          cp -R ${{ github.workspace }} ${{ env.project-workspace-dir }}/prestashop/${{ matrix.PS }}/modules/${{ env.ps-module-name }}
+          docker run -d --name ${{ env.container-name }} \
+            -v ${{ github.workspace }}:/var/www/html/modules/${{ env.ps-module-name }} \
+            --entrypoint tail prestashop/prestashop:${{ matrix.PS }} -f /dev/null
 
-      - name: Run PrestaShop
+      - name: Install git and composer in container
         run: |
-          (cd ${{ env.project-workspace-dir }} && docker compose up -d)
-
-      - name: Healthcheck
-        run: |
-          timeout 120s sh -c 'until docker ps | grep ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} | grep -q "(healthy)"; do echo "Waiting for container to be healthy..."; sleep 1; done'
-
-      - name: Cache composer folder
-        uses: actions/cache@v3
-        with:
-          path: ${{ env.project-workspace-dir }}/prestashop/${{ matrix.PS }}/modules/${{ env.ps-module-name }}/vendor
-          key: ${{ github.sha }}
-
-      - name: Install git
-        run: |
-          docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "apt update && apt install -y git"
-
-      - name: Remove old module
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules && rm -rf ${{ env.ps-module-name }}"
-
-      - name: Install module
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules && git clone https://github.com/Invertus/${{ env.ps-module-name }}"
-
-      - name: Switch to the correct branch
-        run: |
-          docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && git fetch origin && git checkout ${{ github.head_ref || github.ref_name }}"
+          docker exec -i ${{ env.container-name }} bash -c "apt-get update -qq && apt-get install -y -qq git"
+          docker exec -i ${{ env.container-name }} bash -c "php -r \"copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');\" && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer --quiet && composer --version"
 
       - name: Install composer dependencies
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && composer install"
+        run: docker exec -i ${{ env.container-name }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && composer install --no-interaction"
 
       - name: PHP version
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "php -v"
+        run: docker exec -i ${{ env.container-name }} bash -c "php -v"
 
       - name: Run ${{ matrix.testsuite }} tests
-        run: docker exec -i ${{ env.ps-module-name }}-ps-prestashop-${{ matrix.PS }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && make ci-${{ matrix.testsuite }} ps_version_tag=${{ matrix.PS }}"
+        run: docker exec -i ${{ env.container-name }} bash -c "cd /var/www/html/modules/${{ env.ps-module-name }} && make ci-${{ matrix.testsuite }} ps_version_tag=${{ matrix.PS }}"
 
   prepare-zip:
     name: Prepare module ZIP artifact

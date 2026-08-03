@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Cart;
-use Customer;
 use Exception;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
@@ -32,8 +31,6 @@ use Invertus\SaferPay\Api\Request\CancelService;
 use Invertus\SaferPay\Api\Request\CaptureService;
 use Invertus\SaferPay\Api\Request\RefundService;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\DTO\Request\PendingNotification;
-use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Logger\LoggerInterface;

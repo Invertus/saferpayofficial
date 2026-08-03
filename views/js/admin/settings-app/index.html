@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SaferPay Settings (Dev)</title>
+  </head>
+  <body>
+    <div id="saferpay-settings-root" class="sp-saferpay-root"></div>
+    <script>
+      // Mock data for development
+      window.saferpaySettingsData = {
+        testMode: true,
+        testUsername: '', testPassword: '', testCustomerId: '', testTerminalId: '',
+        testMerchantEmails: '', testFieldAccessToken: '', testFieldJsUrl: 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js',
+        testBusinessLicense: false,
+        liveUsername: '', livePassword: '', liveCustomerId: '', liveTerminalId: '',
+        liveMerchantEmails: '', liveFieldAccessToken: '', liveFieldJsUrl: 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js',
+        liveBusinessLicense: false,
+        paymentBehavior: 1, paymentBehaviorWithout3D: 1, restrictRefund: 0,
+        orderCreationAfterAuth: 0, groupCards: false, groupCardsLogo: false, creditCardSave: 0,
+        allowSaferpayMail: true, sendNewOrderMail: false, sendOrderConfMail: false,
+        orderStateAwaitingPayment: 1, paymentDescription: 'Prestashop Payment',
+        configurationName: '', debugMode: false,
+        orderStates: [{ id: 1, name: 'Awaiting Saferpay payment' }],
+        countries: [{ id: 1, name: 'All' }],
+        currencies: [{ id: 1, iso_code: 'All' }],
+        paymentMethods: [],
+        ajaxUrl: '', adminToken: ''
+      };
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

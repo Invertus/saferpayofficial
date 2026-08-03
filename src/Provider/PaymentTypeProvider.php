@@ -48,12 +48,11 @@ class PaymentTypeProvider
      */
     public function get(string $paymentMethod): string
     {
+        // Custom Form ON (Saferpay Fields, Business licence) => Saferpay Fields.
+        // Anything else (Custom Form OFF, non-Business) => Saferpay Payment Page.
+        // The legacy Transaction Interface (IFRAME) is no longer selectable (SL-374).
         if ($this->isHostedIframeRedirect($paymentMethod)) {
             return PaymentType::HOSTED_IFRAME;
-        }
-
-        if ($this->isIframeRedirect($paymentMethod)) {
-            return PaymentType::IFRAME;
         }
 
         return PaymentType::BASIC;
@@ -63,30 +62,21 @@ class PaymentTypeProvider
      * @param string $paymentMethod
      * @return bool
      */
-    private function isIframeRedirect(string $paymentMethod): bool
-    {
-        if (!in_array($paymentMethod, SaferPayConfig::TRANSACTION_METHODS)) {
-            return false;
-        }
-
-        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string $paymentMethod
-     * @return bool
-     */
     private function isHostedIframeRedirect(string $paymentMethod): bool
     {
-        if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
+        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
             return false;
         }
 
-        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
+        // Grouped cards render a single inline Fields form under the "Cards" option.
+        if ($paymentMethod === SaferPayConfig::PAYMENT_CARDS
+            && \Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS)
+        ) {
+            return true;
+        }
+
+        // Individual cards use Fields when their "Saferpay Fields" toggle is on.
+        if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
             return false;
         }
 

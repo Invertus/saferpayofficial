@@ -1,10 +1,11 @@
 /.idea
 /config*.xml
 /vendor
-composer.lock
 .php_cs.cache
 tests/.env
 /node_modules
 var/cache/*
 !var/cache/index.php
 .DS_Store
+views/js/admin/settings-app/node_modules/
+views/js/admin/dist/

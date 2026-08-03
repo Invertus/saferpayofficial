@@ -255,7 +255,6 @@ class SaferPayConfig
     const SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE = 'Prestashop Payment';
 
     const SAFERPAY_TEMPLATE_LOCATION = 'module:saferpayofficial/views/templates/';
-    const SAFERPAY_HOSTED_TEMPLATE_LOCATION = 'module:saferpayofficial/views/templates/front/hosted-templates/';
 
     const AMOUNT_MULTIPLIER_FOR_API = 100;
     const DEFAULT_PAYMENT_BEHAVIOR_CAPTURE = 0;
@@ -267,15 +266,15 @@ class SaferPayConfig
     const FIELDS_LIBRARY = 'SAFERPAY_FIELDS_JAVASCRIPT_LIBRARY';
     const FIELDS_LIBRARY_DEFAULT_VALUE = 'https://www.saferpay.com/Fields/lib/1/saferpay-fields.js';
 
-    const HOSTED_FIELDS_TEMPLATE_DEFAULT = 1;
-    const HOSTED_FIELDS_TEMPLATE = 'SAFERPAY_HOSTED_FIELDS_TEMPLATE';
-
     const IS_BUSINESS_LICENCE = 'isBusinessLicence';
 
     const EMAIL_ALERTS_MODULE_NAME = 'ps_emailalerts';
 
     const PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL = 0;
     const PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE = 1;
+    const PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE = 2;
+
+    const SAFERPAY_ORDER_ID_OPTION = 'SAFERPAY_ORDER_ID_OPTION';
 
     const SAFERPAY_CARDFORM_HOLDERNAME_REQUIRENCE = 'MANDATORY';
     const SAFERPAY_DEBUG_MODE = 'SAFERPAY_DEBUG_MODE';
@@ -436,12 +435,12 @@ class SaferPayConfig
             RequestHeader::SPEC_REFUND_VERSION => SaferPayConfig::API_VERSION,
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
-            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 1,
+            SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 0,
             SaferPayConfig::SAFERPAY_ALLOW_SAFERPAY_SEND_CUSTOMER_MAIL => 1,
             SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION => self::SAFERPAY_PAYMENT_DESCRIPTION_DEFAULT_VALUE,
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => 0,
+            self::SAFERPAY_ORDER_ID_OPTION => 0,
             self::TEST_MODE => 1,
-            self::HOSTED_FIELDS_TEMPLATE => self::HOSTED_FIELDS_TEMPLATE_DEFAULT,
             self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => (int) Configuration::get(
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
@@ -478,6 +477,7 @@ class SaferPayConfig
             self::FIELDS_ACCESS_TOKEN,
             self::FIELDS_ACCESS_TOKEN . self::TEST_SUFFIX,
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION,
+            self::SAFERPAY_ORDER_ID_OPTION,
             self::SAFERPAY_SEND_ORDER_CONF_MAIL,
             self::SAFERPAY_GROUP_CARDS,
         ];

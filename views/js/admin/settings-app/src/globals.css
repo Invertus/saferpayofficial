@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.sp-saferpay-root {
+  --sp-background: 210 20% 97%;
+  --sp-foreground: 220 20% 10%;
+  --sp-card: 0 0% 100%;
+  --sp-card-foreground: 220 20% 10%;
+  --sp-popover: 0 0% 100%;
+  --sp-popover-foreground: 220 20% 10%;
+  --sp-primary: 180 51% 31%;
+  --sp-primary-foreground: 0 0% 100%;
+  --sp-secondary: 180 15% 95%;
+  --sp-secondary-foreground: 220 20% 10%;
+  --sp-muted: 180 12% 95%;
+  --sp-muted-foreground: 220 12% 38%;
+  --sp-accent: 180 25% 92%;
+  --sp-accent-foreground: 180 51% 22%;
+  --sp-destructive: 0 72% 51%;
+  --sp-destructive-foreground: 0 0% 100%;
+  --sp-border: 214 20% 90%;
+  --sp-input: 214 20% 90%;
+  --sp-ring: 180 51% 31%;
+  --sp-radius: 0.625rem;
+
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: hsl(var(--sp-foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.sp-saferpay-root *,
+.sp-saferpay-root *::before,
+.sp-saferpay-root *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid hsl(var(--sp-border));
+}
