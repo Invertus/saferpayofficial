@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { AlertCircle, Eye, EyeOff, Key, Shield, Loader2, Info, CheckCircle2, Wand2, XCircle } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff, Key, Shield, Loader2, Info, CheckCircle2, Wand2, XCircle, Pencil } from 'lucide-react'
 import { useSettings } from '@/context/settings-context'
 import { toast } from '@/hooks/use-toast'
 import { t } from '@/utils/translations'
@@ -68,7 +68,6 @@ export function ApiCredentials() {
     if (!hasCredentials) {
       setCredentialStatus('idle')
       setCredentialError('')
-      setTerminals([])
       return
     }
 
@@ -195,6 +194,10 @@ export function ApiCredentials() {
                   placeholder={t('enterApiUsername', envLabel.toLowerCase())}
                   value={username}
                   onChange={(e) => setField('username', e.target.value)}
+                  data-lpignore="true"
+                  data-1p-ignore=""
+                  data-bwignore="true"
+                  data-form-type="other"
                   required
                   aria-required="true"
                 />
@@ -210,10 +213,26 @@ export function ApiCredentials() {
                     placeholder={t('enterApiPassword', envLabel.toLowerCase())}
                     value={password}
                     onChange={(e) => setField('password', e.target.value)}
-                    className={isStoredPasswordMasked ? undefined : 'sp-pr-10'}
+                    readOnly={isStoredPasswordMasked}
+                    className="!sp-pr-10"
+                    data-lpignore="true"
+                    data-1p-ignore=""
+                    data-bwignore="true"
+                    data-form-type="other"
                     required
                     aria-required="true"
                   />
+                  {isStoredPasswordMasked && (
+                    <button
+                      type="button"
+                      onClick={() => setField('password', '')}
+                      className="sp-absolute sp-right-3 sp-top-1/2 sp--translate-y-1/2 sp-text-muted-foreground hover:sp-text-foreground sp-transition-colors sp-p-1 sp-min-w-[24px] sp-min-h-[24px] sp-flex sp-items-center sp-justify-center"
+                      aria-label={t('changePassword')}
+                      title={t('changePassword')}
+                    >
+                      <Pencil className="sp-h-4 sp-w-4" />
+                    </button>
+                  )}
                   {showPasswordToggle && (
                     <button
                       type="button"
@@ -225,6 +244,9 @@ export function ApiCredentials() {
                     </button>
                   )}
                 </div>
+                {isStoredPasswordMasked && (
+                  <p className="sp-text-xs sp-text-muted-foreground">{t('passwordSavedHint')}</p>
+                )}
               </div>
             </div>
 
