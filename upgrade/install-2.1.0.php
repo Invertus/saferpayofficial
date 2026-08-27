@@ -21,15 +21,19 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_2_1_0()
+function upgrade_module_2_1_0($module)
 {
     saferpayofficial_2_1_0_delete_removed_tabs();
     saferpayofficial_2_1_0_delete_removed_files();
     saferpayofficial_2_1_0_delete_removed_configuration();
+    saferpayofficial_2_1_0_add_payment_method_details();
+    saferpayofficial_2_1_0_backfill_payment_method_details($module);
 
     Tools::clearSmartyCache();
 
@@ -153,4 +157,40 @@ function saferpayofficial_2_1_0_delete_empty_directory($directory, $moduleDir)
 function saferpayofficial_2_1_0_delete_removed_configuration()
 {
     Configuration::deleteByName('SAFERPAY_HOSTED_FIELDS_TEMPLATE');
+}
+
+/**
+ * The checkout used to read the logo and the supported currencies straight off the Management
+ * API on every payment step render. Storing them alongside the method removes that call.
+ */
+function saferpayofficial_2_1_0_add_payment_method_details()
+{
+    $table = _DB_PREFIX_ . 'saferpay_payment';
+    $columns = array_column(Db::getInstance()->executeS('SHOW COLUMNS FROM `' . $table . '`'), 'Field');
+
+    if (!in_array('logo_url', $columns, true)) {
+        Db::getInstance()->execute('ALTER TABLE `' . $table . '` ADD `logo_url` VARCHAR(255) DEFAULT NULL');
+    }
+
+    if (!in_array('currencies', $columns, true)) {
+        Db::getInstance()->execute('ALTER TABLE `' . $table . '` ADD `currencies` VARCHAR(1024) DEFAULT NULL');
+    }
+}
+
+/**
+ * Populate the two new columns for shops that already have payment methods stored. Best effort
+ * on purpose: an unreachable account must not fail the upgrade, and the checkout repopulates
+ * on its own when it finds the columns still empty.
+ */
+function saferpayofficial_2_1_0_backfill_payment_method_details($module)
+{
+    try {
+        /** @var SaferPayRefreshPaymentsService $refreshPaymentsService */
+        $refreshPaymentsService = $module->getService(SaferPayRefreshPaymentsService::class);
+        $refreshPaymentsService->refreshPayments();
+    } catch (Exception $exception) {
+        PrestaShopLogger::addLog(
+            'SaferPay 2.1.0 upgrade: could not backfill payment method details - ' . $exception->getMessage()
+        );
+    }
 }
