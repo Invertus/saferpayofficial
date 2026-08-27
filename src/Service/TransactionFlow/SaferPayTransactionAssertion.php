@@ -113,7 +113,7 @@ class SaferPayTransactionAssertion
             $assertResponse,
             $saferPayOrder->id,
             $cart->id_customer,
-            $selectedCard
+            (bool) $saveCard
         );
 
         // assertion shouldn't update, this is quickfix for what seems to be a general flaw in structure

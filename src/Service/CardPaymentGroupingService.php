@@ -63,10 +63,38 @@ class CardPaymentGroupingService
             $result[] = [
                 'paymentMethod' => SaferPayConfig::PAYMENT_CARDS,
                 'logoUrl' => _PS_BASE_URL_SSL_ . $this->module->getPathUri() . 'views/img/' . SaferPayConfig::PAYMENT_CARDS . '.png',
-                'currencies' => $allCurrencies,
+                'currencies' => $this->mergeCurrencies($cardMethods, $allCurrencies),
             ];
         }
 
         return $result;
+    }
+
+    /**
+     * The grouped option may only offer the currencies its own card brands support. Handing it every
+     * shop currency would show the Cards option in a currency no enabled card can be paid in.
+     *
+     * @param array $cardMethods
+     * @param array $allCurrencies
+     *
+     * @return array
+     */
+    private function mergeCurrencies(array $cardMethods, array $allCurrencies): array
+    {
+        $currencies = [];
+
+        foreach ($cardMethods as $method) {
+            if (empty($method['currencies'])) {
+                continue;
+            }
+
+            $currencies = array_merge($currencies, (array) $method['currencies']);
+        }
+
+        if (empty($currencies)) {
+            return $allCurrencies;
+        }
+
+        return array_values(array_unique($currencies));
     }
 }

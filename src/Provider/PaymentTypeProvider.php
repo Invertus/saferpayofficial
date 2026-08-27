@@ -59,6 +59,26 @@ class PaymentTypeProvider
     }
 
     /**
+     * Resolves the flow on the return leg from how the payment was initialized, not from the brand
+     * Saferpay reports back. A field token means the shopper paid through Saferpay Fields, whatever
+     * card they ended up typing into it.
+     *
+     * @param string $paymentMethod
+     * @param string|null $fieldToken
+     * @param bool $usingSavedCard
+     *
+     * @return string
+     */
+    public function getForReturn(string $paymentMethod, $fieldToken = null, bool $usingSavedCard = false): string
+    {
+        if (!empty($fieldToken) || $usingSavedCard) {
+            return PaymentType::HOSTED_IFRAME;
+        }
+
+        return $this->get($paymentMethod);
+    }
+
+    /**
      * @param string $paymentMethod
      * @return bool
      */

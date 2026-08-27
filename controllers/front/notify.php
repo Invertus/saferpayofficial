@@ -30,6 +30,7 @@ use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionProcessedGuard;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -104,6 +105,19 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 'context' => [
                     'id_order' => $order->id,
                     'current_state' => $order->current_state,
+                ],
+            ]);
+
+            die($this->module->l('Order already complete', self::FILE_NAME));
+        }
+
+        /** @var SaferPayTransactionProcessedGuard $processedGuard */
+        $processedGuard = $this->module->getService(SaferPayTransactionProcessedGuard::class);
+
+        if ($processedGuard->isProcessed($cartId)) {
+            $logger->debug(sprintf('%s - Payment already processed. Dying.', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $cartId,
                 ],
             ]);
 

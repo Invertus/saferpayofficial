@@ -445,7 +445,7 @@ class SaferPayConfig
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
             self::SAFERPAY_SEND_ORDER_CONF_MAIL => 0,
-            self::SAFERPAY_GROUP_CARDS => 0,
+            self::SAFERPAY_GROUP_CARDS => 1,
         ];
     }
 

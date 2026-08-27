@@ -33,9 +33,12 @@ use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Provider\PaymentTypeProvider;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
+use Invertus\SaferPay\Response\Response;
+use Invertus\SaferPay\Service\CardAliasRegistrationGuard;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAuthorization;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionProcessedGuard;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 use Invertus\SaferPay\Adapter\Cart as CartAdapter;
 
@@ -72,8 +75,33 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             $this->redirectWithNotifications($this->getRedirectionToControllerUrl($failController));
         }
 
+        // Saferpay sends the redirect and the notification in parallel, and with a business licence
+        // the assert below authorizes the transaction, which may only ever happen once. The same lock
+        // key is used by the notify controller, so whichever arrives second waits out the first.
+        $lockResult = $this->applyLock(sprintf('%s-%s', $cartId, $secureKey));
+
+        // Only a conflict means the notification holds the lock. Any other failure is the locking
+        // itself being unavailable, and the processed check below still guards the repeated assert.
+        if ($lockResult->getStatusCode() === Response::HTTP_CONFLICT) {
+            $logger->debug(sprintf('%s - Notification is already being processed, skipping assert', self::FILE_NAME));
+
+            return;
+        }
+
+        /** @var SaferPayTransactionProcessedGuard $processedGuard */
+        $processedGuard = $this->module->getService(SaferPayTransactionProcessedGuard::class);
+
+        if ($processedGuard->isProcessed($cartId)) {
+            $logger->debug(sprintf('%s - Payment already processed, skipping assert', self::FILE_NAME));
+
+            return;
+        }
+
         /** @var SaferPayTransactionAssertion $transactionAssert */
         $transactionAssert = $this->module->getService(SaferPayTransactionAssertion::class);
+
+        /** @var CardAliasRegistrationGuard $aliasRegistrationGuard */
+        $aliasRegistrationGuard = $this->module->getService(CardAliasRegistrationGuard::class);
 
         $assertResponseBody = null;
         $transactionStatus = null;
@@ -81,7 +109,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         try {
             $assertResponseBody = $transactionAssert->assert(
                 $cartId,
-                (int) $selectedCard === SaferPayConfig::CREDIT_CARD_OPTION_SAVE,
+                $aliasRegistrationGuard->shouldRegister($selectedCard),
                 $selectedCard,
                 (int) Tools::getValue(SaferPayConfig::IS_BUSINESS_LICENCE)
             );
@@ -112,7 +140,13 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         /** @var PaymentTypeProvider $paymentTypeProvider */
         $paymentTypeProvider = $this->module->getService(PaymentTypeProvider::class);
 
-        if ($paymentTypeProvider->get($orderPayment) === PaymentType::HOSTED_IFRAME) {
+        $paymentType = $paymentTypeProvider->getForReturn(
+            $orderPayment,
+            Tools::getValue('fieldToken'),
+            (int) $selectedCard > 0
+        );
+
+        if ($paymentType === PaymentType::HOSTED_IFRAME) {
             $order = new Order(Order::getIdByCartId($cartId));
 
             try {
