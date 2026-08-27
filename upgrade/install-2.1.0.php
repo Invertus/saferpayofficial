@@ -25,11 +25,12 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_2_1_0()
+function upgrade_module_2_1_0($module)
 {
     saferpayofficial_2_1_0_delete_removed_tabs();
     saferpayofficial_2_1_0_delete_removed_files();
     saferpayofficial_2_1_0_delete_removed_configuration();
+    saferpayofficial_2_1_0_translate_tabs($module);
 
     Tools::clearSmartyCache();
 
@@ -153,4 +154,50 @@ function saferpayofficial_2_1_0_delete_empty_directory($directory, $moduleDir)
 function saferpayofficial_2_1_0_delete_removed_configuration()
 {
     Configuration::deleteByName('SAFERPAY_HOSTED_FIELDS_TEMPLATE');
+}
+
+/**
+ * Tab names are stored rows, so the ones written on an earlier install stay in the language of
+ * the employee who installed the module back then, and no dictionary shipped later reaches them.
+ * getTabs() now carries a name per language, so they can be rewritten here.
+ *
+ * A row is only rewritten while it still holds the English wording the module installed. Anything
+ * else is a rename the merchant made in Advanced Parameters and is left alone.
+ *
+ * @param SaferPayOfficial $module
+ */
+function saferpayofficial_2_1_0_translate_tabs($module)
+{
+    $languages = Language::getLanguages(false);
+
+    foreach ($module->getTabs() as $tabData) {
+        if (!is_array($tabData['name'])) {
+            continue;
+        }
+
+        $idTab = (int) Tab::getIdFromClassName($tabData['class_name']);
+
+        if (!$idTab) {
+            continue;
+        }
+
+        $tab = new Tab($idTab);
+        $installed = reset($tabData['name']);
+
+        foreach ($languages as $language) {
+            $idLang = (int) $language['id_lang'];
+
+            if (!isset($tabData['name'][$language['iso_code']], $tab->name[$idLang])) {
+                continue;
+            }
+
+            if ($tab->name[$idLang] !== $installed) {
+                continue;
+            }
+
+            $tab->name[$idLang] = $tabData['name'][$language['iso_code']];
+        }
+
+        $tab->save();
+    }
 }

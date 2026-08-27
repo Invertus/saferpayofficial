@@ -1,0 +1,356 @@
+specifier,source_en,de,fr,placeholders,occurrences
+AbstractAdminSaferPayController,Unauthorized.,"Nicht autorisiert.","Non autorisé.",,src/Controller/AbstractAdminSaferPayController.php:80
+AbstractAdminSaferPayController,"You do not have permission to view this.","Sie haben keine Berechtigung, dies anzusehen.","Vous n'avez pas la permission de voir ceci.",,src/Controller/AbstractAdminSaferPayController.php:83
+AbstractSaferPayController,"Internal error","Interner Fehler","Erreur interne",,src/Controller/AbstractSaferPayController.php:98
+AbstractSaferPayController,"Resource conflict",Ressourcenkonflikt,"Conflit de ressources",,src/Controller/AbstractSaferPayController.php:87
+AdminSaferPayOfficialLogsController,Context,Kontext,Contexte,,controllers/admin/AdminSaferPayOfficialLogsController.php:128
+AdminSaferPayOfficialLogsController,Date,Datum,Date,,controllers/admin/AdminSaferPayOfficialLogsController.php:136
+AdminSaferPayOfficialLogsController,"Failed to find log.","Protokoll nicht gefunden.","Journal introuvable.",,controllers/admin/AdminSaferPayOfficialLogsController.php:284
+AdminSaferPayOfficialLogsController,ID,ID,ID,,controllers/admin/AdminSaferPayOfficialLogsController.php:98
+AdminSaferPayOfficialLogsController,Message,Meldung,Message,,controllers/admin/AdminSaferPayOfficialLogsController.php:125
+AdminSaferPayOfficialLogsController,"No log information found.","Keine Protokollinformationen gefunden.","Aucune information de journal trouvée.",,controllers/admin/AdminSaferPayOfficialLogsController.php:299
+AdminSaferPayOfficialLogsController,Request,Anfrage,Requête,,controllers/admin/AdminSaferPayOfficialLogsController.php:109
+AdminSaferPayOfficialLogsController,Response,Antwort,Réponse,,controllers/admin/AdminSaferPayOfficialLogsController.php:117
+AdminSaferPayOfficialLogsController,"Severity (1-4)","Schweregrad (1-4)","Gravité (1-4)",,controllers/admin/AdminSaferPayOfficialLogsController.php:103
+AdminSaferPayOfficialSettingsController,"API validation failed. Please check your credentials and try again.","API-Validierung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten und versuchen Sie es erneut.","La validation de l'API a échoué. Veuillez vérifier vos identifiants et réessayer.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:876
+AdminSaferPayOfficialSettingsController,"API validation failed:","API-Validierung fehlgeschlagen:","La validation de l'API a échoué :",,controllers/admin/AdminSaferPayOfficialSettingsController.php:867
+AdminSaferPayOfficialSettingsController,"Access token generated successfully.","Zugriffstoken erfolgreich generiert.","Jeton d'accès généré avec succès.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:537
+AdminSaferPayOfficialSettingsController,All,Alle,Tous,,"controllers/admin/AdminSaferPayOfficialSettingsController.php:674; controllers/admin/AdminSaferPayOfficialSettingsController.php:691"
+AdminSaferPayOfficialSettingsController,"Email settings saved successfully","E-Mail-Einstellungen erfolgreich gespeichert","Paramètres d'e-mail enregistrés avec succès",,controllers/admin/AdminSaferPayOfficialSettingsController.php:351
+AdminSaferPayOfficialSettingsController,"Failed to generate access token.","Zugriffstoken konnte nicht generiert werden.","Échec de la génération du jeton d'accès.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:550
+AdminSaferPayOfficialSettingsController,"Failed to update payment methods","Zahlungsarten konnten nicht aktualisiert werden","Échec de la mise à jour des moyens de paiement",,controllers/admin/AdminSaferPayOfficialSettingsController.php:455
+AdminSaferPayOfficialSettingsController,"General settings saved successfully","Allgemeine Einstellungen erfolgreich gespeichert","Paramètres généraux enregistrés avec succès",,controllers/admin/AdminSaferPayOfficialSettingsController.php:380
+AdminSaferPayOfficialSettingsController,"Invalid API credentials. Please verify your username and password.","Ungültige API-Zugangsdaten. Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.","Identifiants API non valides. Veuillez vérifier votre nom d'utilisateur et votre mot de passe.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:864
+AdminSaferPayOfficialSettingsController,"Invalid API username. Please check your credentials and try again.","Ungültiger API-Benutzername. Bitte überprüfen Sie Ihre Zugangsdaten und versuchen Sie es erneut.","Nom d'utilisateur API non valide. Veuillez vérifier vos identifiants et réessayer.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:200
+AdminSaferPayOfficialSettingsController,"Invalid action","Ungültige Aktion","Action non valide",,controllers/admin/AdminSaferPayOfficialSettingsController.php:135
+AdminSaferPayOfficialSettingsController,"Invalid credentials. Please check your username and password.","Ungültige Zugangsdaten. Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.","Identifiants non valides. Veuillez vérifier votre nom d'utilisateur et votre mot de passe.",,"controllers/admin/AdminSaferPayOfficialSettingsController.php:482; controllers/admin/AdminSaferPayOfficialSettingsController.php:496"
+AdminSaferPayOfficialSettingsController,"Invalid merchant email address: %s","Ungültige Händler-E-Mail-Adresse: %s","Adresse e-mail du marchand non valide : %s",%s,controllers/admin/AdminSaferPayOfficialSettingsController.php:219
+AdminSaferPayOfficialSettingsController,"Invalid request data","Ungültige Anfragedaten","Données de requête non valides",,"controllers/admin/AdminSaferPayOfficialSettingsController.php:179; controllers/admin/AdminSaferPayOfficialSettingsController.php:308; controllers/admin/AdminSaferPayOfficialSettingsController.php:340; controllers/admin/AdminSaferPayOfficialSettingsController.php:361; controllers/admin/AdminSaferPayOfficialSettingsController.php:390"
+AdminSaferPayOfficialSettingsController,"Invalid security token","Ungültiges Sicherheitstoken","Jeton de sécurité non valide",,controllers/admin/AdminSaferPayOfficialSettingsController.php:128
+AdminSaferPayOfficialSettingsController,"Only letters, numbers, dots, colons, hyphens, and underscores are allowed. Max 20 characters.","Nur Buchstaben, Zahlen, Punkte, Doppelpunkte, Bindestriche und Unterstriche sind erlaubt. Max. 20 Zeichen.","Seuls les lettres, chiffres, points, deux-points, tirets et tirets bas sont autorisés. 20 caractères max.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:373
+AdminSaferPayOfficialSettingsController,"Payment Processing saved successfully","Zahlungsabwicklung erfolgreich gespeichert","Traitement des paiements enregistré avec succès",,controllers/admin/AdminSaferPayOfficialSettingsController.php:330
+AdminSaferPayOfficialSettingsController,"Payment methods saved successfully","Zahlungsarten erfolgreich gespeichert","Moyens de paiement enregistrés avec succès",,controllers/admin/AdminSaferPayOfficialSettingsController.php:459
+AdminSaferPayOfficialSettingsController,"Please enter valid credentials and select a terminal first.","Bitte geben Sie zuerst gültige Zugangsdaten ein und wählen Sie ein Terminal aus.","Veuillez d'abord saisir des identifiants valides et sélectionner un terminal.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:521
+AdminSaferPayOfficialSettingsController,"Settings saved successfully.","Einstellungen erfolgreich gespeichert.","Paramètres enregistrés avec succès.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:288
+AdminSaferPayOfficialSettingsController,"Settings saved, but Saferpay Fields availability could not be confirmed. Please try again later or check the module Logs for details.","Einstellungen gespeichert, aber die Verfügbarkeit von Saferpay Fields konnte nicht bestätigt werden. Bitte versuchen Sie es später erneut oder prüfen Sie die Modul-Protokolle für Details.","Paramètres enregistrés, mais la disponibilité de Saferpay Fields n'a pas pu être confirmée. Veuillez réessayer plus tard ou consulter les journaux du module pour plus de détails.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:287
+AdminSaferPayOfficialSettingsController,"Wrong restriction type","Falscher Einschränkungstyp","Type de restriction incorrect",,controllers/admin/AdminSaferPayOfficialSettingsController.php:449
+AdminSaferPayOfficialSettingsController,"You do not have permission to edit these settings.","Sie haben keine Berechtigung, diese Einstellungen zu bearbeiten.","Vous n'avez pas la permission de modifier ces paramètres.",,controllers/admin/AdminSaferPayOfficialSettingsController.php:143
+ajax,"Order already exists","Bestellung existiert bereits","La commande existe déjà",,controllers/front/ajax.php:184
+AssertPresenter,No,Nein,Non,,src/Presenter/AssertPresenter.php:60
+AssertPresenter,Yes,Ja,Oui,,src/Presenter/AssertPresenter.php:59
+credit_cards,Action,Aktion,Action,,views/templates/front/credit_cards.tpl:51
+credit_cards,"Added date","Hinzugefügt am","Date d'ajout",,views/templates/front/credit_cards.tpl:42
+credit_cards,"Card number",Kartennummer,"Numéro de carte",,views/templates/front/credit_cards.tpl:48
+credit_cards,"Card type",Kartentyp,"Type de carte",,views/templates/front/credit_cards.tpl:36
+credit_cards,"Credit card",Kreditkarte,"Carte de crédit",,views/templates/front/credit_cards.tpl:39
+credit_cards,"My credit cards","Meine Kreditkarten","Mes cartes de crédit",,views/templates/front/credit_cards.tpl:26
+credit_cards,"Saved credit cards","Gespeicherte Kreditkarten","Cartes de crédit enregistrées",,views/templates/front/credit_cards.tpl:32
+credit_cards,"Valid till","Gültig bis","Valable jusqu'au",,views/templates/front/credit_cards.tpl:45
+credit_card,Remove,Entfernen,Supprimer,,views/templates/front/credit_card.tpl:44
+credit_card,"Remove card","Karte entfernen","Supprimer la carte",,views/templates/front/credit_card.tpl:42
+creditCards,"Failed to removed credit card","Kreditkarte konnte nicht entfernt werden","Échec de la suppression de la carte de crédit",,controllers/front/creditCards.php:107
+creditCards,"Successfully removed credit card","Kreditkarte erfolgreich entfernt","Carte de crédit supprimée avec succès",,controllers/front/creditCards.php:104
+creditCards,"Your account","Ihr Konto","Votre compte",,controllers/front/creditCards.php:120
+fail,"We couldn't authorize your payment. Please try again.","Ihre Zahlung konnte nicht autorisiert werden. Bitte versuchen Sie es erneut.","Nous n'avons pas pu autoriser votre paiement. Veuillez réessayer.",,controllers/front/fail.php:91
+field-access-token-desc,"More information on Saferpay Fields preparation:","Weitere Informationen zur Einrichtung von Saferpay Fields:","Plus d'informations sur la préparation de Saferpay Fields :",,views/templates/admin/partials/field-access-token-desc.tpl:24
+field-access-token-desc,"Saferpay Field Access Token can be found in Saferpay Backoffice, navigate to Settings > Saferpay Fields Access Tokens","Den Saferpay Field Access Token finden Sie im Saferpay Backoffice unter Einstellungen > Saferpay Fields Access Tokens","Le jeton d'accès Saferpay Fields se trouve dans le Backoffice Saferpay, sous Paramètres > Saferpay Fields Access Tokens",,views/templates/admin/partials/field-access-token-desc.tpl:23
+field-access-token-desc,here,hier,ici,,views/templates/admin/partials/field-access-token-desc.tpl:24
+field-javascript-library-desc,"Saferpay Field Javascript library url can be found ","Die URL der Saferpay-Field-JavaScript-Bibliothek finden Sie ","L'URL de la bibliothèque JavaScript Saferpay Fields se trouve ",,views/templates/admin/partials/field-javascript-library-desc.tpl:23
+field-javascript-library-desc,here,hier,ici,,views/templates/admin/partials/field-javascript-library-desc.tpl:23
+field-new-order-mail-desc,"For this feature to be functioning you need to have the Mail Alert module configured","Damit diese Funktion funktioniert, muss das Modul „Mail Alert“ konfiguriert sein","Pour que cette fonctionnalité fonctionne, le module Mail Alert doit être configuré",,views/templates/admin/partials/field-new-order-mail-desc.tpl:24
+field-new-order-mail-desc,"When this feature is enabled, a confirmation email will be only sent once the payment is authorized by Saferpay","Wenn diese Funktion aktiviert ist, wird die Bestätigungs-E-Mail erst gesendet, wenn die Zahlung durch Saferpay autorisiert wurde","Lorsque cette fonctionnalité est activée, l'e-mail de confirmation n'est envoyé qu'une fois le paiement autorisé par Saferpay",,views/templates/admin/partials/field-new-order-mail-desc.tpl:23
+Invertus\SaferPay\Install\Installer,"Failed to create order status","Bestellstatus konnte nicht erstellt werden","Échec de la création du statut de commande",,src/Install/Installer.php:66
+Invertus\SaferPay\Install\Installer,"Failed to install configuration","Konfiguration konnte nicht installiert werden","Échec de l'installation de la configuration",,src/Install/Installer.php:71
+Invertus\SaferPay\Install\Installer,"Failed to install database","Datenbank konnte nicht installiert werden","Échec de l'installation de la base de données",,src/Install/Installer.php:61
+Invertus\SaferPay\Install\Uninstaller,"Failed to uninstall configuration","Konfiguration konnte nicht deinstalliert werden","Échec de la désinstallation de la configuration",,src/Install/Uninstaller.php:47
+Invertus\SaferPay\Install\Uninstaller,"Failed to uninstall database table [%s]","Datenbanktabelle [%s] konnte nicht deinstalliert werden","Échec de la désinstallation de la table de base de données [%s]",%s,src/Install/Uninstaller.php:54
+LegacyTranslator,AccountToAccount,AccountToAccount,AccountToAccount,,src/Service/LegacyTranslator.php:83
+LegacyTranslator,Alipay,Alipay,Alipay,,src/Service/LegacyTranslator.php:63
+LegacyTranslator,Amex,Amex,Amex,,src/Service/LegacyTranslator.php:64
+LegacyTranslator,Applepay,Applepay,Applepay,,src/Service/LegacyTranslator.php:81
+LegacyTranslator,Bancontact,Bancontact,Bancontact,,src/Service/LegacyTranslator.php:65
+LegacyTranslator,Blik,Blik,Blik,,src/Service/LegacyTranslator.php:88
+LegacyTranslator,Cards,Karten,Cartes,,src/Service/LegacyTranslator.php:85
+LegacyTranslator,Clicktopay,Clicktopay,Clicktopay,,src/Service/LegacyTranslator.php:90
+LegacyTranslator,Diners,Diners,Diners,,src/Service/LegacyTranslator.php:66
+LegacyTranslator,Directdebit,Lastschrift,Prélèvement,,src/Service/LegacyTranslator.php:67
+LegacyTranslator,Eprzelewy,Eprzelewy,Eprzelewy,,src/Service/LegacyTranslator.php:68
+LegacyTranslator,Eps,Eps,Eps,,src/Service/LegacyTranslator.php:69
+LegacyTranslator,Giftcard,Geschenkkarte,"Carte cadeau",,src/Service/LegacyTranslator.php:93
+LegacyTranslator,Googlepay,Googlepay,Googlepay,,src/Service/LegacyTranslator.php:89
+LegacyTranslator,Ideal,Ideal,Ideal,,src/Service/LegacyTranslator.php:70
+LegacyTranslator,Invoice,Rechnung,Facture,,src/Service/LegacyTranslator.php:71
+LegacyTranslator,Jcb,Jcb,Jcb,,src/Service/LegacyTranslator.php:72
+LegacyTranslator,Klarna,Klarna,Klarna,,src/Service/LegacyTranslator.php:82
+LegacyTranslator,Maestro,Maestro,Maestro,,src/Service/LegacyTranslator.php:73
+LegacyTranslator,Mastercard,Mastercard,Mastercard,,src/Service/LegacyTranslator.php:74
+LegacyTranslator,Myone,Myone,Myone,,src/Service/LegacyTranslator.php:75
+LegacyTranslator,Payconiq,Payconiq,Payconiq,,src/Service/LegacyTranslator.php:84
+LegacyTranslator,PostFinancePay,PostFinancePay,PostFinancePay,,src/Service/LegacyTranslator.php:86
+LegacyTranslator,Postcard,Postcard,Postcard,,src/Service/LegacyTranslator.php:76
+LegacyTranslator,Postfinance,Postfinance,Postfinance,,src/Service/LegacyTranslator.php:77
+LegacyTranslator,Reka,Reka,Reka,,src/Service/LegacyTranslator.php:91
+LegacyTranslator,Twint,Twint,Twint,,src/Service/LegacyTranslator.php:78
+LegacyTranslator,Visa,Visa,Visa,,src/Service/LegacyTranslator.php:79
+LegacyTranslator,Vpay,Vpay,Vpay,,src/Service/LegacyTranslator.php:80
+LegacyTranslator,WeChatPay,WeChatPay,WeChatPay,,src/Service/LegacyTranslator.php:87
+LegacyTranslator,Wero,Wero,Wero,,src/Service/LegacyTranslator.php:92
+loading,"Loading payment, please wait","Zahlung wird geladen, bitte warten","Chargement du paiement, veuillez patienter",,views/templates/front/loading.tpl:30
+log_modal,Close,Schließen,Fermer,,views/templates/admin/logs/log_modal.tpl:47
+log_modal,"Context data",Kontextdaten,"Données de contexte",,views/templates/admin/logs/log_modal.tpl:44
+log_modal,Loading,"Wird geladen",Chargement,,views/templates/admin/logs/log_modal.tpl:51
+log_modal,"Request data",Anfragedaten,"Données de requête",,views/templates/admin/logs/log_modal.tpl:40
+log_modal,"Response data",Antwortdaten,"Données de réponse",,views/templates/admin/logs/log_modal.tpl:42
+log_modal,View,Anzeigen,Voir,,views/templates/admin/logs/log_modal.tpl:30
+MyAccount,"My credit cards","Meine Kreditkarten","Mes cartes de crédit",,views/templates/hook/front/MyAccount.tpl:26
+notify,"An unknown error error occurred. Please contact support","Ein unbekannter Fehler ist aufgetreten. Bitte kontaktieren Sie den Support","Une erreur inconnue s'est produite. Veuillez contacter le support",,controllers/front/notify.php:70
+notify,"Error. Insecure cart","Fehler. Unsicherer Warenkorb","Erreur. Panier non sécurisé",,controllers/front/notify.php:82
+notify,"Liability shift is false","Keine Haftungsumkehr","Pas de transfert de responsabilité",,controllers/front/notify.php:160
+notify,"Liability shift is false, capturing order","Keine Haftungsumkehr, Bestellung wird gebucht","Pas de transfert de responsabilité, capture de la commande",,controllers/front/notify.php:185
+notify,"Liability shift is false, order left authorized","Keine Haftungsumkehr, Bestellung bleibt autorisiert","Pas de transfert de responsabilité, la commande reste autorisée",,controllers/front/notify.php:170
+notify,"Lock already exists","Sperre existiert bereits","Le verrou existe déjà",,controllers/front/notify.php:92
+notify,"Order already complete","Bestellung bereits abgeschlossen","Commande déjà terminée",,controllers/front/notify.php:110
+notify,"Order already created","Bestellung bereits erstellt","Commande déjà créée",,controllers/front/notify.php:242
+notify,Success,Erfolg,Succès,,controllers/front/notify.php:283
+order_fail,"Your order is canceled","Ihre Bestellung wurde storniert","Votre commande est annulée",,views/templates/front/order_fail.tpl:29
+payment_method_label,Countries,Länder,Pays,,views/templates/admin/payment_method_label.tpl:41
+payment_method_label,Currencies,Währungen,Devises,,views/templates/admin/payment_method_label.tpl:46
+payment_method_label,Enabled,Aktiviert,Activé,,views/templates/admin/payment_method_label.tpl:26
+payment_method_label,"Show custom form","Benutzerdefiniertes Formular anzeigen","Afficher le formulaire personnalisé",,views/templates/admin/payment_method_label.tpl:36
+payment_method_label,"Show logos","Logos anzeigen","Afficher les logos",,views/templates/admin/payment_method_label.tpl:31
+payment_with_cards,Pay,Bezahlen,Payer,,views/templates/hook/front/payment_with_cards.tpl:40
+PaymentFormAssetLoader,"An error occurred while processing the card, please try again.","Bei der Verarbeitung der Karte ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.","Une erreur s'est produite lors du traitement de la carte, veuillez réessayer.",,src/Presentation/Loader/PaymentFormAssetLoader.php:184
+PaymentFormAssetLoader,CVC,CVC,CVC,,src/Presentation/Loader/PaymentFormAssetLoader.php:188
+PaymentFormAssetLoader,"Card number",Kartennummer,"Numéro de carte",,src/Presentation/Loader/PaymentFormAssetLoader.php:186
+PaymentFormAssetLoader,"Expiry date",Ablaufdatum,"Date d'expiration",,src/Presentation/Loader/PaymentFormAssetLoader.php:187
+PaymentFormAssetLoader,"Holder name","Name des Karteninhabers","Nom du titulaire",,src/Presentation/Loader/PaymentFormAssetLoader.php:183
+PaymentFormAssetLoader,"Please check the following:","Bitte überprüfen Sie Folgendes:","Veuillez vérifier les points suivants :",,src/Presentation/Loader/PaymentFormAssetLoader.php:185
+pendingNotify,"Error. Insecure cart","Fehler. Unsicherer Warenkorb","Erreur. Panier non sécurisé",,controllers/front/pendingNotify.php:57
+pendingNotify,Success,Erfolg,Succès,,controllers/front/pendingNotify.php:78
+return,"An error occurred. Please contact support","Ein Fehler ist aufgetreten. Bitte kontaktieren Sie den Support","Une erreur s'est produite. Veuillez contacter le support",,controllers/front/return.php:128
+return,"An unknown error error occurred. Please contact support","Ein unbekannter Fehler ist aufgetreten. Bitte kontaktieren Sie den Support","Une erreur inconnue s'est produite. Veuillez contacter le support",,"controllers/front/return.php:66; controllers/front/return.php:174; controllers/front/return.php:187"
+return,"Error. Insecure cart","Fehler. Unsicherer Warenkorb","Erreur. Panier non sécurisé",,controllers/front/return.php:71
+saferpay_additional_info,"Use new card and save it","Neue Karte verwenden und speichern","Utiliser une nouvelle carte et l'enregistrer",,views/templates/hook/front/saferpay_additional_info.tpl:41
+saferpay_additional_info,"Use new card once","Neue Karte einmalig verwenden","Utiliser une nouvelle carte une seule fois",,views/templates/hook/front/saferpay_additional_info.tpl:47
+saferpay_order,"Authorisation Amount:","Autorisierter Betrag:","Montant autorisé :",,views/templates/hook/admin/saferpay_order.tpl:76
+saferpay_order,Brand:,Marke:,"Marque :",,views/templates/hook/admin/saferpay_order.tpl:118
+saferpay_order,"Cancel this order","Diese Bestellung stornieren","Annuler cette commande",,views/templates/hook/admin/saferpay_order.tpl:66
+saferpay_order,"Canceled: ","Storniert: ","Annulé : ",,views/templates/hook/admin/saferpay_order.tpl:163
+saferpay_order,Capture,Buchen,Capturer,,views/templates/hook/admin/saferpay_order.tpl:62
+saferpay_order,"Card expiry date:","Ablaufdatum der Karte:","Date d'expiration de la carte :",,views/templates/hook/admin/saferpay_order.tpl:108
+saferpay_order,"Card number:",Kartennummer:,"Numéro de carte :",,views/templates/hook/admin/saferpay_order.tpl:158
+saferpay_order,"Card on File:","Gespeicherte Karte:","Carte enregistrée :",,views/templates/hook/admin/saferpay_order.tpl:152
+saferpay_order,"Converted amount:","Umgerechneter Betrag:","Montant converti :",,views/templates/hook/admin/saferpay_order.tpl:93
+saferpay_order,"Converted currency:","Umgerechnete Währung:","Devise convertie :",,views/templates/hook/admin/saferpay_order.tpl:96
+saferpay_order,Currency:,Währung:,"Devise :",,views/templates/hook/admin/saferpay_order.tpl:88
+saferpay_order,"Is Payment safe:","Ist die Zahlung sicher:","Paiement sécurisé :",,views/templates/hook/admin/saferpay_order.tpl:146
+saferpay_order,"Liability entity:","Haftende Partei:","Entité responsable :",,views/templates/hook/admin/saferpay_order.tpl:141
+saferpay_order,No,Nein,Non,,views/templates/hook/admin/saferpay_order.tpl:167
+saferpay_order,"Payment ID:",Zahlungs-ID:,"ID de paiement :",,views/templates/hook/admin/saferpay_order.tpl:135
+saferpay_order,"Payment Method:",Zahlungsart:,"Moyen de paiement :",,views/templates/hook/admin/saferpay_order.tpl:123
+saferpay_order,"Payment status: Authorize. This payment failed security check (liability: false). If you want, you can still capture manually on your own responsibility.","Zahlungsstatus: Autorisiert. Diese Zahlung hat die Sicherheitsprüfung nicht bestanden (Haftungsumkehr: nein). Sie können die Zahlung auf eigene Verantwortung dennoch manuell buchen.","Statut du paiement : Autorisé. Ce paiement a échoué au contrôle de sécurité (responsabilité : non). Si vous le souhaitez, vous pouvez tout de même le capturer manuellement sous votre propre responsabilité.",,views/templates/hook/admin/saferpay_order.tpl:30
+saferpay_order,"Pending refund Amount:","Ausstehender Rückerstattungsbetrag:","Montant du remboursement en attente :",,views/templates/hook/admin/saferpay_order.tpl:83
+saferpay_order,Refund,Rückerstattung,Remboursement,,views/templates/hook/admin/saferpay_order.tpl:54
+saferpay_order,"Refund amount",Rückerstattungsbetrag,"Montant du remboursement",,"views/templates/hook/admin/saferpay_order.tpl:40; views/templates/hook/admin/saferpay_order.tpl:46"
+saferpay_order,"Refunded Amount:","Erstatteter Betrag:","Montant remboursé :",,views/templates/hook/admin/saferpay_order.tpl:79
+saferpay_order,SaferPayOfficial,SaferPayOfficial,SaferPayOfficial,,views/templates/hook/admin/saferpay_order.tpl:26
+saferpay_order,"Transaction authorized:","Transaktion autorisiert:","Transaction autorisée :",,views/templates/hook/admin/saferpay_order.tpl:103
+saferpay_order,"Transaction details:",Transaktionsdetails:,"Détails de la transaction :",,views/templates/hook/admin/saferpay_order.tpl:71
+saferpay_order,"Transaction paid:","Transaktion bezahlt:","Transaction payée :",,views/templates/hook/admin/saferpay_order.tpl:130
+saferpay_order,"Transaction uncertain:","Transaktion unsicher:","Transaction incertaine :",,views/templates/hook/admin/saferpay_order.tpl:113
+saferpay_order,Yes,Ja,Oui,,views/templates/hook/admin/saferpay_order.tpl:165
+saferpay_payment,"Saferpay payment form",Saferpay-Zahlungsformular,"Formulaire de paiement Saferpay",,views/templates/hook/front/saferpay_payment.tpl:24
+saferpay_wait,"Awaiting payment status","Status für ausstehende Zahlung","Statut de paiement en attente",,views/templates/front/saferpay_wait.tpl:22
+saferpay_wait,"Loading, please wait","Wird geladen, bitte warten","Chargement, veuillez patienter",,views/templates/front/saferpay_wait.tpl:25
+SaferPayExceptionService,"Failed to Assert","Assert fehlgeschlagen","Échec de l'assertion",,src/Service/SaferPayExceptionService.php:69
+SaferPayExceptionService,"Failed to Authorize","Autorisierung fehlgeschlagen","Échec de l'autorisation",,src/Service/SaferPayExceptionService.php:65
+SaferPayExceptionService,"Failed to Cancel","Stornierung fehlgeschlagen","Échec de l'annulation",,src/Service/SaferPayExceptionService.php:61
+SaferPayExceptionService,"Failed to Initialize","Initialisierung fehlgeschlagen","Échec de l'initialisation",,src/Service/SaferPayExceptionService.php:67
+SaferPayExceptionService,"Failed to Refund","Rückerstattung fehlgeschlagen","Échec du remboursement",,src/Service/SaferPayExceptionService.php:63
+SaferPayExceptionService,"Failed to capture","Buchung fehlgeschlagen","Échec de la capture",,src/Service/SaferPayExceptionService.php:59
+SaferPayMailService,"New voucher for your order %s","Neuer Gutschein für Ihre Bestellung %s","Nouveau bon d'achat pour votre commande %s",%s,src/Service/SaferPayMailService.php:347
+SaferPayMailService,"No carrier","Kein Versanddienst","Aucun transporteur",,src/Service/SaferPayMailService.php:242
+saferpayofficial,"Awaiting Saferpay payment","Warten auf Saferpay-Zahlung","En attente du paiement Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,Logs,Protokolle,Journaux,,src/Install/AbstractInstaller.php:74
+saferpayofficial,Order,Bestellung,Commande,,src/Install/AbstractInstaller.php:67
+saferpayofficial,"Order Canceled by Saferpay","Bestellung durch Saferpay storniert","Commande annulée par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Order Partly Refunded by Saferpay","Bestellung durch Saferpay teilweise erstattet","Commande partiellement remboursée par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Order Pending Refund by Saferpay","Rückerstattung der Bestellung durch Saferpay ausstehend","Remboursement de la commande en attente par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Order Refunded by Saferpay","Bestellung durch Saferpay erstattet","Commande remboursée par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Order authorization failed by Saferpay","Autorisierung der Bestellung durch Saferpay fehlgeschlagen","Échec de l'autorisation de la commande par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Payment authorized by Saferpay","Zahlung durch Saferpay autorisiert","Paiement autorisé par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Payment completed by Saferpay","Zahlung durch Saferpay abgeschlossen","Paiement effectué par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Payment pending by Saferpay","Zahlung bei Saferpay ausstehend","Paiement en attente par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,"Payment rejected by Saferpay","Zahlung durch Saferpay abgelehnt","Paiement rejeté par Saferpay",,"src/Install/Installer.php (runtime variable, order state name)"
+saferpayofficial,Payments,Zahlungen,Paiements,,src/Install/AbstractInstaller.php:60
+saferpayofficial,"Saferpay full refund was made successfully!","Vollständige Saferpay-Rückerstattung erfolgreich durchgeführt!","Le remboursement intégral Saferpay a été effectué avec succès !",,saferpayofficial.php:477
+saferpayofficial,"Saferpay partial refund was made successfully!","Teilweise Saferpay-Rückerstattung erfolgreich durchgeführt!","Le remboursement partiel Saferpay a été effectué avec succès !",,saferpayofficial.php:479
+saferpayofficial,"Saferpay payment was canceled successfully","Saferpay-Zahlung erfolgreich storniert","Le paiement Saferpay a été annulé avec succès",,saferpayofficial.php:467
+saferpayofficial,"Saferpay payment was captured successfully","Saferpay-Zahlung erfolgreich gebucht","Le paiement Saferpay a été capturé avec succès",,saferpayofficial.php:471
+saferpayofficial,Settings,Einstellungen,Paramètres,,src/Install/AbstractInstaller.php:54
+saferpayofficial,"Unknown exception in SaferPay","Unbekannte Ausnahme in SaferPay","Exception inconnue dans SaferPay",,src/Service/SaferPayExceptionService.php:96
+saferpayofficial,"Your payment is still being processed by your bank. This can take up to 5 days (120 hours). Once we receive the final status, we will notify you immediately.
+Thank you for your patience!","Ihre Zahlung wird noch von Ihrer Bank verarbeitet. Dies kann bis zu 5 Tage (120 Stunden) dauern. Sobald wir den endgültigen Status erhalten, benachrichtigen wir Sie umgehend.
+Vielen Dank für Ihre Geduld!","Votre paiement est toujours en cours de traitement par votre banque. Cela peut prendre jusqu'à 5 jours (120 heures). Dès que nous recevrons le statut final, nous vous en informerons immédiatement.
+Merci de votre patience !",,saferpayofficial.php:164
+saferpayofficial,canceled,storniert,annulé,,controllers/front/notify.php:264
+settings_react,"Failed to load settings data.","Einstellungsdaten konnten nicht geladen werden.","Échec du chargement des données de paramètres.",,views/templates/admin/settings_react.tpl:1
+SettingsTranslationService,"%s saved successfully","%s erfolgreich gespeichert","%s enregistré avec succès",%s,src/Service/SettingsTranslationService.php:259
+SettingsTranslationService,"API Credentials",API-Zugangsdaten,"Identifiants API",,"src/Service/SettingsTranslationService.php:76; src/Service/SettingsTranslationService.php:110"
+SettingsTranslationService,"Access token generated successfully.","Zugriffstoken erfolgreich generiert.","Jeton d'accès généré avec succès.",,src/Service/SettingsTranslationService.php:149
+SettingsTranslationService,"After authorization","Nach der Autorisierung","Après l'autorisation",,src/Service/SettingsTranslationService.php:194
+SettingsTranslationService,"Allow customers to save credit card for faster purchase.","Kunden erlauben, ihre Kreditkarte für einen schnelleren Einkauf zu speichern.","Autoriser les clients à enregistrer leur carte de crédit pour un achat plus rapide.",,src/Service/SettingsTranslationService.php:207
+SettingsTranslationService,Authorize,Autorisieren,Autoriser,,src/Service/SettingsTranslationService.php:182
+SettingsTranslationService,"Before authorization","Vor der Autorisierung","Avant l'autorisation",,src/Service/SettingsTranslationService.php:196
+SettingsTranslationService,"Behavior when liability shift through 3D Secure has not been granted","Verhalten, wenn die Haftungsumkehr durch 3-D Secure nicht gewährt wurde","Comportement lorsque le transfert de responsabilité via 3-D Secure n'a pas été accordé",,src/Service/SettingsTranslationService.php:184
+SettingsTranslationService,Cancel,Stornieren,Annuler,,src/Service/SettingsTranslationService.php:186
+SettingsTranslationService,"Cancel or Capture manually","Manuell stornieren oder buchen","Annuler ou capturer manuellement",,src/Service/SettingsTranslationService.php:188
+SettingsTranslationService,Capture,Buchen,Capturer,,src/Service/SettingsTranslationService.php:180
+SettingsTranslationService,"Card Display",Kartenanzeige,"Affichage des cartes",,src/Service/SettingsTranslationService.php:199
+SettingsTranslationService,"Card Display & Saving","Kartenanzeige und -speicherung","Affichage et enregistrement des cartes",,src/Service/SettingsTranslationService.php:198
+SettingsTranslationService,"Card Saving for Customers","Kartenspeicherung für Kunden","Enregistrement de carte pour les clients",,src/Service/SettingsTranslationService.php:201
+SettingsTranslationService,"Change password","Passwort ändern","Modifier le mot de passe",,src/Service/SettingsTranslationService.php:121
+SettingsTranslationService,"Charge immediately","Sofort belasten","Débiter immédiatement",,"src/Service/SettingsTranslationService.php:181; src/Service/SettingsTranslationService.php:189"
+SettingsTranslationService,"Clear all","Alle entfernen","Tout effacer",,src/Service/SettingsTranslationService.php:93
+SettingsTranslationService,Configuration,Konfiguration,Configuration,,src/Service/SettingsTranslationService.php:240
+SettingsTranslationService,"Configure Saferpay Fields for inline payment form integration.","Konfigurieren Sie Saferpay Fields für die Integration des Zahlungsformulars direkt im Checkout.","Configurez Saferpay Fields pour l'intégration du formulaire de paiement intégré.",,src/Service/SettingsTranslationService.php:132
+SettingsTranslationService,"Configure how cards appear and are grouped at checkout.","Legen Sie fest, wie Karten im Checkout angezeigt und gruppiert werden.","Configurez la façon dont les cartes sont affichées et regroupées lors du paiement.",,src/Service/SettingsTranslationService.php:200
+SettingsTranslationService,"Configure how payments are processed, authorized, and captured.","Legen Sie fest, wie Zahlungen verarbeitet, autorisiert und gebucht werden.","Configurez la façon dont les paiements sont traités, autorisés et capturés.",,src/Service/SettingsTranslationService.php:177
+SettingsTranslationService,"Configure which emails are sent during the payment process. Merchant notifications sent by Saferpay use the Merchant Email(s) field on the API Credentials tab.","Legen Sie fest, welche E-Mails während des Zahlungsvorgangs gesendet werden. Händlerbenachrichtigungen von Saferpay verwenden das Feld „Händler-E-Mails“ auf der Registerkarte „API-Zugangsdaten“.","Configurez les e-mails envoyés pendant le processus de paiement. Les notifications marchand envoyées par Saferpay utilisent le champ « E-mails du marchand » de l'onglet « Identifiants API ».",,src/Service/SettingsTranslationService.php:215
+SettingsTranslationService,"Configure your Saferpay payment integration for your Prestashop store.","Konfigurieren Sie Ihre Saferpay-Zahlungsintegration für Ihren PrestaShop-Shop.","Configurez votre intégration de paiement Saferpay pour votre boutique PrestaShop.",,src/Service/SettingsTranslationService.php:67
+SettingsTranslationService,"Could not reach your Saferpay account. Please check the error logs for more details","Ihr Saferpay-Konto konnte nicht erreicht werden. Weitere Details finden Sie in den Fehlerprotokollen","Impossible de joindre votre compte Saferpay. Veuillez consulter les journaux d'erreurs pour plus de détails",,src/Service/SettingsTranslationService.php:263
+SettingsTranslationService,Countries,Länder,Pays,,src/Service/SettingsTranslationService.php:164
+SettingsTranslationService,"Create before payment","Vor der Zahlung erstellen","Créer avant le paiement",,src/Service/SettingsTranslationService.php:197
+SettingsTranslationService,"Create when authorized","Bei Autorisierung erstellen","Créer lors de l'autorisation",,src/Service/SettingsTranslationService.php:195
+SettingsTranslationService,"Credentials verified successfully.","Zugangsdaten erfolgreich überprüft.","Identifiants vérifiés avec succès.",,src/Service/SettingsTranslationService.php:145
+SettingsTranslationService,"Credit card saving for customers","Kreditkartenspeicherung für Kunden","Enregistrement de la carte de crédit pour les clients",,src/Service/SettingsTranslationService.php:206
+SettingsTranslationService,Currencies,Währungen,Devises,,src/Service/SettingsTranslationService.php:165
+SettingsTranslationService,"Customize the appearance of the payment page.","Passen Sie das Erscheinungsbild der Zahlungsseite an.","Personnalisez l'apparence de la page de paiement.",,src/Service/SettingsTranslationService.php:236
+SettingsTranslationService,"Debug mode",Debug-Modus,"Mode débogage",,src/Service/SettingsTranslationService.php:249
+SettingsTranslationService,"Default payment behavior",Standard-Zahlungsverhalten,"Comportement de paiement par défaut",,src/Service/SettingsTranslationService.php:178
+SettingsTranslationService,"Default payment behavior for payment without 3-D Secure.","Standard-Zahlungsverhalten für Zahlungen ohne 3-D Secure.","Comportement de paiement par défaut pour les paiements sans 3-D Secure.",,src/Service/SettingsTranslationService.php:185
+SettingsTranslationService,"Default status on SaferPay order creation.","Standardstatus bei der Erstellung einer SaferPay-Bestellung.","Statut par défaut lors de la création d'une commande SaferPay.",,src/Service/SettingsTranslationService.php:234
+SettingsTranslationService,"Define the default order status for Saferpay payments.","Legen Sie den Standard-Bestellstatus für Saferpay-Zahlungen fest.","Définissez le statut de commande par défaut pour les paiements Saferpay.",,src/Service/SettingsTranslationService.php:231
+SettingsTranslationService,Description,Beschreibung,Description,,src/Service/SettingsTranslationService.php:242
+SettingsTranslationService,Disable,Deaktivieren,Désactiver,,src/Service/SettingsTranslationService.php:90
+SettingsTranslationService,"Email Notifications",E-Mail-Benachrichtigungen,"Notifications par e-mail",,src/Service/SettingsTranslationService.php:79
+SettingsTranslationService,"Email Sending",E-Mail-Versand,"Envoi d'e-mails",,src/Service/SettingsTranslationService.php:214
+SettingsTranslationService,Enable,Aktivieren,Activer,,src/Service/SettingsTranslationService.php:89
+SettingsTranslationService,"Enable and configure available payment methods for your checkout.","Aktivieren und konfigurieren Sie die verfügbaren Zahlungsarten für Ihren Checkout.","Activez et configurez les moyens de paiement disponibles lors du paiement.",,src/Service/SettingsTranslationService.php:158
+SettingsTranslationService,"Enable debug mode to see more information in logs.","Aktivieren Sie den Debug-Modus, um mehr Informationen in den Protokollen zu sehen.","Activez le mode débogage pour afficher plus d'informations dans les journaux.",,src/Service/SettingsTranslationService.php:250
+SettingsTranslationService,Enabled,Aktiviert,Activé,,src/Service/SettingsTranslationService.php:161
+SettingsTranslationService,"Enter %s API password","Geben Sie das API-Passwort für %s ein","Saisissez le mot de passe API %s",%s,src/Service/SettingsTranslationService.php:118
+SettingsTranslationService,"Enter %s API username","Geben Sie den API-Benutzernamen für %s ein","Saisissez le nom d'utilisateur API %s",%s,src/Service/SettingsTranslationService.php:116
+SettingsTranslationService,"Enter configuration name","Konfigurationsnamen eingeben","Saisissez le nom de la configuration",,src/Service/SettingsTranslationService.php:238
+SettingsTranslationService,"Enter credentials first","Geben Sie zuerst die Zugangsdaten ein","Saisissez d'abord les identifiants",,src/Service/SettingsTranslationService.php:142
+SettingsTranslationService,"Enter description","Beschreibung eingeben","Saisissez la description",,src/Service/SettingsTranslationService.php:243
+SettingsTranslationService,"Enter merchant email addresses (comma-separated)","Händler-E-Mail-Adressen eingeben (durch Komma getrennt)","Saisissez les adresses e-mail du marchand (séparées par des virgules)",,src/Service/SettingsTranslationService.php:128
+SettingsTranslationService,"Enter or generate token","Token eingeben oder generieren","Saisissez ou générez un jeton",,src/Service/SettingsTranslationService.php:136
+SettingsTranslationService,"Enter your API credentials first to generate a token.","Geben Sie zuerst Ihre API-Zugangsdaten ein, um einen Token zu generieren.","Saisissez d'abord vos identifiants API pour générer un jeton.",,src/Service/SettingsTranslationService.php:138
+SettingsTranslationService,"Enter your API username and password first to load available terminals.","Geben Sie zuerst Ihren API-Benutzernamen und Ihr Passwort ein, um die verfügbaren Terminals zu laden.","Saisissez d'abord votre nom d'utilisateur et votre mot de passe API pour charger les terminaux disponibles.",,src/Service/SettingsTranslationService.php:143
+SettingsTranslationService,"Enter your Saferpay %s environment API credentials.","Geben Sie die API-Zugangsdaten für Ihre Saferpay-Umgebung %s ein.","Saisissez les identifiants API de votre environnement Saferpay %s.",%s,src/Service/SettingsTranslationService.php:111
+SettingsTranslationService,Environment,Umgebung,Environnement,,src/Service/SettingsTranslationService.php:101
+SettingsTranslationService,"Error fetching terminals","Fehler beim Abrufen der Terminals","Erreur lors de la récupération des terminaux",,src/Service/SettingsTranslationService.php:258
+SettingsTranslationService,"Error refreshing payment methods: %s","Fehler beim Aktualisieren der Zahlungsarten: %s","Erreur lors de l'actualisation des moyens de paiement : %s",%s,src/Service/SettingsTranslationService.php:262
+SettingsTranslationService,"Error saving %s: %s","Fehler beim Speichern von %s: %s","Erreur lors de l'enregistrement de %s : %s","%s %s",src/Service/SettingsTranslationService.php:261
+SettingsTranslationService,"Failed to fetch terminals","Terminals konnten nicht abgerufen werden","Échec de la récupération des terminaux",,src/Service/SettingsTranslationService.php:257
+SettingsTranslationService,"Failed to generate access token.","Zugriffstoken konnte nicht generiert werden.","Échec de la génération du jeton d'accès.",,src/Service/SettingsTranslationService.php:150
+SettingsTranslationService,"Failed to load settings data.","Einstellungsdaten konnten nicht geladen werden.","Échec du chargement des données de paramètres.",,src/Service/SettingsTranslationService.php:69
+SettingsTranslationService,"Failed to save %s","%s konnte nicht gespeichert werden","Échec de l'enregistrement de %s",%s,src/Service/SettingsTranslationService.php:260
+SettingsTranslationService,"Fetch terminals from API","Terminals über die API abrufen","Récupérer les terminaux via l'API",,src/Service/SettingsTranslationService.php:126
+SettingsTranslationService,"Field Access Token","Field Access Token","Field Access Token",,src/Service/SettingsTranslationService.php:135
+SettingsTranslationService,"Field Javascript Library URL","URL der Field-JavaScript-Bibliothek","URL de la bibliothèque JavaScript Fields",,src/Service/SettingsTranslationService.php:140
+SettingsTranslationService,"Find the library URL here","Die Bibliotheks-URL finden Sie hier","Trouvez l'URL de la bibliothèque ici",,src/Service/SettingsTranslationService.php:141
+SettingsTranslationService,"For this feature to be functioning you need to have the Mail Alert module configured.","Damit diese Funktion funktioniert, muss das Modul „Mail Alert“ konfiguriert sein.","Pour que cette fonctionnalité fonctionne, le module Mail Alert doit être configuré.",,src/Service/SettingsTranslationService.php:223
+SettingsTranslationService,"General Settings","Allgemeine Einstellungen","Paramètres généraux",,src/Service/SettingsTranslationService.php:80
+SettingsTranslationService,"General module configuration settings.","Allgemeine Konfigurationseinstellungen des Moduls.","Paramètres généraux de configuration du module.",,src/Service/SettingsTranslationService.php:241
+SettingsTranslationService,Generate,Generieren,Générer,,src/Service/SettingsTranslationService.php:137
+SettingsTranslationService,"Group debit/credit cards as 'Cards' in checkout","Debit-/Kreditkarten im Checkout als „Karten“ gruppieren","Regrouper les cartes de débit/crédit sous « Cartes » lors du paiement",,src/Service/SettingsTranslationService.php:202
+SettingsTranslationService,"Hide password","Passwort verbergen","Masquer le mot de passe",,src/Service/SettingsTranslationService.php:119
+SettingsTranslationService,"How payment provider should behave when order is created.","Wie sich der Zahlungsanbieter verhalten soll, wenn die Bestellung erstellt wird.","Comportement du prestataire de paiement lors de la création de la commande.",,src/Service/SettingsTranslationService.php:179
+SettingsTranslationService,"If enabled, a logo for the grouped 'Cards' payment method will be displayed at checkout.","Wenn aktiviert, wird im Checkout ein Logo für die gruppierte Zahlungsart „Karten“ angezeigt.","Si activé, un logo pour le moyen de paiement groupé « Cartes » sera affiché lors du paiement.",,src/Service/SettingsTranslationService.php:205
+SettingsTranslationService,"If enabled, all supported card brands will be grouped and shown as a single 'Cards' payment method at checkout.","Wenn aktiviert, werden alle unterstützten Kartenmarken gruppiert und im Checkout als eine einzige Zahlungsart „Karten“ angezeigt.","Si activé, toutes les marques de cartes prises en charge seront regroupées et affichées comme un seul moyen de paiement « Cartes » lors du paiement.",,src/Service/SettingsTranslationService.php:203
+SettingsTranslationService,"If set to true, the refund will be rejected if the sum of authorized refunds exceeds the capture value.","Wenn aktiviert, wird die Rückerstattung abgelehnt, falls die Summe der autorisierten Rückerstattungen den gebuchten Betrag übersteigt.","Si activé, le remboursement sera rejeté si la somme des remboursements autorisés dépasse le montant capturé.",,src/Service/SettingsTranslationService.php:191
+SettingsTranslationService,"Invalid credentials. Please check your username and password.","Ungültige Zugangsdaten. Bitte überprüfen Sie Ihren Benutzernamen und Ihr Passwort.","Identifiants non valides. Veuillez vérifier votre nom d'utilisateur et votre mot de passe.",,src/Service/SettingsTranslationService.php:146
+SettingsTranslationService,"Invalid email address","Ungültige E-Mail-Adresse","Adresse e-mail non valide",,src/Service/SettingsTranslationService.php:130
+SettingsTranslationService,"JSON API Password",JSON-API-Passwort,"Mot de passe API JSON",,src/Service/SettingsTranslationService.php:117
+SettingsTranslationService,"JSON API Username",JSON-API-Benutzername,"Nom d'utilisateur API JSON",,src/Service/SettingsTranslationService.php:115
+SettingsTranslationService,Live,Live,Live,,src/Service/SettingsTranslationService.php:109
+SettingsTranslationService,"Live Environment",Live-Umgebung,"Environnement Live",,src/Service/SettingsTranslationService.php:105
+SettingsTranslationService,Logos,Logos,Logos,,src/Service/SettingsTranslationService.php:162
+SettingsTranslationService,"Merchant Emails",Händler-E-Mails,"E-mails du marchand",,src/Service/SettingsTranslationService.php:127
+SettingsTranslationService,"More information","Weitere Informationen","Plus d'informations",,"src/Service/SettingsTranslationService.php:114; src/Service/SettingsTranslationService.php:139"
+SettingsTranslationService,"Name of the Payment Page Configuration created in Saferpay Backoffice (Settings > Payment Page Configuration). Max 20 characters. Allowed: letters, numbers, dots, colons, hyphens, underscores.","Name der im Saferpay Backoffice erstellten Payment-Page-Konfiguration (Einstellungen > Payment Page Konfiguration). Max. 20 Zeichen. Erlaubt: Buchstaben, Zahlen, Punkte, Doppelpunkte, Bindestriche, Unterstriche.","Nom de la configuration de page de paiement créée dans le Backoffice Saferpay (Paramètres > Configuration de la page de paiement). 20 caractères max. Autorisés : lettres, chiffres, points, deux-points, tirets, tirets bas.",,src/Service/SettingsTranslationService.php:239
+SettingsTranslationService,"No payment methods available. Please configure your API credentials first.","Keine Zahlungsarten verfügbar. Bitte konfigurieren Sie zuerst Ihre API-Zugangsdaten.","Aucun moyen de paiement disponible. Veuillez d'abord configurer vos identifiants API.",,src/Service/SettingsTranslationService.php:169
+SettingsTranslationService,"No results found.","Keine Ergebnisse gefunden.","Aucun résultat trouvé.",,src/Service/SettingsTranslationService.php:92
+SettingsTranslationService,"Notify the shop owner when an order is authorized (requires the Mail Alert module).","Den Shop-Betreiber benachrichtigen, wenn eine Bestellung autorisiert wird (erfordert das Modul „Mail Alert“).","Notifier le propriétaire de la boutique lorsqu'une commande est autorisée (nécessite le module Mail Alert).",,src/Service/SettingsTranslationService.php:219
+SettingsTranslationService,"Order State",Bestellstatus,"Statut de commande",,src/Service/SettingsTranslationService.php:230
+SettingsTranslationService,"Order creation rule","Regel für die Bestellerstellung","Règle de création de commande",,src/Service/SettingsTranslationService.php:192
+SettingsTranslationService,"Order reference on payment page","Bestellreferenz auf der Zahlungsseite","Référence de commande sur la page de paiement",,src/Service/SettingsTranslationService.php:245
+SettingsTranslationService,"Password saved. Click the pencil icon to enter a new one.","Passwort gespeichert. Klicken Sie auf das Stiftsymbol, um ein neues einzugeben.","Mot de passe enregistré. Cliquez sur l'icône crayon pour en saisir un nouveau.",,src/Service/SettingsTranslationService.php:122
+SettingsTranslationService,"Payment Methods",Zahlungsarten,"Moyens de paiement",,"src/Service/SettingsTranslationService.php:77; src/Service/SettingsTranslationService.php:157"
+SettingsTranslationService,"Payment Page configurations name","Name der Payment-Page-Konfiguration","Nom de la configuration de la page de paiement",,src/Service/SettingsTranslationService.php:237
+SettingsTranslationService,"Payment Processing",Zahlungsabwicklung,"Traitement des paiements",,src/Service/SettingsTranslationService.php:78
+SettingsTranslationService,"Payment method",Zahlungsart,"Moyen de paiement",,src/Service/SettingsTranslationService.php:160
+SettingsTranslationService,"Refresh terminals","Terminals aktualisieren","Actualiser les terminaux",,src/Service/SettingsTranslationService.php:125
+SettingsTranslationService,"Reject the payment","Zahlung ablehnen","Rejeter le paiement",,src/Service/SettingsTranslationService.php:187
+SettingsTranslationService,"Reserve and capture later","Reservieren und später buchen","Réserver et capturer plus tard",,src/Service/SettingsTranslationService.php:183
+SettingsTranslationService,"Restrict RefundAmount to Captured Amount","Rückerstattungsbetrag auf den gebuchten Betrag beschränken","Limiter le montant du remboursement au montant capturé",,src/Service/SettingsTranslationService.php:190
+SettingsTranslationService,"Saferpay Backoffice","Saferpay Backoffice","Backoffice Saferpay",,src/Service/SettingsTranslationService.php:113
+SettingsTranslationService,"Saferpay Field Access Token can be found in Saferpay Backoffice, navigate to","Den Saferpay Field Access Token finden Sie im Saferpay Backoffice unter","Le jeton d'accès Saferpay Fields se trouve dans le Backoffice Saferpay, accédez à",,src/Service/SettingsTranslationService.php:133
+SettingsTranslationService,"Saferpay Fields","Saferpay Fields","Saferpay Fields",,"src/Service/SettingsTranslationService.php:131; src/Service/SettingsTranslationService.php:163"
+SettingsTranslationService,"Saferpay Fields Access Tokens","Saferpay Fields Access Tokens","Saferpay Fields Access Tokens",,src/Service/SettingsTranslationService.php:134
+SettingsTranslationService,"Saferpay Fields is included in your license","Saferpay Fields ist in Ihrer Lizenz enthalten","Saferpay Fields est inclus dans votre licence",,src/Service/SettingsTranslationService.php:147
+SettingsTranslationService,"Saferpay Settings",Saferpay-Einstellungen,"Paramètres Saferpay",,src/Service/SettingsTranslationService.php:66
+SettingsTranslationService,"Saferpay sends a payment confirmation email directly to the customer.","Saferpay sendet eine Zahlungsbestätigung per E-Mail direkt an den Kunden.","Saferpay envoie un e-mail de confirmation de paiement directement au client.",,src/Service/SettingsTranslationService.php:217
+SettingsTranslationService,"Save Changes","Änderungen speichern","Enregistrer les modifications",,src/Service/SettingsTranslationService.php:87
+SettingsTranslationService,Saving...,"Wird gespeichert...",Enregistrement...,,src/Service/SettingsTranslationService.php:88
+SettingsTranslationService,Search...,Suchen...,Rechercher...,,src/Service/SettingsTranslationService.php:91
+SettingsTranslationService,Select,Auswählen,Sélectionner,,src/Service/SettingsTranslationService.php:168
+SettingsTranslationService,"Select a terminal","Terminal auswählen","Sélectionnez un terminal",,src/Service/SettingsTranslationService.php:124
+SettingsTranslationService,"Select countries","Länder auswählen","Sélectionnez les pays",,src/Service/SettingsTranslationService.php:166
+SettingsTranslationService,"Select currencies","Währungen auswählen","Sélectionnez les devises",,src/Service/SettingsTranslationService.php:167
+SettingsTranslationService,"Select environment","Umgebung auswählen","Sélectionnez l'environnement",,src/Service/SettingsTranslationService.php:103
+SettingsTranslationService,"Select order status","Bestellstatus auswählen","Sélectionnez le statut de commande",,src/Service/SettingsTranslationService.php:233
+SettingsTranslationService,"Select the option to determine whether the order should be created.","Wählen Sie aus, ob die Bestellung erstellt werden soll.","Sélectionnez l'option déterminant si la commande doit être créée.",,src/Service/SettingsTranslationService.php:193
+SettingsTranslationService,"Select your active environment. Credentials are stored separately for each.","Wählen Sie Ihre aktive Umgebung. Die Zugangsdaten werden für jede Umgebung separat gespeichert.","Sélectionnez votre environnement actif. Les identifiants sont stockés séparément pour chaque environnement.",,src/Service/SettingsTranslationService.php:102
+SettingsTranslationService,"Send an email from Saferpay on payment completion","Bei Zahlungsabschluss eine E-Mail von Saferpay senden","Envoyer un e-mail depuis Saferpay à la finalisation du paiement",,src/Service/SettingsTranslationService.php:216
+SettingsTranslationService,"Send new order mail on authorization","E-Mail über neue Bestellung bei Autorisierung senden","Envoyer l'e-mail de nouvelle commande lors de l'autorisation",,src/Service/SettingsTranslationService.php:218
+SettingsTranslationService,"Send order confirmation mail on payment completion","Bestellbestätigung bei Zahlungsabschluss senden","Envoyer l'e-mail de confirmation de commande à la finalisation du paiement",,src/Service/SettingsTranslationService.php:220
+SettingsTranslationService,"Send the shop's order confirmation email to the customer, only once payment is authorized by Saferpay.","Die Bestellbestätigung des Shops erst an den Kunden senden, wenn die Zahlung durch Saferpay autorisiert wurde.","Envoyer l'e-mail de confirmation de commande de la boutique au client uniquement une fois le paiement autorisé par Saferpay.",,src/Service/SettingsTranslationService.php:221
+SettingsTranslationService,Settings,Einstellungen,Paramètres,,src/Service/SettingsTranslationService.php:134
+SettingsTranslationService,"Show 'Cards' payment method logo","Logo der Zahlungsart „Karten“ anzeigen","Afficher le logo du moyen de paiement « Cartes »",,src/Service/SettingsTranslationService.php:204
+SettingsTranslationService,"Show password","Passwort anzeigen","Afficher le mot de passe",,src/Service/SettingsTranslationService.php:120
+SettingsTranslationService,"Something went wrong loading Saferpay settings. Please refresh the page.","Beim Laden der Saferpay-Einstellungen ist ein Fehler aufgetreten. Bitte aktualisieren Sie die Seite.","Une erreur s'est produite lors du chargement des paramètres Saferpay. Veuillez actualiser la page.",,src/Service/SettingsTranslationService.php:68
+SettingsTranslationService,"Status for Saferpay payment awaiting","Status für ausstehende Saferpay-Zahlung","Statut pour paiement Saferpay en attente",,src/Service/SettingsTranslationService.php:232
+SettingsTranslationService,Styling,Gestaltung,Style,,src/Service/SettingsTranslationService.php:235
+SettingsTranslationService,"Terminal ID",Terminal-ID,"ID du terminal",,src/Service/SettingsTranslationService.php:123
+SettingsTranslationService,Test,Test,Test,,src/Service/SettingsTranslationService.php:108
+SettingsTranslationService,"Test Environment",Test-Umgebung,"Environnement de test",,src/Service/SettingsTranslationService.php:104
+SettingsTranslationService,"These email addresses receive payment notification emails directly from SaferPay. Separate multiple email addresses with commas.","Diese E-Mail-Adressen erhalten Zahlungsbenachrichtigungen direkt von SaferPay. Trennen Sie mehrere E-Mail-Adressen durch Kommas.","Ces adresses e-mail reçoivent les notifications de paiement directement de SaferPay. Séparez plusieurs adresses e-mail par des virgules.",,src/Service/SettingsTranslationService.php:129
+SettingsTranslationService,"This description is visible in payment page also in payment confirmation email.","Diese Beschreibung ist auf der Zahlungsseite und in der Zahlungsbestätigungs-E-Mail sichtbar.","Cette description est visible sur la page de paiement ainsi que dans l'e-mail de confirmation de paiement.",,src/Service/SettingsTranslationService.php:244
+SettingsTranslationService,"Transaction Handling",Transaktionsabwicklung,"Gestion des transactions",,src/Service/SettingsTranslationService.php:176
+SettingsTranslationService,"Use Description field value","Wert des Beschreibungsfelds verwenden","Utiliser la valeur du champ Description",,src/Service/SettingsTranslationService.php:247
+SettingsTranslationService,"Use PrestaShop Order reference (default)","PrestaShop-Bestellreferenz verwenden (Standard)","Utiliser la référence de commande PrestaShop (par défaut)",,src/Service/SettingsTranslationService.php:246
+SettingsTranslationService,"Validating credentials...","Zugangsdaten werden überprüft...","Vérification des identifiants...",,src/Service/SettingsTranslationService.php:144
+SettingsTranslationService,"When ""Use PrestaShop Order reference"" is selected and the order is not yet created (e.g. order creation after authorization), the Description field value is used as fallback.","Wenn „PrestaShop-Bestellreferenz verwenden“ ausgewählt ist und die Bestellung noch nicht erstellt wurde (z. B. Bestellerstellung nach der Autorisierung), wird der Wert des Beschreibungsfelds als Fallback verwendet.","Lorsque « Utiliser la référence de commande PrestaShop » est sélectionné et que la commande n'est pas encore créée (par ex. création de commande après l'autorisation), la valeur du champ Description est utilisée en dernier recours.",,src/Service/SettingsTranslationService.php:248
+SettingsTranslationService,"When this feature is enabled, a confirmation email will be only sent once the payment is authorized by Saferpay.","Wenn diese Funktion aktiviert ist, wird die Bestätigungs-E-Mail erst gesendet, wenn die Zahlung durch Saferpay autorisiert wurde.","Lorsque cette fonctionnalité est activée, l'e-mail de confirmation n'est envoyé qu'une fois le paiement autorisé par Saferpay.",,src/Service/SettingsTranslationService.php:222
+SettingsTranslationService,"You are currently in test mode. No real transactions will be processed.","Sie befinden sich derzeit im Testmodus. Es werden keine echten Transaktionen verarbeitet.","Vous êtes actuellement en mode test. Aucune transaction réelle ne sera traitée.",,src/Service/SettingsTranslationService.php:106
+SettingsTranslationService,"You are in live mode. Real transactions will be processed.","Sie befinden sich im Live-Modus. Es werden echte Transaktionen verarbeitet.","Vous êtes en mode live. Des transactions réelles seront traitées.",,src/Service/SettingsTranslationService.php:107
+SettingsTranslationService,"You can generate your API credentials inside the [backoffice_link] under Settings > JSON API Basic authentication. [more_info_link]","Sie können Ihre API-Zugangsdaten im [backoffice_link] unter Einstellungen > JSON API Basic-Authentifizierung generieren. [more_info_link]","Vous pouvez générer vos identifiants API dans le [backoffice_link] sous Paramètres > Authentification de base JSON API. [more_info_link]",,src/Service/SettingsTranslationService.php:112
+SettingsTranslationService,"You can use hosted payment fields for a seamless checkout experience.","Sie können gehostete Zahlungsfelder für einen nahtlosen Checkout verwenden.","Vous pouvez utiliser des champs de paiement hébergés pour une expérience de paiement fluide.",,src/Service/SettingsTranslationService.php:148
+SettingsTranslationService,active,aktiv,actif,,src/Service/SettingsTranslationService.php:159
+SettingsTranslationService,selected,ausgewählt,sélectionné(s),,src/Service/SettingsTranslationService.php:94
+severity_level_column,Error,Fehler,Erreur,,views/templates/admin/logs/severity_level_column.tpl:27
+severity_level_column,"Informative only","Nur informativ","Informatif uniquement",,views/templates/admin/logs/severity_level_column.tpl:23
+severity_level_column,"Major issue (crash)!","Schwerwiegendes Problem (Absturz)!","Problème majeur (plantage) !",,views/templates/admin/logs/severity_level_column.tpl:29
+severity_level_column,Warning,Warnung,Avertissement,,views/templates/admin/logs/severity_level_column.tpl:25
+severity_levels,Error,Fehler,Erreur,,views/templates/admin/logs/severity_levels.tpl:31
+severity_levels,Fatal,Fatal,Fatal,,views/templates/admin/logs/severity_levels.tpl:32
+severity_levels,Info,Info,Info,,views/templates/admin/logs/severity_levels.tpl:29
+severity_levels,"Meaning of severity levels:","Bedeutung der Schweregrade:","Signification des niveaux de gravité :",,views/templates/admin/logs/severity_levels.tpl:27
+severity_levels,"Severity levels:",Schweregrade:,"Niveaux de gravité :",,views/templates/admin/logs/severity_levels.tpl:25
+severity_levels,Warning,Warnung,Avertissement,,views/templates/admin/logs/severity_levels.tpl:30
+successHosted,"Failed to validate cart.","Warenkorb konnte nicht validiert werden.","Échec de la validation du panier.",,controllers/front/successHosted.php:61
+validation,"Order already exists.","Bestellung existiert bereits.","La commande existe déjà.",,controllers/front/validation.php:84
+validation,"This payment method is not available.","Diese Zahlungsart ist nicht verfügbar.","Ce moyen de paiement n'est pas disponible.",,controllers/front/validation.php:79
