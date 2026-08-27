@@ -219,3 +219,4 @@
 - Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
 - BO : Fixed issue when a saved API password offered no visible way to enter a new one, and browser password manager icons covered the show/hide password control
 - FO : Removed the Saferpay Management API call from the checkout, payment methods are now read from local storage
+- BO : Added a log entry when Saferpay stops offering a payment method, so a method disappearing from the settings and the checkout can be traced
