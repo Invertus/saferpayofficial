@@ -218,3 +218,4 @@
 - BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
 - Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
 - BO : Fixed issue when a saved API password offered no visible way to enter a new one, and browser password manager icons covered the show/hide password control
+- FO : Removed the Saferpay Management API call from the checkout, payment methods are now read from local storage

@@ -38,9 +38,8 @@ use Invertus\SaferPay\Install\Installer;
 use Invertus\SaferPay\Install\Uninstaller;
 use Invertus\SaferPay\Service\SaferPayCartService;
 use Invertus\SaferPay\Provider\PaymentTypeProvider;
-use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
+use Invertus\SaferPay\Service\SaferPayStoredPaymentMethods;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation;
 use Invertus\SaferPay\Provider\CurrencyProvider;
 use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
@@ -217,14 +216,17 @@ Thank you for your patience!');
         /** @var PaymentTypeProvider $paymentTypeProvider */
         $paymentTypeProvider = $this->getService(PaymentTypeProvider::class);
 
-        /** @var SaferPayObtainPaymentMethods $obtainPaymentMethods */
-        $obtainPaymentMethods = $this->getService(SaferPayObtainPaymentMethods::class);
+        /** @var SaferPayStoredPaymentMethods $storedPaymentMethods */
+        $storedPaymentMethods = $this->getService(SaferPayStoredPaymentMethods::class);
         /** @var SaferPayPaymentRepository $paymentRepository */
         $paymentRepository = $this->getService(SaferPayPaymentRepository::class);
 
-        try {
-            $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
-        } catch (SaferPayApiException $exception) {
+        // Read the account's payment methods from storage. PrestaShop re-renders the payment
+        // step over AJAX on every address and carrier change, so calling the Management API
+        // here meant several GetTerminal calls per order.
+        $paymentMethods = $storedPaymentMethods->getPaymentMethods();
+
+        if (empty($paymentMethods)) {
             return [];
         }
 

@@ -61,27 +61,18 @@ class SaferPayRefreshPaymentsService
 
     public function refreshPayments()
     {
-        // Get enabled payments.
-        $activePayments = $this->paymentRepository->getActivePaymentMethods();
-
-        if (empty($activePayments)) {
-            $this->logger->info('No active payment options found', [
-                'context' => [],
-            ]);
-
-            return;
-        }
-
         // Get payments from API.
         try {
-            $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethodsNamesAsArray();
+            $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethods();
         } catch (Exception $exception) {
             throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
         }
 
+        // Read every stored row, not only the enabled ones, so that a method the merchant
+        // deliberately switched off keeps its flags across a refresh instead of silently
+        // reappearing as enabled-by-default.
         $paymentsInfo = [];
-        foreach ($activePayments as $payment) {
-            $paymentsInfo[$payment['name']]['name'] = $payment['name'];
+        foreach ($this->paymentRepository->getAllPaymentMethods() as $payment) {
             $paymentsInfo[$payment['name']]['active'] = $payment['active'];
             $paymentsInfo[$payment['name']]['field'] = $this->fieldRepository->isActiveByName($payment['name']);
         }
@@ -91,16 +82,26 @@ class SaferPayRefreshPaymentsService
         $this->fieldRepository->truncateTable();
 
         foreach ($paymentsFromAPI as $payment) {
-            $paymentActive = (isset($paymentsInfo[$payment]['active'])) ? (int) $paymentsInfo[$payment]['active'] : 0;
-            $fieldActive = (isset($paymentsInfo[$payment]['field'])) ? (int) $paymentsInfo[$payment]['field'] : 0;
+            $paymentName = str_replace(' ', '', $payment['paymentMethod']);
+            $paymentActive = (isset($paymentsInfo[$paymentName]['active'])) ? (int) $paymentsInfo[$paymentName]['active'] : 0;
+            $fieldActive = (isset($paymentsInfo[$paymentName]['field'])) ? (int) $paymentsInfo[$paymentName]['field'] : 0;
+
+            // The logo and the supported currencies are the only two things the checkout
+            // needed the account for. Persisting them here is what lets hookPaymentOptions
+            // build the payment list without calling the Management API on every render.
+            $currencies = isset($payment['currencies']) && is_array($payment['currencies'])
+                ? $payment['currencies']
+                : [];
 
             $this->paymentRepository->insertPayment([
-                'name' => $payment,
+                'name' => pSQL($paymentName),
                 'active' => $paymentActive,
+                'logo_url' => pSQL((string) $payment['logoUrl']),
+                'currencies' => pSQL(implode(',', $currencies)),
             ]);
 
             $this->fieldRepository->insertField([
-                'name' => $payment,
+                'name' => pSQL($paymentName),
                 'active' => $fieldActive,
             ]);
         }
