@@ -215,6 +215,7 @@
 - Added configurable payment description and order reference on payment page
 - API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT
 - BO/FO : Added German and French translations for all module texts
+- BO : Fixed issue when the module menu tabs stayed in English on German and French shops
 - BO : Fixed issue when a freshly installed module logged an account error before any API credentials were entered
 - BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
 - Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
