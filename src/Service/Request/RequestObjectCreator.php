@@ -90,7 +90,7 @@ class RequestObjectCreator
 
     public function createRequestHeader(): RequestHeader
     {
-        $specVersion = Configuration::get(RequestHeader::SPEC_VERSION);
+        $specVersion = SaferPayConfig::API_VERSION;
         $customerId = Configuration::get(RequestHeader::CUSTOMER_ID . SaferPayConfig::getConfigSuffix());
         $requestId = $this->idempotencyProvider->getIdempotencyKey();
         $retryIndicator = Configuration::get(RequestHeader::RETRY_INDICATOR);

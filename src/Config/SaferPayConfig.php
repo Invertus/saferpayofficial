@@ -49,7 +49,7 @@ class SaferPayConfig
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = '1.50';
+    const API_VERSION = '1.53';
 
     const HOOKS = [
         'paymentOptions',
@@ -431,8 +431,6 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => SaferPayConfig::API_VERSION,
-            RequestHeader::SPEC_REFUND_VERSION => SaferPayConfig::API_VERSION,
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 0,
