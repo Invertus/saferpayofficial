@@ -65,8 +65,6 @@ class CardAliasRegistrationGuard
             return false;
         }
 
-        // With grouped cards the checkout shows a single "Cards" option, which carries no saved
-        // card list, so an alias registered under it could never be selected again.
-        return !$this->configuration->getAsBoolean(SaferPayConfig::SAFERPAY_GROUP_CARDS);
+        return true;
     }
 }

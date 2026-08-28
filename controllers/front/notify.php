@@ -156,8 +156,13 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             $paymentBehaviorWithout3D = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
+            // $order->payment holds the checkout option's name, which is "Cards" for the grouped
+            // option and never matches a brand, silently skipping the whole without-3DS behaviour.
+            // The brand Saferpay asserted is what this setting is about.
+            $assertedPaymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
+
             if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
+                in_array($assertedPaymentMethod, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);

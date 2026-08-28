@@ -30,6 +30,7 @@ function upgrade_module_2_1_0()
     saferpayofficial_2_1_0_delete_removed_tabs();
     saferpayofficial_2_1_0_delete_removed_files();
     saferpayofficial_2_1_0_delete_removed_configuration();
+    saferpayofficial_2_1_0_enable_card_grouping();
 
     Tools::clearSmartyCache();
 
@@ -153,4 +154,15 @@ function saferpayofficial_2_1_0_delete_empty_directory($directory, $moduleDir)
 function saferpayofficial_2_1_0_delete_removed_configuration()
 {
     Configuration::deleteByName('SAFERPAY_HOSTED_FIELDS_TEMPLATE');
+}
+
+/**
+ * Card brands are no longer offered one by one in the checkout. A shopper who picked a brand and
+ * then typed a card of another one had the payment approved by Saferpay but no order created, so
+ * the single "Cards" option becomes the way card payments render. Shops upgrading from an earlier
+ * version have the setting at 0 and would otherwise keep the per-brand list and the defect with it.
+ */
+function saferpayofficial_2_1_0_enable_card_grouping()
+{
+    Configuration::updateValue('SAFERPAY_GROUP_CARDS', 1);
 }

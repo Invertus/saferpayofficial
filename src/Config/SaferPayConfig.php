@@ -167,6 +167,7 @@ class SaferPayConfig
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
+        self::PAYMENT_AMEX,
         self::PAYMENT_VISA,
         self::PAYMENT_VPAY,
         self::PAYMENT_MASTERCARD,
@@ -312,6 +313,21 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_MYONE,
         self::PAYMENT_BANCONTACT,
+    ];
+
+    /**
+     * Brand names the Saferpay Fields SDK accepts in its paymentMethods option, which are not the
+     * module's own constants. VPAY and MYONE have no SDK equivalent, so an option covering either
+     * cannot be restricted in the browser at all.
+     */
+    public const FIELDS_SDK_BRANDS = [
+        self::PAYMENT_AMEX => 'amex',
+        self::PAYMENT_BANCONTACT => 'bancontact',
+        self::PAYMENT_DINERS => 'diners',
+        self::PAYMENT_JCB => 'jcb',
+        self::PAYMENT_MAESTRO => 'maestro',
+        self::PAYMENT_MASTERCARD => 'mastercard',
+        self::PAYMENT_VISA => 'visa',
     ];
 
     public static function supportsOrderCapture($paymentMethod)

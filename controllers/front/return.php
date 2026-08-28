@@ -76,16 +76,21 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         }
 
         // Saferpay sends the redirect and the notification in parallel, and with a business licence
-        // the assert below authorizes the transaction, which may only ever happen once. The same lock
-        // key is used by the notify controller, so whichever arrives second waits out the first.
-        $lockResult = $this->applyLock(sprintf('%s-%s', $cartId, $secureKey));
+        // the assert below authorizes the transaction, which may only ever happen once, so both legs
+        // share a lock key. With isWebhook set the notification is the only leg that completes the
+        // payment and the assert here is the read-only PaymentPage/Assert, so taking the lock would
+        // only starve the notification, which dies on a conflict instead of waiting and leaves the
+        // order awaiting payment forever.
+        if (!Tools::getValue('isWebhook')) {
+            $lockResult = $this->applyLock(sprintf('%s-%s', $cartId, $secureKey));
 
-        // Only a conflict means the notification holds the lock. Any other failure is the locking
-        // itself being unavailable, and the processed check below still guards the repeated assert.
-        if ($lockResult->getStatusCode() === Response::HTTP_CONFLICT) {
-            $logger->debug(sprintf('%s - Notification is already being processed, skipping assert', self::FILE_NAME));
+            // Only a conflict means the notification holds the lock. Any other failure is the locking
+            // itself being unavailable, and the processed check below still guards the repeated assert.
+            if ($lockResult->getStatusCode() === Response::HTTP_CONFLICT) {
+                $logger->debug(sprintf('%s - Notification is already being processed, skipping assert', self::FILE_NAME));
 
-            return;
+                return;
+            }
         }
 
         /** @var SaferPayTransactionProcessedGuard $processedGuard */
@@ -360,8 +365,11 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
         $order = new Order($orderId);
         $paymentBehaviorWithout3D = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
+        // $order->payment holds the checkout option's name, which is "Cards" for the grouped
+        // option and never matches a brand, silently skipping the whole without-3DS behaviour.
+        // The brand Saferpay asserted is what this setting is about.
         if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
-            in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
+            in_array($orderPayment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
         ) {
             /** @var SaferPayOrderStatusService $orderStatusService */
             $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
