@@ -112,6 +112,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       orderCreationAfterAuth: currentSettings.orderCreationAfterAuth,
       groupCards: currentSettings.groupCards,
       groupCardsLogo: currentSettings.groupCardsLogo,
+      useFields: currentSettings.useFields,
       creditCardSave: currentSettings.creditCardSave,
     }), 'Payment Processing', 'paymentProcessing')
   }, [handleSave])

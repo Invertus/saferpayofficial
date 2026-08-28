@@ -23,17 +23,17 @@
 
 namespace Invertus\SaferPay\Tests\Unit\Provider;
 
+use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Provider\PaymentTypeProvider;
-use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Tests\Unit\Tools\UnitTestCase;
 
 class PaymentTypeProviderTest extends UnitTestCase
 {
     public function testItResolvesFieldsFromTheFieldTokenWhateverBrandCameBack()
     {
-        $provider = $this->mockProviderExpectingNoBrandLookup();
+        $provider = $this->makeProvider($this->fieldsDisabledConfiguration());
 
         $this->assertEquals(
             PaymentType::HOSTED_IFRAME,
@@ -43,7 +43,7 @@ class PaymentTypeProviderTest extends UnitTestCase
 
     public function testItResolvesFieldsForASavedCard()
     {
-        $provider = $this->mockProviderExpectingNoBrandLookup();
+        $provider = $this->makeProvider($this->fieldsDisabledConfiguration());
 
         $this->assertEquals(
             PaymentType::HOSTED_IFRAME,
@@ -51,16 +51,9 @@ class PaymentTypeProviderTest extends UnitTestCase
         );
     }
 
-    public function testItFallsBackToTheBrandLookupWhenNeitherIsPresent()
+    public function testItFallsBackToTheConfiguredModeWhenNeitherIsPresent()
     {
-        $provider = $this->mockProvider();
-
-        $provider
-            ->expects($this->once())
-            ->method('get')
-            ->with(SaferPayConfig::PAYMENT_VISA)
-            ->willReturn(PaymentType::BASIC)
-        ;
+        $provider = $this->makeProvider($this->fieldsDisabledConfiguration());
 
         $this->assertEquals(
             PaymentType::BASIC,
@@ -68,32 +61,129 @@ class PaymentTypeProviderTest extends UnitTestCase
         );
     }
 
-    private function mockProviderExpectingNoBrandLookup()
+    public function testItResolvesFieldsForTheGroupedCardsOption()
     {
-        $provider = $this->mockProvider();
+        $provider = $this->makeProvider($this->fieldsEnabledConfiguration());
 
-        $provider
-            ->expects($this->never())
-            ->method('get')
-        ;
-
-        return $provider;
+        $this->assertEquals(
+            PaymentType::HOSTED_IFRAME,
+            $provider->get(SaferPayConfig::PAYMENT_CARDS)
+        );
     }
 
-    /**
-     * get() reads the module configuration directly, so it is stubbed out to keep getForReturn
-     * testable without a configured shop.
-     */
-    private function mockProvider()
+    public function testItResolvesFieldsForAnIndividualCardBrand()
     {
-        $fieldRepositoryMock = $this
-            ->getMockBuilder(SaferPayFieldRepository::class)
+        $provider = $this->makeProvider($this->fieldsEnabledConfiguration());
+
+        $this->assertEquals(
+            PaymentType::HOSTED_IFRAME,
+            $provider->get(SaferPayConfig::PAYMENT_VISA)
+        );
+    }
+
+    public function testANonCardMethodNeverUsesFields()
+    {
+        $provider = $this->makeProvider($this->fieldsEnabledConfiguration());
+
+        $this->assertEquals(
+            PaymentType::BASIC,
+            $provider->get(SaferPayConfig::PAYMENT_TWINT)
+        );
+    }
+
+    public function testItFallsBackToThePaymentPageWithoutABusinessLicense()
+    {
+        $provider = $this->makeProvider($this->fieldsEnabledConfiguration([
+            SaferPayConfig::BUSINESS_LICENSE => null,
+        ]));
+
+        $this->assertEquals(
+            PaymentType::BASIC,
+            $provider->get(SaferPayConfig::PAYMENT_CARDS)
+        );
+    }
+
+    public function testItFallsBackToThePaymentPageWhenFieldsAreTurnedOff()
+    {
+        $provider = $this->makeProvider($this->fieldsEnabledConfiguration([
+            SaferPayConfig::SAFERPAY_USE_FIELDS => null,
+        ]));
+
+        $this->assertEquals(
+            PaymentType::BASIC,
+            $provider->get(SaferPayConfig::PAYMENT_CARDS)
+        );
+    }
+
+    public function testItFallsBackToThePaymentPageWhenTheAccessTokenIsMissing()
+    {
+        $provider = $this->makeProvider($this->fieldsEnabledConfiguration([
+            SaferPayConfig::FIELDS_ACCESS_TOKEN => null,
+        ]));
+
+        $this->assertEquals(
+            PaymentType::BASIC,
+            $provider->get(SaferPayConfig::PAYMENT_CARDS)
+        );
+    }
+
+    public function testTestModeReadsTheTestSuffixedConfiguration()
+    {
+        $provider = $this->makeProvider($this->makeConfiguration([
+            SaferPayConfig::TEST_MODE => '1',
+            SaferPayConfig::SAFERPAY_USE_FIELDS => '1',
+            SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::TEST_SUFFIX => '1',
+            SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX => 'test-token',
+        ]));
+
+        $this->assertEquals(
+            PaymentType::HOSTED_IFRAME,
+            $provider->get(SaferPayConfig::PAYMENT_CARDS)
+        );
+    }
+
+    private function makeProvider(Configuration $configuration)
+    {
+        return new PaymentTypeProvider($configuration);
+    }
+
+    private function fieldsEnabledConfiguration(array $overrides = [])
+    {
+        return $this->makeConfiguration(array_merge([
+            SaferPayConfig::TEST_MODE => null,
+            SaferPayConfig::BUSINESS_LICENSE => '1',
+            SaferPayConfig::SAFERPAY_USE_FIELDS => '1',
+            SaferPayConfig::FIELDS_ACCESS_TOKEN => 'access-token',
+        ], $overrides));
+    }
+
+    private function fieldsDisabledConfiguration()
+    {
+        return $this->fieldsEnabledConfiguration([
+            SaferPayConfig::SAFERPAY_USE_FIELDS => null,
+        ]);
+    }
+
+    private function makeConfiguration(array $values)
+    {
+        $configuration = $this
+            ->getMockBuilder(Configuration::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get', 'getAsBoolean'])
             ->getMock();
 
-        return $this
-            ->getMockBuilder(PaymentTypeProvider::class)
-            ->setConstructorArgs([$fieldRepositoryMock])
-            ->setMethods(['get'])
-            ->getMock();
+        $configuration
+            ->method('get')
+            ->willReturnCallback(function ($id) use ($values) {
+                return isset($values[$id]) ? $values[$id] : null;
+            });
+
+        $configuration
+            ->method('getAsBoolean')
+            ->willReturnCallback(function ($id) use ($values) {
+                return !empty($values[$id]);
+            });
+
+        return $configuration;
     }
 }

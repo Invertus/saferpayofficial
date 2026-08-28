@@ -160,7 +160,6 @@ class SettingsTranslationService
             'paymentMethod' => $this->module->l('Payment method', self::FILE_NAME),
             'enabled' => $this->module->l('Enabled', self::FILE_NAME),
             'logos' => $this->module->l('Logos', self::FILE_NAME),
-            'customForm' => $this->module->l('Saferpay Fields', self::FILE_NAME),
             'countries' => $this->module->l('Countries', self::FILE_NAME),
             'currencies' => $this->module->l('Currencies', self::FILE_NAME),
             'selectCountries' => $this->module->l('Select countries', self::FILE_NAME),
@@ -205,6 +204,9 @@ class SettingsTranslationService
             'showCardsLogoDescription' => $this->module->l('If enabled, a logo for the grouped \'Cards\' payment method will be displayed at checkout.', self::FILE_NAME),
             'creditCardSaving' => $this->module->l('Credit card saving for customers', self::FILE_NAME),
             'creditCardSavingDescription' => $this->module->l('Allow customers to save credit card for faster purchase.', self::FILE_NAME),
+            'useFieldsLabel' => $this->module->l('Use Saferpay Fields', self::FILE_NAME),
+            'useFieldsDescription' => $this->module->l('When disabled, card payments use the Saferpay Payment Page (redirect).', self::FILE_NAME),
+            'fieldsTokenMissingWarning' => $this->module->l('Saferpay Fields access token is missing. Card payments are using the Payment Page. Generate the token under API credentials.', self::FILE_NAME),
         ];
     }
 

@@ -23,9 +23,9 @@
 
 namespace Invertus\SaferPay\Provider;
 
+use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\PaymentType;
-use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,13 +33,12 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentTypeProvider
 {
-    /** @var SaferPayFieldRepository */
-    private $saferPayFieldRepository;
+    /** @var Configuration */
+    private $configuration;
 
-    public function __construct(
-        SaferPayFieldRepository $saferPayFieldRepository
-    ) {
-        $this->saferPayFieldRepository = $saferPayFieldRepository;
+    public function __construct(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
     }
 
     /**
@@ -48,10 +47,10 @@ class PaymentTypeProvider
      */
     public function get(string $paymentMethod): string
     {
-        // Custom Form ON (Saferpay Fields, Business licence) => Saferpay Fields.
-        // Anything else (Custom Form OFF, non-Business) => Saferpay Payment Page.
+        // Saferpay Fields prerequisites met => inline card form (Saferpay Fields).
+        // Anything else => Saferpay Payment Page (redirect).
         // The legacy Transaction Interface (IFRAME) is no longer selectable (SL-374).
-        if ($this->isHostedIframeRedirect($paymentMethod)) {
+        if ($this->isSaferPayFieldsPayment($paymentMethod)) {
             return PaymentType::HOSTED_IFRAME;
         }
 
@@ -79,27 +78,45 @@ class PaymentTypeProvider
     }
 
     /**
+     * Card payments use Saferpay Fields only when every prerequisite holds: a Business licence,
+     * the "Use Saferpay Fields" setting, and a Fields access token. A missing prerequisite falls
+     * back to the Payment Page, so the checkout never offers a card form it cannot render.
+     *
      * @param string $paymentMethod
      * @return bool
      */
-    private function isHostedIframeRedirect(string $paymentMethod): bool
+    private function isSaferPayFieldsPayment(string $paymentMethod): bool
     {
-        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
+        if (!$this->isCardPaymentMethod($paymentMethod)) {
             return false;
         }
 
-        // Grouped cards render a single inline Fields form under the "Cards" option.
-        if ($paymentMethod === SaferPayConfig::PAYMENT_CARDS
-            && \Configuration::get(SaferPayConfig::SAFERPAY_GROUP_CARDS)
-        ) {
-            return true;
+        $suffix = $this->configuration->getAsBoolean(SaferPayConfig::TEST_MODE)
+            ? SaferPayConfig::TEST_SUFFIX
+            : '';
+
+        if (!$this->configuration->getAsBoolean(SaferPayConfig::BUSINESS_LICENSE . $suffix)) {
+            return false;
         }
 
-        // Individual cards use Fields when their "Saferpay Fields" toggle is on.
-        if (!$this->saferPayFieldRepository->isActiveByName($paymentMethod)) {
+        if (!$this->configuration->getAsBoolean(SaferPayConfig::SAFERPAY_USE_FIELDS)) {
+            return false;
+        }
+
+        if (empty($this->configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . $suffix))) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * @param string $paymentMethod
+     * @return bool
+     */
+    private function isCardPaymentMethod(string $paymentMethod): bool
+    {
+        return $paymentMethod === SaferPayConfig::PAYMENT_CARDS
+            || in_array($paymentMethod, SaferPayConfig::FIELD_SUPPORTED_PAYMENT_METHODS, true);
     }
 }

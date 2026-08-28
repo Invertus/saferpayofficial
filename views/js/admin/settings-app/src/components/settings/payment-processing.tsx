@@ -3,13 +3,14 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { CreditCard, ShieldCheck, Loader2 } from 'lucide-react'
+import { AlertCircle, CreditCard, ShieldCheck, Loader2 } from 'lucide-react'
 import { useSettings } from '@/context/settings-context'
 import { t } from '@/utils/translations'
 
 export function PaymentProcessing() {
   const { settings, updateSettings, savePaymentProcessing, savingSections } = useSettings()
   const saving = savingSections.has('paymentProcessing')
+  const hasBusinessLicense = settings.testMode ? settings.testHasBusinessLicense : settings.liveHasBusinessLicense
 
   return (
     <div className="sp-flex sp-flex-col sp-gap-6">
@@ -261,6 +262,31 @@ export function PaymentProcessing() {
                   checked={settings.groupCardsLogo}
                   onCheckedChange={(checked) => updateSettings({ groupCardsLogo: checked })}
                 />
+              </div>
+            )}
+
+            {hasBusinessLicense && (
+              <div className="sp-flex sp-items-center sp-justify-between sp-rounded-lg sp-border sp-bg-secondary/50 sp-px-4 sp-py-3">
+                <div className="sp-flex sp-flex-col sp-gap-0.5">
+                  <Label htmlFor="use-fields" className="sp-font-medium sp-cursor-pointer">
+                    {t('useFieldsLabel')}
+                  </Label>
+                  <p className="sp-text-xs sp-text-muted-foreground">
+                    {t('useFieldsDescription')}
+                  </p>
+                </div>
+                <Switch
+                  id="use-fields"
+                  checked={settings.useFields}
+                  onCheckedChange={(checked) => updateSettings({ useFields: checked })}
+                />
+              </div>
+            )}
+
+            {hasBusinessLicense && settings.useFields && settings.fieldsAccessTokenMissing && (
+              <div className="sp-flex sp-items-center sp-gap-2 sp-rounded-lg sp-px-4 sp-py-3 sp-text-sm sp-bg-amber-50 sp-text-amber-800 sp-border sp-border-amber-200">
+                <AlertCircle className="sp-h-4 sp-w-4 sp-shrink-0" />
+                <span>{t('fieldsTokenMissingWarning')}</span>
               </div>
             )}
           </div>

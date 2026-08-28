@@ -210,7 +210,9 @@
 ## [2.1.0]
 - BO : Redesigned back-office settings into a React single-page admin
 - BO : Conditionally show/hide Saferpay Fields settings based on account license
-- BO : Renamed the "Custom form" column in Payment methods to "Saferpay Fields"
+- BO : Replaced the per-brand "Saferpay Fields" toggles with a single "Use Saferpay Fields" setting, initialized from the old toggles during upgrade
+- FO : Card payments automatically fall back to the Saferpay Payment Page when the Saferpay Fields access token is missing
+- Added automatic Saferpay Fields access token generation from stored API credentials during upgrade
 - BO/FO : Accessibility improvements for EAA / WCAG 2.1 AA compliance
 - Added configurable payment description and order reference on payment page
 - API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT

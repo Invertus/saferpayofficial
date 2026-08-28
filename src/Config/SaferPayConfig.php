@@ -300,6 +300,7 @@ class SaferPayConfig
 
     const SAFERPAY_GROUP_CARDS = 'SAFERPAY_GROUP_CARDS';
     const SAFERPAY_GROUP_CARDS_LOGO = 'SAFERPAY_GROUP_CARDS_LOGO';
+    const SAFERPAY_USE_FIELDS = 'SAFERPAY_USE_FIELDS';
     /**
      * Card brands that can be grouped under 'Cards' method
      */
@@ -462,6 +463,7 @@ class SaferPayConfig
             ),
             self::SAFERPAY_SEND_ORDER_CONF_MAIL => 0,
             self::SAFERPAY_GROUP_CARDS => 1,
+            self::SAFERPAY_USE_FIELDS => 1,
         ];
     }
 
@@ -496,6 +498,7 @@ class SaferPayConfig
             self::SAFERPAY_ORDER_ID_OPTION,
             self::SAFERPAY_SEND_ORDER_CONF_MAIL,
             self::SAFERPAY_GROUP_CARDS,
+            self::SAFERPAY_USE_FIELDS,
         ];
     }
 

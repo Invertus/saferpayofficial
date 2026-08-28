@@ -181,6 +181,10 @@ class PaymentFormAssetLoader
             return;
         }
 
+        if (!\Configuration::get(SaferPayConfig::SAFERPAY_USE_FIELDS)) {
+            return;
+        }
+
         if (!SaferPayConfig::getFieldAccessToken()) {
             return;
         }
