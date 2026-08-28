@@ -210,7 +210,9 @@
 ## [2.1.0]
 - BO : Redesigned back-office settings into a React single-page admin
 - BO : Conditionally show/hide Saferpay Fields settings based on account license
-- BO : Renamed the "Custom form" column in Payment methods to "Saferpay Fields"
+- BO : Replaced the per-brand "Saferpay Fields" toggles with a single "Use Saferpay Fields" setting, initialized from the old toggles during upgrade
+- FO : Card payments automatically fall back to the Saferpay Payment Page when the Saferpay Fields access token is missing
+- Added automatic Saferpay Fields access token generation from stored API credentials during upgrade
 - BO/FO : Accessibility improvements for EAA / WCAG 2.1 AA compliance
 - Added configurable payment description and order reference on payment page
 - API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT
@@ -218,3 +220,10 @@
 - BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
 - Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
 - BO : Fixed issue when a saved API password offered no visible way to enter a new one, and browser password manager icons covered the show/hide password control
+- FO : Replaced the per-brand card list in checkout with a single "Cards" option that accepts only the enabled brands, with saved cards and Saferpay Fields support
+- FO : Added American Express support to the Saferpay Fields form
+- FO : Fixed issue when paying with a card brand other than the one selected left the payment authorized at Saferpay without a completed order
+- FO : Fixed issue when reloading the payment return page sent a second authorization and failed an already paid order
+- FO : Fixed issue when the payment behavior without 3-D Secure setting was ignored for orders paid through the grouped "Cards" option
+- FO : Fixed issue when the grouped "Cards" option ignored payment method country and currency restrictions
+- FO : Fixed issue when an order paid through the Saferpay hosted payment page stayed awaiting payment because the return page blocked the Saferpay notification

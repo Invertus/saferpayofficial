@@ -192,11 +192,10 @@ export function PaymentMethods() {
         </CardHeader>
         <CardContent>
           {/* Header row */}
-          <div className="sp-mb-3 sp-hidden sp-items-center sp-gap-3 sp-rounded-lg sp-bg-muted sp-px-4 sp-py-2.5 sp-text-xs sp-font-medium sp-text-muted-foreground md:sp-grid md:sp-grid-cols-[1fr_80px_80px_100px_1fr_1fr]">
+          <div className="sp-mb-3 sp-hidden sp-items-center sp-gap-3 sp-rounded-lg sp-bg-muted sp-px-4 sp-py-2.5 sp-text-xs sp-font-medium sp-text-muted-foreground md:sp-grid md:sp-grid-cols-[1fr_80px_80px_1fr_1fr]">
             <span>{t('paymentMethod')}</span>
             <span className="sp-text-center">{t('enabled')}</span>
             <span className="sp-text-center">{t('logos')}</span>
-            <span className="sp-text-center">{t('customForm')}</span>
             <span>{t('countries')}</span>
             <span>{t('currencies')}</span>
           </div>
@@ -213,7 +212,7 @@ export function PaymentMethods() {
                 }`}
               >
                 {/* Desktop layout */}
-                <div className="sp-hidden sp-items-center sp-gap-3 md:sp-grid md:sp-grid-cols-[1fr_80px_80px_100px_1fr_1fr]">
+                <div className="sp-hidden sp-items-center sp-gap-3 md:sp-grid md:sp-grid-cols-[1fr_80px_80px_1fr_1fr]">
                   <div className="sp-flex sp-items-center sp-gap-3">
                     <span className="sp-text-sm sp-font-medium">{method.displayName}</span>
                   </div>
@@ -232,18 +231,6 @@ export function PaymentMethods() {
                       onCheckedChange={(checked) => updatePaymentMethod(method.name, { showLogos: checked })}
                       aria-label={`${t('logos')} ${method.displayName}`}
                     />
-                  </div>
-
-                  <div className="sp-flex sp-justify-center">
-                    {method.hasCustomForm ? (
-                      <Switch
-                        checked={method.showCustomForm}
-                        onCheckedChange={(checked) => updatePaymentMethod(method.name, { showCustomForm: checked })}
-                        aria-label={`${t('customForm')} ${method.displayName}`}
-                      />
-                    ) : (
-                      <span className="sp-text-xs sp-text-muted-foreground">--</span>
-                    )}
                   </div>
 
                   <MultiSelect
@@ -283,16 +270,6 @@ export function PaymentMethods() {
                         aria-label={`${t('logos')} ${method.displayName}`}
                       />
                     </div>
-                    {method.hasCustomForm && (
-                      <div className="sp-flex sp-items-center sp-justify-between sp-rounded-md sp-border sp-bg-secondary/50 sp-px-3 sp-py-2">
-                        <Label className="sp-text-xs sp-text-muted-foreground">{t('customForm')}</Label>
-                        <Switch
-                          checked={method.showCustomForm}
-                          onCheckedChange={(checked) => updatePaymentMethod(method.name, { showCustomForm: checked })}
-                          aria-label={`${t('customForm')} ${method.displayName}`}
-                        />
-                      </div>
-                    )}
                   </div>
 
                   <div className="sp-grid sp-grid-cols-2 sp-gap-2">

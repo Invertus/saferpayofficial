@@ -25,7 +25,6 @@ namespace Invertus\SaferPay\Api\Request;
 
 use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
-use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\EntityBuilder\SaferPayAssertBuilder;
@@ -101,18 +100,19 @@ class AssertService
      * @param object|null $responseBody
      * @param int $saferPayOrderId
      * @param string $customerId
-     * @param int $selectedCardOption
+     * @param bool $saveCard whether an alias was requested from Saferpay for this transaction
      *
      * @return AssertBody
      * @throws Exception
      */
-    public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId, $customerId, $selectedCardOption)
+    public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId, $customerId, $saveCard)
     {
         $assertBody = $this->assertResponseObjectCreator->createAssertObject($responseBody);
         $this->assertBuilder->createAssert($assertBody, $saferPayOrderId);
         $isPaymentSafe = $assertBody->getLiability()->getLiabilityShift();
 
-        if ((int) $selectedCardOption === SaferPayConfig::CREDIT_CARD_OPTION_SAVE && $isPaymentSafe) {
+        // Storing a card alias is only possible when one was asked for, the response carries none otherwise.
+        if ($saveCard && $isPaymentSafe) {
             $this->aliasBuilder->createCardAlias($assertBody, $customerId);
         }
 

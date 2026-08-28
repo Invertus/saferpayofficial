@@ -30,6 +30,7 @@ use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionProcessedGuard;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -110,6 +111,19 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             die($this->module->l('Order already complete', self::FILE_NAME));
         }
 
+        /** @var SaferPayTransactionProcessedGuard $processedGuard */
+        $processedGuard = $this->module->getService(SaferPayTransactionProcessedGuard::class);
+
+        if ($processedGuard->isProcessed($cartId)) {
+            $logger->debug(sprintf('%s - Payment already processed. Dying.', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $cartId,
+                ],
+            ]);
+
+            die($this->module->l('Order already complete', self::FILE_NAME));
+        }
+
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
 
@@ -142,8 +156,13 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
 
             $paymentBehaviorWithout3D = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
 
+            // $order->payment holds the checkout option's name, which is "Cards" for the grouped
+            // option and never matches a brand, silently skipping the whole without-3DS behaviour.
+            // The brand Saferpay asserted is what this setting is about.
+            $assertedPaymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
+
             if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
+                in_array($assertedPaymentMethod, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);

@@ -3,8 +3,6 @@ export interface PaymentMethodData {
   displayName: string
   enabled: boolean
   showLogos: boolean
-  showCustomForm: boolean
-  hasCustomForm: boolean
   countries: number[]
   currencies: number[]
 }
@@ -44,6 +42,8 @@ export interface SaferpaySettingsData {
   orderCreationAfterAuth: number
   groupCards: boolean
   groupCardsLogo: boolean
+  useFields: boolean
+  fieldsAccessTokenMissing: boolean
   creditCardSave: number
 
   // Email

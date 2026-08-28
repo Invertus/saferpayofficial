@@ -155,6 +155,20 @@
         return parseInt($form.find('[name="selectedCreditCard_' + method + '"]').val(), 10) || 0;
     }
 
+    // Brands this option's Fields form may accept, as the SDK's own lowercase names. Absent
+    // when the merchant enabled a brand the SDK cannot express (VPAY, myOne): a partial list
+    // would decline a card Saferpay itself accepts, so the form is left unrestricted.
+    function fieldPaymentMethods($form) {
+        if (typeof saferpay_field_payment_methods === 'undefined') {
+            return null;
+        }
+
+        var method = $form.find('[name="saved_card_method"]').val();
+        var brands = saferpay_field_payment_methods[method];
+
+        return (brands && brands.length) ? brands : null;
+    }
+
     function stopLoading() {
         if (loadingTimeout) {
             clearTimeout(loadingTimeout);
@@ -172,7 +186,7 @@
     // Render a fresh Fields form into the selected option's container and initialise the SDK
     // on it. Rebuilding fresh readonly-input placeholders each time keeps re-initialisation
     // valid when the customer switches between card options.
-    function renderInto($container) {
+    function renderInto($container, $form) {
         var containerId = $container.attr('id');
         if (renderedContainerId === containerId && $('#' + SLOT_ID).length) {
             return;
@@ -185,7 +199,7 @@
         renderedContainerId = containerId;
         loadingTimeout = setTimeout(stopLoading, LOADING_TIMEOUT);
 
-        SaferpayFields.init({
+        var fieldsConfig = {
             accessToken: saferpay_field_access_token,
             url: saferpay_field_url,
             // Visible labels sit in the field border notch (see fieldMarkup), so the inputs
@@ -266,7 +280,40 @@
                     toggleFieldClass(evt.fieldType, 'is-focused', false);
                 }
             }
-        });
+        };
+
+        var allowedBrands = fieldPaymentMethods($form);
+        if (allowedBrands) {
+            fieldsConfig.paymentMethods = allowedBrands;
+        }
+
+        SaferpayFields.init(fieldsConfig);
+    }
+
+    // The saved-card radios are rendered into the option's additional-information block, which
+    // is a sibling of the pay-with-<option>-form container the Fields form lives in, so the
+    // container has to be resolved by name rather than by walking up from the radio.
+    function optionContainerFor($el) {
+        var $additional = $el.closest('[id$="-additional-information"]');
+
+        if ($additional.length) {
+            return $('#pay-with-' + $additional.attr('id').replace('-additional-information', '') + '-form');
+        }
+
+        return $el.closest('[id^=pay-with-][id$=-form]');
+    }
+
+    // Show the Fields form only for an inline-Fields option that is paying with a new card;
+    // a saved card needs no card entry.
+    function refreshFieldsForm($option) {
+        var $form = $option.find('form').first();
+
+        if ($form.length && isInlineFieldsOption($form) && selectedCardValue($form) <= 0) {
+            renderInto($option, $form);
+            return;
+        }
+
+        removeSlot();
     }
 
     function showSubmissionError(message) {
@@ -314,7 +361,7 @@
                     data: {
                         action: 'submitHostedFields',
                         paymentMethod: $form.find('[name="saved_card_method"]').val(),
-                        selectedCard: 0,
+                        selectedCard: selectedCardValue($form),
                         fieldToken: evt.token,
                         isBusinessLicence: 1,
                         ajax: 1
@@ -362,14 +409,15 @@
         // Render / remove the form as payment options are selected. Rendering into the
         // selected option's own container places the fields directly under it.
         $('body').on('change', 'input[name="payment-option"]', function () {
-            var $option = $('#pay-with-' + $(this).attr('id') + '-form');
-            var $form = $option.find('form').first();
+            refreshFieldsForm($('#pay-with-' + $(this).attr('id') + '-form'));
+        });
 
-            if ($form.length && isInlineFieldsOption($form) && selectedCardValue($form) <= 0) {
-                renderInto($option);
-            } else {
-                removeSlot();
-            }
+        // A saved card and "use a new card" sit inside the same payment option, so switching
+        // between them must add or remove the Fields form while that option stays selected.
+        // Delegated on body so it runs after saferpay_saved_card.js, which is bound directly to
+        // the radio and updates the hidden input selectedCardValue reads here.
+        $('body').on('change', 'input[name^="saved_card_"]', function () {
+            refreshFieldsForm(optionContainerFor($(this)));
         });
 
         // Handle a payment option that is already selected on load (e.g. single option or
