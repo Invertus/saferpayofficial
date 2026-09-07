@@ -67,6 +67,18 @@ export async function getTerminals(
   }>
 }
 
+export async function getPaymentPageConfigurations(
+  env: string,
+  username: string,
+  password: string,
+): Promise<{ success: boolean; message?: string; configurations: string[] }> {
+  return postAjax('getPaymentPageConfigurations', { env, username, password }) as Promise<{
+    success: boolean
+    message?: string
+    configurations: string[]
+  }>
+}
+
 export async function generateFieldAccessToken(
   env: string,
   username: string,
