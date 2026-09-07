@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -9,9 +10,59 @@ import { Settings2, Paintbrush, ClipboardList, Loader2, Info } from 'lucide-reac
 import { useSettings } from '@/context/settings-context'
 import { t } from '@/utils/translations'
 
+// Radix treats an empty SelectItem value as "no value", so the deliberate
+// "no configuration" choice needs a sentinel that maps back to '' on change.
+const NO_CONFIG_VALUE = '__none__'
+
 export function GeneralSettings() {
-  const { settings, updateSettings, saveGeneralSettings, savingSections } = useSettings()
+  const { settings, updateSettings, saveGeneralSettings, savingSections, fetchPaymentPageConfigurations } = useSettings()
   const saving = savingSections.has('generalSettings')
+
+  const environment = settings.testMode ? 'test' : 'live'
+  const username = settings.testMode ? settings.testUsername : settings.liveUsername
+  const password = settings.testMode ? settings.testPassword : settings.livePassword
+  const hasCredentials = Boolean(username && password)
+
+  const [configurations, setConfigurations] = useState<string[]>([])
+  const [configurationsLoaded, setConfigurationsLoaded] = useState(false)
+  const [loadingConfigurations, setLoadingConfigurations] = useState(false)
+  const [configurationsError, setConfigurationsError] = useState('')
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Credentials live on another tab, so this reacts to the shared state rather
+  // than to local input - same debounce as the terminal lookup.
+  useEffect(() => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+
+    if (!hasCredentials) {
+      setConfigurations([])
+      setConfigurationsLoaded(false)
+      setConfigurationsError('')
+      return
+    }
+
+    debounceTimer.current = setTimeout(async () => {
+      setLoadingConfigurations(true)
+      setConfigurationsError('')
+      try {
+        setConfigurations(await fetchPaymentPageConfigurations(environment, username, password))
+        setConfigurationsLoaded(true)
+      } catch {
+        setConfigurations([])
+        setConfigurationsLoaded(false)
+        setConfigurationsError(t('failedToFetchConfigNames'))
+      } finally {
+        setLoadingConfigurations(false)
+      }
+    }, 1000)
+
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    }
+  }, [environment, username, password])
+
+  const savedName = settings.configurationName
+  const savedNameNotInList = Boolean(savedName) && !configurations.includes(savedName)
 
   return (
     <div className="sp-flex sp-flex-col sp-gap-6">
@@ -69,17 +120,48 @@ export function GeneralSettings() {
         <CardContent>
           <div className="sp-flex sp-flex-col sp-gap-2">
             <Label htmlFor="page-config-name">{t('configName')}</Label>
-            <Input
-              id="page-config-name"
-              type="text"
-              maxLength={20}
-              placeholder={t('enterConfigName')}
-              value={settings.configurationName}
-              onChange={(e) => {
-                const cleaned = e.target.value.replace(/[^A-Za-z0-9.:\-_]/g, '')
-                updateSettings({ configurationName: cleaned })
-              }}
-            />
+            <Select
+              value={savedName || NO_CONFIG_VALUE}
+              onValueChange={(val) =>
+                updateSettings({ configurationName: val === NO_CONFIG_VALUE ? '' : val })
+              }
+              disabled={!hasCredentials && !savedName}
+            >
+              <SelectTrigger id="page-config-name">
+                <SelectValue placeholder={hasCredentials ? t('selectConfigName') : t('enterCredentialsFirst')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NO_CONFIG_VALUE}>{t('noConfigNameOption')}</SelectItem>
+                {configurations.map((name) => (
+                  <SelectItem key={name} value={name}>{name}</SelectItem>
+                ))}
+                {savedNameNotInList && (
+                  <SelectItem value={savedName}>
+                    {configurationsLoaded ? t('configNameNotInAccount', savedName) : savedName}
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+            {loadingConfigurations && (
+              <p className="sp-text-xs sp-text-muted-foreground sp-flex sp-items-center sp-gap-1">
+                <Loader2 className="sp-h-3 sp-w-3 sp-animate-spin" />
+                {t('loadingConfigNames')}
+              </p>
+            )}
+            {configurationsError && (
+              <p className="sp-text-xs sp-text-destructive">{configurationsError}</p>
+            )}
+            {configurationsLoaded && savedNameNotInList && (
+              <p className="sp-text-xs sp-text-destructive">{t('savedConfigNameMissing')}</p>
+            )}
+            {configurationsLoaded && configurations.length === 0 && (
+              <p className="sp-text-xs sp-text-muted-foreground">{t('noConfigNamesInAccount')}</p>
+            )}
+            {!hasCredentials && (
+              <p className="sp-text-xs sp-text-muted-foreground">
+                {t('enterCredentialsToLoadConfigNames')}
+              </p>
+            )}
             <p className="sp-text-xs sp-text-muted-foreground">
               {t('configNameDescription')}
             </p>
