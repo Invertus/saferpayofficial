@@ -96,9 +96,22 @@ class LegacyContext
     }
 
     /**
-     * @return \Mobile_Detect
+     * @return bool
      */
-    public function getMobileDetect(): \Mobile_Detect
+    public function isIosDevice(): bool
+    {
+        return (bool) $this->getContext()->getMobileDetect()->is('ios');
+    }
+
+    /**
+     * Core returns \Mobile_Detect up to PS 8 and \Detection\MobileDetect on PS 9,
+     * and a union type would not parse on the supported PHP 7.4 floor.
+     *
+     * @deprecated use isIosDevice()
+     *
+     * @return \Mobile_Detect|\Detection\MobileDetect
+     */
+    public function getMobileDetect()
     {
         return $this->getContext()->getMobileDetect();
     }
