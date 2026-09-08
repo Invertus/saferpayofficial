@@ -151,6 +151,12 @@ class PaymentFormAssetLoader
             'modules/' . $this->module->name . '/views/js/front/saferpay_saved_card.js'
         );
 
+        $controller->registerJavascript(
+            $this->module->name . '-opc-double-submit-guard',
+            'modules/' . $this->module->name . '/views/js/front/opc-double-submit-guard.js',
+            ['version' => $this->module->version]
+        );
+
         $controller->registerStylesheet(
             $this->module->name . '-checkout',
             'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css',
