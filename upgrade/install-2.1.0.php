@@ -27,13 +27,17 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_2_1_0($module)
+function upgrade_module_2_1_0(SaferPayOfficial $module)
 {
     saferpayofficial_2_1_0_delete_removed_tabs();
     saferpayofficial_2_1_0_delete_removed_files();
     saferpayofficial_2_1_0_delete_removed_configuration();
     saferpayofficial_2_1_0_add_payment_method_details();
     saferpayofficial_2_1_0_backfill_payment_method_details($module);
+    saferpayofficial_2_1_0_translate_tabs($module);
+    saferpayofficial_2_1_0_enable_card_grouping();
+    saferpayofficial_2_1_0_init_card_form_setting();
+    saferpayofficial_2_1_0_generate_fields_access_token($module);
 
     Tools::clearSmartyCache();
 
@@ -154,9 +158,146 @@ function saferpayofficial_2_1_0_delete_empty_directory($directory, $moduleDir)
     }
 }
 
+/**
+ * The API spec version is no longer stored in configuration, it now comes straight from
+ * SaferPayConfig::API_VERSION, so the HTTP header and the request body cannot disagree.
+ * Upgraded shops still carry the old rows, and the refund one was never migrated past the
+ * version it was first written at, so both are removed here to stop them being trusted.
+ */
 function saferpayofficial_2_1_0_delete_removed_configuration()
 {
     Configuration::deleteByName('SAFERPAY_HOSTED_FIELDS_TEMPLATE');
+    Configuration::deleteByName('SAFERPAY_SPEC_VERSION');
+    Configuration::deleteByName('SAFERPAY_SPEC_REFUND_VERSION');
+}
+
+/**
+ * Card brands are no longer offered one by one in the checkout. A shopper who picked a brand and
+ * then typed a card of another one had the payment approved by Saferpay but no order created, so
+ * the single "Cards" option becomes the way card payments render. Shops upgrading from an earlier
+ * version have the setting at 0 and would otherwise keep the per-brand list and the defect with it.
+ */
+function saferpayofficial_2_1_0_enable_card_grouping()
+{
+    Configuration::updateValue('SAFERPAY_GROUP_CARDS', 1);
+}
+
+/**
+ * The per-brand "Saferpay Fields" toggles are replaced by one "Use Saferpay Fields" setting.
+ * A shop where every toggle was off had deliberately chosen the Payment Page, so the new
+ * setting starts at 0 there; any active toggle, or a shop that never saw the toggles at all,
+ * starts on Fields, matching the behaviour of a fresh install.
+ */
+function saferpayofficial_2_1_0_init_card_form_setting()
+{
+    $rows = Db::getInstance()->executeS(
+        'SELECT `active` FROM `' . _DB_PREFIX_ . 'saferpay_field`'
+    );
+
+    $useFields = 1;
+
+    if (!empty($rows) && !in_array('1', array_column($rows, 'active'), false)) {
+        $useFields = 0;
+    }
+
+    Configuration::updateValue('SAFERPAY_USE_FIELDS', $useFields);
+}
+
+/**
+ * Saferpay Fields needs an access token that older versions only created when the merchant
+ * pressed the Generate button, so most upgraded shops have none and their card options would
+ * silently fall back to the Payment Page. The token is generated here from the stored
+ * credentials; a failure is only logged because the runtime fallback and the back office
+ * warning already cover a shop without a token.
+ */
+function saferpayofficial_2_1_0_generate_fields_access_token(SaferPayOfficial $module)
+{
+    foreach (['' => false, '_TEST' => true] as $suffix => $isTestMode) {
+        if (Configuration::get('SAFERPAY_FIELDS_ACCESS_TOKEN' . $suffix)) {
+            continue;
+        }
+
+        $username = Configuration::get('SAFERPAY_USERNAME' . $suffix);
+        $password = Configuration::get('SAFERPAY_PASSWORD' . $suffix);
+        $customerId = Configuration::get('SAFERPAY_CUSTOMER_ID' . $suffix);
+        $terminalId = Configuration::get('SAFERPAY_TERMINAL_ID' . $suffix);
+
+        if (!$username || !$password || !$customerId || !$terminalId) {
+            continue;
+        }
+
+        try {
+            $shopUrl = Context::getContext()->link
+                ? Context::getContext()->link->getBaseLink()
+                : Tools::getShopDomainSsl(true, true);
+
+            /** @var Invertus\SaferPay\Service\SaferPayGenerateFieldAccessToken $tokenGenerator */
+            $tokenGenerator = $module->getService(Invertus\SaferPay\Service\SaferPayGenerateFieldAccessToken::class);
+            $token = $tokenGenerator->generateWithCredentials(
+                $username,
+                $password,
+                $customerId,
+                $terminalId,
+                $isTestMode,
+                $shopUrl
+            );
+
+            if ($token) {
+                Configuration::updateValue('SAFERPAY_FIELDS_ACCESS_TOKEN' . $suffix, $token);
+            }
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
+                'Saferpay upgrade 2.1.0: could not generate Fields access token (' . ($isTestMode ? 'test' : 'live') . '): ' . $e->getMessage(),
+                2
+            );
+        }
+    }
+}
+
+/**
+ * Tab names are stored rows, so the ones written on an earlier install stay in the language of
+ * the employee who installed the module back then, and no dictionary shipped later reaches them.
+ * getTabs() now carries a name per language, so they can be rewritten here.
+ *
+ * A row is only rewritten while it still holds the English wording the module installed. Anything
+ * else is a rename the merchant made in Advanced Parameters and is left alone.
+ *
+ * @param SaferPayOfficial $module
+ */
+function saferpayofficial_2_1_0_translate_tabs($module)
+{
+    $languages = Language::getLanguages(false);
+
+    foreach ($module->getTabs() as $tabData) {
+        if (!is_array($tabData['name'])) {
+            continue;
+        }
+
+        $idTab = (int) Tab::getIdFromClassName($tabData['class_name']);
+
+        if (!$idTab) {
+            continue;
+        }
+
+        $tab = new Tab($idTab);
+        $installed = reset($tabData['name']);
+
+        foreach ($languages as $language) {
+            $idLang = (int) $language['id_lang'];
+
+            if (!isset($tabData['name'][$language['iso_code']], $tab->name[$idLang])) {
+                continue;
+            }
+
+            if ($tab->name[$idLang] !== $installed) {
+                continue;
+            }
+
+            $tab->name[$idLang] = $tabData['name'][$language['iso_code']];
+        }
+
+        $tab->save();
+    }
 }
 
 /**

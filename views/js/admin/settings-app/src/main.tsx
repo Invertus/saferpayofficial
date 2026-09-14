@@ -22,7 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const data = parseSettingsData()
   if (!data) {
-    rootEl.innerHTML = '<div style="padding:20px;color:#c00">Failed to load settings data.</div>'
+    const errorMessage = rootEl.dataset.errorMessage || 'Failed to load settings data.'
+    const errorEl = document.createElement('div')
+    errorEl.style.cssText = 'padding:20px;color:#c00'
+    errorEl.textContent = errorMessage
+    rootEl.replaceChildren(errorEl)
     return
   }
 

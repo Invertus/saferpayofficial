@@ -49,7 +49,7 @@ class SaferPayConfig
     const RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT = 'SAFERPAY_RESTRICT_REFUND_AMOUNT_TO_CAPTURED_AMOUNT';
     const CONFIGURATION_NAME = 'SAFERPAY_CONFIGURATION_NAME';
     const TEST_SUFFIX = '_TEST';
-    const API_VERSION = '1.50';
+    const API_VERSION = '1.53';
 
     const HOOKS = [
         'paymentOptions',
@@ -167,6 +167,7 @@ class SaferPayConfig
     ];
 
     const FIELD_SUPPORTED_PAYMENT_METHODS = [
+        self::PAYMENT_AMEX,
         self::PAYMENT_VISA,
         self::PAYMENT_VPAY,
         self::PAYMENT_MASTERCARD,
@@ -299,6 +300,7 @@ class SaferPayConfig
 
     const SAFERPAY_GROUP_CARDS = 'SAFERPAY_GROUP_CARDS';
     const SAFERPAY_GROUP_CARDS_LOGO = 'SAFERPAY_GROUP_CARDS_LOGO';
+    const SAFERPAY_USE_FIELDS = 'SAFERPAY_USE_FIELDS';
     /**
      * Card brands that can be grouped under 'Cards' method
      */
@@ -312,6 +314,21 @@ class SaferPayConfig
         self::PAYMENT_DINERS,
         self::PAYMENT_MYONE,
         self::PAYMENT_BANCONTACT,
+    ];
+
+    /**
+     * Brand names the Saferpay Fields SDK accepts in its paymentMethods option, which are not the
+     * module's own constants. VPAY and MYONE have no SDK equivalent, so an option covering either
+     * cannot be restricted in the browser at all.
+     */
+    public const FIELDS_SDK_BRANDS = [
+        self::PAYMENT_AMEX => 'amex',
+        self::PAYMENT_BANCONTACT => 'bancontact',
+        self::PAYMENT_DINERS => 'diners',
+        self::PAYMENT_JCB => 'jcb',
+        self::PAYMENT_MAESTRO => 'maestro',
+        self::PAYMENT_MASTERCARD => 'mastercard',
+        self::PAYMENT_VISA => 'visa',
     ];
 
     public static function supportsOrderCapture($paymentMethod)
@@ -431,8 +448,6 @@ class SaferPayConfig
     public static function getDefaultConfiguration()
     {
         return [
-            RequestHeader::SPEC_VERSION => SaferPayConfig::API_VERSION,
-            RequestHeader::SPEC_REFUND_VERSION => SaferPayConfig::API_VERSION,
             RequestHeader::RETRY_INDICATOR => 0,
             SaferPayConfig::PAYMENT_BEHAVIOR => 1,
             SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D => 0,
@@ -445,7 +460,8 @@ class SaferPayConfig
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
             self::SAFERPAY_SEND_ORDER_CONF_MAIL => 0,
-            self::SAFERPAY_GROUP_CARDS => 0,
+            self::SAFERPAY_GROUP_CARDS => 1,
+            self::SAFERPAY_USE_FIELDS => 1,
         ];
     }
 
@@ -480,6 +496,7 @@ class SaferPayConfig
             self::SAFERPAY_ORDER_ID_OPTION,
             self::SAFERPAY_SEND_ORDER_CONF_MAIL,
             self::SAFERPAY_GROUP_CARDS,
+            self::SAFERPAY_USE_FIELDS,
         ];
     }
 

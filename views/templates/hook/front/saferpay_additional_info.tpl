@@ -29,7 +29,7 @@
                 <input type="radio" name="saved_card_{$paymentMethod|escape:'htmlall':'UTF-8'}" value="{$savedCard['id_saferpay_card_alias']|escape:'htmlall':'UTF-8'}"
                        {if $selected }checked="checked" {$selected = 0}{/if}
                 >
-                <span>{$savedCard['card_number']|escape:'htmlall':'UTF-8'}</span>
+                <span>{if $showSavedCardBrand}{$savedCard['payment_method']|escape:'htmlall':'UTF-8'} {/if}{$savedCard['card_number']|escape:'htmlall':'UTF-8'}</span>
             </label>
         </div>
     {/foreach}
