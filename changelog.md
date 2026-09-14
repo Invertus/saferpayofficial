@@ -227,3 +227,5 @@
 - FO : Fixed issue when the payment behavior without 3-D Secure setting was ignored for orders paid through the grouped "Cards" option
 - FO : Fixed issue when the grouped "Cards" option ignored payment method country and currency restrictions
 - FO : Fixed issue when an order paid through the Saferpay hosted payment page stayed awaiting payment because the return page blocked the Saferpay notification
+- FO : Fixed issue when clicking Pay a second time on a one-page checkout interrupted the redirect to Saferpay, leaving the order in awaiting payment with an emptied cart
+- API update to V1.53: all payment and lookup calls now declare the current Saferpay API version

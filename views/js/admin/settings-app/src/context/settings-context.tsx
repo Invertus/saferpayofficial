@@ -15,6 +15,7 @@ interface SettingsContextValue {
   saveGeneralSettings: () => Promise<void>
   savePaymentMethods: () => Promise<void>
   fetchTerminals: (env: string, username: string, password: string) => Promise<TerminalOption[]>
+  fetchPaymentPageConfigurations: (env: string, username: string, password: string) => Promise<string[]>
   generateFieldAccessToken: () => Promise<{ success: boolean; message?: string; token?: string }>
   refreshPaymentMethods: () => Promise<void>
   paymentMethods: PaymentMethodData[]
@@ -196,6 +197,14 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     return result.terminals
   }, [])
 
+  const fetchPaymentPageConfigurations = useCallback(async (env: string, username: string, password: string) => {
+    const result = await api.getPaymentPageConfigurations(env, username, password)
+    if (!result.success) {
+      throw new Error(result.message || t('failedToFetchConfigNames'))
+    }
+    return result.configurations
+  }, [])
+
   const value = useMemo<SettingsContextValue>(() => ({
     settings,
     updateSettings,
@@ -205,6 +214,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     saveGeneralSettings,
     savePaymentMethods,
     fetchTerminals,
+    fetchPaymentPageConfigurations,
     generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
@@ -219,6 +229,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     saveGeneralSettings,
     savePaymentMethods,
     fetchTerminals,
+    fetchPaymentPageConfigurations,
     generateFieldAccessToken,
     refreshPaymentMethods,
     paymentMethods,
