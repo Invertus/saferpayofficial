@@ -31,6 +31,7 @@ use Invertus\SaferPay\Adapter\Configuration as SaferPayConfiguration;
 use Invertus\SaferPay\Service\SaferPayFieldCreator;
 use Invertus\SaferPay\Service\SaferPayGenerateFieldAccessToken;
 use Invertus\SaferPay\Service\SaferPayGetLicense;
+use Invertus\SaferPay\Service\SaferPayGetPaymentPageConfigurations;
 use Invertus\SaferPay\Service\SaferPayGetTerminals;
 use Invertus\SaferPay\Service\SaferPayLogoCreator;
 use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
@@ -60,6 +61,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         'saveGeneralSettings',
         'savePaymentMethods',
         'getTerminals',
+        'getPaymentPageConfigurations',
         'generateFieldAccessToken',
         'refreshData',
     ];
@@ -494,6 +496,44 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             ]);
         } catch (\Exception $e) {
             $this->ajaxResponse(false, $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME));
+        }
+    }
+
+    /**
+     * AJAX: Fetch the payment page configurations available to the account
+     */
+    public function ajaxProcessGetPaymentPageConfigurations()
+    {
+        $data = $this->getJsonInput();
+        $isTestMode = isset($data['env']) && $data['env'] === 'test';
+        $suffix = $isTestMode ? SaferPayConfig::TEST_SUFFIX : '';
+
+        $username = isset($data['username']) ? trim($data['username']) : '';
+        $password = isset($data['password']) ? $data['password'] : '';
+        $customerId = $this->parseCustomerIdFromUsername($username);
+
+        if ($password === self::PASSWORD_PLACEHOLDER) {
+            /** @var SaferPayConfiguration $configuration */
+            $configuration = $this->module->getService(SaferPayConfiguration::class);
+            $password = (string) $configuration->get(SaferPayConfig::PASSWORD . $suffix);
+        }
+
+        if (empty($username) || empty($password) || empty($customerId)) {
+            $this->ajaxResponse(false, $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME));
+            return;
+        }
+
+        try {
+            /** @var SaferPayGetPaymentPageConfigurations $getConfigurations */
+            $getConfigurations = $this->module->getService(SaferPayGetPaymentPageConfigurations::class);
+            $configurations = $getConfigurations->fetchConfigurationsWithCredentials($username, $password, $customerId, $isTestMode);
+
+            $this->sendJsonResponse([
+                'success' => true,
+                'configurations' => $configurations,
+            ]);
+        } catch (\Exception $e) {
+            $this->ajaxResponse(false, $this->module->l('Could not load payment page configurations. Please check your credentials and try again.', self::FILE_NAME));
         }
     }
 
