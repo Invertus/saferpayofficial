@@ -177,9 +177,18 @@ prepare-zip:
 ci-lint:
 	./vendor/bin/php-cs-fixer fix --diff --no-interaction --dry-run
 
-ci-phpstan:
-	# PHPStan version is PHP version-dependent, so we need to install it on the go depending on actual PHP version used by CI.
-	composer require phpstan/phpstan --dev --ignore-platform-reqs
+# PHPStan ships a phar, which is what this target runs. `composer require phpstan/phpstan`
+# re-resolves the whole dependency tree, and invertus/lock is declared with "no-api", so
+# resolving it clones over git - which the PrestaShop image can no longer install, Debian 11
+# being end of life. The phar also pins the version: the old command took whatever PHPStan
+# had released that morning, so an analyser release could turn a green branch red.
+PHPSTAN_VERSION := 2.2.14
+PHPSTAN_PHAR := tests/phpstan/phpstan-$(PHPSTAN_VERSION).phar
+
+$(PHPSTAN_PHAR):
+	curl -fsSL -o $@ https://github.com/phpstan/phpstan/releases/download/$(PHPSTAN_VERSION)/phpstan.phar
+
+ci-phpstan: $(PHPSTAN_PHAR)
 	ps_version=$(firstword $(subst -, ,$(ps_version_tag))); \
 	if [ -e tests/phpstan/phpstan-$$ps_version.neon ] ; then \
 		phpstan_config_path=tests/phpstan/phpstan-$$ps_version.neon ; \
@@ -187,4 +196,4 @@ ci-phpstan:
 		phpstan_config_path=tests/phpstan/phpstan.neon ; \
 	fi; \
 	echo Using PHPStan config: $$phpstan_config_path ; \
-	_PS_ROOT_DIR_=/var/www/html ./vendor/bin/phpstan --configuration=$$phpstan_config_path analyse
+	_PS_ROOT_DIR_=/var/www/html php $(PHPSTAN_PHAR) --configuration=$$phpstan_config_path analyse
