@@ -81,19 +81,26 @@ HEADER;
 
 $moduleDir = realpath(__DIR__ . '/../..');
 
-// Strings passed to l() through a variable at runtime (order state names,
-// Installer::createOrderStatus). They key under the bare module name.
+// Strings the extractor cannot see in a l() call: order state names reach l() through a
+// variable (Installer::createOrderStatus), and admin tab names are resolved from the
+// dictionary by AbstractInstaller::tabName() instead. Both key under the bare module name.
+$orderStateNames = 'src/Install/Installer.php (runtime variable, order state name)';
+$tabNames = 'src/Install/AbstractInstaller.php (resolved per language by tabName())';
 $manualStrings = [
-    'Payment completed by Saferpay',
-    'Payment authorized by Saferpay',
-    'Payment pending by Saferpay',
-    'Payment rejected by Saferpay',
-    'Awaiting Saferpay payment',
-    'Order Refunded by Saferpay',
-    'Order Partly Refunded by Saferpay',
-    'Order Pending Refund by Saferpay',
-    'Order Canceled by Saferpay',
-    'Order authorization failed by Saferpay',
+    'Payment completed by Saferpay' => $orderStateNames,
+    'Payment authorized by Saferpay' => $orderStateNames,
+    'Payment pending by Saferpay' => $orderStateNames,
+    'Payment rejected by Saferpay' => $orderStateNames,
+    'Awaiting Saferpay payment' => $orderStateNames,
+    'Order Refunded by Saferpay' => $orderStateNames,
+    'Order Partly Refunded by Saferpay' => $orderStateNames,
+    'Order Pending Refund by Saferpay' => $orderStateNames,
+    'Order Canceled by Saferpay' => $orderStateNames,
+    'Order authorization failed by Saferpay' => $orderStateNames,
+    'Settings' => $tabNames,
+    'Payments' => $tabNames,
+    'Order' => $tabNames,
+    'Logs' => $tabNames,
 ];
 
 $command = $argv[1] ?? '';
@@ -152,8 +159,8 @@ function extractCommand($moduleDir, $csvPath, array $manualStrings)
         extractFromTpl($file, $moduleDir, $entries, $skipped);
     }
 
-    foreach ($manualStrings as $string) {
-        addEntry($entries, MODULE_NAME, $string, 'src/Install/Installer.php (runtime variable, order state name)');
+    foreach ($manualStrings as $string => $occurrence) {
+        addEntry($entries, MODULE_NAME, $string, $occurrence);
     }
 
     $existing = readCsv($csvPath);
