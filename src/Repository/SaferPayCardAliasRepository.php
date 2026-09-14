@@ -32,13 +32,32 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayCardAliasRepository
 {
-    public function getSavedValidCardsByUserIdAndPaymentMethod($userId, $paymentMethod, $currentDate)
+    /**
+     * The grouped "Cards" option covers several brands at once, and an alias is always stored
+     * under the brand Saferpay reported, never under "CARD". The brand comes back with the row so
+     * the checkout can tell two saved cards of different brands apart.
+     *
+     * @param int $userId
+     * @param array $paymentMethods
+     * @param string $currentDate
+     *
+     * @return array
+     */
+    public function getSavedValidCardsByUserIdAndPaymentMethods($userId, array $paymentMethods, $currentDate)
     {
+        if (empty($paymentMethods)) {
+            return [];
+        }
+
+        $escapedMethods = array_map(function ($paymentMethod) {
+            return '"' . pSQL($paymentMethod) . '"';
+        }, $paymentMethods);
+
         $query = new DbQuery();
-        $query->select('`id_saferpay_card_alias`, `card_number`');
+        $query->select('`id_saferpay_card_alias`, `card_number`, `payment_method`');
         $query->from('saferpay_card_alias');
         $query->where('id_customer = ' . (int) $userId);
-        $query->where('payment_method = "' . pSQL($paymentMethod) . '"');
+        $query->where('payment_method IN (' . implode(', ', $escapedMethods) . ')');
         $query->where('valid_till > "' . pSQL($currentDate) . '"');
 
         return Db::getInstance()->executeS($query);
