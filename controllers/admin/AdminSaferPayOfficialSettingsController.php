@@ -22,13 +22,11 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayLogoRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
 use Invertus\SaferPay\Adapter\Configuration as SaferPayConfiguration;
-use Invertus\SaferPay\Service\SaferPayFieldCreator;
 use Invertus\SaferPay\Service\SaferPayGenerateFieldAccessToken;
 use Invertus\SaferPay\Service\SaferPayGetLicense;
 use Invertus\SaferPay\Service\SaferPayGetPaymentPageConfigurations;
@@ -99,9 +97,11 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::setMedia($isNewTheme);
 
+        // The bundle filename never changes between releases, so CDNs keep serving the
+        // previous version's build after an upgrade unless the URL carries the version.
         $distPath = 'modules/' . $this->module->name . '/views/js/admin/dist/';
-        $this->addJS($distPath . 'saferpay-settings.js');
-        $this->addCSS($distPath . 'saferpay-settings.css');
+        $this->addJS($distPath . 'saferpay-settings.js?v=' . $this->module->version);
+        $this->addCSS($distPath . 'saferpay-settings.css?v=' . $this->module->version);
     }
 
     public function initContent()
@@ -320,6 +320,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $configuration->set(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION, $this->getIntValue($data, 'orderCreationAfterAuth'));
         $configuration->set(SaferPayConfig::SAFERPAY_GROUP_CARDS, !empty($data['groupCards']) ? 1 : 0);
         $configuration->set(SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO, !empty($data['groupCardsLogo']) ? 1 : 0);
+        $configuration->set(SaferPayConfig::SAFERPAY_USE_FIELDS, !empty($data['useFields']) ? 1 : 0);
         $configuration->set(SaferPayConfig::CREDIT_CARD_SAVE, $this->getIntValue($data, 'creditCardSave'));
 
         // If credit card save disabled, clean up saved cards
@@ -409,9 +410,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         /** @var SaferPayLogoCreator $logoCreation */
         $logoCreation = $this->module->getService(SaferPayLogoCreator::class);
 
-        /** @var SaferPayFieldCreator $fieldCreation */
-        $fieldCreation = $this->module->getService(SaferPayFieldCreator::class);
-
         /** @var SaferPayRestrictionCreator $restrictionCreator */
         $restrictionCreator = $this->module->getService(SaferPayRestrictionCreator::class);
 
@@ -424,7 +422,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             $paymentName = $method['name'];
             $success = $paymentCreation->updatePayment($paymentName, !empty($method['enabled'])) && $success;
             $success = $logoCreation->updateLogo($paymentName, !empty($method['showLogos'])) && $success;
-            $success = $fieldCreation->updateField($paymentName, !empty($method['showCustomForm'])) && $success;
 
             try {
                 $countries = isset($method['countries']) ? $method['countries'] : [];
@@ -614,6 +611,11 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         // Resolved before the payload is built because it sets $paymentMethodsFetchFailed.
         $paymentMethodsData = $this->getPaymentMethodsData();
 
+        $envSuffix = $configuration->get(SaferPayConfig::TEST_MODE) ? SaferPayConfig::TEST_SUFFIX : '';
+        $fieldsAccessTokenMissing = (bool) $configuration->get(SaferPayConfig::BUSINESS_LICENSE . $envSuffix)
+            && (bool) $configuration->get(SaferPayConfig::SAFERPAY_USE_FIELDS)
+            && !$configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . $envSuffix);
+
         $data = [
             // Environment
             'testMode' => (bool) $configuration->get(SaferPayConfig::TEST_MODE),
@@ -645,6 +647,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'orderCreationAfterAuth' => (int) $configuration->get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION),
             'groupCards' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_GROUP_CARDS),
             'groupCardsLogo' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_GROUP_CARDS_LOGO),
+            'useFields' => (bool) $configuration->get(SaferPayConfig::SAFERPAY_USE_FIELDS),
+            'fieldsAccessTokenMissing' => $fieldsAccessTokenMissing,
             'creditCardSave' => (int) $configuration->get(SaferPayConfig::CREDIT_CARD_SAVE),
 
             // Email
@@ -791,9 +795,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         /** @var SaferPayLogoRepository $logoRepository */
         $logoRepository = $this->module->getService(SaferPayLogoRepository::class);
 
-        /** @var SaferPayFieldRepository $fieldRepository */
-        $fieldRepository = $this->module->getService(SaferPayFieldRepository::class);
-
         /** @var SaferPayRestrictionRepository $restrictionRepository */
         $restrictionRepository = $this->module->getService(SaferPayRestrictionRepository::class);
 
@@ -807,8 +808,6 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'displayName' => $saferPayPaymentNotation->getForDisplay($paymentMethod),
                 'enabled' => (bool) $paymentRepository->isActiveByName($paymentMethod),
                 'showLogos' => (bool) $logoRepository->isActiveByName($paymentMethod),
-                'showCustomForm' => (bool) $fieldRepository->isActiveByName($paymentMethod),
-                'hasCustomForm' => in_array($paymentMethod, SaferPayConfig::FIELD_SUPPORTED_PAYMENT_METHODS),
                 'countries' => $restrictionRepository->getSelectedIdsByName(
                     $paymentMethod,
                     SaferPayRestrictionCreator::RESTRICTION_COUNTRY

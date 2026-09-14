@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader;
 use Invertus\SaferPay\Presenter\AdminOrderPagePresenter;
 use Invertus\SaferPay\Presenter\AssertPresenter;
+use Invertus\SaferPay\Provider\EnabledCardBrandsProvider;
 use Invertus\SaferPay\Provider\PaymentRedirectionProvider;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -261,6 +262,8 @@ Thank you for your patience!');
         $paymentRedirectionProvider = $this->getService(PaymentRedirectionProvider::class);
         /** @var LegacyTranslator $translator */
         $translator = $this->getService(LegacyTranslator::class);
+        /** @var EnabledCardBrandsProvider $enabledCardBrandsProvider */
+        $enabledCardBrandsProvider = $this->getService(EnabledCardBrandsProvider::class);
 
         $isBusinessLicenseEnabled = Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
         $isCreditCardSavingEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
@@ -289,7 +292,7 @@ Thank you for your patience!');
             $isCreditCard = in_array(
                 $paymentMethod['paymentMethod'],
                 SaferPayConfig::TRANSACTION_METHODS
-            );
+            ) || $paymentMethod['paymentMethod'] === SaferPayConfig::PAYMENT_CARDS;
 
             $selectedCard = 0;
             $isCreditCardSavingEnabledForUser = $isCreditCardSavingEnabled;
@@ -319,9 +322,15 @@ Thank you for your patience!');
             if ($isCreditCardSavingEnabledForUser && $isCreditCard && $isBusinessLicenseEnabled) {
                 $currentDate = date('Y-m-d h:i:s');
 
-                $savedCards = $cardAliasRepository->getSavedValidCardsByUserIdAndPaymentMethod(
+                // Aliases are stored under the brand Saferpay reported, so the grouped "Cards"
+                // option has to look up every brand it stands for, not its own "CARD" name.
+                $savedCardBrands = $paymentMethod['paymentMethod'] === SaferPayConfig::PAYMENT_CARDS
+                    ? $enabledCardBrandsProvider->get()
+                    : [$paymentMethod['paymentMethod']];
+
+                $savedCards = $cardAliasRepository->getSavedValidCardsByUserIdAndPaymentMethods(
                     $this->context->customer->id,
-                    $paymentMethod['paymentMethod'],
+                    $savedCardBrands,
                     $currentDate
                 );
 
@@ -329,6 +338,7 @@ Thank you for your patience!');
                     [
                         'savedCards' => $savedCards,
                         'paymentMethod' => $paymentMethod['paymentMethod'],
+                        'showSavedCardBrand' => $paymentMethod['paymentMethod'] === SaferPayConfig::PAYMENT_CARDS,
                     ]
                 );
 
