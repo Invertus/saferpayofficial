@@ -150,7 +150,15 @@ function saferpayofficial_2_1_0_delete_empty_directory($directory, $moduleDir)
     }
 }
 
+/**
+ * The API spec version is no longer stored in configuration, it now comes straight from
+ * SaferPayConfig::API_VERSION, so the HTTP header and the request body cannot disagree.
+ * Upgraded shops still carry the old rows, and the refund one was never migrated past the
+ * version it was first written at, so both are removed here to stop them being trusted.
+ */
 function saferpayofficial_2_1_0_delete_removed_configuration()
 {
     Configuration::deleteByName('SAFERPAY_HOSTED_FIELDS_TEMPLATE');
+    Configuration::deleteByName('SAFERPAY_SPEC_VERSION');
+    Configuration::deleteByName('SAFERPAY_SPEC_REFUND_VERSION');
 }
