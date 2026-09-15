@@ -43,9 +43,12 @@ jobs:
             -v ${{ github.workspace }}:/var/www/html/modules/${{ env.ps-module-name }} \
             --entrypoint tail prestashop/prestashop:${{ matrix.PS }} -f /dev/null
 
-      - name: Install git and composer in container
+      # No apt here on purpose. The image is Debian 11, which is end of life: its apt index
+      # still advertises packages the security pool no longer serves, so installing anything
+      # fails on a 404. Nothing in lint or phpstan needs git any more - composer installs
+      # every package from the dist archives recorded in composer.lock.
+      - name: Install composer in container
         run: |
-          docker exec -i ${{ env.container-name }} bash -c "apt-get update -qq && apt-get install -y -qq git"
           docker exec -i ${{ env.container-name }} bash -c "php -r \"copy('https://getcomposer.org/installer', '/tmp/composer-setup.php');\" && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer --quiet && composer --version"
 
       - name: Install composer dependencies
