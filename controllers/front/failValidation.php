@@ -77,12 +77,10 @@ class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferP
         $saferPayOrder->update();
 
         $cartDuplicationService->restoreCart($cartId);
-        $isBusinessLicence = Tools::getValue(\Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE);
-        $controller = $isBusinessLicence ? 'failIFrame' : 'fail';
 
         $failUrl = $this->context->link->getModuleLink(
             $this->module->name,
-            $controller,
+            'fail',
             [
                 'cartId' => $cartId,
                 'secureKey' => $secureKey,

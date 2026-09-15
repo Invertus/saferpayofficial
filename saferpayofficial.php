@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader;
 use Invertus\SaferPay\Presenter\AdminOrderPagePresenter;
 use Invertus\SaferPay\Presenter\AssertPresenter;
+use Invertus\SaferPay\Provider\EnabledCardBrandsProvider;
 use Invertus\SaferPay\Provider\PaymentRedirectionProvider;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -38,9 +39,8 @@ use Invertus\SaferPay\Install\Installer;
 use Invertus\SaferPay\Install\Uninstaller;
 use Invertus\SaferPay\Service\SaferPayCartService;
 use Invertus\SaferPay\Provider\PaymentTypeProvider;
-use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
+use Invertus\SaferPay\Service\SaferPayStoredPaymentMethods;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation;
 use Invertus\SaferPay\Provider\CurrencyProvider;
 use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
@@ -55,7 +55,6 @@ class SaferPayOfficial extends PaymentModule
     const ADMIN_SAFERPAY_MODULE_CONTROLLER = 'AdminSaferPayOfficialModule';
     const ADMIN_SETTINGS_CONTROLLER = 'AdminSaferPayOfficialSettings';
     const ADMIN_PAYMENTS_CONTROLLER = 'AdminSaferPayOfficialPayment';
-    const ADMIN_FIELDS_CONTROLLER = 'AdminSaferPayOfficialFields';
     const ADMIN_ORDER_CONTROLLER = 'AdminSaferPayOfficialOrder';
     const ADMIN_LOGS_CONTROLLER = 'AdminSaferPayOfficialLogs';
 
@@ -68,7 +67,7 @@ class SaferPayOfficial extends PaymentModule
     {
         $this->name = 'saferpayofficial';
         $this->author = 'Invertus';
-        $this->version = '2.0.3';
+        $this->version = '2.1.0';
         $this->module_key = '3d3506c3e184a1fe63b936b82bda1bdf';
         $this->displayName = 'SaferpayOfficial';
         $this->description = 'Saferpay Payment module';
@@ -218,14 +217,17 @@ Thank you for your patience!');
         /** @var PaymentTypeProvider $paymentTypeProvider */
         $paymentTypeProvider = $this->getService(PaymentTypeProvider::class);
 
-        /** @var SaferPayObtainPaymentMethods $obtainPaymentMethods */
-        $obtainPaymentMethods = $this->getService(SaferPayObtainPaymentMethods::class);
+        /** @var SaferPayStoredPaymentMethods $storedPaymentMethods */
+        $storedPaymentMethods = $this->getService(SaferPayStoredPaymentMethods::class);
         /** @var SaferPayPaymentRepository $paymentRepository */
         $paymentRepository = $this->getService(SaferPayPaymentRepository::class);
 
-        try {
-            $paymentMethods = $obtainPaymentMethods->obtainPaymentMethods();
-        } catch (SaferPayApiException $exception) {
+        // Read the account's payment methods from storage. PrestaShop re-renders the payment
+        // step over AJAX on every address and carrier change, so calling the Management API
+        // here meant several GetTerminal calls per order.
+        $paymentMethods = $storedPaymentMethods->getPaymentMethods();
+
+        if (empty($paymentMethods)) {
             return [];
         }
 
@@ -262,6 +264,8 @@ Thank you for your patience!');
         $paymentRedirectionProvider = $this->getService(PaymentRedirectionProvider::class);
         /** @var LegacyTranslator $translator */
         $translator = $this->getService(LegacyTranslator::class);
+        /** @var EnabledCardBrandsProvider $enabledCardBrandsProvider */
+        $enabledCardBrandsProvider = $this->getService(EnabledCardBrandsProvider::class);
 
         $isBusinessLicenseEnabled = Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix());
         $isCreditCardSavingEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
@@ -290,7 +294,7 @@ Thank you for your patience!');
             $isCreditCard = in_array(
                 $paymentMethod['paymentMethod'],
                 SaferPayConfig::TRANSACTION_METHODS
-            );
+            ) || $paymentMethod['paymentMethod'] === SaferPayConfig::PAYMENT_CARDS;
 
             $selectedCard = 0;
             $isCreditCardSavingEnabledForUser = $isCreditCardSavingEnabled;
@@ -320,9 +324,15 @@ Thank you for your patience!');
             if ($isCreditCardSavingEnabledForUser && $isCreditCard && $isBusinessLicenseEnabled) {
                 $currentDate = date('Y-m-d h:i:s');
 
-                $savedCards = $cardAliasRepository->getSavedValidCardsByUserIdAndPaymentMethod(
+                // Aliases are stored under the brand Saferpay reported, so the grouped "Cards"
+                // option has to look up every brand it stands for, not its own "CARD" name.
+                $savedCardBrands = $paymentMethod['paymentMethod'] === SaferPayConfig::PAYMENT_CARDS
+                    ? $enabledCardBrandsProvider->get()
+                    : [$paymentMethod['paymentMethod']];
+
+                $savedCards = $cardAliasRepository->getSavedValidCardsByUserIdAndPaymentMethods(
                     $this->context->customer->id,
-                    $paymentMethod['paymentMethod'],
+                    $savedCardBrands,
                     $currentDate
                 );
 
@@ -330,6 +340,7 @@ Thank you for your patience!');
                     [
                         'savedCards' => $savedCards,
                         'paymentMethod' => $paymentMethod['paymentMethod'],
+                        'showSavedCardBrand' => $paymentMethod['paymentMethod'] === SaferPayConfig::PAYMENT_CARDS,
                     ]
                 );
 

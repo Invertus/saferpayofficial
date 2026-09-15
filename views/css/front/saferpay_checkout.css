@@ -51,3 +51,107 @@ input[type="radio"][name^="saved_card_"] {
     vertical-align: middle !important;
     margin: 0 !important;
 }
+
+/* Saferpay payment-page outlined style: each card field is a fieldset whose legend sits
+   in a notch on the top border. The card inputs themselves are cross-origin iframes —
+   their inner styling ships in saferpay-fields-inner.css (loaded into the iframes through
+   the SDK cssUrl option) — so the visible outline and label are drawn here, on our own
+   fieldset/legend elements. */
+.saferpay-inline-fields {
+    max-width: 460px;
+    padding: 8px 0;
+}
+
+.saferpay-inline-fields .saferpay-field {
+    min-inline-size: auto;
+    margin: 0 0 14px;
+    padding: 0 12px 2px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color .15s ease-in-out;
+}
+
+/* Theme resets: PrestaShop/Bootstrap style legends as full-width block headings. */
+.saferpay-inline-fields .saferpay-field legend {
+    float: none;
+    display: block;
+    width: auto;
+    margin: 0 0 0 -4px;
+    padding: 0 4px;
+    border: none;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1;
+    color: #6f7379;
+    transition: color .15s ease-in-out;
+}
+
+/* Pre-init placeholder the SDK replaces with its iframe. Same height as the iframe
+   (the SDK sizes the iframe from the placeholder, and a 0-height placeholder would
+   yield a 0-height iframe), so nothing flashes or shifts while the fields load. */
+.saferpay-inline-fields .saferpay-field-placeholder {
+    height: 38px;
+}
+
+.saferpay-inline-fields iframe {
+    display: block;
+    width: 100%;
+    border: none;
+    box-sizing: border-box;
+    background: transparent;
+    opacity: 1;
+    transition: opacity .2s ease-in;
+}
+
+/* While the SDK initialises, each iframe briefly paints with its default input styling
+   before our injected stylesheet applies — keep the iframes invisible until the SDK's
+   init onSuccess lifts this class, leaving the outlined fieldsets as loading skeleton.
+   An invisible iframe still takes clicks and keystrokes, so without pointer-events a
+   customer clicking a field during init focuses and types into a field they cannot see:
+   no caret, no characters, and the field reads as broken. */
+.saferpay-inline-fields.saferpay-fields-loading iframe {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Two states where a field is drawn but cannot be typed into: while the SDK initialises, and
+   while the SDK holds the CVC disabled until the card number passes its CheckCard lookup (the
+   inner input is muted through the injected :disabled rule, see inline-fields.js). Muting the
+   outline and label too means the field reads as unavailable before it is clicked instead of
+   after. Declared ahead of the focus/error rules below so both still take precedence. */
+.saferpay-inline-fields.saferpay-fields-loading .saferpay-field,
+.saferpay-inline-fields .saferpay-field.is-locked {
+    border-color: #e0e0e0;
+    background: #f7f8f8;
+}
+
+.saferpay-inline-fields.saferpay-fields-loading .saferpay-field legend,
+.saferpay-inline-fields .saferpay-field.is-locked legend {
+    color: #9aa4a8;
+}
+
+.saferpay-inline-fields.saferpay-fields-loading .saferpay-field {
+    cursor: progress;
+}
+
+/* Focus feedback: the SDK's own focus styling is cleared (it shrank the field), so the
+   Saferpay accent colour is applied to the field outline and its label instead. Colour
+   only, no inset shadow — a shadow on the fieldset would draw a line across the legend
+   notch in the top border. */
+.saferpay-inline-fields .saferpay-field.is-focused {
+    border-color: rgb(39, 119, 119);
+}
+
+.saferpay-inline-fields .saferpay-field.is-focused legend {
+    color: rgb(39, 119, 119);
+}
+
+/* Highlight a field whose contents are invalid/missing (takes precedence over focus). */
+.saferpay-inline-fields .saferpay-field.has-error {
+    border-color: #e74c3c;
+}
+
+.saferpay-inline-fields .saferpay-field.has-error legend {
+    color: #e74c3c;
+}

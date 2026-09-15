@@ -21,7 +21,8 @@
  *}
 <h2>{l s='Awaiting payment status' mod='saferpayofficial'}</h2>
 <div id="saferpay-await-config" data-status-endpoint="{$checkStatusEndpoint|escape:'htmlall':'UTF-8'}"></div>
-<div class="saferpay-spinner">
+<div class="saferpay-spinner" role="status" aria-live="polite">
+    <span class="sr-only">{l s='Loading, please wait' mod='saferpayofficial'}</span>
     <div class="rect1"></div>
     <div class="rect2"></div>
     <div class="rect3"></div>
@@ -99,7 +100,11 @@
                 try {
                     var data = JSON.parse(request.responseText);
                     if (data.isFinished && data.href) {
-                        window.location.href = data.href;
+                        try {
+                            (window.top || window).location.replace(data.href);
+                        } catch (e) {
+                            window.location.replace(data.href);
+                        }
                         return;
                     }
                 } catch (e) {

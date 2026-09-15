@@ -41,11 +41,6 @@ function upgrade_module_1_0_3($module)
         \Invertus\SaferPay\Config\SaferPayConfig::TEST_SUFFIX,
         \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE
     );
-    Configuration::updateValue(
-        \Invertus\SaferPay\Config\SaferPayConfig::HOSTED_FIELDS_TEMPLATE,
-        \Invertus\SaferPay\Config\SaferPayConfig::HOSTED_FIELDS_TEMPLATE_DEFAULT
-    );
-
     $result &= Db::getInstance()->execute(
         'ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_log 
             MODIFY COLUMN message TEXT NOT NULL,
@@ -55,13 +50,6 @@ function upgrade_module_1_0_3($module)
     $result &= Db::getInstance()->execute(
         'ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_assert
         ADD COLUMN `authorized` TINYINT(1) DEFAULT 0'
-    );
-
-    $installer = new \Invertus\SaferPay\Install\Installer($module);
-    $installer->installTab(
-        SaferPayOfficial::ADMIN_FIELDS_CONTROLLER,
-        SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
-        $module->l('Fields')
     );
 
     return $result;

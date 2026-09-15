@@ -36,8 +36,8 @@
         <input type="hidden" class="saved_card_method" name="isBusinessLicence" value="1">
         <input type="hidden" name="saferpayPaymentType" value="{$saferpayPaymentType|escape:'htmlall':'UTF-8'}">
 
-        <a type="submit" class="btn btn-default button button-medium" onclick="$(this).closest('form').submit();">
+        <button type="submit" class="btn btn-default button button-medium">
             <span>{l s='Pay' mod='saferpayofficial'}<i class="icon-chevron-right right"></i></span>
-        </a>
+        </button>
     </form>
 </div>
