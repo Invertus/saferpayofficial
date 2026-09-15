@@ -33,15 +33,11 @@ class ControllerName
     const CREDIT_CARDS = 'creditCards';
     const CREDIT_CARDS_16 = 'creditCards16';
     const FAIL = 'fail';
-    const FAIL_IFRAME = 'failIFrame';
     const FAIL_VALIDATION = 'failValidation';
-    const HOSTED_IFRAME = 'hostedIframe';
-    const IFRAME = 'iframe';
     const NOTIFY = 'notify';
     const PENDING_NOTIFY = 'pendingNotify';
     const SUCCESS = 'success';
     const SUCCESS_HOSTED = 'successHosted';
-    const SUCCESS_IFRAME = 'successIFrame';
     const VALIDATION = 'validation';
     const RETURN_URL = 'return';
 }

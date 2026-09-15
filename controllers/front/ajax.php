@@ -106,7 +106,7 @@ class SaferPayOfficialAjaxModuleFrontController extends AbstractSaferPayControll
             'isFinished' => $saferPayOrder->authorized || $saferPayOrder->captured || $saferPayOrder->pending,
             'href' => $this->context->link->getModuleLink(
                 $this->module->name,
-                $this->getSuccessControllerName($isBusinessLicence, $fieldToken),
+                $this->getSuccessControllerName($isBusinessLicence, $fieldToken, (int) $selectedCard > 0),
                 [
                     'cartId' => $cartId,
                     'orderId' => $saferPayOrder->id_order,
@@ -132,19 +132,13 @@ class SaferPayOfficialAjaxModuleFrontController extends AbstractSaferPayControll
         );
     }
 
-    private function getSuccessControllerName($isBusinessLicence, $fieldToken)
+    private function getSuccessControllerName($isBusinessLicence, $fieldToken, $usingSavedCard)
     {
-        $successController = ControllerName::SUCCESS;
-
-        if ($isBusinessLicence) {
-            $successController = ControllerName::SUCCESS_IFRAME;
+        if ($fieldToken || $usingSavedCard) {
+            return ControllerName::SUCCESS_HOSTED;
         }
 
-        if ($fieldToken) {
-            $successController = ControllerName::SUCCESS_HOSTED;
-        }
-
-        return $successController;
+        return ControllerName::SUCCESS;
     }
 
     private function submitHostedFields()

@@ -24,7 +24,11 @@
 namespace Invertus\SaferPay\Tests\Unit\Service\PaymentRestrictionValidation;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
+use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\BasePaymentRestrictionValidation;
+use Invertus\SaferPay\Service\SaferPayObtainPaymentMethods;
+use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use Invertus\SaferPay\Tests\Unit\Tools\UnitTestCase;
 
 class BasePaymentRestrictionValidationTest extends UnitTestCase
@@ -41,7 +45,8 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
         $basePaymentRestrictionValidation = new BasePaymentRestrictionValidation(
             $this->mockContext('AT', 'AUD'),
             $this->getPaymentRepositoryMock($paymentName, $paymentResults),
-            $this->getRestrictionRepositoryMock($paymentName, $restrictionResults)
+            $this->getRestrictionRepositoryMock($paymentName, $restrictionResults),
+            $this->getObtainPaymentMethodsMock()
         );
         $this->assertEquals($expectedResult, $basePaymentRestrictionValidation->isValid($paymentName));
     }
@@ -113,5 +118,96 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                 'expectedResult' => false,
             ],
         ];
+    }
+
+    /**
+     * @dataProvider getGroupedCardsDataProvider
+     */
+    public function testItValidatesGroupedCardsThroughTheBrandsBehindThem(
+        $enabledBrands,
+        $enabledCountries,
+        $expectedResult
+    ) {
+        $basePaymentRestrictionValidation = new BasePaymentRestrictionValidation(
+            $this->mockContext('AT', 'AUD'),
+            $this->getBrandPaymentRepositoryMock($enabledBrands),
+            $this->getBrandRestrictionRepositoryMock($enabledCountries),
+            $this->getObtainPaymentMethodsMock()
+        );
+
+        $this->assertEquals(
+            $expectedResult,
+            $basePaymentRestrictionValidation->isValid(SaferPayConfig::PAYMENT_CARDS)
+        );
+    }
+
+    public function getGroupedCardsDataProvider()
+    {
+        return [
+            [
+                'enabledBrands' => [SaferPayConfig::PAYMENT_VISA],
+                'enabledCountries' => [0], //ALL COUNTRIES
+                'expectedResult' => true,
+            ],
+            [
+                'enabledBrands' => SaferPayConfig::CARD_BRANDS,
+                'enabledCountries' => [0], //ALL COUNTRIES
+                'expectedResult' => true,
+            ],
+            [
+                'enabledBrands' => [], //EVERY BRAND DISABLED
+                'enabledCountries' => [0], //ALL COUNTRIES
+                'expectedResult' => false,
+            ],
+            [
+                'enabledBrands' => SaferPayConfig::CARD_BRANDS,
+                'enabledCountries' => [], //NO COUNTRIES
+                'expectedResult' => false,
+            ],
+        ];
+    }
+
+    private function getBrandPaymentRepositoryMock(array $enabledBrands)
+    {
+        $paymentRepositoryMock = $this
+            ->getMockBuilder(SaferPayPaymentRepository::class)
+            ->getMock();
+
+        $paymentRepositoryMock
+            ->method('isActiveByName')
+            ->willReturnCallback(function ($paymentName) use ($enabledBrands) {
+                return in_array($paymentName, $enabledBrands, true);
+            })
+        ;
+
+        return $paymentRepositoryMock;
+    }
+
+    private function getBrandRestrictionRepositoryMock(array $enabledCountries)
+    {
+        $restrictionMock = $this
+            ->getMockBuilder(SaferPayRestrictionRepository::class)
+            ->getMock();
+
+        $restrictionMock
+            ->method('getSelectedIdsByName')
+            ->willReturnCallback(function ($paymentName, $restrictionType) use ($enabledCountries) {
+                if ($restrictionType === SaferPayRestrictionCreator::RESTRICTION_COUNTRY) {
+                    return $enabledCountries;
+                }
+
+                return [0]; //ALL CURRENCIES
+            })
+        ;
+
+        return $restrictionMock;
+    }
+
+    private function getObtainPaymentMethodsMock()
+    {
+        return $this
+            ->getMockBuilder(SaferPayObtainPaymentMethods::class)
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

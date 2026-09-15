@@ -27,8 +27,6 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_0_2($module)
 {
-    Configuration::updateValue(\Invertus\SaferPay\Config\SaferPayConfig::SAFERPAY_SEND_ORDER_CONFIRMATION, 1);
-
     $module->registerHook('actionEmailSendBefore');
 
     return true;

@@ -30,6 +30,5 @@ if (!defined('_PS_VERSION_')) {
 class PaymentType
 {
     const BASIC = 'basic';
-    const IFRAME = 'iframe';
     const HOSTED_IFRAME = 'hosted_iframe';
 }

@@ -28,6 +28,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Enum\PaymentType;
 use Invertus\SaferPay\Factory\ModuleFactory;
+use Invertus\SaferPay\Provider\EnabledCardBrandsProvider;
 use Invertus\SaferPay\Provider\OpcModulesProvider;
 use Invertus\SaferPay\Service\SaferPayErrorDisplayService;
 use Media;
@@ -46,12 +47,19 @@ class PaymentFormAssetLoader
     private $context;
     /** @var OpcModulesProvider $opcModuleProvider */
     private $opcModulesProvider;
+    /** @var EnabledCardBrandsProvider */
+    private $enabledCardBrandsProvider;
 
-    public function __construct(ModuleFactory $module, LegacyContext $context, OpcModulesProvider $opcModulesProvider)
-    {
+    public function __construct(
+        ModuleFactory $module,
+        LegacyContext $context,
+        OpcModulesProvider $opcModulesProvider,
+        EnabledCardBrandsProvider $enabledCardBrandsProvider
+    ) {
         $this->module = $module->getModule();
         $this->context = $context;
         $this->opcModulesProvider = $opcModulesProvider;
+        $this->enabledCardBrandsProvider = $enabledCardBrandsProvider;
     }
 
     public function register($controller)
@@ -60,7 +68,6 @@ class PaymentFormAssetLoader
             'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
             'saferpay_payment_types' => [
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
-                'iframe' => PaymentType::IFRAME,
                 'basic' => PaymentType::BASIC,
             ],
         ]);
@@ -152,10 +159,117 @@ class PaymentFormAssetLoader
             'modules/' . $this->module->name . '/views/js/front/saferpay_saved_card.js'
         );
 
+        $controller->registerJavascript(
+            $this->module->name . '-opc-double-submit-guard',
+            'modules/' . $this->module->name . '/views/js/front/opc-double-submit-guard.js',
+            ['version' => $this->module->version]
+        );
+
         $controller->registerStylesheet(
             $this->module->name . '-checkout',
-            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
+            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css',
+            ['version' => $this->module->version]
         );
+
+        $this->registerInlineFieldsAssets($controller);
+    }
+
+    /**
+     * Registers the Saferpay Fields SDK + inline renderer so Custom-Form cards show their
+     * card form inline in the default checkout instead of redirecting to a hosted page.
+     * Only relevant when the account has Fields (Business licence) and a field access token.
+     *
+     * @param OrderControllerCore $controller
+     */
+    private function registerInlineFieldsAssets($controller)
+    {
+        if (!\Configuration::get(SaferPayConfig::BUSINESS_LICENSE . SaferPayConfig::getConfigSuffix())) {
+            return;
+        }
+
+        if (!\Configuration::get(SaferPayConfig::SAFERPAY_USE_FIELDS)) {
+            return;
+        }
+
+        if (!SaferPayConfig::getFieldAccessToken()) {
+            return;
+        }
+
+        Media::addJsDef([
+            'saferpay_field_access_token' => SaferPayConfig::getFieldAccessToken(),
+            'saferpay_field_url' => SaferPayConfig::getFieldUrl(),
+            'holder_name' => $this->module->l('Holder name', 'PaymentFormAssetLoader'),
+            'saferpay_internal_error' => $this->module->l('An error occurred while processing the card, please try again.', 'PaymentFormAssetLoader'),
+            'saferpay_fields_incomplete_error' => $this->module->l('Please check the following:', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_cardnumber' => $this->module->l('Card number', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_expiration' => $this->module->l('Expiry date', 'PaymentFormAssetLoader'),
+            'saferpay_field_label_cvc' => $this->module->l('CVC', 'PaymentFormAssetLoader'),
+            'saferpay_field_payment_methods' => $this->getFieldPaymentMethods(),
+        ]);
+
+        $controller->registerJavascript(
+            'remote-saferpay-fields-js-lib',
+            SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE,
+            ['server' => 'remote', 'position' => 'bottom', 'priority' => 20]
+        );
+
+        $controller->registerJavascript(
+            $this->module->name . '-inline-fields',
+            'modules/' . $this->module->name . '/views/js/front/inline-fields.js',
+            ['position' => 'bottom', 'priority' => 21, 'version' => $this->module->version]
+        );
+    }
+
+    /**
+     * Which card brands the Fields form may accept, keyed by the checkout option that renders it.
+     * A brand typed into an option that does not list it is rejected by the SDK before submit,
+     * which is what stops a Mastercard being paid under a Visa-only option.
+     *
+     * @return array
+     */
+    private function getFieldPaymentMethods()
+    {
+        $enabledBrands = $this->enabledCardBrandsProvider->get();
+        $methods = [];
+
+        foreach ($enabledBrands as $brand) {
+            if (!isset(SaferPayConfig::FIELDS_SDK_BRANDS[$brand])) {
+                continue;
+            }
+
+            $methods[$brand] = [SaferPayConfig::FIELDS_SDK_BRANDS[$brand]];
+        }
+
+        $groupedBrands = $this->getGroupedFieldBrands($enabledBrands);
+
+        if ($groupedBrands) {
+            $methods[SaferPayConfig::PAYMENT_CARDS] = $groupedBrands;
+        }
+
+        return $methods;
+    }
+
+    /**
+     * Empty as soon as one enabled brand has no SDK equivalent: a partial allowlist would decline
+     * a card Saferpay itself accepts, so the grouped option is left unrestricted instead.
+     *
+     * @param array $enabledBrands
+     *
+     * @return array
+     */
+    private function getGroupedFieldBrands(array $enabledBrands)
+    {
+        $brands = [];
+
+        foreach ($enabledBrands as $brand) {
+            if (!isset(SaferPayConfig::FIELDS_SDK_BRANDS[$brand])) {
+                return [];
+            }
+
+            $brands[] = SaferPayConfig::FIELDS_SDK_BRANDS[$brand];
+        }
+
+        return $brands;
     }
 
     public function registerErrorBags()
