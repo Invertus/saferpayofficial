@@ -73,7 +73,7 @@ class RefundRequest implements SaferPayRequestInterface
     {
         $return = [
             'RequestHeader' => [
-                'SpecVersion' => (string) Configuration::get(RequestHeader::SPEC_REFUND_VERSION),
+                'SpecVersion' => (string) $this->requestHeader->getSpecVersions(),
                 'CustomerId' => $this->requestHeader->getCustomerId(),
                 'RequestId' => $this->requestHeader->getRequestId(),
                 'RetryIndicator' => $this->requestHeader->getRetryIndicator(),
