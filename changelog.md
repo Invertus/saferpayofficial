@@ -197,31 +197,35 @@
 - Remove WL Crypto payment method
 - Added setting to toggle order confirmation email sending
 - Added feature to group card payment methods into unified "Card" payment method
-- Fixed issue when newly enabled payment methods did not appear in checkout because default "all countries/currencies" restriction was not created on save
-- Fixed issue when payment method country/currency dropdowns showed "0" instead of indicating that all countries/currencies are allowed
-- BO : Added validation for Merchant Emails field (frontend + backend) to prevent saving invalid addresses
 
 ## [2.0.3]
 - Optimized database performance
 - Dynamic termimal selection
 - Removed uneccesary inputs from admin settings
 - Checked overall module stability
+- API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT
 
 ## [2.1.0]
 - BO : Redesigned back-office settings into a React single-page admin
 - BO : Conditionally show/hide Saferpay Fields settings based on account license
 - BO : Replaced the per-brand "Saferpay Fields" toggles with a single "Use Saferpay Fields" setting, initialized from the old toggles during upgrade
+- BO : Added a payment page configuration selector filled with the configurations available on the Saferpay account
+- BO : Account payment methods are now reconciled against Saferpay when the settings page is opened and not only on save, falling back to the stored list when the account cannot be reached
+- BO : Added validation that blocks saving while the JSON API username or password is empty or rejected by Saferpay
+- BO : Added validation for Merchant Emails field (frontend + backend) to prevent saving invalid addresses
 - FO : Card payments automatically fall back to the Saferpay Payment Page when the Saferpay Fields access token is missing
 - Added automatic Saferpay Fields access token generation from stored API credentials during upgrade
 - BO/FO : Accessibility improvements for EAA / WCAG 2.1 AA compliance
 - Added configurable payment description and order reference on payment page
-- API update to V1.50: added WERO and GIFTCARD payment methods, removed deprecated GIROPAY/PAYDIREKT/SOFORT
+- BO/FO : Removed the Transaction Interface and the hosted Saferpay Fields page, card fields now render inline in the checkout and the no-JavaScript fallback for every payment method is the Saferpay Payment Page
 - BO/FO : Added German and French translations for all module texts
 - BO : Fixed issue when the module menu tabs stayed in English on German and French shops
 - BO : Fixed issue when a freshly installed module logged an account error before any API credentials were entered
 - BO : Fixed issue when the "Could not reach your Saferpay account" warning kept showing after payment methods had loaded successfully
 - Fixed issue when files removed in this version stayed on disk after an upgrade, leaving obsolete iframe checkout controllers reachable and re-creating obsolete menu tabs on module reset
 - BO : Fixed issue when a saved API password offered no visible way to enter a new one, and browser password manager icons covered the show/hide password control
+- Fixed issue when newly enabled payment methods did not appear in checkout because default "all countries/currencies" restriction was not created on save
+- Fixed issue when payment method country/currency dropdowns showed "0" instead of indicating that all countries/currencies are allowed
 - FO : Removed the Saferpay Management API call from the checkout, payment methods are now read from local storage
 - BO : Added a log entry when Saferpay stops offering a payment method, so a method disappearing from the settings and the checkout can be traced
 - FO : Replaced the per-brand card list in checkout with a single "Cards" option that accepts only the enabled brands, with saved cards and Saferpay Fields support
@@ -232,4 +236,9 @@
 - FO : Fixed issue when the grouped "Cards" option ignored payment method country and currency restrictions
 - FO : Fixed issue when an order paid through the Saferpay hosted payment page stayed awaiting payment because the return page blocked the Saferpay notification
 - FO : Fixed issue when clicking Pay a second time on a one-page checkout interrupted the redirect to Saferpay, leaving the order in awaiting payment with an emptied cart
+- Fixed issue when customer was redirected to order history instead of cart after aborting a Saferpay transaction
+- FO : Fixed issue when the Saferpay Fields CVC field looked editable while the card number was incomplete, showing no cursor and accepting no input
+- FO : Fixed issue when the Saferpay Fields card form accepted clicks and keystrokes while it was still loading, so the first characters typed were invisible and appeared to be lost
+- FO : Fixed issue when a rejected payment left the order stuck on awaiting payment and the checkout on an endless spinner, for shops that create the order before authorization
+- FO : Fixed issue when Apple Pay failed with a type error on PrestaShop 9 because of the changed mobile detection
 - API update to V1.53: all payment and lookup calls now declare the current Saferpay API version
