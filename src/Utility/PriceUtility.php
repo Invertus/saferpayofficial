@@ -31,10 +31,9 @@ class PriceUtility
 {
     /**
      * @param float $price
-     *
      * @return int
      */
-    public function convertToCents($price)
+    public function convertToCents($price): int
     {
         if (!is_numeric($price)) {
             throw new \InvalidArgumentException('Price must be numeric');

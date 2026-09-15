@@ -36,9 +36,17 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayObtainPaymentMethods
 {
     const FILE_NAME = 'SaferPayObtainPaymentMethods';
+    
+    /** @var ObtainPaymentMethodsService */
     private $obtainPaymentMethodsService;
+    
+    /** @var ObtainPaymentMethodsObjectCreator */
     private $obtainPaymentMethodsObjectCreator;
+    
+    /** @var SaferPayPaymentNotation */
     private $saferPayPaymentNotation;
+    
+    /** @var LoggerInterface */
     private $logger;
 
     public function __construct(
@@ -58,7 +66,7 @@ class SaferPayObtainPaymentMethods
         $paymentMethods = [];
 
         try {
-            // TODO: Fix this to return an object
+            /** @var \stdClass $paymentMethodsObject */
             $paymentMethodsObject = $this->obtainPaymentMethodsService->getPaymentMethods(
                 $this->obtainPaymentMethodsObjectCreator->create()
             );
@@ -83,7 +91,7 @@ class SaferPayObtainPaymentMethods
         }
 
         if (!empty($paymentMethodsObject->Wallets)) {
-            // TODO: Fix this to return an object (now error in IDE)
+            /** @var \stdClass $wallet */
             foreach ($paymentMethodsObject->Wallets as $wallet) {
                 $paymentMethods[$wallet->WalletName] = [
                     'paymentMethod' => $wallet->WalletName,

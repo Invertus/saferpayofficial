@@ -197,3 +197,9 @@
 - Remove WL Crypto payment method
 - Added setting to toggle order confirmation email sending
 - Added feature to group card payment methods into unified "Card" payment method
+
+## [2.0.3]
+- Optimized database performance
+- Dynamic termimal selection
+- Removed uneccesary inputs from admin settings
+- Checked overall module stability

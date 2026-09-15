@@ -44,7 +44,11 @@ class SaferPayCartService
         $this->module = $moduleFactory->getModule();
     }
 
-    public function isCurrencyAvailable(Cart $cart)
+    /**
+     * @param Cart $cart
+     * @return bool
+     */
+    public function isCurrencyAvailable(Cart $cart): bool
     {
         $currency_order = new Currency($cart->id_currency);
         $currencies_module = $this->module->getCurrency($cart->id_currency);

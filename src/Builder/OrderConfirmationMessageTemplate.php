@@ -72,8 +72,9 @@ class OrderConfirmationMessageTemplate
      * Sets Smarty From Given Param.
      *
      * @param \Smarty $smarty
+     * @return void
      */
-    public function setSmarty(\Smarty $smarty)
+    public function setSmarty(\Smarty $smarty): void
     {
         $this->smarty = $smarty;
     }
@@ -82,8 +83,9 @@ class OrderConfirmationMessageTemplate
      * Sets Order Message Template Class.
      *
      * @param string $orderMessageTemplateClass
+     * @return void
      */
-    public function setOrderMessageTemplateClass($orderMessageTemplateClass)
+    public function setOrderMessageTemplateClass(string $orderMessageTemplateClass): void
     {
         $this->orderMessageTemplateClass = $orderMessageTemplateClass;
     }
@@ -92,8 +94,9 @@ class OrderConfirmationMessageTemplate
      * Sets Order Message Text.
      *
      * @param string $orderMessageText
+     * @return void
      */
-    public function setOrderMessageText($orderMessageText)
+    public function setOrderMessageText(string $orderMessageText): void
     {
         $this->orderMessageText = $orderMessageText;
     }
@@ -103,7 +106,7 @@ class OrderConfirmationMessageTemplate
      *
      * @return array
      */
-    public function getSmartyParams()
+    public function getSmartyParams(): array
     {
         return [
             'orderMessageText' => $this->orderMessageText,
@@ -118,7 +121,7 @@ class OrderConfirmationMessageTemplate
      *
      * @throws \SmartyException
      */
-    public function getHtml()
+    public function getHtml(): string
     {
         $this->smarty->assign($this->getSmartyParams());
         return $this->smarty->fetch(

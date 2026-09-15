@@ -29,32 +29,55 @@ if (!defined('_PS_VERSION_')) {
 
 class VersionUtility
 {
-    public static function isPsVersionLessThan($version)
+    /**
+     * @param string $version
+     * @return bool
+     */
+    public static function isPsVersionLessThan($version): bool
     {
         return version_compare(_PS_VERSION_, $version, '<');
     }
 
-    public static function isPsVersionGreaterThan($version)
+    /**
+     * @param string $version
+     * @return bool
+     */
+    public static function isPsVersionGreaterThan($version): bool
     {
         return version_compare(_PS_VERSION_, $version, '>');
     }
 
-    public static function isPsVersionGreaterOrEqualTo($version)
+    /**
+     * @param string $version
+     * @return bool
+     */
+    public static function isPsVersionGreaterOrEqualTo($version): bool
     {
         return version_compare(_PS_VERSION_, $version, '>=');
     }
 
-    public static function isPsVersionLessThanOrEqualTo($version)
+    /**
+     * @param string $version
+     * @return bool
+     */
+    public static function isPsVersionLessThanOrEqualTo($version): bool
     {
         return version_compare(_PS_VERSION_, $version, '<=');
     }
 
-    public static function isPsVersionEqualTo($version)
+    /**
+     * @param string $version
+     * @return bool
+     */
+    public static function isPsVersionEqualTo($version): bool
     {
         return version_compare(_PS_VERSION_, $version, '=');
     }
 
-    public static function current()
+    /**
+     * @return string
+     */
+    public static function current(): string
     {
         return _PS_VERSION_;
     }

@@ -121,7 +121,7 @@ class SaferPayOrderStatusService
         $this->logger = $logger;
     }
 
-    public function setPending(Order $order)
+    public function setPending(Order $order): void
     {
         $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
         $saferPayOrder->pending = 1;
@@ -130,7 +130,7 @@ class SaferPayOrderStatusService
         $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
     }
 
-    public function setComplete(Order $order)
+    public function setComplete(Order $order): void
     {
         $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
         $saferPayOrder->captured = 1;
@@ -147,8 +147,11 @@ class SaferPayOrderStatusService
         $order->setCurrentState(_SAFERPAY_PAYMENT_COMPLETED_);
     }
 
-    /** TODO extract capture api code to different service like Assert for readability */
-    public function capture(Order $order, $refundedAmount = 0, $isRefund = false)
+    /**
+     * @NOTE: Consider extracting capture API logic to a dedicated service for improved readability.
+     * @see SaferPayTransactionAssertion for similar service pattern
+     */
+    public function capture(Order $order, int $refundedAmount = 0, bool $isRefund = false): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
@@ -220,7 +223,7 @@ class SaferPayOrderStatusService
         $saferPayAssert->update();
     }
 
-    public function cancel(Order $order)
+    public function cancel(Order $order): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
@@ -248,7 +251,7 @@ class SaferPayOrderStatusService
         $saferPayAssert->update();
     }
 
-    public function refund(Order $order, $refundedAmount)
+    public function refund(Order $order, float $refundedAmount): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
@@ -266,21 +269,6 @@ class SaferPayOrderStatusService
 
         $cart = new Cart($order->id_cart);
         $pendingNotification = null;
-        if ($saferPayAssert->payment_method === SaferPayConfig::PAYMENT_PAYDIREKT) {
-            $pendingNotify = $this->context->getLink()->getModuleLink(
-                $this->module->name,
-                ControllerName::PENDING_NOTIFY,
-                [
-                    'success' => 1,
-                    'cartId' => $cart->id,
-                    'orderId' => Order::getOrderByCartId($cart->id),
-                    'secureKey' => $cart->secure_key,
-                ],
-                true
-            );
-            $customer = new Customer($order->id_customer);
-            $pendingNotification = new PendingNotification($pendingNotify, [$customer->email]);
-        }
         $refundRequest = $this->refundRequestObjectCreator->create(
             $cart,
             $saferPayOrder->transaction_id,

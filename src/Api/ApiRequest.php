@@ -53,10 +53,10 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
-     * @return object|null
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function post($url, $params = [])
+    public function post(string $url, array $params = []): ?\stdClass
     {
         try {
             $response = Request::post(
@@ -87,13 +87,13 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
-     * @return array |null
+     * @return \stdClass|null
      * @throws Exception
      */
-    public function get($url, $params = [])
+    public function get(string $url, array $params = []): ?\stdClass
     {
         $response = null;
-        
+
         try {
             $response = Request::get(
                 $this->getBaseUrl() . $url,
@@ -127,7 +127,10 @@ class ApiRequest
         }
     }
 
-    private function getHeaders()
+    /**
+     * @return array
+     */
+    private function getHeaders(): array
     {
         $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
         $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
@@ -143,12 +146,20 @@ class ApiRequest
         ];
     }
 
-    private function getBaseUrl()
+    /**
+     * @return string
+     */
+    private function getBaseUrl(): string
     {
         return SaferPayConfig::getBaseApiUrl();
     }
 
-    private function isValidResponse(Response $response)
+    /**
+     * @param Response $response
+     * @return void
+     * @throws SaferPayApiException
+     */
+    private function isValidResponse(Response $response): void
     {
         if (isset($response->body->ErrorName) && $response->body->ErrorName === SaferPayConfig::TRANSACTION_ALREADY_CAPTURED) {
             $this->logger->debug('Tried to apply state CAPTURED to already captured order', [

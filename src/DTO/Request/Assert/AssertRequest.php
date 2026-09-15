@@ -24,14 +24,13 @@
 namespace Invertus\SaferPay\DTO\Request\Assert;
 
 use Invertus\SaferPay\DTO\Request\RequestHeader;
+use Invertus\SaferPay\DTO\Request\SaferPayRequestInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-// TODO: A lot of these request are the same, we can at least put them under an interface
-
-class AssertRequest
+class AssertRequest implements SaferPayRequestInterface
 {
 
     /**

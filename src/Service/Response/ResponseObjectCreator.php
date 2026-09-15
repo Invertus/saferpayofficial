@@ -77,8 +77,12 @@ class ResponseObjectCreator
             $card = $paymentMeans->Card;
             $cardObj = new Card();
             $cardObj->setMaskedNumber($card->MaskedNumber);
-            $cardObj->setExpYear($card->ExpYear);
-            $cardObj->setExpMonth($card->ExpMonth);
+            if (isset($card->ExpYear)) {
+                $cardObj->setExpYear($card->ExpYear);
+            }
+            if (isset($card->ExpMonth)) {
+                $cardObj->setExpMonth($card->ExpMonth);
+            }
             if (isset($card->HolderName)) {
                 $cardObj->setHolderName($card->HolderName);
             }

@@ -18,7 +18,10 @@
     "config": {
         "prepend-autoloader": false,
         "platform": {
-            "php": "5.6"
+            "php": "7.1"
+        },
+        "audit": {
+            "ignore": ["PKSA-wws7-mr54-jsny"]
         }
     },
     "repositories": {
@@ -33,22 +36,23 @@
         }
     },
     "require": {
+        "php": ">=7.1",
         "vlucas/phpdotenv": "^3.6",
-
         "symfony/config": "^3.4",
         "symfony/dependency-injection": "^3.4",
         "symfony/filesystem": "^3.4",
         "apimatic/unirest-php": "^2.3",
         "symfony/yaml": "^3.4",
-        "league/container": "2.5.0",
+        "league/container": "^3.0",
         "invertus/lock": "^1.0.0",
         "invertus/knapsack": "^10.0"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "*",
-        "phpunit/phpunit": "*",
-        "behat/behat": "*",
-        "symfony/translation": "*",
+        "friendsofphp/php-cs-fixer": "^2.16.7",
+        "phpunit/phpunit": "^7.5",
+        "behat/behat": "^3.7",
+        "symfony/translation": "^3.4",
+        "symfony/process": "^3.4",
         "prestashop/php-dev-tools": "^3.16"
     },
     "scripts": {
