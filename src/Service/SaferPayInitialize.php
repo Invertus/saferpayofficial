@@ -111,7 +111,8 @@ class SaferPayInitialize
         $selectedCard = -1,
         $fieldToken = null,
         $successController = null,
-        $isWebhook = 1
+        $isWebhook = 1,
+        $cartTotal = null
     ) {
         $customerEmail = $this->context->customer->email;
         $cartId = $this->context->cart->id;
@@ -155,7 +156,8 @@ class SaferPayInitialize
             $this->context->cart->id_customer,
             $isBusinessLicence,
             $alias,
-            $fieldToken
+            $fieldToken,
+            $cartTotal
         );
 
         return $initializeRequest;

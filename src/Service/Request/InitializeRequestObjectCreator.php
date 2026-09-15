@@ -57,14 +57,17 @@ class InitializeRequestObjectCreator
         $customerId,
         $isBusinessLicence,
         $alias = null,
-        $fieldToken = null
+        $fieldToken = null,
+        $cartTotal = null
     ) {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
         $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
 
-        $cartDetails = $cart->getSummaryDetails();
-        $totalPrice = $cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
-        $totalPrice = (int) (round($totalPrice));
+        $totalPrice = $cartTotal;
+        if ($cartTotal === null) {
+            $cartDetails = $cart->getSummaryDetails();
+            $totalPrice = (int) round($cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API);
+        }
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
 
