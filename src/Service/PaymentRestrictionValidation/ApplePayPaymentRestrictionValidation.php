@@ -72,7 +72,7 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
             return true;
         }
 
-        return (bool) $this->context->getMobileDetect()->is('ios');
+        return $this->context->isIosDevice();
     }
 
     /**
