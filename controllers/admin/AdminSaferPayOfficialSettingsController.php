@@ -99,21 +99,19 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         // The bundle filename never changes between releases, so CDNs keep serving the
         // previous version's build after an upgrade unless the URL carries the version.
-        $distPath = $this->module->getPathUri() . 'views/js/admin/dist/';
-        $this->addJS($distPath . 'saferpay-settings.js?v=' . $this->module->version);
+        $modulePath = $this->module->getPathUri();
+        $this->addJS($modulePath . 'views/js/admin/dist/saferpay-settings.js?v=' . $this->module->version);
         // addJS() strips the query string before it checks the file exists, addCSS() does
         // not, so a versioned CSS URL fails Media::getCSSPath() and gets dropped silently.
-        $this->addCSS($distPath . 'saferpay-settings.css?v=' . $this->module->version, 'all', null, false);
+        $this->addCSS($modulePath . 'views/css/admin/saferpay-settings.css?v=' . $this->module->version, 'all', null, false);
     }
 
     public function initContent()
     {
         parent::initContent();
 
-        $settingsData = $this->collectSettingsData();
-
-        $this->context->smarty->assign([
-            'settingsDataJson' => json_encode($settingsData),
+        Media::addJsDef([
+            'saferpaySettingsData' => $this->collectSettingsData(),
         ]);
 
         $this->content .= $this->context->smarty->fetch(

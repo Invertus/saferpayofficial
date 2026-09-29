@@ -5,22 +5,19 @@ import './globals.css'
 import type { SaferpaySettingsData } from '@/types'
 import { initTranslations } from '@/utils/translations'
 
-function parseSettingsData(): SaferpaySettingsData | null {
-  const el = document.getElementById('saferpay-settings-data')
-  if (!el?.textContent) return null
+// The settings controller passes the data through Media::addJsDef().
+function getSettingsData(): SaferpaySettingsData | null {
+  const data: unknown = window.saferpaySettingsData
+  if (!data || typeof data !== 'object') return null
 
-  try {
-    return JSON.parse(el.textContent) as SaferpaySettingsData
-  } catch {
-    return null
-  }
+  return data as SaferpaySettingsData
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   const rootEl = document.getElementById('saferpay-settings-root')
   if (!rootEl) return
 
-  const data = parseSettingsData()
+  const data = getSettingsData()
   if (!data) {
     const errorMessage = rootEl.dataset.errorMessage || 'Failed to load settings data.'
     const errorEl = document.createElement('div')
@@ -30,7 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return
   }
 
-  window.saferpaySettingsData = data
   initTranslations(data.translations || {})
 
   ReactDOM.createRoot(rootEl).render(
