@@ -110,10 +110,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         parent::initContent();
 
-        $settingsData = $this->collectSettingsData();
-
-        $this->context->smarty->assign([
-            'settingsDataJson' => json_encode($settingsData),
+        Media::addJsDef([
+            'saferpaySettingsData' => $this->collectSettingsData(),
         ]);
 
         $this->content .= $this->context->smarty->fetch(
