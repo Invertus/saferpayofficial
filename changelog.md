@@ -242,3 +242,4 @@
 - FO : Fixed issue when a rejected payment left the order stuck on awaiting payment and the checkout on an endless spinner, for shops that create the order before authorization
 - FO : Fixed issue when Apple Pay failed with a type error on PrestaShop 9 because of the changed mobile detection
 - API update to V1.53: all payment and lookup calls now declare the current Saferpay API version
+- Fixed issues reported by the PrestaShop Addons validator
