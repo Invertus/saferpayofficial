@@ -9,4 +9,5 @@ var/cache/*
 .DS_Store
 views/js/admin/settings-app/node_modules/
 views/js/admin/dist/
+views/css/admin/saferpay-settings.css
 tests/phpstan/*.phar
