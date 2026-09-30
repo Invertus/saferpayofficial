@@ -61,48 +61,102 @@ class SaferPayRefreshPaymentsService
 
     public function refreshPayments()
     {
-        // Get enabled payments.
-        $activePayments = $this->paymentRepository->getActivePaymentMethods();
-
-        if (empty($activePayments)) {
-            $this->logger->info('No active payment options found', [
-                'context' => [],
-            ]);
-
-            return;
-        }
-
         // Get payments from API.
         try {
-            $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethodsNamesAsArray();
+            $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethods();
         } catch (Exception $exception) {
             throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
         }
 
+        // Read every stored row, not only the enabled ones, so that a method the merchant
+        // deliberately switched off keeps its flags across a refresh instead of silently
+        // reappearing as enabled-by-default.
         $paymentsInfo = [];
-        foreach ($activePayments as $payment) {
-            $paymentsInfo[$payment['name']]['name'] = $payment['name'];
+        foreach ($this->paymentRepository->getAllPaymentMethods() as $payment) {
             $paymentsInfo[$payment['name']]['active'] = $payment['active'];
             $paymentsInfo[$payment['name']]['field'] = $this->fieldRepository->isActiveByName($payment['name']);
         }
+
+        $paymentNamesFromAPI = [];
+        foreach ($paymentsFromAPI as $payment) {
+            $paymentNamesFromAPI[] = $this->getPaymentName($payment);
+        }
+
+        // Logged before the rebuild so that a failure part way through the inserts still
+        // leaves a record of what the account stopped offering.
+        $this->logRemovedPayments($paymentsInfo, $paymentNamesFromAPI);
 
         // Truncate tables.
         $this->paymentRepository->truncateTable();
         $this->fieldRepository->truncateTable();
 
         foreach ($paymentsFromAPI as $payment) {
-            $paymentActive = (isset($paymentsInfo[$payment]['active'])) ? (int) $paymentsInfo[$payment]['active'] : 0;
-            $fieldActive = (isset($paymentsInfo[$payment]['field'])) ? (int) $paymentsInfo[$payment]['field'] : 0;
+            $paymentName = $this->getPaymentName($payment);
+            $paymentActive = (isset($paymentsInfo[$paymentName]['active'])) ? (int) $paymentsInfo[$paymentName]['active'] : 0;
+            $fieldActive = (isset($paymentsInfo[$paymentName]['field'])) ? (int) $paymentsInfo[$paymentName]['field'] : 0;
+
+            // The logo and the supported currencies are the only two things the checkout
+            // needed the account for. Persisting them here is what lets hookPaymentOptions
+            // build the payment list without calling the Management API on every render.
+            $currencies = isset($payment['currencies']) && is_array($payment['currencies'])
+                ? $payment['currencies']
+                : [];
 
             $this->paymentRepository->insertPayment([
-                'name' => $payment,
+                'name' => pSQL($paymentName),
                 'active' => $paymentActive,
+                'logo_url' => pSQL((string) $payment['logoUrl']),
+                'currencies' => pSQL(implode(',', $currencies)),
             ]);
 
             $this->fieldRepository->insertField([
-                'name' => $payment,
+                'name' => pSQL($paymentName),
                 'active' => $fieldActive,
             ]);
+        }
+    }
+
+    /**
+     * @param array $payment
+     *
+     * @return string
+     */
+    private function getPaymentName(array $payment)
+    {
+        return str_replace(' ', '', $payment['paymentMethod']);
+    }
+
+    /**
+     * A method that disappears from the Saferpay account is dropped from storage without
+     * leaving any trace, so the merchant finds it gone from both the settings page and the
+     * checkout with nothing to explain why. Logging it is what lets support tell them that
+     * Saferpay stopped offering it, instead of the module having lost it.
+     *
+     * @param array $storedPayments
+     * @param array $paymentNamesFromAPI
+     *
+     * @return void
+     */
+    private function logRemovedPayments(array $storedPayments, array $paymentNamesFromAPI)
+    {
+        $removedPayments = array_diff(array_keys($storedPayments), $paymentNamesFromAPI);
+
+        foreach ($removedPayments as $paymentName) {
+            $message = sprintf(
+                'Payment method "%s" is no longer available on the Saferpay account and was removed from this shop',
+                $paymentName
+            );
+
+            if (empty($storedPayments[$paymentName]['active'])) {
+                $this->logger->notice($message, ['context' => []]);
+
+                continue;
+            }
+
+            $this->logger->warning(
+                sprintf('%s. It was enabled, so it is no longer offered in the checkout', $message),
+                ['context' => []]
+            );
         }
     }
 }

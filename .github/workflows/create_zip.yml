@@ -20,12 +20,32 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: views/js/admin/settings-app/pnpm-lock.yaml
+
+      - name: Build React settings app
+        run: |
+          cd views/js/admin/settings-app
+          pnpm install --frozen-lockfile
+          pnpm run build
+
       - name: Build module ZIP
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
           cp .github/.htaccess vendor/.htaccess
-          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md .editorconfig .gitignore .php_cs.dist browserstack.json
+          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md .editorconfig .gitignore .php_cs.dist browserstack.json views/js/admin/settings-app
+          # The Addons validator requires an index.php in every shipped directory
+          find . -type d | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
           chmod -R 777 ${{ env.MODULE_NAME }}/var/cache

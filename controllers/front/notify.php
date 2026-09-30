@@ -30,6 +30,7 @@ use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
 use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionAssertion;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayTransactionProcessedGuard;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -110,6 +111,19 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             die($this->module->l('Order already complete', self::FILE_NAME));
         }
 
+        /** @var SaferPayTransactionProcessedGuard $processedGuard */
+        $processedGuard = $this->module->getService(SaferPayTransactionProcessedGuard::class);
+
+        if ($processedGuard->isProcessed($cartId)) {
+            $logger->debug(sprintf('%s - Payment already processed. Dying.', self::FILE_NAME), [
+                'context' => [
+                    'cart_id' => $cartId,
+                ],
+            ]);
+
+            die($this->module->l('Order already complete', self::FILE_NAME));
+        }
+
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
         $saferPayOrderRepository = $this->module->getService(SaferPayOrderRepository::class);
 
@@ -140,27 +154,55 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             // Must be left below assert action to get newest information.
             $order = new Order($orderId);
 
+            $paymentBehaviorWithout3D = (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D);
+
+            // $order->payment holds the checkout option's name, which is "Cards" for the grouped
+            // option and never matches a brand, silently skipping the whole without-3DS behaviour.
+            // The brand Saferpay asserted is what this setting is about.
+            $assertedPaymentMethod = $assertResponseBody->getPaymentMeans()->getBrand()->getPaymentMethod();
+
             if (!$assertResponseBody->getLiability()->getLiabilityShift() &&
-                in_array($order->payment, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS) &&
-                (int) Configuration::get(SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D) === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL
+                in_array($assertedPaymentMethod, SaferPayConfig::SUPPORTED_3DS_PAYMENT_METHODS)
             ) {
                 /** @var SaferPayOrderStatusService $orderStatusService */
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
-                $orderStatusService->cancel($order);
 
-                $logger->debug(sprintf('%s - Liability shift is false', self::FILE_NAME), [
-                    'context' => [
-                        'id_order' => $order->id,
-                    ],
-                ]);
+                if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CANCEL) {
+                    $orderStatusService->cancel($order);
 
-                $logger->debug(sprintf('%s - liability shift is false', self::FILE_NAME), [
-                    'context' => [
-                        'id_order' => $order->id,
-                    ],
-                ]);
+                    $logger->debug(sprintf('%s - Liability shift is false, canceling order', self::FILE_NAME), [
+                        'context' => [
+                            'id_order' => $order->id,
+                        ],
+                    ]);
 
-                die($this->module->l('Liability shift is false', self::FILE_NAME));
+                    die($this->module->l('Liability shift is false', self::FILE_NAME));
+                }
+
+                if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_AUTHORIZE) {
+                    $logger->debug(sprintf('%s - Liability shift is false, order left authorized', self::FILE_NAME), [
+                        'context' => [
+                            'id_order' => $order->id,
+                        ],
+                    ]);
+
+                    die($this->module->l('Liability shift is false, order left authorized', self::FILE_NAME));
+                }
+
+                if ($paymentBehaviorWithout3D === SaferPayConfig::PAYMENT_BEHAVIOR_WITHOUT_3D_CAPTURE
+                    && SaferPayConfig::supportsOrderCapture($order->payment)
+                    && $transactionStatus !== TransactionStatus::CAPTURED
+                ) {
+                    $orderStatusService->capture($order);
+
+                    $logger->debug(sprintf('%s - Liability shift is false, capturing order', self::FILE_NAME), [
+                        'context' => [
+                            'id_order' => $order->id,
+                        ],
+                    ]);
+
+                    die($this->module->l('Liability shift is false, capturing order', self::FILE_NAME));
+                }
             }
 
             //NOTE to get latest information possible and not override new information.

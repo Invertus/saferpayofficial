@@ -114,14 +114,130 @@ class ApiRequest
 
             return json_decode($response->raw_body);
         } catch (Exception $exception) {
-            $this->logger->error($exception->getMessage(), [
+            if ($response === null) {
+                $this->logger->error($exception->getMessage(), [
+                    'context' => [
+                        'headers' => $this->getHeaders(),
+                    ],
+                    'request' => $params,
+                    'response' => null,
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * API Request Get Method with explicit credentials.
+     *
+     * @param string $url
+     * @param string $username
+     * @param string $password
+     * @param string $baseUrl
+     * @param array $params
+     * @return mixed
+     * @throws Exception
+     */
+    public function getWithCredentials($url, $username, $password, $baseUrl, $params = [])
+    {
+        $response = null;
+
+        try {
+            $credentials = base64_encode("$username:$password");
+            $headers = [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
+                'Saferpay-RequestId' => 'false',
+                'Authorization' => "Basic $credentials",
+            ];
+
+            $response = Request::get(
+                $baseUrl . $url,
+                $headers,
+                $params
+            );
+
+            $this->logger->debug(sprintf('%s - GET (credentials) response: %d', self::FILE_NAME, $response->code), [
                 'context' => [
-                    'headers' => $this->getHeaders(),
+                    'uri' => $baseUrl . $url,
                 ],
                 'request' => $params,
-                'response' => json_decode($response->raw_body),
-                'exceptions' => ExceptionUtility::getExceptions($exception),
+                'response' => $response->body,
             ]);
+
+            $this->isValidResponse($response);
+
+            return json_decode($response->raw_body);
+        } catch (Exception $exception) {
+            if ($response === null) {
+                $this->logger->error($exception->getMessage(), [
+                    'context' => [],
+                    'request' => $params,
+                    'response' => null,
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
+            }
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * API Request Post Method with explicit credentials.
+     *
+     * @param string $url
+     * @param string $username
+     * @param string $password
+     * @param string $baseUrl
+     * @param array|null $params
+     * @return mixed
+     * @throws Exception
+     */
+    public function postWithCredentials($url, $username, $password, $baseUrl, $params = null)
+    {
+        $response = null;
+
+        try {
+            $credentials = base64_encode("$username:$password");
+            $headers = [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Saferpay-ApiVersion' => SaferPayConfig::API_VERSION,
+                'Saferpay-RequestId' => 'false',
+                'Authorization' => "Basic $credentials",
+            ];
+
+            $body = $params !== null ? json_encode($params) : '{}';
+
+            $response = Request::post(
+                $baseUrl . $url,
+                $headers,
+                $body
+            );
+
+            $this->logger->debug(sprintf('%s - POST (credentials) response: %d', self::FILE_NAME, $response->code), [
+                'context' => [
+                    'uri' => $baseUrl . $url,
+                ],
+                'request' => $params,
+                'response' => $response->body,
+            ]);
+
+            $this->isValidResponse($response);
+
+            return json_decode($response->raw_body);
+        } catch (Exception $exception) {
+            if ($response === null) {
+                $this->logger->error($exception->getMessage(), [
+                    'context' => [],
+                    'request' => $params,
+                    'response' => null,
+                    'exceptions' => ExceptionUtility::getExceptions($exception),
+                ]);
+            }
 
             throw $exception;
         }

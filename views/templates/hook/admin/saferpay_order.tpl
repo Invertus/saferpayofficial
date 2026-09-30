@@ -37,10 +37,13 @@
                     <div class="mb-2 form-inline">
                         <div class="input-group money-type row">
                             <div class="input-group">
+                                <label for="saferpay-refund-amount" class="sr-only">{l s='Refund amount' mod='saferpayofficial'}</label>
                                 <span class=" input-group-addon input-group-text"> {$currencySign|escape:'htmlall':'UTF-8'}</span>
                                 <input type="number"
+                                       id="saferpay-refund-amount"
                                        name="saferpay_refund_amount"
                                        class="form-control"
+                                       aria-label="{l s='Refund amount' mod='saferpayofficial'}"
                                        step=".01"
                                        min="0"
                                        max="{($authAmount|escape:'htmlall':'UTF-8' - $refund_amount|escape:'htmlall':'UTF-8' - $pending_refund_amount|escape:'htmlall':'UTF-8') / $amountMultiplier|escape:'htmlall':'UTF-8'}"

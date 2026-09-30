@@ -23,6 +23,8 @@
 
 namespace Invertus\SaferPay\Tests\Unit\Service\PaymentRestrictionValidation;
 
+use Configuration;
+use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Service\PaymentRestrictionValidation\ApplePayPaymentRestrictionValidation;
 use Invertus\SaferPay\Tests\Unit\Tools\UnitTestCase;
@@ -50,5 +52,27 @@ class ApplePayPaymentRestrictionValidationTest extends UnitTestCase
                 'expectedResult' => false,
             ],
         ];
+    }
+
+    public function testIsValidUsesTheContextAdapterWhenNotInTestMode()
+    {
+        $originalTestMode = Configuration::get(SaferPayConfig::TEST_MODE);
+        Configuration::set(SaferPayConfig::TEST_MODE, 0);
+
+        try {
+            $context = $this->getMockBuilder(LegacyContext::class)->getMock();
+
+            $context
+                ->expects($this->once())
+                ->method('isIosDevice')
+                ->willReturn(true)
+            ;
+
+            $applePayValidation = new ApplePayPaymentRestrictionValidation($context);
+
+            $this->assertTrue($applePayValidation->isValid(SaferPayConfig::PAYMENT_APPLEPAY));
+        } finally {
+            Configuration::set(SaferPayConfig::TEST_MODE, $originalTestMode);
+        }
     }
 }
