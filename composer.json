@@ -22,6 +22,18 @@
         },
         "audit": {
             "ignore": ["PKSA-wws7-mr54-jsny"]
+        },
+        "policy": {
+            "advisories": {
+                "ignore-id": [
+                    "PKSA-v5yj-8nmz-sk2q",
+                    "PKSA-ft77-7h5f-p3r6",
+                    "PKSA-b14r-zh1d-vdrc",
+                    "PKSA-z3gr-8qht-p93v",
+                    "PKSA-rkkf-636k-qjb3",
+                    "PKSA-wws7-mr54-jsny"
+                ]
+            }
         }
     },
     "repositories": {

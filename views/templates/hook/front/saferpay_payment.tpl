@@ -21,5 +21,5 @@
  *}
 
 <div>
-    <iframe id="test-frame" src=''></iframe>
+    <iframe id="saferpay-payment-frame" src='' title="{l s='Saferpay payment form' mod='saferpayofficial'}"></iframe>
 </div>

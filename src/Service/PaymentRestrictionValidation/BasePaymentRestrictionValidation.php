@@ -76,7 +76,7 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
     public function isValid(string $paymentName): bool
     {
         if ($paymentName === SaferPayConfig::PAYMENT_CARDS) {
-            return true;
+            return $this->hasAnyEnabledCardBrand();
         }
 
         if (!$this->isPaymentMethodEnabled($paymentName)) {
@@ -102,6 +102,33 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
     public function supports(string $paymentName): bool
     {
         return true;
+    }
+
+    /**
+     * The grouped "Cards" option carries no restrictions of its own. It is payable exactly when at
+     * least one of the brands behind it is enabled and passes the country and currency checks.
+     *
+     * @return bool
+     */
+    private function hasAnyEnabledCardBrand()
+    {
+        foreach (SaferPayConfig::CARD_BRANDS as $brand) {
+            if (!$this->isPaymentMethodEnabled($brand)) {
+                continue;
+            }
+
+            if (!$this->isCountrySupportedByPaymentName($brand)) {
+                continue;
+            }
+
+            if (!$this->isCurrencySupportedByPaymentName($brand)) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

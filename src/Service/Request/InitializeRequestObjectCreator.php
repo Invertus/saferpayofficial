@@ -29,6 +29,7 @@ use Customer;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
+use Invertus\SaferPay\Provider\EnabledCardBrandsProvider;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,9 +42,17 @@ class InitializeRequestObjectCreator
      */
     private $requestObjectCreator;
 
-    public function __construct(RequestObjectCreator $requestObjectCreator)
-    {
+    /**
+     * @var EnabledCardBrandsProvider
+     */
+    private $enabledCardBrandsProvider;
+
+    public function __construct(
+        RequestObjectCreator $requestObjectCreator,
+        EnabledCardBrandsProvider $enabledCardBrandsProvider
+    ) {
         $this->requestObjectCreator = $requestObjectCreator;
+        $this->enabledCardBrandsProvider = $enabledCardBrandsProvider;
     }
 
     public function create(
@@ -104,7 +113,8 @@ class InitializeRequestObjectCreator
             $alias,
             $order,
             $payerProfile,
-            $fieldToken
+            $fieldToken,
+            $paymentMethod === SaferPayConfig::PAYMENT_CARDS ? $this->enabledCardBrandsProvider->get() : []
         );
     }
 }

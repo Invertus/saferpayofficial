@@ -86,7 +86,7 @@ class LegacyTranslator implements TranslatorInterface
             SaferPayConfig::PAYMENT_POSTFINANCE_PAY => $this->module->l('PostFinancePay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_WECHATPAY => $this->module->l('WeChatPay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_BLIK => $this->module->l('Blik', self::FILE_NAME),
-            SaferPayConfig::PAYMENT_GOOGLEPAY => $this->module->l('Googlepay'),
+            SaferPayConfig::PAYMENT_GOOGLEPAY => $this->module->l('Googlepay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_CLICKTOPAY => $this->module->l('Clicktopay', self::FILE_NAME),
             SaferPayConfig::PAYMENT_REKA => $this->module->l('Reka', self::FILE_NAME),
             SaferPayConfig::PAYMENT_WERO => $this->module->l('Wero', self::FILE_NAME),

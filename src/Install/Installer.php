@@ -153,6 +153,8 @@ class Installer extends AbstractInstaller
             `id_saferpay_payment` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `name` VARCHAR(64) NOT NULL,
             `active` tinyint(1) DEFAULT 0,
+            `logo_url` VARCHAR(255) DEFAULT NULL,
+            `currencies` VARCHAR(1024) DEFAULT NULL,
             UNIQUE (`name`)
                 ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci'
         );

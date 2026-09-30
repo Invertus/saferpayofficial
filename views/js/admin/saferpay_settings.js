@@ -20,16 +20,23 @@
  *@license   SIX Payment Services
  */
 
-$(document).ready(function (e) {
-    $("input[name='SAFERPAY_CONFIGURATION_NAME']").keypress(function (e) {
-        //disable symbols
+$(document).ready(function () {
+    var $configInput = $("input[name='SAFERPAY_CONFIGURATION_NAME']");
+
+    $configInput.attr('maxlength', 20);
+
+    $configInput.keypress(function (e) {
         var txt = String.fromCharCode(e.which);
-        if (!txt.match(/[A-Za-z0-9&. ]/)) {
+        if (!txt.match(/[A-Za-z0-9.:\-_]/)) {
             return false;
         }
-        // disable space
-        if (e.keyCode === 32) {
-            return false;
-        }
+    });
+
+    $configInput.on('paste', function (e) {
+        var $input = $(this);
+        setTimeout(function () {
+            var cleaned = $input.val().replace(/[^A-Za-z0-9.:\-_]/g, '').substring(0, 20);
+            $input.val(cleaned);
+        }, 0);
     });
 });

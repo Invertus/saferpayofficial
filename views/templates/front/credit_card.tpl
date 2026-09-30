@@ -22,7 +22,7 @@
 
 <tr>
     <td>
-        <img src="{$card_img|escape:'htmlall':'UTF-8'}">
+        <img src="{$card_img|escape:'htmlall':'UTF-8'}" alt="{$payment_method|escape:'htmlall':'UTF-8'}">
     </td>
     <td>
         {$payment_method|escape:'htmlall':'UTF-8'}
@@ -38,7 +38,8 @@
     </td>
     <td>
         <a class="button lnk_view btn btn-default"
-           href="{$link->getModuleLink('saferpayofficial', {$controller|escape:'htmlall':'UTF-8'}, ['saved_card_id' => $saved_card_id|escape:'htmlall':'UTF-8'])|escape:'htmlall':'UTF-8' }">
+           href="{$link->getModuleLink('saferpayofficial', {$controller|escape:'htmlall':'UTF-8'}, ['saved_card_id' => $saved_card_id|escape:'htmlall':'UTF-8'])|escape:'htmlall':'UTF-8' }"
+           aria-label="{l s='Remove card' mod='saferpayofficial'} {$card_number|escape:'htmlall':'UTF-8'}">
             <span>
                 {l s='Remove' mod='saferpayofficial'}
             </span>

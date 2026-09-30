@@ -117,6 +117,11 @@ class InitializeRequest implements SaferPayRequestInterface
      */
     private $fieldToken;
 
+    /**
+     * @var array
+     */
+    private $paymentMethods;
+
     public function __construct(
         RequestHeader        $requestHeader,
         $terminalId,
@@ -132,7 +137,8 @@ class InitializeRequest implements SaferPayRequestInterface
         $alias,
         Order                $order,
         PayerProfile         $payerProfile,
-        $fieldToken
+        $fieldToken,
+        array                $paymentMethods = []
     ) {
         $this->requestHeader = $requestHeader;
         $this->terminalId = $terminalId;
@@ -149,6 +155,7 @@ class InitializeRequest implements SaferPayRequestInterface
         $this->order = $order;
         $this->payerProfile = $payerProfile;
         $this->fieldToken = $fieldToken;
+        $this->paymentMethods = $paymentMethods;
     }
 
     public function getAsArray()
@@ -166,9 +173,7 @@ class InitializeRequest implements SaferPayRequestInterface
                 'ClientInfo' => $this->requestHeader->getClientInfo(),
             ],
             'TerminalId' => $this->terminalId,
-            'PaymentMethods' => [
-                $this->paymentMethod,
-            ],
+            'PaymentMethods' => $this->getPaymentMethods(),
             'Payment' => [
                 'Amount' => [
                     'Value' => $this->payment->getValue(),
@@ -266,6 +271,22 @@ class InitializeRequest implements SaferPayRequestInterface
         }
 
         return $return;
+    }
+
+    /**
+     * The grouped "Cards" option is sent to Saferpay as the brands the merchant actually enabled.
+     * Sending its own "CARD" value instead would let Saferpay offer every brand the terminal
+     * supports, including ones switched off in the back office.
+     *
+     * @return array
+     */
+    private function getPaymentMethods()
+    {
+        if (!empty($this->paymentMethods)) {
+            return $this->paymentMethods;
+        }
+
+        return [$this->paymentMethod];
     }
 
     /**

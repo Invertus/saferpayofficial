@@ -26,7 +26,9 @@
 {/block}
 
 {block name='content'}
-    <div class="loader"></div>
+    <div class="loader" role="status" aria-live="polite">
+        <span class="sr-only">{l s='Loading payment, please wait' mod='saferpayofficial'}</span>
+    </div>
 {/block}
 
 {block name='footer'}
