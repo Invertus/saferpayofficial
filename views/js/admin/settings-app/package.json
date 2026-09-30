@@ -26,7 +26,7 @@
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
-    "vite": "^5.4.10",
+    "vite": "^6.4.3",
     "@vitejs/plugin-react": "^4.3.3",
     "typescript": "^5.6.3",
     "@types/react": "^18.3.11",
