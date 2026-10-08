@@ -243,3 +243,6 @@
 - FO : Fixed issue when Apple Pay failed with a type error on PrestaShop 9 because of the changed mobile detection
 - API update to V1.53: all payment and lookup calls now declare the current Saferpay API version
 - Fixed issues reported by the PrestaShop Addons validator
+
+## [2.1.1]
+- BO : Fixed issue when another installed module shipping a different version of the Unirest HTTP library (e.g. Click to Pay) broke the settings page, the credentials check and order capture
