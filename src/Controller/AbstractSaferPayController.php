@@ -106,6 +106,26 @@ class AbstractSaferPayController extends \ModuleFrontControllerCore
         );
     }
 
+    /**
+     * Waits until no other request holds the resource, unlike applyLock() which gives up at once.
+     *
+     * @param string $resource
+     *
+     * @return void
+     */
+    protected function waitForLock($resource)
+    {
+        try {
+            $this->lock->create($resource);
+            $this->lock->acquire(true);
+        } catch (\Exception $exception) {
+            $this->logger->error('Failed to lock process', [
+                'resource' => $resource,
+                'exception' => $exception,
+            ]);
+        }
+    }
+
     protected function lockExist()
     {
         try {

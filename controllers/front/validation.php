@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Logger\LoggerInterface;
+use Invertus\SaferPay\Service\PendingPaymentPageProvider;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
 use Invertus\SaferPay\Controller\Front\CheckoutController;
 
@@ -50,6 +51,14 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
         $paymentMethod = Tools::getValue('saved_card_method');
+        $customerId = (int) $this->context->customer->id;
+
+        // A double click on "Pay" submits the checkout twice. Run those requests one after another, so
+        // the second one sees the order and payment page the first one created.
+        if ($customerId) {
+            $this->waitForLock(sprintf('validation-%s', $customerId));
+        }
+
         $cart = $this->context->cart;
 
         $redirectLink = $this->context->link->getPageLink(
@@ -60,6 +69,39 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
                 'step' => 1,
             ]
         );
+
+        $existingOrderId = $cart->id ? (int) Order::getIdByCartId((int) $cart->id) : 0;
+
+        // PrestaShop swaps an already converted cart for an empty one, so a repeated submit arrives either
+        // with the converted cart or with no cart at all.
+        if (!Validate::isLoadedObject($cart) || $existingOrderId) {
+            /** @var PendingPaymentPageProvider $pendingPaymentPageProvider */
+            $pendingPaymentPageProvider = $this->module->getService(PendingPaymentPageProvider::class);
+            $paymentPageUrl = $pendingPaymentPageProvider->getUrl(
+                (int) $cart->id,
+                $customerId,
+                (int) $this->context->shop->id
+            );
+
+            if ($paymentPageUrl) {
+                $logger->debug(sprintf('%s - Repeated submit sent to the open payment page', self::FILE_NAME), [
+                    'context' => [
+                        'id_cart' => (int) $cart->id,
+                        'id_customer' => $customerId,
+                    ],
+                ]);
+
+                Tools::redirect($paymentPageUrl);
+            }
+
+            if ($existingOrderId) {
+                $this->errors[] = $this->module->l('Order already exists.', self::FILE_NAME);
+                $this->redirectWithNotifications($redirectLink);
+            }
+
+            Tools::redirect($redirectLink);
+        }
+
         if ($cart->id_customer == 0
             || $cart->id_address_delivery == 0
             || $cart->id_address_invoice == 0
@@ -77,11 +119,6 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
         }
         if (!$authorized) {
             $this->errors[] = $this->module->l('This payment method is not available.', self::FILE_NAME);
-            $this->redirectWithNotifications($redirectLink);
-        }
-
-        if (Order::getIdByCartId($this->context->cart->id)) {
-            $this->errors[] = $this->module->l('Order already exists.', self::FILE_NAME);
             $this->redirectWithNotifications($redirectLink);
         }
 

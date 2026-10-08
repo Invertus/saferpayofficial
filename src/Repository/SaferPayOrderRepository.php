@@ -44,6 +44,35 @@ class SaferPayOrderRepository
     }
 
     /**
+     * @param int $cartId
+     * @return SaferPayOrder
+     */
+    public function getByCartId(int $cartId): SaferPayOrder
+    {
+        return new SaferPayOrder((int) $this->getIdByCartId($cartId));
+    }
+
+    /**
+     * @param int $customerId
+     * @param int $shopId
+     * @param string $placedAfter date in Y-m-d H:i:s
+     * @return SaferPayOrder
+     */
+    public function getLatestByCustomerIdPlacedAfter(int $customerId, int $shopId, string $placedAfter): SaferPayOrder
+    {
+        $query = new DbQuery();
+        $query->select('so.`id_saferpay_order`');
+        $query->from('saferpay_order', 'so');
+        $query->innerJoin('orders', 'o', 'o.`id_order` = so.`id_order`');
+        $query->where('so.id_customer = ' . (int) $customerId);
+        $query->where('o.id_shop = ' . (int) $shopId);
+        $query->where('o.date_add >= \'' . pSQL($placedAfter) . '\'');
+        $query->orderBy('so.`id_saferpay_order` DESC');
+
+        return new SaferPayOrder((int) Db::getInstance()->getValue($query, false));
+    }
+
+    /**
      * @param int $orderId
      * @return false|string|null
      */
