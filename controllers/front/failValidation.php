@@ -25,6 +25,7 @@ use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\CartDuplicationService;
+use Invertus\SaferPay\Validation\OrderBelongsToCartValidation;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -61,20 +62,40 @@ class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferP
 
         $order = new Order($orderId);
 
-        if (Validate::isLoadedObject($order)) {
-            $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
-        }
-
         /** @var SaferPayOrderRepository $orderRepo */
         $orderRepo = $this->module->getService(SaferPayOrderRepository::class);
 
         /** @var CartDuplicationService $cartDuplicationService */
         $cartDuplicationService = $this->module->getService(CartDuplicationService::class);
 
+        /** @var OrderBelongsToCartValidation $orderBelongsToCartValidation */
+        $orderBelongsToCartValidation = $this->module->getService(OrderBelongsToCartValidation::class);
+
         $saferPayOrderId = $orderRepo->getIdByCartId($cartId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-        $saferPayOrder->canceled = 1;
-        $saferPayOrder->update();
+
+        // A payment confirmed through another path (e.g. the notify webhook) must never be overridden.
+        $isPaymentConfirmed = $saferPayOrder->authorized || $saferPayOrder->captured;
+
+        $orderBelongsToCart = $orderBelongsToCartValidation->validate($order, $cart, $this->module->name);
+
+        if (!$orderBelongsToCart) {
+            $logger->warning(sprintf('%s - Order does not belong to the validated cart', self::FILE_NAME), [
+                'context' => [
+                    'id_order' => (int) $orderId,
+                    'id_cart' => (int) $cartId,
+                ],
+            ]);
+        }
+
+        if (!$isPaymentConfirmed && $orderBelongsToCart) {
+            $order->setCurrentState(_SAFERPAY_PAYMENT_AUTHORIZATION_FAILED_);
+        }
+
+        if (!$isPaymentConfirmed) {
+            $saferPayOrder->canceled = 1;
+            $saferPayOrder->update();
+        }
 
         $cartDuplicationService->restoreCart($cartId);
 

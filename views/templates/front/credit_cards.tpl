@@ -28,6 +28,9 @@
 
 {block name='page_content'}
     <div class="card">
+        <form method="post" action="{$remove_card_url|escape:'htmlall':'UTF-8'}">
+        <input type="hidden" name="token" value="{$remove_card_token|escape:'htmlall':'UTF-8'}">
+        <input type="hidden" name="submitRemoveCard" value="1">
         <table class="table">
             <caption class="sr-only">{l s='Saved credit cards' mod='saferpayofficial'}</caption>
             <thead>
@@ -58,5 +61,6 @@
             {/foreach}
             </tbody>
         </table>
+        </form>
     </div>
 {/block}
