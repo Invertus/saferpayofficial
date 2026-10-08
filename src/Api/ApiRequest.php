@@ -25,12 +25,12 @@ namespace Invertus\SaferPay\Api;
 
 use Configuration;
 use Exception;
+use Invertus\SaferPay\Api\Http\CurlHttpClient;
+use Invertus\SaferPay\Api\Http\HttpResponse;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Utility\ExceptionUtility;
-use Unirest\Request;
-use Unirest\Response;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,9 +43,13 @@ class ApiRequest
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(LoggerInterface $logger)
+    /** @var CurlHttpClient */
+    private $httpClient;
+
+    public function __construct(LoggerInterface $logger, CurlHttpClient $httpClient)
     {
         $this->logger = $logger;
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -59,24 +63,24 @@ class ApiRequest
     public function post(string $url, array $params = []): ?\stdClass
     {
         try {
-            $response = Request::post(
+            $response = $this->httpClient->post(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
                 json_encode($params)
             );
 
-            $this->logger->debug(sprintf('%s - POST response: %d', self::FILE_NAME, $response->code), [
+            $this->logger->debug(sprintf('%s - POST response: %d', self::FILE_NAME, $response->getCode()), [
                 'context' => [
                     'uri' => $this->getBaseUrl() . $url,
                     'headers' => $this->getHeaders(),
                 ],
                 'request' => $params,
-                'response' => $response->body,
+                'response' => $response->getBody(),
             ]);
 
             $this->isValidResponse($response);
 
-            return json_decode($response->raw_body);
+            return json_decode($response->getRawBody());
         } catch (Exception $exception) {
             throw $exception;
         }
@@ -95,24 +99,24 @@ class ApiRequest
         $response = null;
 
         try {
-            $response = Request::get(
+            $response = $this->httpClient->get(
                 $this->getBaseUrl() . $url,
                 $this->getHeaders(),
                 $params
             );
 
-            $this->logger->debug(sprintf('%s - GET response: %d', self::FILE_NAME, $response->code), [
+            $this->logger->debug(sprintf('%s - GET response: %d', self::FILE_NAME, $response->getCode()), [
                 'context' => [
                     'uri' => $this->getBaseUrl() . $url,
                     'headers' => $this->getHeaders(),
                 ],
                 'request' => $params,
-                'response' => $response->body,
+                'response' => $response->getBody(),
             ]);
 
             $this->isValidResponse($response);
 
-            return json_decode($response->raw_body);
+            return json_decode($response->getRawBody());
         } catch (Exception $exception) {
             if ($response === null) {
                 $this->logger->error($exception->getMessage(), [
@@ -154,23 +158,23 @@ class ApiRequest
                 'Authorization' => "Basic $credentials",
             ];
 
-            $response = Request::get(
+            $response = $this->httpClient->get(
                 $baseUrl . $url,
                 $headers,
                 $params
             );
 
-            $this->logger->debug(sprintf('%s - GET (credentials) response: %d', self::FILE_NAME, $response->code), [
+            $this->logger->debug(sprintf('%s - GET (credentials) response: %d', self::FILE_NAME, $response->getCode()), [
                 'context' => [
                     'uri' => $baseUrl . $url,
                 ],
                 'request' => $params,
-                'response' => $response->body,
+                'response' => $response->getBody(),
             ]);
 
             $this->isValidResponse($response);
 
-            return json_decode($response->raw_body);
+            return json_decode($response->getRawBody());
         } catch (Exception $exception) {
             if ($response === null) {
                 $this->logger->error($exception->getMessage(), [
@@ -212,23 +216,23 @@ class ApiRequest
 
             $body = $params !== null ? json_encode($params) : '{}';
 
-            $response = Request::post(
+            $response = $this->httpClient->post(
                 $baseUrl . $url,
                 $headers,
                 $body
             );
 
-            $this->logger->debug(sprintf('%s - POST (credentials) response: %d', self::FILE_NAME, $response->code), [
+            $this->logger->debug(sprintf('%s - POST (credentials) response: %d', self::FILE_NAME, $response->getCode()), [
                 'context' => [
                     'uri' => $baseUrl . $url,
                 ],
                 'request' => $params,
-                'response' => $response->body,
+                'response' => $response->getBody(),
             ]);
 
             $this->isValidResponse($response);
 
-            return json_decode($response->raw_body);
+            return json_decode($response->getRawBody());
         } catch (Exception $exception) {
             if ($response === null) {
                 $this->logger->error($exception->getMessage(), [
@@ -271,13 +275,15 @@ class ApiRequest
     }
 
     /**
-     * @param Response $response
+     * @param HttpResponse $response
      * @return void
      * @throws SaferPayApiException
      */
-    private function isValidResponse(Response $response): void
+    private function isValidResponse(HttpResponse $response): void
     {
-        if (isset($response->body->ErrorName) && $response->body->ErrorName === SaferPayConfig::TRANSACTION_ALREADY_CAPTURED) {
+        $body = $response->getBody();
+
+        if (isset($body->ErrorName) && $body->ErrorName === SaferPayConfig::TRANSACTION_ALREADY_CAPTURED) {
             $this->logger->debug('Tried to apply state CAPTURED to already captured order', [
                 'context' => [],
             ]);
@@ -285,13 +291,13 @@ class ApiRequest
             return;
         }
 
-        if ($response->code >= 300) {
-            $this->logger->error(sprintf('%s - API thrown code: %d', self::FILE_NAME, $response->code), [
+        if ($response->getCode() >= 300) {
+            $this->logger->error(sprintf('%s - API thrown code: %d', self::FILE_NAME, $response->getCode()), [
                 'context' => [],
-                'response' => $response->body,
+                'response' => $body,
             ]);
 
-            throw new SaferPayApiException(sprintf('Initialize API failed: %s', $response->raw_body), SaferPayApiException::INITIALIZE);
+            throw new SaferPayApiException(sprintf('Initialize API failed: %s', $response->getRawBody()), SaferPayApiException::INITIALIZE);
         }
     }
 }
