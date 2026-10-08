@@ -25,6 +25,7 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
+use Invertus\SaferPay\Validation\CardAliasOwnershipValidation;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,14 +37,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
 
     public function display()
     {
-        $isCreditCardSaveEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
-        if (!$this->context->customer->logged || !$isCreditCardSaveEnabled) {
-            $back_url = $this->context->link->getModuleLink('saferpay', 'my-account');
-
-            Tools::redirect(
-                $this->context->link->getPageLink('authentication', null, null, ['back' => $back_url])
-            );
-        }
+        $this->redirectIfCardsPageIsNotAvailable();
         $this->initCardList();
         $this->setBreadcrumb();
         $this->setTemplate(SaferPayConfig::SAFERPAY_TEMPLATE_LOCATION . '/front/credit_cards.tpl');
@@ -75,7 +69,6 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
                 'payment_method' => $savedCard['payment_method'],
                 'date_add' => $savedCard['date_add'],
                 'card_img' => "{$this->module->getPathUri()}views/img/{$savedCard['payment_method']}.png",
-                'controller' => self::FILE_NAME,
             ]);
 
             $rows[] = $this->context->smarty->fetch(
@@ -85,7 +78,21 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
 
         $this->context->smarty->assign([
             'rows' => $rows,
+            'remove_card_url' => $this->context->link->getModuleLink($this->module->name, self::FILE_NAME),
+            'remove_card_token' => Tools::getToken(false),
         ]);
+    }
+
+    private function redirectIfCardsPageIsNotAvailable()
+    {
+        $isCreditCardSaveEnabled = Configuration::get(SaferPayConfig::CREDIT_CARD_SAVE);
+        if (!$this->context->customer->isLogged() || !$isCreditCardSaveEnabled) {
+            $back_url = $this->context->link->getModuleLink('saferpay', 'my-account');
+
+            Tools::redirect(
+                $this->context->link->getPageLink('authentication', null, null, ['back' => $back_url])
+            );
+        }
     }
 
     public function postProcess()
@@ -95,10 +102,25 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
 
         $logger->debug(sprintf('%s - Controller called', self::FILE_NAME));
 
-        $selectedCard = Tools::getValue('saved_card_id');
+        $this->redirectIfCardsPageIsNotAvailable();
+
+        $selectedCard = (int) Tools::getValue('saved_card_id');
 
         if ($selectedCard) {
             $cardAlias = new SaferPayCardAlias($selectedCard);
+
+            if (!$this->canRemoveCard($cardAlias)) {
+                $logger->warning(sprintf('%s - Card removal rejected', self::FILE_NAME), [
+                    'context' => [
+                        'id_saferpay_card_alias' => $selectedCard,
+                        'id_customer' => (int) $this->context->customer->id,
+                    ],
+                ]);
+
+                $this->errors[] = $this->module->l('Failed to removed credit card', self::FILE_NAME);
+
+                return;
+            }
 
             if ($cardAlias->delete()) {
                 $this->success[] = $this->module->l('Successfully removed credit card', self::FILE_NAME);
@@ -110,6 +132,29 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
         parent::postProcess();
+    }
+
+    /**
+     * @param SaferPayCardAlias $cardAlias
+     *
+     * @return bool
+     */
+    private function canRemoveCard(SaferPayCardAlias $cardAlias)
+    {
+        $isPostRequest = isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'POST';
+
+        if (!Tools::isSubmit('submitRemoveCard') || !$isPostRequest) {
+            return false;
+        }
+
+        if (!hash_equals(Tools::getToken(false), (string) Tools::getValue('token'))) {
+            return false;
+        }
+
+        /** @var CardAliasOwnershipValidation $cardAliasOwnershipValidation */
+        $cardAliasOwnershipValidation = $this->module->getService(CardAliasOwnershipValidation::class);
+
+        return $cardAliasOwnershipValidation->validate($cardAlias, $this->context->customer->id);
     }
 
     private function setBreadcrumb()
