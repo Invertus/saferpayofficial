@@ -35,10 +35,6 @@ class ExceptionCode
     const PAYMENT_FAILED_TO_CREATE_ORDER = 5002;
     const CANNOT_USE_CARD = 5003;
 
-    // Order related codes starts from 7***
-    const ORDER_FAILED_TO_FIND_ORDER = 7001;
-    const ORDER_UNHANDLED_TRANSACTION_STATUS = 7002;
-
     // Any other unhandled codes should start with 9***
     const UNKNOWN_ERROR = 9001;
 }
