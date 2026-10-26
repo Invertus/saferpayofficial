@@ -32,6 +32,7 @@ use Invertus\SaferPay\EntityManager\ObjectModelUnitOfWork;
 use Invertus\SaferPay\Logger\Formatter\LogFormatterInterface;
 use Invertus\SaferPay\Provider\BasicIdempotencyProvider;
 use Invertus\SaferPay\Repository\PrestashopLoggerRepositoryInterface;
+use Invertus\SaferPay\Utility\LogDataUtility;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -178,9 +179,9 @@ class Logger implements LoggerInterface
         $log = new \SaferPayLog();
         $log->id_log = $logId;
         $log->id_shop = $this->globalShopContext->getShopId();
-        $log->context = json_encode($this->getFilledContextWithShopData($context));
-        $log->request = json_encode($request);
-        $log->response = json_encode($response);
+        $log->context = json_encode(LogDataUtility::removeCredentials($this->getFilledContextWithShopData($context)));
+        $log->request = json_encode(is_array($request) ? LogDataUtility::removeCredentials($request) : $request);
+        $log->response = json_encode(is_array($response) ? LogDataUtility::removeCredentials($response) : $response);
 
         $this->entityManager->persist($log, ObjectModelUnitOfWork::UNIT_OF_WORK_SAVE);
         $this->entityManager->flush();
