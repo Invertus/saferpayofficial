@@ -2,6 +2,7 @@
 /config*.xml
 /vendor
 .php_cs.cache
+tests/.env
 /node_modules
 var/cache/*
 !var/cache/index.php
