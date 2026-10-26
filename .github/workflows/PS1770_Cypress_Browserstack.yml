@@ -1,8 +1,8 @@
 name: PS1770 + E2E Cypress + Crossbrowser Browserstack Testing
+# Paused: these Cypress specs target the old settings screen that the React redesign replaced,
+# so they cannot pass. The browser tests are being rebuilt in Playwright under SL-384.
 on:
-  pull_request:
-    types: [opened, reopened]
-    branches: [master, v*.*.*]
+  workflow_dispatch:
 jobs:
   Cypress-E2E-Browserstack-1770:
     runs-on: ubuntu-latest

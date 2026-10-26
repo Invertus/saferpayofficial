@@ -68,7 +68,6 @@
         "prestashop/php-dev-tools": "^3.16"
     },
     "scripts": {
-        "test-integration": "./vendor/bin/phpunit --configuration ./tests/Integration/phpunit.xml",
         "test-unit": "./vendor/bin/phpunit --configuration tests/Unit/phpunit.xml"
     },
     "author": "PrestaShop",
