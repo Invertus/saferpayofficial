@@ -232,7 +232,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $configuration->set(SaferPayConfig::USERNAME . SaferPayConfig::TEST_SUFFIX, $testUsername);
         $testPassword = $this->getStringValue($data, 'testPassword');
         if ($testPassword && $testPassword !== self::PASSWORD_PLACEHOLDER) {
-            $configuration->set(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX, $testPassword);
+            $configuration->setRaw(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX, $testPassword);
         }
         $configuration->set(SaferPayConfig::CUSTOMER_ID . SaferPayConfig::TEST_SUFFIX, $this->parseCustomerIdFromUsername($testUsername));
         $configuration->set(SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX, $this->getStringValue($data, 'testTerminalId'));
@@ -245,7 +245,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $configuration->set(SaferPayConfig::USERNAME, $liveUsername);
         $livePassword = $this->getStringValue($data, 'livePassword');
         if ($livePassword && $livePassword !== self::PASSWORD_PLACEHOLDER) {
-            $configuration->set(SaferPayConfig::PASSWORD, $livePassword);
+            $configuration->setRaw(SaferPayConfig::PASSWORD, $livePassword);
         }
         $configuration->set(SaferPayConfig::CUSTOMER_ID, $this->parseCustomerIdFromUsername($liveUsername));
         $configuration->set(SaferPayConfig::TERMINAL_ID, $this->getStringValue($data, 'liveTerminalId'));

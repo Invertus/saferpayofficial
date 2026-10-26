@@ -24,6 +24,8 @@
 namespace Invertus\SaferPay\Adapter;
 
 use Configuration as PrestaShopConfiguration;
+use Db;
+use Shop;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -55,6 +57,43 @@ class Configuration
         }
 
         PrestaShopConfiguration::updateValue($id, $value, false, null, $shopId);
+    }
+
+    /**
+     * Stores the value byte for byte. Configuration::updateValue() runs strip_tags() on it
+     * (or HTMLPurifier when $html is true), which corrupts secrets such as API passwords
+     * that contain "<". The row is created through updateValue() first so the shop scope
+     * and the in-memory cache match set(), then its value is overwritten with the unfiltered one.
+     *
+     * @param string $id
+     * @param string $value
+     * @param int|null $shopId
+     * @return void
+     */
+    public function setRaw($id, $value, $shopId = null)
+    {
+        if (!$shopId) {
+            $shopId = $this->context->getShopId();
+        }
+
+        $this->set($id, $value, $shopId);
+
+        $idShop = Shop::isFeatureActive() ? (int) $shopId : Shop::getContextShopID(true);
+        $idShopGroup = Shop::getContextShopGroupID(true);
+        $configurationId = (int) PrestaShopConfiguration::getIdByName($id, $idShopGroup, $idShop);
+
+        if (!$configurationId) {
+            return;
+        }
+
+        Db::getInstance()->update(
+            'configuration',
+            [
+                'value' => pSQL($value, true),
+                'date_upd' => date('Y-m-d H:i:s'),
+            ],
+            'id_configuration = ' . $configurationId
+        );
     }
 
     /**
