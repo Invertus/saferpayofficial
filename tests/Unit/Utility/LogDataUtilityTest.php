@@ -77,26 +77,6 @@ class LogDataUtilityTest extends UnitTestCase
         $this->assertSame($data, LogDataUtility::removeCredentials($data));
     }
 
-    public function testRemovesCredentialsFromStoredJson()
-    {
-        $json = json_encode([
-            'context' => ['headers' => ['Authorization' => 'Basic abc', 'Accept' => 'application/json']],
-            'id_shop' => 1,
-        ]);
-
-        $this->assertSame(
-            json_encode(['context' => ['headers' => ['Accept' => 'application/json']], 'id_shop' => 1]),
-            LogDataUtility::removeCredentialsFromJson($json)
-        );
-    }
-
-    public function testLeavesStoredJsonWithoutCredentialsUntouched()
-    {
-        $this->assertSame('{"a":"b\/c"}', LogDataUtility::removeCredentialsFromJson('{"a":"b\/c"}'));
-        $this->assertSame('not json', LogDataUtility::removeCredentialsFromJson('not json'));
-        $this->assertSame('""', LogDataUtility::removeCredentialsFromJson('""'));
-    }
-
     public function testRemovesAuthorizationInsideListsAndWithArrayValue()
     {
         $data = [
@@ -114,15 +94,5 @@ class LogDataUtilityTest extends UnitTestCase
         ];
 
         $this->assertSame($expected, LogDataUtility::removeCredentials($data));
-    }
-
-    public function testMasksCredentialsInStoredValueThatIsNotValidJson()
-    {
-        $truncated = '{"context":{"headers":{"Accept":"application\\/json","Authorization":"Basic c2w0MDct';
-
-        $this->assertSame(
-            '{"context":{"headers":{"Accept":"application\\/json","Authorization":"[removed]"',
-            LogDataUtility::removeCredentialsFromJson($truncated)
-        );
     }
 }

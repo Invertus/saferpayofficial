@@ -53,26 +53,4 @@ class LogDataUtility
 
         return $data;
     }
-
-    /**
-     * @param string $json
-     *
-     * @return string
-     */
-    public static function removeCredentialsFromJson($json)
-    {
-        $data = json_decode($json, true);
-
-        if (!is_array($data)) {
-            return preg_replace('/("authorization"\s*:\s*)"[^"]*"?/i', '$1"[removed]"', $json);
-        }
-
-        $cleanData = self::removeCredentials($data);
-
-        if ($cleanData === $data) {
-            return $json;
-        }
-
-        return json_encode($cleanData);
-    }
 }

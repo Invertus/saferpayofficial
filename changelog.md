@@ -246,4 +246,4 @@
 
 ## [2.1.1]
 
-- BO : Fixed issue when the Saferpay API username and password were saved in the module logs and the log export, credentials already saved in the logs are removed on upgrade
+- BO : Fixed issue when the Saferpay API username and password were saved in the module logs and the log export
