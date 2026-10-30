@@ -1,8 +1,8 @@
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # target: fix-lint			- Launch php cs fixer
-fix-lint:
-	docker-compose run --rm php sh -c "vendor/bin/php-cs-fixer fix --using-cache=no"
+fix-lint: tools-install
+	./tests/ci-tools/vendor/bin/php-cs-fixer fix
 
 ############ PS1784 ############################
 
@@ -165,7 +165,7 @@ prepare-zip:
 	composer install --no-dev --optimize-autoloader && \
 	cp .github/.htaccess vendor/.htaccess && \
 	cd views/js/admin/settings-app && pnpm install && pnpm run build && cd ../../../.. && \
-	rm -rf .git .github tests cypress .docker && \
+	rm -rf .git .github tests cypress .docker .php-cs-fixer.dist.php && \
 	rm -rf views/js/admin/settings-app && \
 	mkdir saferpayofficial && \
 	rsync -Rr ./ ./saferpayofficial && \
@@ -174,21 +174,18 @@ prepare-zip:
 	cd saferpayofficial && rm -rf saferpayofficial && \
 	cd ../ && zip -r saferpayofficial.zip saferpayofficial/
 
-ci-lint:
-	./vendor/bin/php-cs-fixer fix --diff --no-interaction --dry-run
+# The style and static analysis tools live in their own composer project, because the
+# module's PHP 7.1 platform pin would hold them at their 2021 versions. They need PHP 7.4+.
+tools-install: tests/ci-tools/vendor/autoload.php
 
-# PHPStan ships a phar, which is what this target runs. `composer require phpstan/phpstan`
-# re-resolves the whole dependency tree, and invertus/lock is declared with "no-api", so
-# resolving it clones over git - which the PrestaShop image can no longer install, Debian 11
-# being end of life. The phar also pins the version: the old command took whatever PHPStan
-# had released that morning, so an analyser release could turn a green branch red.
-PHPSTAN_VERSION := 2.2.14
-PHPSTAN_PHAR := tests/phpstan/phpstan-$(PHPSTAN_VERSION).phar
+tests/ci-tools/vendor/autoload.php: tests/ci-tools/composer.lock
+	composer install --working-dir=tests/ci-tools --no-interaction --no-progress
+	touch $@
 
-$(PHPSTAN_PHAR):
-	curl -fsSL -o $@ https://github.com/phpstan/phpstan/releases/download/$(PHPSTAN_VERSION)/phpstan.phar
+ci-lint: tools-install
+	./tests/ci-tools/vendor/bin/php-cs-fixer fix --diff --no-interaction --dry-run
 
-ci-phpstan: $(PHPSTAN_PHAR)
+ci-phpstan: tools-install
 	ps_version=$(firstword $(subst -, ,$(ps_version_tag))); \
 	if [ -e tests/phpstan/phpstan-$$ps_version.neon ] ; then \
 		phpstan_config_path=tests/phpstan/phpstan-$$ps_version.neon ; \
@@ -196,4 +193,4 @@ ci-phpstan: $(PHPSTAN_PHAR)
 		phpstan_config_path=tests/phpstan/phpstan.neon ; \
 	fi; \
 	echo Using PHPStan config: $$phpstan_config_path ; \
-	_PS_ROOT_DIR_=/var/www/html php $(PHPSTAN_PHAR) --configuration=$$phpstan_config_path analyse
+	_PS_ROOT_DIR_=/var/www/html php -d memory_limit=-1 ./tests/ci-tools/vendor/bin/phpstan --configuration=$$phpstan_config_path analyse

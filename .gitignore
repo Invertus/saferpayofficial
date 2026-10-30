@@ -1,7 +1,6 @@
 /.idea
 /config*.xml
 /vendor
-.php_cs.cache
 tests/.env
 /node_modules
 var/cache/*
@@ -10,4 +9,4 @@ var/cache/*
 views/js/admin/settings-app/node_modules/
 views/js/admin/dist/
 views/css/admin/saferpay-settings.css
-tests/phpstan/*.phar
+tests/ci-tools/vendor/

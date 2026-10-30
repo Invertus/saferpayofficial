@@ -81,7 +81,7 @@ jobs:
         run: |
           composer dump-autoload --no-dev --optimize --classmap-authoritative
           cp .github/.htaccess vendor/.htaccess
-          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker vendor-bin vendor/hambug update_installed_json.php
+          rm -rf .git .github tests .php-cs-fixer.php .php-cs-fixer.dist.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker vendor-bin vendor/hambug update_installed_json.php
           mkdir ${{ env.MODULE_NAME }}
           rsync -Rr ./ ./${{ env.MODULE_NAME }}
           chmod -R 777 ${{ env.MODULE_NAME }}/var/cache

@@ -1,12 +1,18 @@
 includes:
-  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+  - %currentWorkingDirectory%/tests/ci-tools/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
 
 parameters:
+  bootstrapFiles:
+    - bootstrap.php
   paths:
-    - ../../controllers
-    - ../../src
-    - ../../saferpayofficial.php
-    - ../../saferpay.config.php
+    - ../..
+  excludePaths:
+    - ../../cypress
+    - ../../node_modules (?)
+    - ../../tests
+    - ../../var
+    - ../../vendor
+    - ../../views/js
   level: 2
   reportUnmatchedIgnoredErrors: false
   ignoreErrors:
@@ -24,4 +30,3 @@ parameters:
     - '#Access to an undefined property Cookie::\$saferPayErrors#'
     - '#Property SaferPayOfficialFailModuleFrontController::\$order_presenter has unknown class OrderPresenter as its type#'
     - '#Constant _PS_BASE_URL_SSL_ not found#'
-

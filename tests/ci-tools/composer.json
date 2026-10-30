@@ -1,0 +1,17 @@
+{
+    "name": "invertus/saferpayofficial-ci-tools",
+    "description": "Style and static analysis tools for CI. Kept out of the module's composer.json, whose PHP 7.1 platform pin holds these tools at their 2021 versions.",
+    "type": "project",
+    "license": "AFL-3.0",
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.88",
+        "phpstan/phpstan": "^2.1",
+        "prestashop/php-dev-tools": "^5.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.4"
+        },
+        "sort-packages": true
+    }
+}
