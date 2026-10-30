@@ -165,13 +165,14 @@ MODULE_NAME := saferpayofficial
 # target: prepare-zip			- Strip the checkout in place into the shippable saferpayofficial/ folder (CI only, run build-react first)
 prepare-zip:
 	@[ -n "$$CI" ] || { echo "prepare-zip deletes .git and the dev files of this checkout. Run it in CI, or set CI=1 to force it."; exit 1; }
-	composer install --no-dev --optimize-autoloader --classmap-authoritative
+	@[ -f views/js/admin/dist/saferpay-settings.js ] || { echo "The settings app bundle is missing. Run make build-react first."; exit 1; }
+	composer install --no-dev --no-autoloader
 	# Drop the test, CI and dotfile leftovers of the dependencies before the classmap is built
 	find vendor -mindepth 3 -maxdepth 3 -type d \( -name Tests -o -name tests -o -name .github \) -exec rm -rf {} +
 	find vendor -mindepth 3 -type f \( -name '.*' -o -name 'phpunit.xml*' -o -name 'phpcs.xml*' -o -name composer.lock -o -name Makefile \) -delete
 	composer dump-autoload --no-dev --optimize --classmap-authoritative
 	cp .github/.htaccess vendor/.htaccess
-	rm -rf .git .github tests .php-cs-fixer.php .php-cs-fixer.dist.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md .editorconfig .gitignore .php_cs.dist browserstack.json views/js/admin/settings-app
+	rm -rf .git .github tests .php-cs-fixer.php .php-cs-fixer.dist.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md MAINTAINERS.md .editorconfig .gitignore .php_cs.dist browserstack.json views/js/admin/settings-app
 	# The Addons validator requires an index.php in every shipped directory
 	find . -type d | while read -r dir; do [ -f "$$dir/index.php" ] || cp index.php "$$dir/index.php"; done
 	mkdir $(MODULE_NAME)
