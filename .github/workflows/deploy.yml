@@ -30,12 +30,6 @@ jobs:
           cache: pnpm
           cache-dependency-path: views/js/admin/settings-app/pnpm-lock.yaml
 
-      - name: Build React settings app
-        run: |
-          cd views/js/admin/settings-app
-          pnpm install --frozen-lockfile
-          pnpm run build
-
       - name: Build module ZIP
         run: make prepare-zip
       - name: Archive production artifacts

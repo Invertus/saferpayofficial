@@ -31,16 +31,8 @@ jobs:
           cache: pnpm
           cache-dependency-path: views/js/admin/settings-app/pnpm-lock.yaml
 
-      - name: Build React settings app
-        run: |
-          cd views/js/admin/settings-app
-          pnpm install --frozen-lockfile
-          pnpm run build
-
       - name: build
-        run: |
-          make prepare-zip
-          zip -r ${{ env.MODULE_NAME }}.zip ${{ env.MODULE_NAME }}/
+        run: make zip
       - name: Update release
         id: update_release
         uses: tubone24/update_release@v1.0
