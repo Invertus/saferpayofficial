@@ -146,7 +146,7 @@ test-e2e-headless-1786:
 
 # target: build-react			- Install deps and build the React admin settings app
 build-react:
-	cd views/js/admin/settings-app && pnpm install && pnpm run build
+	cd views/js/admin/settings-app && pnpm install --frozen-lockfile && pnpm run build
 
 # target: dev-react			- Start React dev server with HMR
 dev-react:
@@ -160,19 +160,27 @@ watch-react:
 lint-react:
 	cd views/js/admin/settings-app && pnpm run tsc --noEmit
 
-prepare-zip:
-	rm -rf vendor && \
-	composer install --no-dev --optimize-autoloader && \
-	cp .github/.htaccess vendor/.htaccess && \
-	cd views/js/admin/settings-app && pnpm install && pnpm run build && cd ../../../.. && \
-	rm -rf .git .github tests cypress .docker && \
-	rm -rf views/js/admin/settings-app && \
-	mkdir saferpayofficial && \
-	rsync -Rr ./ ./saferpayofficial && \
-	find . -maxdepth 1 ! -name saferpayofficial -exec mv {} saferpayofficial/ \; && \
-	find . -maxdepth 1 -type f -exec rm "{}" \; && \
-	cd saferpayofficial && rm -rf saferpayofficial && \
-	cd ../ && zip -r saferpayofficial.zip saferpayofficial/
+MODULE_NAME ?= saferpayofficial
+
+# target: prepare-zip			- Strip the checkout in place into the shippable saferpayofficial/ folder (CI only)
+prepare-zip: build-react
+	@[ -n "$$CI" ] || { echo "prepare-zip deletes .git and the dev files of this checkout. Run it in CI, or set CI=1 to force it."; exit 1; }
+	composer install --no-dev --no-autoloader
+	# Drop the test, CI and dotfile leftovers of the dependencies before the classmap is built
+	find vendor -mindepth 3 -maxdepth 3 -type d \( -name Tests -o -name tests -o -name .github \) -exec rm -rf {} +
+	find vendor -mindepth 3 -type f \( -name '.*' -o -name 'phpunit.xml*' -o -name 'phpcs.xml*' -o -name composer.lock -o -name Makefile \) -delete
+	composer dump-autoload --no-dev --optimize --classmap-authoritative
+	cp .github/.htaccess vendor/.htaccess
+	rm -rf .git .github tests .php-cs-fixer.dist.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md MAINTAINERS.md .gitignore .php_cs.dist browserstack.json views/js/admin/settings-app
+	# The Addons validator requires an index.php in every shipped directory
+	find . -type d | while read -r dir; do [ -f "$$dir/index.php" ] || cp index.php "$$dir/index.php"; done
+	mkdir $(MODULE_NAME)
+	find . -mindepth 1 -maxdepth 1 ! -name $(MODULE_NAME) -exec mv {} $(MODULE_NAME)/ \;
+	chmod -R 777 $(MODULE_NAME)/var/cache
+
+# target: zip				- Build the module and pack it into saferpayofficial.zip (CI only)
+zip: prepare-zip
+	zip -r $(MODULE_NAME).zip $(MODULE_NAME)/
 
 ci-lint:
 	./vendor/bin/php-cs-fixer fix --diff --no-interaction --dry-run
