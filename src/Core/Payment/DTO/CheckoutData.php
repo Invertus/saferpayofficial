@@ -25,6 +25,7 @@ namespace Invertus\SaferPay\Core\Payment\DTO;
 
 use Configuration;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\DTO\Response\Amount;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,6 +44,7 @@ class CheckoutData
     private $isAuthorizedOrder;
     private $status;
     private $isWebhook;
+    private $authorizedAmount;
 
     public function __construct(
         $cartId,
@@ -206,6 +208,24 @@ class CheckoutData
         }
 
         $this->createAfterAuthorization = Configuration::get(SaferPayConfig::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION);
+    }
+
+    /**
+     * @return Amount|null
+     */
+    public function getAuthorizedAmount()
+    {
+        return $this->authorizedAmount;
+    }
+
+    /**
+     * @param Amount $authorizedAmount
+     *
+     * @return void
+     */
+    public function setAuthorizedAmount(Amount $authorizedAmount)
+    {
+        $this->authorizedAmount = $authorizedAmount;
     }
 
     public function getIsWebhook()

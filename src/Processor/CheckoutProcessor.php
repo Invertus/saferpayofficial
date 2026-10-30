@@ -33,11 +33,13 @@ use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\EntityBuilder\SaferPayOrderBuilder;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Exception\AuthorizedAmountMismatchException;
 use Invertus\SaferPay\Exception\CouldNotProcessCheckout;
 use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
+use Invertus\SaferPay\Service\TransactionFlow\SaferPayAuthorizedAmountGuard;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 use Order;
 use PrestaShopException;
@@ -59,16 +61,21 @@ class CheckoutProcessor
     /** @var SaferPayOrderRepository */
     private $saferPayOrderRepository;
 
+    /** @var SaferPayAuthorizedAmountGuard */
+    private $authorizedAmountGuard;
+
     public function __construct(
         ModuleFactory $module,
         SaferPayOrderBuilder $saferPayOrderBuilder,
         SaferPayInitialize $saferPayInitialize,
-        SaferPayOrderRepository $saferPayOrderRepository
+        SaferPayOrderRepository $saferPayOrderRepository,
+        SaferPayAuthorizedAmountGuard $authorizedAmountGuard
     ) {
         $this->module = $module->getModule();
         $this->saferPayOrderBuilder = $saferPayOrderBuilder;
         $this->saferPayInitialize = $saferPayInitialize;
         $this->saferPayOrderRepository = $saferPayOrderRepository;
+        $this->authorizedAmountGuard = $authorizedAmountGuard;
     }
 
     public function run(CheckoutData $data)
@@ -139,10 +146,12 @@ class CheckoutProcessor
     /**
      * @param Cart $cart
      * @param $paymentMethod
+     * @param int|null $orderStateId defaults to the awaiting payment state
+     * @param float|null $amountPaid defaults to the cart total
      * @return void
      * @throws PrestaShopException
      */
-    private function processCreateOrder(Cart $cart, $paymentMethod)
+    private function processCreateOrder(Cart $cart, $paymentMethod, $orderStateId = null, $amountPaid = null)
     {
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
@@ -171,8 +180,8 @@ class CheckoutProcessor
 
         $this->module->validateOrder(
             $cart->id,
-            \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
-            (float) $cart->getOrderTotal(),
+            $orderStateId ?: \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT),
+            $amountPaid !== null ? $amountPaid : (float) $cart->getOrderTotal(),
             $paymentMethod,
             null,
             [],
@@ -238,11 +247,19 @@ class CheckoutProcessor
             ],
         ]);
 
+        $guardAmount = $data->getCreateAfterAuthorization() && $data->getAuthorizedAmount() !== null;
+
         try {
-            $this->processCreateOrder($cart, $data->getPaymentMethod());
+            $this->createAuthorizedOrder($data, $cart, $guardAmount);
 
             $order = new Order(Order::getIdByCartId($cart->id));
             $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
+
+            if ($guardAmount && !$this->ordersMatchAuthorizedAmount($data, $order)) {
+                $this->leaveOrdersForReview($data, $order, $saferPayOrder);
+
+                throw AuthorizedAmountMismatchException::forCart($cart->id);
+            }
 
             if (
                 $order->getCurrentState() == _SAFERPAY_PAYMENT_AUTHORIZED_
@@ -271,6 +288,8 @@ class CheckoutProcessor
 
             $saferPayOrder->id_order = $order->id;
             $saferPayOrder->update();
+        } catch (AuthorizedAmountMismatchException $exception) {
+            throw $exception;
         } catch (\Exception $exception) {
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
@@ -281,5 +300,87 @@ class CheckoutProcessor
 
             throw CouldNotProcessCheckout::failedToCreateOrder($data->getCartId());
         }
+    }
+
+    /**
+     * With the "After authorization" rule the payment page was opened for the cart total at that time,
+     * so a cart changed meanwhile creates the order straight in Payment error, without an order confirmation.
+     *
+     * @throws PrestaShopException
+     */
+    private function createAuthorizedOrder(CheckoutData $data, Cart $cart, $guardAmount)
+    {
+        if (!$guardAmount) {
+            $this->processCreateOrder($cart, $data->getPaymentMethod());
+
+            return;
+        }
+
+        $total = (float) $cart->getOrderTotal(true, Cart::BOTH);
+        $currency = new \Currency($cart->id_currency);
+
+        if ($this->authorizedAmountGuard->matchesTotal($data->getAuthorizedAmount(), $total, $currency->iso_code)) {
+            $this->processCreateOrder($cart, $data->getPaymentMethod(), null, $total);
+
+            return;
+        }
+
+        $this->processCreateOrder(
+            $cart,
+            $data->getPaymentMethod(),
+            (int) \Configuration::get('PS_OS_ERROR'),
+            $this->authorizedAmountGuard->toMajorUnits($data->getAuthorizedAmount())
+        );
+    }
+
+    /**
+     * Checked again on the created orders, a cart change can land between the check above and the order.
+     */
+    private function ordersMatchAuthorizedAmount(CheckoutData $data, Order $order)
+    {
+        $currency = new \Currency($order->id_currency);
+
+        // Sums every order a cart split by carrier produced, they share one authorization.
+        return $this->authorizedAmountGuard->matchesTotal(
+            $data->getAuthorizedAmount(),
+            (float) $order->getOrdersTotalPaid(),
+            $currency->iso_code
+        );
+    }
+
+    /**
+     * The Saferpay flags follow what Saferpay really holds, so the order page keeps the matching
+     * cancel, capture or refund actions for the merchant.
+     *
+     * @throws PrestaShopException
+     */
+    private function leaveOrdersForReview(CheckoutData $data, Order $order, SaferPayOrder $saferPayOrder)
+    {
+        /** @var LoggerInterface $logger */
+        $logger = $this->module->getService(LoggerInterface::class);
+
+        $logger->error(sprintf('%s - Authorized amount does not match the order total', self::FILE_NAME), [
+            'context' => [
+                'id_cart' => $order->id_cart,
+                'authorized_amount' => $data->getAuthorizedAmount()->getValue(),
+                'authorized_currency' => $data->getAuthorizedAmount()->getCurrencyCode(),
+                'total' => $order->getOrdersTotalPaid(),
+            ],
+        ]);
+
+        $paymentErrorState = (int) \Configuration::get('PS_OS_ERROR');
+        $orders = Order::getByReference($order->reference)->where('id_cart', '=', (int) $order->id_cart);
+
+        /** @var Order $splitOrder */
+        foreach ($orders as $splitOrder) {
+            if ((int) $splitOrder->getCurrentState() !== $paymentErrorState) {
+                $splitOrder->setCurrentState($paymentErrorState);
+            }
+        }
+
+        $saferPayOrder->id_order = $order->id;
+        $saferPayOrder->authorized = $data->getOrderStatus() === TransactionStatus::AUTHORIZED;
+        $saferPayOrder->captured = $data->getOrderStatus() === TransactionStatus::CAPTURED;
+        $saferPayOrder->update();
     }
 }
