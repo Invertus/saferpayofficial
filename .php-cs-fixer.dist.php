@@ -2,7 +2,7 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
-    ->exclude(['vendor', 'tests/ci-tools/vendor', 'node_modules', 'views/js/admin/settings-app/node_modules']);
+    ->exclude(['vendor', 'var', 'tests/ci-tools/vendor', 'node_modules', 'views/js/admin/settings-app/node_modules']);
 
 // PrestaShop\CodingStandards\CsFixer\Config overrides getRules(), so its rules are copied
 // into a plain config to adjust the ones that contradict PrestaShop or the PHP 7.1 floor:

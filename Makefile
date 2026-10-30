@@ -176,8 +176,11 @@ prepare-zip:
 
 # The style and static analysis tools live in their own composer project, because the
 # module's PHP 7.1 platform pin would hold them at their 2021 versions. They need PHP 7.4+.
-tools-install:
+tools-install: tests/ci-tools/vendor/autoload.php
+
+tests/ci-tools/vendor/autoload.php: tests/ci-tools/composer.lock
 	composer install --working-dir=tests/ci-tools --no-interaction --no-progress
+	touch $@
 
 ci-lint: tools-install
 	./tests/ci-tools/vendor/bin/php-cs-fixer fix --diff --no-interaction --dry-run
