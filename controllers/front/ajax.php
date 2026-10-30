@@ -82,7 +82,7 @@ class SaferPayOfficialAjaxModuleFrontController extends AbstractSaferPayControll
         $saferPayOrderId = $saferPayOrderRepository->getIdByCartId($cartId);
         $saferPayOrder = new SaferPayOrder($saferPayOrderId);
 
-        if (!$saferPayOrder->id || $saferPayOrder->canceled) {
+        if (!$saferPayOrder->id || $saferPayOrder->canceled || $this->isLeftInPaymentError($saferPayOrder)) {
             $this->ajaxRender(json_encode([
                 'isFinished' => true,
                 'href' => $this->getFailControllerLink($cartId, $secureKey, $moduleId),
@@ -116,6 +116,20 @@ class SaferPayOfficialAjaxModuleFrontController extends AbstractSaferPayControll
                 ]
             ),
         ]));
+    }
+
+    /**
+     * An authorization that does not match the order total leaves a paid-looking order in Payment error.
+     */
+    private function isLeftInPaymentError(SaferPayOrder $saferPayOrder)
+    {
+        if (!$saferPayOrder->authorized && !$saferPayOrder->captured) {
+            return false;
+        }
+
+        $order = new Order((int) $saferPayOrder->id_order);
+
+        return (int) $order->current_state === (int) Configuration::get('PS_OS_ERROR');
     }
 
     private function getFailControllerLink($cartId, $secureKey, $moduleId)

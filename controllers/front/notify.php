@@ -25,6 +25,7 @@ use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
+use Invertus\SaferPay\Exception\AuthorizedAmountMismatchException;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Processor\CheckoutProcessor;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
@@ -146,6 +147,7 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
             );
 
             $checkoutData->setOrderStatus($transactionStatus);
+            $checkoutData->setAuthorizedAmount($assertResponseBody->getTransaction()->getAmount());
             $checkoutProcessor->run($checkoutData);
 
             $orderId = Order::getIdByCartId($cartId);
@@ -241,6 +243,10 @@ class SaferPayOfficialNotifyModuleFrontController extends AbstractSaferPayContro
                 $orderStatusService = $this->module->getService(SaferPayOrderStatusService::class);
                 $orderStatusService->capture($order);
             }
+        } catch (AuthorizedAmountMismatchException $e) {
+            // The order stays in Payment error for the merchant, the declined handling below would overwrite it.
+            $this->releaseLock();
+            die($this->module->l('Authorized amount does not match the order total', self::FILE_NAME));
         } catch (Exception $e) {
             $logger->debug($e->getMessage(), [
                 'context' => [],

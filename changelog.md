@@ -243,3 +243,7 @@
 - FO : Fixed issue when Apple Pay failed with a type error on PrestaShop 9 because of the changed mobile detection
 - API update to V1.53: all payment and lookup calls now declare the current Saferpay API version
 - Fixed issues reported by the PrestaShop Addons validator
+
+## [2.1.1]
+
+- FO : Fixed issue when a shopper who added products to the cart while the Saferpay payment page was open got an order for the full cart with only the original amount paid, for shops that create the order after authorization

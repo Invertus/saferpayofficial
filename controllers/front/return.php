@@ -351,6 +351,7 @@ class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayContro
             (int) Configuration::get(SaferPayConfig::IS_BUSINESS_LICENCE)
         );
         $checkoutData->setOrderStatus($transactionStatus);
+        $checkoutData->setAuthorizedAmount($assertResponseBody->getTransaction()->getAmount());
 
         /**
          * NOTE: This check is needed because ACCOUNTTOACCOUNT payment method
