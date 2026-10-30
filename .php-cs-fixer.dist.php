@@ -2,7 +2,8 @@
 
 $finder = PhpCsFixer\Finder::create()
     ->in(__DIR__)
-    ->exclude(['vendor', 'var', 'tests/ci-tools/vendor', 'node_modules', 'views/js/admin/settings-app/node_modules']);
+    ->exclude(['vendor', 'tests/ci-tools/vendor', 'node_modules', 'views/js/admin/settings-app/node_modules'])
+    ->notPath('#^var/cache/(?!index\.php$)#');
 
 // These are the rules the Addons validator applies, with one exception. PrestaShop's Config
 // overrides getRules(), so the rules are copied into a plain config to change it:
