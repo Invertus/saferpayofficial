@@ -165,7 +165,7 @@ prepare-zip:
 	composer install --no-dev --optimize-autoloader && \
 	cp .github/.htaccess vendor/.htaccess && \
 	cd views/js/admin/settings-app && pnpm install && pnpm run build && cd ../../../.. && \
-	rm -rf .git .github tests cypress .docker .php-cs-fixer.dist.php .php-cs-fixer.cache && \
+	rm -rf .git .github tests cypress .docker .php-cs-fixer.dist.php && \
 	rm -rf views/js/admin/settings-app && \
 	mkdir saferpayofficial && \
 	rsync -Rr ./ ./saferpayofficial && \

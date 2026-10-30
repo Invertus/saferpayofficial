@@ -1,7 +1,6 @@
 /.idea
 /config*.xml
 /vendor
-.php-cs-fixer.cache
 tests/.env
 /node_modules
 var/cache/*

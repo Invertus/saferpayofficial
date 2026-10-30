@@ -19,6 +19,7 @@ $rules = array_merge((new PrestaShop\CodingStandards\CsFixer\Config())->getRules
 ]);
 
 return (new PhpCsFixer\Config())
+    ->setUsingCache(false)
     ->setRiskyAllowed(true)
     ->setRules($rules)
     ->setFinder($finder);
