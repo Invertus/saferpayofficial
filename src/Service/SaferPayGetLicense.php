@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -33,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayGetLicense
 {
-    const FEATURE_HOSTED_ENTRY_FORM = 'HOSTED_ENTRY_FORM';
+    public const FEATURE_HOSTED_ENTRY_FORM = 'HOSTED_ENTRY_FORM';
 
     /** @var GetLicenseService */
     private $getLicenseService;

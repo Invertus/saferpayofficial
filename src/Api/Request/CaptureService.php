@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CaptureService
 {
-    const CAPTURE_API = 'Payment/v1/Transaction/Capture';
+    public const CAPTURE_API = 'Payment/v1/Transaction/Capture';
 
     /**
      * @var ApiRequest

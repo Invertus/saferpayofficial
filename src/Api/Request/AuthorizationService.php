@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -38,7 +39,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AuthorizationService
 {
-    const AUTHORIZE_API = 'Payment/v1/Transaction/Authorize';
+    public const AUTHORIZE_API = 'Payment/v1/Transaction/Authorize';
 
     /**
      * @var ApiRequest

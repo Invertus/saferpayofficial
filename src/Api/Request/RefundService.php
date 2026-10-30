@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class RefundService
 {
-    const REFUND_API = 'Payment/v1/Transaction/Refund';
+    public const REFUND_API = 'Payment/v1/Transaction/Refund';
 
     /**
      * @var ApiRequest

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -42,7 +43,7 @@ use Order;
 
 class CheckoutProcessor
 {
-    const FILE_NAME = 'CheckoutProcessor';
+    public const FILE_NAME = 'CheckoutProcessor';
 
     /** @var \SaferPayOfficial */
     private $module;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -36,7 +37,7 @@ if (!defined('_PS_VERSION_')) {
 
 class ApiRequest
 {
-    const FILE_NAME = 'ApiRequest';
+    public const FILE_NAME = 'ApiRequest';
 
     /** @var LoggerInterface */
     private $logger;

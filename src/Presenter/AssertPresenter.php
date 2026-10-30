@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AssertPresenter
 {
-    const FILE_NAME = 'AssertPresenter';
+    public const FILE_NAME = 'AssertPresenter';
 
     /**
      * @var \SaferPayOfficial

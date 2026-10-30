@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -52,11 +53,11 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficial extends PaymentModule
 {
-    const ADMIN_SAFERPAY_MODULE_CONTROLLER = 'AdminSaferPayOfficialModule';
-    const ADMIN_SETTINGS_CONTROLLER = 'AdminSaferPayOfficialSettings';
-    const ADMIN_PAYMENTS_CONTROLLER = 'AdminSaferPayOfficialPayment';
-    const ADMIN_ORDER_CONTROLLER = 'AdminSaferPayOfficialOrder';
-    const ADMIN_LOGS_CONTROLLER = 'AdminSaferPayOfficialLogs';
+    public const ADMIN_SAFERPAY_MODULE_CONTROLLER = 'AdminSaferPayOfficialModule';
+    public const ADMIN_SETTINGS_CONTROLLER = 'AdminSaferPayOfficialSettings';
+    public const ADMIN_PAYMENTS_CONTROLLER = 'AdminSaferPayOfficialPayment';
+    public const ADMIN_ORDER_CONTROLLER = 'AdminSaferPayOfficialOrder';
+    public const ADMIN_LOGS_CONTROLLER = 'AdminSaferPayOfficialLogs';
 
     /**
      * @var LeagueServiceContainerProvider|null

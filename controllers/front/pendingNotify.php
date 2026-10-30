@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -34,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'pendingNotify';
+    public const FILE_NAME = 'pendingNotify';
 
     /**
      * This code is being called by SaferPay by using NotifyUrl in InitializeRequest.

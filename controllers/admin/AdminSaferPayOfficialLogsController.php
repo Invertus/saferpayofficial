@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -42,13 +43,13 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayController
 {
-    const FILE_NAME = 'AdminSaferPayOfficialLogsController';
+    public const FILE_NAME = 'AdminSaferPayOfficialLogsController';
 
-    const LOG_INFORMATION_TYPE_REQUEST = 'request';
+    public const LOG_INFORMATION_TYPE_REQUEST = 'request';
 
-    const LOG_INFORMATION_TYPE_RESPONSE = 'response';
+    public const LOG_INFORMATION_TYPE_RESPONSE = 'response';
 
-    const LOG_INFORMATION_TYPE_CONTEXT = 'context';
+    public const LOG_INFORMATION_TYPE_CONTEXT = 'context';
 
     /** @var SaferPayOfficial */
     public $module;

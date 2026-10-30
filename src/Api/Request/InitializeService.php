@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,9 +33,9 @@ if (!defined('_PS_VERSION_')) {
 
 class InitializeService
 {
-    const INITIALIZE_API_PAYMENT = 'Payment/v1/PaymentPage/Initialize';
+    public const INITIALIZE_API_PAYMENT = 'Payment/v1/PaymentPage/Initialize';
 
-    const INITIALIZE_API_TRANSACTION = 'Payment/v1/Transaction/Initialize';
+    public const INITIALIZE_API_TRANSACTION = 'Payment/v1/Transaction/Initialize';
 
     /**
      * @var ApiRequest

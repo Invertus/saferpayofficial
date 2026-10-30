@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -37,9 +38,9 @@ if (!defined('_PS_VERSION_')) {
 
 class AssertService
 {
-    const ASSERT_API_PAYMENT = 'Payment/v1/PaymentPage/Assert';
+    public const ASSERT_API_PAYMENT = 'Payment/v1/PaymentPage/Assert';
 
-    const ASSERT_API_TRANSACTION = 'Payment/v1/Transaction/Authorize';
+    public const ASSERT_API_TRANSACTION = 'Payment/v1/Transaction/Authorize';
 
     /**
      * @var ApiRequest

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -35,7 +36,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayTransactionAssertion
 {
-    const FILE_NAME = 'SaferPayTransactionAssertion';
+    public const FILE_NAME = 'SaferPayTransactionAssertion';
     /**
      * @var AssertRequestObjectCreator
      */

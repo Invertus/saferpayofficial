@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,8 +30,8 @@ if (!defined('_PS_VERSION_')) {
 
 class TransactionStatus
 {
-    const AUTHORIZED = 'AUTHORIZED';
-    const CANCELED = 'CANCELED';
-    const CAPTURED = 'CAPTURED';
-    const PENDING = 'PENDING';
+    public const AUTHORIZED = 'AUTHORIZED';
+    public const CANCELED = 'CANCELED';
+    public const CAPTURED = 'CAPTURED';
+    public const PENDING = 'PENDING';
 }

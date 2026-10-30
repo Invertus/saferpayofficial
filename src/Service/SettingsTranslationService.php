@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SettingsTranslationService
 {
-    const FILE_NAME = 'SettingsTranslationService';
+    public const FILE_NAME = 'SettingsTranslationService';
 
     /** @var \SaferPayOfficial */
     private $module;

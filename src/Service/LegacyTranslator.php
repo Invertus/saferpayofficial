@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class LegacyTranslator implements TranslatorInterface
 {
-    const FILE_NAME = 'LegacyTranslator';
+    public const FILE_NAME = 'LegacyTranslator';
 
     /**
      * @var \SaferPayOfficial

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -44,7 +45,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderStatusService
 {
-    const FILE_NAME = 'SaferPayOrderStatusService';
+    public const FILE_NAME = 'SaferPayOrderStatusService';
     /**
      * @var CaptureService
      */

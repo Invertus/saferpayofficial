@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -48,7 +49,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialReturnModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'return';
+    public const FILE_NAME = 'return';
 
     public function postProcess()
     {

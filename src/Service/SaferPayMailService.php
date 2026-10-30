@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -33,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayMailService
 {
-    const FILE_NAME = 'SaferPayMailService';
+    public const FILE_NAME = 'SaferPayMailService';
 
     /** @var \Context|null */
     private $context;

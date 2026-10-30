@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,13 +30,13 @@ if (!defined('_PS_VERSION_')) {
 
 class GenderEnum
 {
-    const GENDER_MALE = 0;
+    public const GENDER_MALE = 0;
 
-    const GENDER_FEMALE = 1;
+    public const GENDER_FEMALE = 1;
 
-    const GENDER_NEUTRAL = 2;
+    public const GENDER_NEUTRAL = 2;
 
-    const SAFERPAY_GENDERS = [
+    public const SAFERPAY_GENDERS = [
         self::GENDER_MALE => 'MALE',
         self::GENDER_FEMALE => 'FEMALE',
         self::GENDER_NEUTRAL => 'DIVERSE',

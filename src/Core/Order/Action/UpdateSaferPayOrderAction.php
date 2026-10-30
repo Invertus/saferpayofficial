@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 class UpdateSaferPayOrderAction
 {
-    const ACTION_AUTHORIZE = 'AUTHORIZE';
+    public const ACTION_AUTHORIZE = 'AUTHORIZE';
 
     /**
      * @param \SaferPayOrder $saferPayOrder

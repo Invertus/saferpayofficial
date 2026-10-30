@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayExceptionService
 {
-    const SHORT_CLASS_NAME = 'SaferPayExceptionService';
+    public const SHORT_CLASS_NAME = 'SaferPayExceptionService';
 
     /**
      * @var \SaferPayOfficial

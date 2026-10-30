@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,8 +30,8 @@ if (!defined('_PS_VERSION_')) {
 
 class DeliveryAddressForm
 {
-    const ADDRESS_SOURCE = 'NONE';
-    const MANDATORY_FIELDS = [
+    public const ADDRESS_SOURCE = 'NONE';
+    public const MANDATORY_FIELDS = [
         'CITY',
         'COMPANY',
         'COUNTRY',

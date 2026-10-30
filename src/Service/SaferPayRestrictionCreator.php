@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -33,12 +34,12 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayRestrictionCreator
 {
-    const RESTRICTION_ALL = 0;
-    const RESTRICTION_COUNTRY = 1;
-    const RESTRICTION_CURRENCY = 2;
+    public const RESTRICTION_ALL = 0;
+    public const RESTRICTION_COUNTRY = 1;
+    public const RESTRICTION_CURRENCY = 2;
 
-    const COUNTRY_SUFFIX = '_countries';
-    const CURRENCY_SUFFIX = '_currencies';
+    public const COUNTRY_SUFFIX = '_countries';
+    public const CURRENCY_SUFFIX = '_currencies';
 
     /**
      * @var SaferPayRestrictionRepository

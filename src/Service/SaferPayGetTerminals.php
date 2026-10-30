@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -36,7 +37,7 @@ class SaferPayGetTerminals
     /**
      * Terminal types that must never be offered for selection (not usable by this module).
      */
-    const EXCLUDED_TERMINAL_TYPES = ['MPO', 'SPG'];
+    public const EXCLUDED_TERMINAL_TYPES = ['MPO', 'SPG'];
 
     /** @var GetTerminalsService */
     private $getTerminalsService;

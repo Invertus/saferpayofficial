@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialFailValidationModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'failValidation';
+    public const FILE_NAME = 'failValidation';
 
     public function postProcess()
     {

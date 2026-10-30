@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -35,8 +36,8 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayRefreshPaymentsService
 {
-    const ALL_COUNTRIES_ENABLED = '1';
-    const ALL_CURRENCIES_ENABLED = '1';
+    public const ALL_COUNTRIES_ENABLED = '1';
+    public const ALL_CURRENCIES_ENABLED = '1';
 
     private $paymentRepository;
     private $obtainPayments;

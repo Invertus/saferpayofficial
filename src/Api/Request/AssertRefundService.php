@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -33,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AssertRefundService
 {
-    const ASSERT_REFUND_API_TRANSACTION = 'Payment/v1/Transaction/AssertRefund';
+    public const ASSERT_REFUND_API_TRANSACTION = 'Payment/v1/Transaction/AssertRefund';
 
     /**
      * @var ApiRequest

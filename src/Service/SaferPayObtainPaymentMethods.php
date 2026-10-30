@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -34,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayObtainPaymentMethods
 {
-    const FILE_NAME = 'SaferPayObtainPaymentMethods';
+    public const FILE_NAME = 'SaferPayObtainPaymentMethods';
 
     /** @var ObtainPaymentMethodsService */
     private $obtainPaymentMethodsService;

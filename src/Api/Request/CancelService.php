@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CancelService
 {
-    const CANCEL_API = 'Payment/v1/Transaction/Cancel';
+    public const CANCEL_API = 'Payment/v1/Transaction/Cancel';
 
     /**
      * @var ApiRequest

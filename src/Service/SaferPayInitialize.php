@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -41,7 +42,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayInitialize
 {
-    const FILE_NAME = 'SaferPayInitialize';
+    public const FILE_NAME = 'SaferPayInitialize';
     /**
      * @var \SaferPayOfficial
      */

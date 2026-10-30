@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -39,7 +40,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialAjaxModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'ajax';
+    public const FILE_NAME = 'ajax';
 
     /** @var SaferPayOfficial */
     public $module;

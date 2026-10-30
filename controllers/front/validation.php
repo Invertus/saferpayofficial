@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -34,7 +35,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'validation';
+    public const FILE_NAME = 'validation';
 
     /** @var SaferPayOfficial */
     public $module;

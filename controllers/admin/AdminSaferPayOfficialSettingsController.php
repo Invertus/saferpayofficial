@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -49,10 +50,10 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 {
-    const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
-    const PASSWORD_PLACEHOLDER = '********';
+    public const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
+    public const PASSWORD_PLACEHOLDER = '********';
 
-    const ALLOWED_AJAX_ACTIONS = [
+    public const ALLOWED_AJAX_ACTIONS = [
         'saveCredentials',
         'savePaymentProcessing',
         'saveEmailSettings',
@@ -67,7 +68,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     /**
      * AJAX actions that change state and therefore require 'edit' permission.
      */
-    const STATE_CHANGING_AJAX_ACTIONS = [
+    public const STATE_CHANGING_AJAX_ACTIONS = [
         'saveCredentials',
         'savePaymentProcessing',
         'saveEmailSettings',
