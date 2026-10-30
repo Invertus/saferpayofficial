@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -26,8 +27,6 @@ namespace Invertus\SaferPay\Service;
 use Invertus\SaferPay\Exception\Restriction\RestrictionException;
 use Invertus\SaferPay\Exception\Restriction\WrongRestrictionTypeException;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
-use SaferPayCountry;
-use SaferPayCurrency;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -35,12 +34,12 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayRestrictionCreator
 {
-    const RESTRICTION_ALL = 0;
-    const RESTRICTION_COUNTRY = 1;
-    const RESTRICTION_CURRENCY = 2;
+    public const RESTRICTION_ALL = 0;
+    public const RESTRICTION_COUNTRY = 1;
+    public const RESTRICTION_CURRENCY = 2;
 
-    const COUNTRY_SUFFIX = '_countries';
-    const CURRENCY_SUFFIX = '_currencies';
+    public const COUNTRY_SUFFIX = '_countries';
+    public const CURRENCY_SUFFIX = '_currencies';
 
     /**
      * @var SaferPayRestrictionRepository
@@ -82,10 +81,10 @@ class SaferPayRestrictionCreator
     {
         switch ($restrictionType) {
             case SaferPayRestrictionCreator::RESTRICTION_COUNTRY:
-                $restriction = new SaferPayCountry($id);
+                $restriction = new \SaferPayCountry($id);
                 break;
             case SaferPayRestrictionCreator::RESTRICTION_CURRENCY:
-                $restriction = new SaferPayCurrency($id);
+                $restriction = new \SaferPayCurrency($id);
                 break;
             default:
                 throw new WrongRestrictionTypeException('Wrong restriction type');
@@ -98,7 +97,7 @@ class SaferPayRestrictionCreator
     {
         switch ($restrictionType) {
             case self::RESTRICTION_COUNTRY:
-                $saferPayCountry = new SaferPayCountry();
+                $saferPayCountry = new \SaferPayCountry();
                 $saferPayCountry->payment_name = $paymentMethod;
                 if ((int) $restriction === self::RESTRICTION_ALL) {
                     $saferPayCountry->all_countries = 1;
@@ -109,7 +108,7 @@ class SaferPayRestrictionCreator
                 $success = (bool) $saferPayCountry->add();
                 break;
             case self::RESTRICTION_CURRENCY:
-                $saferPayCurrency = new SaferPayCurrency();
+                $saferPayCurrency = new \SaferPayCurrency();
                 $saferPayCurrency->payment_name = $paymentMethod;
                 if ((int) $restriction === self::RESTRICTION_ALL) {
                     $saferPayCurrency->all_currencies = 1;

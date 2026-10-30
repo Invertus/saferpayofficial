@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -47,7 +48,7 @@ class Payment
     /**
      * @var null
      */
-    private $payerNote = null;
+    private $payerNote;
 
     /**
      * @var string

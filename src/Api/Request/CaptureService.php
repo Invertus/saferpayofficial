@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Capture\CaptureRequest;
 
@@ -33,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class CaptureService
 {
-    const CAPTURE_API = 'Payment/v1/Transaction/Capture';
+    public const CAPTURE_API = 'Payment/v1/Transaction/Capture';
 
     /**
      * @var ApiRequest
@@ -47,8 +47,10 @@ class CaptureService
 
     /**
      * @param CaptureRequest $captureRequest
+     *
      * @return \stdClass|null
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function capture(CaptureRequest $captureRequest): ?\stdClass
     {

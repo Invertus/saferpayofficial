@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -20,7 +21,6 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 $projectDir = __DIR__ . '/../../';
 
 require_once $projectDir . 'vendor/autoload.php';

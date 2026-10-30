@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -20,7 +21,6 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 global $_MODULE;
 $_MODULE = [];
 $_MODULE['<{saferpayofficial}prestashop>abstractadminsaferpaycontroller_b42cd3af71fc00ef268910709255320a'] = 'Sie haben keine Berechtigung, dies anzusehen.';

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 class Dcc
 {
-
     /**
      * @var Amount
      */
@@ -37,9 +37,10 @@ class Dcc
 
     /**
      * Dcc constructor.
+     *
      * @param Amount|null $amount
      */
-    public function __construct(Amount $amount = null)
+    public function __construct(?Amount $amount = null)
     {
         $this->amount = $amount;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,9 +24,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use Db;
-use DbQuery;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,33 +32,33 @@ class SaferPayFieldRepository
 {
     public function isActiveByName($paymentName)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`active`');
         $query->from('saferpay_field');
         $query->where('name = "' . pSQL($paymentName) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function getIdByName($paymentName)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`id_saferpay_field`');
         $query->from('saferpay_field');
         $query->where('name = "' . pSQL($paymentName) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function truncateTable()
     {
         $query = 'TRUNCATE TABLE ' . _DB_PREFIX_ . 'saferpay_field;';
 
-        return Db::getInstance()->execute($query);
+        return \Db::getInstance()->execute($query);
     }
 
     public function insertField($data)
     {
-        Db::getInstance()->insert('saferpay_field', $data);
+        \Db::getInstance()->insert('saferpay_field', $data);
     }
 }

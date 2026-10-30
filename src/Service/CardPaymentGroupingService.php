@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,7 +25,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,10 +32,10 @@ if (!defined('_PS_VERSION_')) {
 
 class CardPaymentGroupingService
 {
-    /** @var SaferPayOfficial */
+    /** @var \SaferPayOfficial */
     private $module;
 
-    public function __construct(SaferPayOfficial $module)
+    public function __construct(\SaferPayOfficial $module)
     {
         $this->module = $module;
     }

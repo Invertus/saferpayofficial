@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -41,6 +42,7 @@ class Amount
 
     /**
      * Amount constructor.
+     *
      * @param int $value
      * @param string $currencyCode
      */

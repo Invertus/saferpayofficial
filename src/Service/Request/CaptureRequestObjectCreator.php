@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
-use Cart;
 use Invertus\SaferPay\DTO\Request\Capture\CaptureRequest;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,7 +42,7 @@ class CaptureRequestObjectCreator
         $this->requestObjectCreator = $requestObjectCreator;
     }
 
-    public function create(Cart $cart, $transactionId, $totalPrice)
+    public function create(\Cart $cart, $transactionId, $totalPrice)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);

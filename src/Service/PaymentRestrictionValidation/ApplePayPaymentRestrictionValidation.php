@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -43,8 +44,10 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @param string $paymentName
+     *
      * @return bool
      */
     public function isValid(string $paymentName): bool
@@ -54,6 +57,7 @@ class ApplePayPaymentRestrictionValidation implements PaymentRestrictionValidati
 
     /**
      * @param string $paymentName
+     *
      * @return bool
      */
     public function supports(string $paymentName): bool

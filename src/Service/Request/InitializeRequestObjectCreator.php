@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,9 +24,6 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
-use Cart;
-use Configuration;
-use Customer;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\DTO\Request\Payer;
@@ -56,7 +54,7 @@ class InitializeRequestObjectCreator
     }
 
     public function create(
-        Cart $cart,
+        \Cart $cart,
         $customerEmail,
         $paymentMethod,
         $returnUrl,
@@ -69,11 +67,11 @@ class InitializeRequestObjectCreator
         $fieldToken = null
     ) {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
-        $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
+        $terminalId = \Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
 
         $cartDetails = $cart->getSummaryDetails();
         $totalPrice = $cartDetails['total_price'] * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
-        $totalPrice = (int) (round($totalPrice));
+        $totalPrice = (int) round($totalPrice);
         $payment = $this->requestObjectCreator->createPayment($cart, $totalPrice);
         $payer = new Payer();
 
@@ -85,9 +83,9 @@ class InitializeRequestObjectCreator
         $returnUrl = $this->requestObjectCreator->createReturnUrl($returnUrl);
         $notification = $isBusinessLicence ? null : $this->requestObjectCreator->createNotification($customerEmail, $notifyUrl);
         $deliveryAddressForm = $this->requestObjectCreator->createDeliveryAddressForm();
-        $configSet = Configuration::get(SaferPayConfig::CONFIGURATION_NAME);
+        $configSet = \Configuration::get(SaferPayConfig::CONFIGURATION_NAME);
 
-        $customer = new Customer($customerId);
+        $customer = new \Customer($customerId);
         $deliveryAddress = new \Address($deliveryAddressId);
         $deliveryAddress = $this->requestObjectCreator->createAddressObject($deliveryAddress, $customer);
 

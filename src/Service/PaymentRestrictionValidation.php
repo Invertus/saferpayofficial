@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -65,6 +66,7 @@ class PaymentRestrictionValidation
                 }
             }
         }
+
         return $success;
     }
 }

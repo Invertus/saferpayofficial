@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -20,13 +21,13 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 /**
  * @param SaferPayOfficial $module
+ *
  * @return bool
  */
 function upgrade_module_1_2_2($module)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,9 +32,6 @@ use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Provider\EnabledCardBrandsProvider;
 use Invertus\SaferPay\Provider\OpcModulesProvider;
 use Invertus\SaferPay\Service\SaferPayErrorDisplayService;
-use Media;
-use OrderControllerCore;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,11 +39,11 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentFormAssetLoader
 {
-    /** @var SaferPayOfficial */
+    /** @var \SaferPayOfficial */
     private $module;
     /** @var LegacyContext */
     private $context;
-    /** @var OpcModulesProvider $opcModuleProvider */
+    /** @var OpcModulesProvider */
     private $opcModulesProvider;
     /** @var EnabledCardBrandsProvider */
     private $enabledCardBrandsProvider;
@@ -64,7 +62,7 @@ class PaymentFormAssetLoader
 
     public function register($controller)
     {
-        Media::addJsDef([
+        \Media::addJsDef([
             'saferpay_official_ajax_url' => $this->context->getLink()->getModuleLink('saferpayofficial', ControllerName::AJAX),
             'saferpay_payment_types' => [
                 'hosted_iframe' => PaymentType::HOSTED_IFRAME,
@@ -91,61 +89,61 @@ class PaymentFormAssetLoader
 
     private function registerOnePageCheckoutAssets($controller)
     {
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if (!$controller instanceof \OrderControllerCore) {
             return;
         }
 
         $controller->registerStylesheet(
             $this->module->name . '-checkout',
-            "modules/" . $this->module->name . "/views/css/front/saferpay_checkout.css"
+            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
         );
 
         $controller->registerJavascript(
             $this->module->name . '-onepagecheckoutps-hosted-fields',
-            "modules/" . $this->module->name . "/views/js/front/opc/onepagecheckoutps/hosted_fields.js"
+            'modules/' . $this->module->name . '/views/js/front/opc/onepagecheckoutps/hosted_fields.js'
         );
     }
 
     private function registerTheCheckoutAssets($controller)
     {
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if (!$controller instanceof \TheCheckoutModuleFrontController) {
             return;
         }
 
         $controller->registerStylesheet(
             $this->module->name . '-checkout',
-            "modules/" . $this->module->name . "/views/css/front/saferpay_checkout.css"
+            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
         );
 
         $controller->registerJavascript(
             $this->module->name . '-thecheckout-hosted-fields',
-            "modules/" . $this->module->name . "/views/js/front/opc/thecheckout/hosted_fields.js"
+            'modules/' . $this->module->name . '/views/js/front/opc/thecheckout/hosted_fields.js'
         );
     }
 
     private function registerSuperCheckoutAssets($controller)
     {
-        /** @phpstan-ignore-next-line */
+        /* @phpstan-ignore-next-line */
         if (!$controller instanceof \SupercheckoutSupercheckoutModuleFrontController) {
             return;
         }
 
         $controller->registerStylesheet(
             $this->module->name . '-checkout',
-            "modules/" . $this->module->name . "/views/css/front/saferpay_checkout.css"
+            'modules/' . $this->module->name . '/views/css/front/saferpay_checkout.css'
         );
 
         $controller->registerJavascript(
             $this->module->name . '-supercheckout-hosted-fields',
-            "modules/" . $this->module->name . "/views/js/front/opc/supercheckout/hosted_fields.js"
+            'modules/' . $this->module->name . '/views/js/front/opc/supercheckout/hosted_fields.js'
         );
     }
 
     private function registerDefaultCheckoutAssets($controller)
     {
-        if (!$controller instanceof OrderControllerCore) {
+        if (!$controller instanceof \OrderControllerCore) {
             return;
         }
 
@@ -179,7 +177,7 @@ class PaymentFormAssetLoader
      * card form inline in the default checkout instead of redirecting to a hosted page.
      * Only relevant when the account has Fields (Business licence) and a field access token.
      *
-     * @param OrderControllerCore $controller
+     * @param \OrderControllerCore $controller
      */
     private function registerInlineFieldsAssets($controller)
     {
@@ -195,7 +193,7 @@ class PaymentFormAssetLoader
             return;
         }
 
-        Media::addJsDef([
+        \Media::addJsDef([
             'saferpay_field_access_token' => SaferPayConfig::getFieldAccessToken(),
             'saferpay_field_url' => SaferPayConfig::getFieldUrl(),
             'holder_name' => $this->module->l('Holder name', 'PaymentFormAssetLoader'),

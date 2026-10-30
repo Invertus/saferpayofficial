@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 class Liability
 {
-
     /**
      * @var string
      */
@@ -49,6 +49,7 @@ class Liability
 
     /**
      * Liability constructor.
+     *
      * @param string $liabilityShift
      * @param string $liableEntity
      * @param ThreeDs|null $threeDs
@@ -57,8 +58,8 @@ class Liability
     public function __construct(
         $liabilityShift = null,
         $liableEntity = null,
-        ThreeDs $threeDs = null,
-        FraudFree $fraudFree = null
+        ?ThreeDs $threeDs = null,
+        ?FraudFree $fraudFree = null
     ) {
         $this->liabilityShift = $liabilityShift;
         $this->liableEntity = $liableEntity;

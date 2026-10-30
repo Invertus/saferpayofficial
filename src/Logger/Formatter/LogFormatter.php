@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 class LogFormatter implements LogFormatterInterface
 {
-    const SAFERPAY_LOG_PREFIX = 'SAFERPAY_MODULE_LOG:';
+    public const SAFERPAY_LOG_PREFIX = 'SAFERPAY_MODULE_LOG:';
 
     public function getMessage($message)
     {

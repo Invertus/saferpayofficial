@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,9 +24,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use Db;
-use DbQuery;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,42 +32,42 @@ class SaferPayPaymentRepository
 {
     public function isActiveByName($paymentName)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`active`');
         $query->from('saferpay_payment');
         $query->where('name = "' . pSQL($paymentName) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function getIdByName($paymentName)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`id_saferpay_payment`');
         $query->from('saferpay_payment');
         $query->where('name = "' . pSQL($paymentName) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function isLogoEnabledByName($paymentName)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`active`');
         $query->from('saferpay_logo');
         $query->where('name = "' . pSQL($paymentName) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function getAllActiveLogosNames()
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('name');
         $query->from('saferpay_logo');
         $query->where('active = "1"');
 
-        $result = Db::getInstance()->executeS($query);
+        $result = \Db::getInstance()->executeS($query);
 
         if (!$result) {
             return [];
@@ -80,12 +78,12 @@ class SaferPayPaymentRepository
 
     public function getActivePaymentMethods()
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('*');
         $query->from('saferpay_payment');
         $query->where('active = "1"');
 
-        $result = Db::getInstance()->executeS($query);
+        $result = \Db::getInstance()->executeS($query);
 
         if (!$result) {
             return [];
@@ -96,12 +94,12 @@ class SaferPayPaymentRepository
 
     public function getActivePaymentMethodsNames()
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('name');
         $query->from('saferpay_payment');
         $query->where('active = "1"');
 
-        $result = Db::getInstance()->executeS($query);
+        $result = \Db::getInstance()->executeS($query);
 
         if (!$result) {
             return [];
@@ -112,11 +110,11 @@ class SaferPayPaymentRepository
 
     public function getAllPaymentMethods()
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('*');
         $query->from('saferpay_payment');
 
-        $result = Db::getInstance()->executeS($query);
+        $result = \Db::getInstance()->executeS($query);
 
         if (!$result) {
             return [];
@@ -127,11 +125,11 @@ class SaferPayPaymentRepository
 
     public function getAllPaymentMethodsNames()
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('name');
         $query->from('saferpay_payment');
 
-        $result = Db::getInstance()->executeS($query);
+        $result = \Db::getInstance()->executeS($query);
 
         if (!$result) {
             return [];
@@ -144,11 +142,11 @@ class SaferPayPaymentRepository
     {
         $query = 'TRUNCATE TABLE ' . _DB_PREFIX_ . 'saferpay_payment;';
 
-        return Db::getInstance()->execute($query);
+        return \Db::getInstance()->execute($query);
     }
 
     public function insertPayment($data)
     {
-        Db::getInstance()->insert('saferpay_payment', $data);
+        \Db::getInstance()->insert('saferpay_payment', $data);
     }
 }

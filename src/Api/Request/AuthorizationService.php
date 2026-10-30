@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Authorization\AuthorizationRequest;
@@ -39,7 +39,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AuthorizationService
 {
-    const AUTHORIZE_API = 'Payment/v1/Transaction/Authorize';
+    public const AUTHORIZE_API = 'Payment/v1/Transaction/Authorize';
 
     /**
      * @var ApiRequest
@@ -75,7 +75,9 @@ class AuthorizationService
 
     /**
      * @param AuthorizationRequest $authorizationRequest
+     *
      * @return \stdClass|null
+     *
      * @throws SaferPayApiException
      */
     public function authorize(AuthorizationRequest $authorizationRequest): ?\stdClass
@@ -85,7 +87,7 @@ class AuthorizationService
                 self::AUTHORIZE_API,
                 $authorizationRequest->getAsArray()
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new SaferPayApiException('Authorize API failed', SaferPayApiException::AUTHORIZE);
         }
     }
@@ -97,7 +99,8 @@ class AuthorizationService
      * @param int $selectedCardOption
      *
      * @return AssertBody
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function createObjectsFromAuthorizationResponse(
         array $responseBody,

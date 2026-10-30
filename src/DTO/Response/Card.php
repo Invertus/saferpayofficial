@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -56,6 +57,7 @@ class Card
 
     /**
      * Card constructor.
+     *
      * @param string $maskedNumber
      * @param int $expYear
      * @param int $expMonth

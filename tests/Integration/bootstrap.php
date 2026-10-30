@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,12 +32,12 @@ $projectDir = __DIR__ . '/../../';
 require_once $rootDirectory . 'config/config.inc.php';
 require_once $projectDir . 'vendor/autoload.php';
 
-require_once realpath("../../vendor/autoload.php");
+require_once realpath('../../vendor/autoload.php');
 require_once realpath('../../../../config/config.inc.php');
 require_once realpath('../../../../app/AppKernel.php');
 require_once realpath('../../saferpay.php');
 
-$dotenv = Dotenv::create(realpath("../../tests"));
+$dotenv = Dotenv::create(realpath('../../tests'));
 $dotenv->load();
 
 $username = getenv('DB_USER');

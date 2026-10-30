@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,11 +24,6 @@
 
 namespace Invertus\SaferPay\EntityBuilder;
 
-use Cart;
-use Customer;
-use Order;
-use SaferPayOrder;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -39,18 +35,19 @@ class SaferPayOrderBuilder
      * @param int $cartId
      * @param int $customerId
      * @param bool $isTransaction
-     * @return SaferPayOrder
+     *
+     * @return \SaferPayOrder
      */
-    public function create($body, int $cartId, int $customerId, bool $isTransaction): SaferPayOrder
+    public function create($body, int $cartId, int $customerId, bool $isTransaction): \SaferPayOrder
     {
         if (method_exists('Order', 'getIdByCartId')) {
-            $orderId = Order::getIdByCartId($cartId);
+            $orderId = \Order::getIdByCartId($cartId);
         } else {
             // For PrestaShop 1.6 use the alternative method
-            $orderId = Order::getOrderByCartId($cartId);
+            $orderId = \Order::getOrderByCartId($cartId);
         }
 
-        $saferPayOrder = new SaferPayOrder();
+        $saferPayOrder = new \SaferPayOrder();
         $saferPayOrder->token = $body->Token;
         $saferPayOrder->id_order = $orderId ?: null;
         $saferPayOrder->id_cart = $cartId;
@@ -65,15 +62,16 @@ class SaferPayOrderBuilder
 
     /**
      * @param object $body
-     * @param Cart $cart
-     * @param Customer $customer
+     * @param \Cart $cart
+     * @param \Customer $customer
      * @param bool $isTransaction
-     * @return SaferPayOrder
+     *
+     * @return \SaferPayOrder
      */
-    public function createDirectOrder($body, Cart $cart, Customer $customer, bool $isTransaction): SaferPayOrder
+    public function createDirectOrder($body, \Cart $cart, \Customer $customer, bool $isTransaction): \SaferPayOrder
     {
-        $orderId = Order::getOrderByCartId($cart->id);
-        $saferPayOrder = new SaferPayOrder();
+        $orderId = \Order::getOrderByCartId($cart->id);
+        $saferPayOrder = new \SaferPayOrder();
         $saferPayOrder->transaction_id = $body->Transaction->Id;
         $saferPayOrder->id_order = $orderId;
         $saferPayOrder->id_customer = $customer->id;

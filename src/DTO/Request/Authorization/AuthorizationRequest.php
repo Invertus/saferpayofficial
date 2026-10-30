@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,6 @@ if (!defined('_PS_VERSION_')) {
 
 class AuthorizationRequest implements SaferPayRequestInterface
 {
-
     /**
      * @var RequestHeader
      */
@@ -50,6 +50,7 @@ class AuthorizationRequest implements SaferPayRequestInterface
 
     /**
      * AuthorizationRequest constructor.
+     *
      * @param RequestHeader $requestHeader
      * @param $token
      */
@@ -77,7 +78,7 @@ class AuthorizationRequest implements SaferPayRequestInterface
         ];
 
         if ($this->saveCard) {
-            $return['RegisterAlias'] = [ 'IdGenerator' => 'RANDOM_UNIQUE'];
+            $return['RegisterAlias'] = ['IdGenerator' => 'RANDOM_UNIQUE'];
         }
 
         return $return;

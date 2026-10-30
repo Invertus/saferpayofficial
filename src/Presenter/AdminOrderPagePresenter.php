@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,17 +24,15 @@
 
 namespace Invertus\SaferPay\Presenter;
 
-use SaferPayOrder;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
 class AdminOrderPagePresenter
 {
-    public function present(SaferPayOrder $saferPayOrder, $action, $amountMultiplier, $currencySign)
+    public function present(\SaferPayOrder $saferPayOrder, $action, $amountMultiplier, $currencySign)
     {
-        return  [
+        return [
             'action' => $action,
             'isSaferPayComplete' => $saferPayOrder->captured,
             'isSaferPayCanceled' => $saferPayOrder->canceled,

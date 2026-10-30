@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -39,13 +40,13 @@ if (!defined('_PS_VERSION_')) {
 
 class Logger implements LoggerInterface
 {
-    const FILE_NAME = 'Logger';
+    public const FILE_NAME = 'Logger';
 
-    const LOG_OBJECT_TYPE = 'saferpayLog';
+    public const LOG_OBJECT_TYPE = 'saferpayLog';
 
-    const SEVERITY_INFO = 1;
-    const SEVERITY_WARNING = 2;
-    const SEVERITY_ERROR = 3;
+    public const SEVERITY_INFO = 1;
+    public const SEVERITY_WARNING = 2;
+    public const SEVERITY_ERROR = 3;
 
     private $logFormatter;
     private $globalShopContext;

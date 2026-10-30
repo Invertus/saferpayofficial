@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,7 +25,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
-use SaferPayPayment;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,7 +45,7 @@ class SaferPayPaymentCreator
 
     public function updatePayment($paymentMethod, $isActive)
     {
-        $saferPayPayment = new SaferPayPayment();
+        $saferPayPayment = new \SaferPayPayment();
         $paymentId = $this->paymentRepository->getIdByName($paymentMethod);
         if ($paymentId) {
             $saferPayPayment->id = $paymentId;

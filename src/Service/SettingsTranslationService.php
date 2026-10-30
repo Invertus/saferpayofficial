@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,7 +25,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Factory\ModuleFactory;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -32,9 +32,9 @@ if (!defined('_PS_VERSION_')) {
 
 class SettingsTranslationService
 {
-    const FILE_NAME = 'SettingsTranslationService';
+    public const FILE_NAME = 'SettingsTranslationService';
 
-    /** @var SaferPayOfficial */
+    /** @var \SaferPayOfficial */
     private $module;
 
     public function __construct(ModuleFactory $moduleFactory)

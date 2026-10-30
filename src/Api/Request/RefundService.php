@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
@@ -33,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class RefundService
 {
-    const REFUND_API = 'Payment/v1/Transaction/Refund';
+    public const REFUND_API = 'Payment/v1/Transaction/Refund';
 
     /**
      * @var ApiRequest
@@ -47,8 +47,10 @@ class RefundService
 
     /**
      * @param RefundRequest $refundRequest
+     *
      * @return \stdClass|null
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function refund(RefundRequest $refundRequest): ?\stdClass
     {

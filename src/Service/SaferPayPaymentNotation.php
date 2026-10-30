@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,7 +30,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayPaymentNotation
 {
-    const PAYMENTS = [
+    public const PAYMENTS = [
         'AMEX' => 'AmericanExpress',
         'DINERS' => 'DinersClub',
         'BONUS' => 'BonusCard',
@@ -40,6 +41,7 @@ class SaferPayPaymentNotation
 
     /**
      * @param string $payment
+     *
      * @return string
      */
     public function getForDisplay($payment): string
@@ -56,6 +58,7 @@ class SaferPayPaymentNotation
 
     /**
      * @param string $payment
+     *
      * @return string
      */
     public function getShortName($payment): string

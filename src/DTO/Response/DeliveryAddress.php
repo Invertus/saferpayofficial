@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -81,6 +82,7 @@ class DeliveryAddress
 
     /**
      * DeliveryAddress constructor.
+     *
      * @param string $firstName
      * @param string $lastName
      * @param string $company

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 class Payer
 {
-
     /**
      * @var string|null
      */
@@ -47,11 +47,12 @@ class Payer
 
     /**
      * Payer constructor.
+     *
      * @param string $ipAddress
      * @param string $ipLocation
      * @param DeliveryAddress|null $deliveryAddress
      */
-    public function __construct($ipAddress = null, $ipLocation = null, DeliveryAddress $deliveryAddress = null)
+    public function __construct($ipAddress = null, $ipLocation = null, ?DeliveryAddress $deliveryAddress = null)
     {
         $this->ipAddress = $ipAddress;
         $this->ipLocation = $ipLocation;

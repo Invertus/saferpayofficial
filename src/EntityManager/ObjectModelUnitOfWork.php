@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -30,8 +31,8 @@ if (!defined('_PS_VERSION_')) {
 /** In memory entity manager object model unit of work */
 class ObjectModelUnitOfWork
 {
-    const UNIT_OF_WORK_SAVE = 'UNIT_OF_WORK_SAVE';
-    const UNIT_OF_WORK_DELETE = 'UNIT_OF_WORK_DELETE';
+    public const UNIT_OF_WORK_SAVE = 'UNIT_OF_WORK_SAVE';
+    public const UNIT_OF_WORK_DELETE = 'UNIT_OF_WORK_DELETE';
 
     private $work = [];
 

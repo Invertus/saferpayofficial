@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -34,7 +35,7 @@ class SaferPayException extends \Exception
     final public function __construct(
         $internalMessage,
         $code,
-        array  $context = []
+        array $context = []
     ) {
         parent::__construct($internalMessage, $code);
         $this->context = $context;

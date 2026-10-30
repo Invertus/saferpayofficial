@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,15 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 class ControllerName
 {
-    const AJAX = 'ajax';
-    const CREDIT_CARDS = 'creditCards';
-    const CREDIT_CARDS_16 = 'creditCards16';
-    const FAIL = 'fail';
-    const FAIL_VALIDATION = 'failValidation';
-    const NOTIFY = 'notify';
-    const PENDING_NOTIFY = 'pendingNotify';
-    const SUCCESS = 'success';
-    const SUCCESS_HOSTED = 'successHosted';
-    const VALIDATION = 'validation';
-    const RETURN_URL = 'return';
+    public const AJAX = 'ajax';
+    public const CREDIT_CARDS = 'creditCards';
+    public const CREDIT_CARDS_16 = 'creditCards16';
+    public const FAIL = 'fail';
+    public const FAIL_VALIDATION = 'failValidation';
+    public const NOTIFY = 'notify';
+    public const PENDING_NOTIFY = 'pendingNotify';
+    public const SUCCESS = 'success';
+    public const SUCCESS_HOSTED = 'successHosted';
+    public const VALIDATION = 'validation';
+    public const RETURN_URL = 'return';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,8 +24,6 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Context;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -33,7 +32,7 @@ class SaferPayErrorDisplayService
 {
     public function showCookieError($id)
     {
-        $context = Context::getContext();
+        $context = \Context::getContext();
         if (isset($context->cookie->$id)) {
             $context->controller->errors = $this->stripSlashesDeep(json_decode($context->cookie->$id));
             unset($_SERVER['HTTP_REFERER']);

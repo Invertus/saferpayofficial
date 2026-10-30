@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,9 +24,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use Db;
-use DbQuery;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,15 +32,15 @@ class SaferPaySavedCreditCardRepository
 {
     public function areAnyCreditCardsSaved()
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`id_saferpay_card_alias`');
         $query->from('saferpay_card_alias');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function deleteAllSavedCreditCards()
     {
-        Db::getInstance()->delete('saferpay_card_alias');
+        \Db::getInstance()->delete('saferpay_card_alias');
     }
 }

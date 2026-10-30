@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,6 +32,7 @@ class VersionUtility
 {
     /**
      * @param string $version
+     *
      * @return bool
      */
     public static function isPsVersionLessThan($version): bool
@@ -40,6 +42,7 @@ class VersionUtility
 
     /**
      * @param string $version
+     *
      * @return bool
      */
     public static function isPsVersionGreaterThan($version): bool
@@ -49,6 +52,7 @@ class VersionUtility
 
     /**
      * @param string $version
+     *
      * @return bool
      */
     public static function isPsVersionGreaterOrEqualTo($version): bool
@@ -58,6 +62,7 @@ class VersionUtility
 
     /**
      * @param string $version
+     *
      * @return bool
      */
     public static function isPsVersionLessThanOrEqualTo($version): bool
@@ -67,6 +72,7 @@ class VersionUtility
 
     /**
      * @param string $version
+     *
      * @return bool
      */
     public static function isPsVersionEqualTo($version): bool

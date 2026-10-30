@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,15 +24,13 @@
 
 namespace Invertus\SaferPay\Tests\Unit\Tools;
 
-use Cart;
+use GuzzleHttp\Client;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\SaferPayApiClient;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 use PHPUnit\Framework\TestCase;
-use GuzzleHttp\Client;
-use SaferPayOfficial;
 
 class UnitTestCase extends TestCase
 {
@@ -50,7 +49,7 @@ class UnitTestCase extends TestCase
 
     public function mockSaferPayModule()
     {
-        $moduleMock = $this->getMockBuilder(SaferPayOfficial::class)
+        $moduleMock = $this->getMockBuilder(\SaferPayOfficial::class)
             ->disableOriginalConstructor()
             ->setMethods(['l'])
             ->getMock()
@@ -66,7 +65,7 @@ class UnitTestCase extends TestCase
 
     public function mockCart()
     {
-        $cartMock = $this->getMockBuilder(Cart::class)
+        $cartMock = $this->getMockBuilder(\Cart::class)
             ->disableOriginalConstructor()
             ->getMock()
         ;

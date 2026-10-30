@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,7 +32,6 @@ if (!defined('_PS_VERSION_')) {
 
 class Configuration
 {
-
     /**
      * @var LegacyContext
      */
@@ -46,6 +46,7 @@ class Configuration
      * @param string $id
      * @param $value
      * @param int|null $shopId
+     *
      * @return void
      */
     public function set($id, $value, $shopId = null)
@@ -60,6 +61,7 @@ class Configuration
     /**
      * @param string $id
      * @param int|null $shopId
+     *
      * @return false|string|null
      */
     public function get($id, $shopId = null)
@@ -76,6 +78,7 @@ class Configuration
     /**
      * @param string $id
      * @param int|null $shopId
+     *
      * @return bool
      */
     public function getAsBoolean($id, $shopId = null)
@@ -92,6 +95,7 @@ class Configuration
     /**
      * @param string $id
      * @param int|null $shopId
+     *
      * @return int
      */
     public function getAsInteger($id, $shopId = null)

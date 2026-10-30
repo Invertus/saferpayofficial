@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,7 +25,6 @@
 namespace Invertus\SaferPay\Service\Request;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Configuration;
 use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
 
 if (!defined('_PS_VERSION_')) {
@@ -44,7 +44,7 @@ class ObtainPaymentMethodsObjectCreator
     public function create()
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
-        $terminalId = Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
+        $terminalId = \Configuration::get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::getConfigSuffix());
 
         return new ObtainPaymentMethodsRequest($requestHeader, $terminalId);
     }

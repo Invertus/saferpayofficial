@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,7 +25,6 @@
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -61,7 +61,7 @@ class SaferPayTransactionProcessedGuard
             return false;
         }
 
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder = new \SaferPayOrder($saferPayOrderId);
 
         return (bool) $saferPayOrder->authorized || (bool) $saferPayOrder->captured;
     }

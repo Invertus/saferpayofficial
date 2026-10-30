@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'creditCards';
+    public const FILE_NAME = 'creditCards';
 
     public function display()
     {
@@ -102,6 +103,7 @@ class SaferPayOfficialCreditCardsModuleFrontController extends AbstractSaferPayC
 
             if ($cardAlias->delete()) {
                 $this->success[] = $this->module->l('Successfully removed credit card', self::FILE_NAME);
+
                 return;
             }
             $this->errors[] = $this->module->l('Failed to removed credit card', self::FILE_NAME);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,9 +30,9 @@ if (!defined('_PS_VERSION_')) {
 
 class OrderItem implements \JsonSerializable
 {
-    const ITEM_PHYSICAL = 'PHYSICAL';
-    const ITEM_DIGITAL = 'DIGITAL';
-    const ITEM_SHIPPING_FEE = 'SHIPPINGFEE';
+    public const ITEM_PHYSICAL = 'PHYSICAL';
+    public const ITEM_DIGITAL = 'DIGITAL';
+    public const ITEM_SHIPPING_FEE = 'SHIPPINGFEE';
 
     /**
      * @var string [DIGITAL|PHYSICAL|SHIPPINGFEE]

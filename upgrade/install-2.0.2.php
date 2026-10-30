@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -20,7 +21,6 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -32,11 +32,11 @@ function upgrade_module_2_0_2(SaferPayOfficial $module)
 
     // Add indexes for saferpay_order table
     $orderIndexes = [
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order` ADD INDEX `idx_id_order` (`id_order`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order` ADD INDEX `idx_id_cart` (`id_cart`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order` ADD INDEX `idx_id_customer` (`id_customer`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order` ADD INDEX `idx_transaction_id` (`transaction_id`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order` ADD INDEX `idx_status_flags` (`authorized`, `captured`, `pending`)",
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order` ADD INDEX `idx_id_order` (`id_order`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order` ADD INDEX `idx_id_cart` (`id_cart`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order` ADD INDEX `idx_id_customer` (`id_customer`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order` ADD INDEX `idx_transaction_id` (`transaction_id`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order` ADD INDEX `idx_status_flags` (`authorized`, `captured`, `pending`)',
     ];
 
     foreach ($orderIndexes as $indexSql) {
@@ -56,11 +56,11 @@ function upgrade_module_2_0_2(SaferPayOfficial $module)
 
     // Add indexes for saferpay_card_alias table
     $cardAliasIndexes = [
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_card_alias` ADD INDEX `idx_id_customer` (`id_customer`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_card_alias` ADD INDEX `idx_payment_method` (`payment_method`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_card_alias` ADD INDEX `idx_customer_payment` (`id_customer`, `payment_method`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_card_alias` ADD INDEX `idx_valid_till` (`valid_till`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_card_alias` ADD INDEX `idx_alias_id` (`alias_id`)",
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_card_alias` ADD INDEX `idx_id_customer` (`id_customer`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_card_alias` ADD INDEX `idx_payment_method` (`payment_method`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_card_alias` ADD INDEX `idx_customer_payment` (`id_customer`, `payment_method`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_card_alias` ADD INDEX `idx_valid_till` (`valid_till`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_card_alias` ADD INDEX `idx_alias_id` (`alias_id`)',
     ];
 
     foreach ($cardAliasIndexes as $indexSql) {
@@ -80,9 +80,9 @@ function upgrade_module_2_0_2(SaferPayOfficial $module)
 
     // Add indexes for saferpay_assert table
     $assertIndexes = [
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_assert` ADD INDEX `idx_id_saferpay_order` (`id_saferpay_order`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_assert` ADD INDEX `idx_payment_method` (`payment_method`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_assert` ADD INDEX `idx_brand` (`brand`)",
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_assert` ADD INDEX `idx_id_saferpay_order` (`id_saferpay_order`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_assert` ADD INDEX `idx_payment_method` (`payment_method`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_assert` ADD INDEX `idx_brand` (`brand`)',
     ];
 
     foreach ($assertIndexes as $indexSql) {
@@ -102,9 +102,9 @@ function upgrade_module_2_0_2(SaferPayOfficial $module)
 
     // Add indexes for saferpay_order_refund table
     $refundIndexes = [
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order_refund` ADD INDEX `idx_id_saferpay_order` (`id_saferpay_order`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order_refund` ADD INDEX `idx_id_order` (`id_order`)",
-        "ALTER TABLE `" . _DB_PREFIX_ . "saferpay_order_refund` ADD INDEX `idx_transaction_id` (`transaction_id`)",
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order_refund` ADD INDEX `idx_id_saferpay_order` (`id_saferpay_order`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order_refund` ADD INDEX `idx_id_order` (`id_order`)',
+        'ALTER TABLE `' . _DB_PREFIX_ . 'saferpay_order_refund` ADD INDEX `idx_transaction_id` (`transaction_id`)',
     ];
 
     foreach ($refundIndexes as $indexSql) {

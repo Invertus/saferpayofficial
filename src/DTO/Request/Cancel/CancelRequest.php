@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,6 @@ if (!defined('_PS_VERSION_')) {
 
 class CancelRequest implements SaferPayRequestInterface
 {
-
     /**
      * @var RequestHeader
      */

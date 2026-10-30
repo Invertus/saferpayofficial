@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,14 +24,12 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\ObtainPaymentMethods\ObtainPaymentMethodsRequest;
 
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
 
 class ObtainPaymentMethodsService
 {
@@ -43,7 +42,7 @@ class ObtainPaymentMethodsService
     }
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function getPaymentMethods(ObtainPaymentMethodsRequest $obtainPaymentMethodsRequestDTO)
     {

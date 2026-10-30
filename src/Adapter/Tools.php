@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -150,7 +151,7 @@ class Tools
         return PrestashopTools::getShopDomain();
     }
 
-    public function displayPrice($price, $currency = null, $no_utf8 = false, PrestashopContext $context = null)
+    public function displayPrice($price, $currency = null, $no_utf8 = false, ?PrestashopContext $context = null)
     {
         if (VersionUtility::isPsVersionGreaterOrEqualTo('9.0.0')) {
             $context = $context ?: PrestashopContext::getContext();
@@ -171,12 +172,12 @@ class Tools
         return PrestashopTools::ps_round($value, $precision, $round_mode);
     }
 
-    public function getToken($page = true, PrestashopContext $context = null)
+    public function getToken($page = true, ?PrestashopContext $context = null)
     {
         return PrestashopTools::getToken($page, $context);
     }
 
-    public function convertPriceFull($amount, \Currency $currency_from = null, \Currency $currency_to = null)
+    public function convertPriceFull($amount, ?\Currency $currency_from = null, ?\Currency $currency_to = null)
     {
         return PrestashopTools::convertPriceFull($amount, $currency_from, $currency_to);
     }

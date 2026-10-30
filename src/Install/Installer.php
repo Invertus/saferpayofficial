@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,13 +24,7 @@
 
 namespace Invertus\SaferPay\Install;
 
-use Configuration;
-use Context;
-use Db;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Language;
-use OrderState;
-use Tab;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -41,7 +36,6 @@ if (!defined('_PS_VERSION_')) {
 class Installer extends AbstractInstaller
 {
     private $errors = [];
-
 
     public function getErrors()
     {
@@ -59,16 +53,19 @@ class Installer extends AbstractInstaller
 
         if (!$this->processDatabase()) {
             $this->errors[] = $this->module->l('Failed to install database', __CLASS__);
+
             return false;
         }
 
         if (!$this->createAllOrderStatus()) {
             $this->errors[] = $this->module->l('Failed to create order status', __CLASS__);
+
             return false;
         }
 
         if (!$this->installConfiguration()) {
             $this->errors[] = $this->module->l('Failed to install configuration', __CLASS__);
+
             return false;
         }
 
@@ -85,7 +82,7 @@ class Installer extends AbstractInstaller
         $configuration = SaferPayConfig::getDefaultConfiguration();
 
         foreach ($configuration as $name => $value) {
-            if (!Configuration::updateValue($name, $value, false, 0, 0)) {
+            if (!\Configuration::updateValue($name, $value, false, 0, 0)) {
                 return false;
             }
         }
@@ -98,7 +95,7 @@ class Installer extends AbstractInstaller
         $tabs = $this->tabs();
 
         foreach ($tabs as $tab) {
-            if (Tab::getIdFromClassName($tab['class_name'])) {
+            if (\Tab::getIdFromClassName($tab['class_name'])) {
                 continue;
             }
 
@@ -112,14 +109,14 @@ class Installer extends AbstractInstaller
 
     public function installTab($className, $parent, $name)
     {
-        $idParent = is_int($parent) ? $parent : Tab::getIdFromClassName($parent);
+        $idParent = is_int($parent) ? $parent : \Tab::getIdFromClassName($parent);
 
-        $moduleTab = new Tab();
+        $moduleTab = new \Tab();
         $moduleTab->class_name = $className;
         $moduleTab->id_parent = $idParent;
         $moduleTab->module = $this->module->name;
 
-        $languages = Language::getLanguages(true);
+        $languages = \Language::getLanguages(true);
         foreach ($languages as $language) {
             $moduleTab->name[$language['id_lang']] = $name;
         }
@@ -133,22 +130,22 @@ class Installer extends AbstractInstaller
 
     public function processDatabase()
     {
-        return $this->installSaferPayPaymentTable() &&
-            $this->installSaferPayLogoTable() &&
-            $this->installSaferPayCountryTable() &&
-            $this->installSaferPayCurrencyTable() &&
-            $this->installSaferPayOrderTable() &&
-            $this->installSaferPayAssertTable() &&
-            $this->installSaferPayCardAlias() &&
-            $this->installSaferPayLog() &&
-            $this->installSaferPayFieldTable() &&
-            $this->installOrderRefundTable()
-            ;
+        return $this->installSaferPayPaymentTable()
+            && $this->installSaferPayLogoTable()
+            && $this->installSaferPayCountryTable()
+            && $this->installSaferPayCurrencyTable()
+            && $this->installSaferPayOrderTable()
+            && $this->installSaferPayAssertTable()
+            && $this->installSaferPayCardAlias()
+            && $this->installSaferPayLog()
+            && $this->installSaferPayFieldTable()
+            && $this->installOrderRefundTable()
+        ;
     }
 
     private function installSaferPayPaymentTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_payment' . '(
             `id_saferpay_payment` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `name` VARCHAR(64) NOT NULL,
@@ -162,7 +159,7 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayLogoTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_logo' . '(
             `id_saferpay_logo` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `name` VARCHAR(64) NOT NULL,
@@ -174,7 +171,7 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayCountryTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_country' . '(
             `id_saferpay_country` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `payment_name` VARCHAR(64) NOT NULL,
@@ -186,7 +183,7 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayFieldTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_field' . '(
             `id_saferpay_field` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `name` VARCHAR(64) NOT NULL,
@@ -198,7 +195,7 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayCurrencyTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_currency' . '(
             `id_saferpay_currency` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `payment_name` VARCHAR(64) NOT NULL,
@@ -210,7 +207,7 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayOrderTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_order' . '(
             `id_saferpay_order` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `id_order` INTEGER(10) DEFAULT 0 NULL,
@@ -234,7 +231,7 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayAssertTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_assert' . '(
             `id_saferpay_assert` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `id_saferpay_order` INTEGER(10) DEFAULT 0,
@@ -271,7 +268,7 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayCardAlias()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_card_alias' . '(
             `id_saferpay_card_alias` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `id_customer` INTEGER(10) DEFAULT 0,
@@ -292,11 +289,11 @@ class Installer extends AbstractInstaller
 
     private function installSaferPayLog()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . pSQL(\SaferPayLog::$definition['table']) . '(
                 `id_saferpay_log` INTEGER(10) unsigned NOT NULL AUTO_INCREMENT,
                 `id_log` INT(10) NOT NULL,
-                `id_shop` INT(10) NOT NULL DEFAULT ' . (int) Configuration::get('PS_SHOP_DEFAULT') . ',
+                `id_shop` INT(10) NOT NULL DEFAULT ' . (int) \Configuration::get('PS_SHOP_DEFAULT') . ',
                 `request` MEDIUMTEXT DEFAULT NULL,
                 `response` MEDIUMTEXT DEFAULT NULL,
                 `context` TEXT DEFAULT NULL,
@@ -309,7 +306,7 @@ class Installer extends AbstractInstaller
 
     private function installOrderRefundTable()
     {
-        return Db::getInstance()->execute(
+        return \Db::getInstance()->execute(
             'CREATE TABLE IF NOT EXISTS ' . _DB_PREFIX_ . 'saferpay_order_refund' . '(
             `id_saferpay_order_refund` INTEGER(10) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
             `id_saferpay_order` INTEGER(10) DEFAULT 0,
@@ -441,17 +438,17 @@ class Installer extends AbstractInstaller
         $template = ''
     ) {
         $stateExists = false;
-        $langId = Context::getContext()->language->id;
-        $states = OrderState::getOrderStates((int) $langId);
+        $langId = \Context::getContext()->language->id;
+        $states = \OrderState::getOrderStates((int) $langId);
         foreach ($states as $state) {
             if ($this->module->l($name) === $state['name']) {
-                Configuration::updateValue($configName, (int) $state[OrderState::$definition['primary']]);
+                \Configuration::updateValue($configName, (int) $state[\OrderState::$definition['primary']]);
                 $stateExists = true;
                 break;
             }
         }
         if (!$stateExists) {
-            $orderState = new OrderState();
+            $orderState = new \OrderState();
             $orderState->send_email = $sendEmail;
             $orderState->color = $color;
             $orderState->hidden = $hidden;
@@ -462,14 +459,14 @@ class Installer extends AbstractInstaller
             $orderState->module_name = $this->module->name;
             $orderState->name = [];
             $orderState->template = $template;
-            $languages = Language::getLanguages(false);
+            $languages = \Language::getLanguages(false);
             foreach ($languages as $language) {
                 $orderState->name[$language['id_lang']] = $this->module->l($name);
             }
             if (!$orderState->add()) {
                 return false;
             }
-            Configuration::updateValue($configName, (int) $orderState->id);
+            \Configuration::updateValue($configName, (int) $orderState->id);
 
             $imagePath = "{$this->module->getLocalPath()}views/img/state/{$configName}.gif";
             $destination = _PS_ORDER_STATE_IMG_DIR_ . $orderState->id . '.gif';

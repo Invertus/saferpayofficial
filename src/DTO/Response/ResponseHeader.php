@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -41,6 +42,7 @@ class ResponseHeader
 
     /**
      * ResponseHeader constructor.
+     *
      * @param string $specVersion
      * @param string $requestId
      */

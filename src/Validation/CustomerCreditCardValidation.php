@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -43,7 +44,7 @@ class CustomerCreditCardValidation
      */
     private $logger;
 
-    const FILE_NAME = 'CustomerCreditCardValidation';
+    public const FILE_NAME = 'CustomerCreditCardValidation';
 
     public function __construct(SaferPayCardAliasRepository $saferPayCardAliasRepository, LoggerInterface $logger)
     {

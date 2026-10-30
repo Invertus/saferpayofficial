@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,6 +32,7 @@ class PriceUtility
 {
     /**
      * @param float $price
+     *
      * @return int
      */
     public function convertToCents($price): int

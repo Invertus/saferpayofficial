@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -57,11 +58,11 @@ class AuthorizationBody
     private $liability;
 
     public function __construct(
-        ResponseHeader $responseHeader = null,
-        Transaction $transaction = null,
-        PaymentMeans $paymentMeans = null,
-        ThreeDs $threeDs = null,
-        Liability $liability = null
+        ?ResponseHeader $responseHeader = null,
+        ?Transaction $transaction = null,
+        ?PaymentMeans $paymentMeans = null,
+        ?ThreeDs $threeDs = null,
+        ?Liability $liability = null
     ) {
         $this->responseHeader = $responseHeader;
         $this->transaction = $transaction;

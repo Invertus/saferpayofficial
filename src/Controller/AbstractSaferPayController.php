@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -33,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AbstractSaferPayController extends \ModuleFrontControllerCore
 {
-    const FILE_NAME = 'AbstractSaferPayController';
+    public const FILE_NAME = 'AbstractSaferPayController';
 
     /** @var \SaferPayOfficial */
     public $module;

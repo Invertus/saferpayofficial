@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -31,14 +32,14 @@ if (!defined('_PS_VERSION_')) {
 class ExceptionCode
 {
     // Payment related codes starts from 5***
-    const PAYMENT_FAILED_TO_FIND_CART = 5001;
-    const PAYMENT_FAILED_TO_CREATE_ORDER = 5002;
-    const CANNOT_USE_CARD = 5003;
+    public const PAYMENT_FAILED_TO_FIND_CART = 5001;
+    public const PAYMENT_FAILED_TO_CREATE_ORDER = 5002;
+    public const CANNOT_USE_CARD = 5003;
 
     // Order related codes starts from 7***
-    const ORDER_FAILED_TO_FIND_ORDER = 7001;
-    const ORDER_UNHANDLED_TRANSACTION_STATUS = 7002;
+    public const ORDER_FAILED_TO_FIND_ORDER = 7001;
+    public const ORDER_UNHANDLED_TRANSACTION_STATUS = 7002;
 
     // Any other unhandled codes should start with 9***
-    const UNKNOWN_ERROR = 9001;
+    public const UNKNOWN_ERROR = 9001;
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,7 +25,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Repository\SaferPayLogoRepository;
-use SaferPayLogo;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,7 +45,7 @@ class SaferPayLogoCreator
 
     public function updateLogo($paymentMethod, $isActive)
     {
-        $saferPayLogo = new SaferPayLogo();
+        $saferPayLogo = new \SaferPayLogo();
         $paymentId = $this->logoRepository->getIdByName($paymentMethod);
         if ($paymentId) {
             $saferPayLogo->id = $paymentId;

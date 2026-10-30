@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -25,7 +26,6 @@ namespace Invertus\SaferPay\EntityBuilder;
 
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
-use SaferPayCardAlias;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,7 +33,6 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayCardAliasBuilder
 {
-
     /**
      * @var SaferPayCardAliasRepository
      */
@@ -48,7 +47,9 @@ class SaferPayCardAliasBuilder
      * @param AssertBody $assertBody
      * @param $saferPayOrderId
      * @param $customerId
-     * @return SaferPayCardAlias
+     *
+     * @return \SaferPayCardAlias
+     *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
@@ -58,7 +59,7 @@ class SaferPayCardAliasBuilder
             $aliasId = $assertBody->getRegistrationResult()->getAliasId();
             $isCardAliasSaved = $this->aliasRepository->getSavedCardIdByCustomerIdAndAliasId($customerId, $aliasId);
             if (!$isCardAliasSaved && $assertBody->getLiability()->getThreeDs()->getAuthenticated()) {
-                $cardAlias = new SaferPayCardAlias();
+                $cardAlias = new \SaferPayCardAlias();
                 $cardAlias->alias_id = $aliasId;
                 $cardAlias->success = $assertBody->getRegistrationResult()->isSuccess();
                 $cardAlias->lifetime = $assertBody->getRegistrationResult()->getLifetime();
@@ -75,7 +76,7 @@ class SaferPayCardAliasBuilder
                 return $cardAlias;
             }
 
-            return new SaferPayCardAlias($isCardAliasSaved);
+            return new \SaferPayCardAlias($isCardAliasSaved);
         }
 
         return null;

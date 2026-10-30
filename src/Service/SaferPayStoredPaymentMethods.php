@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Exception;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 
@@ -39,7 +39,7 @@ if (!defined('_PS_VERSION_')) {
  */
 class SaferPayStoredPaymentMethods
 {
-    const FILE_NAME = 'SaferPayStoredPaymentMethods';
+    public const FILE_NAME = 'SaferPayStoredPaymentMethods';
 
     /** @var SaferPayPaymentRepository */
     private $paymentRepository;
@@ -70,7 +70,7 @@ class SaferPayStoredPaymentMethods
 
         try {
             $this->refreshPaymentsService->refreshPayments();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->logger->error(sprintf('%s - failed to populate the stored payment methods', self::FILE_NAME), [
                 'context' => [],
                 'exception' => $exception,

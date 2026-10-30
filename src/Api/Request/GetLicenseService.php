@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -45,6 +46,7 @@ class GetLicenseService
      * @param string $username
      * @param string $password
      * @param string $baseUrl
+     *
      * @return mixed
      */
     public function getLicense(GetLicenseRequest $request, $username, $password, $baseUrl)
@@ -62,6 +64,7 @@ class GetLicenseService
      * @param string $username
      * @param string $password
      * @param string $baseUrl
+     *
      * @return mixed
      */
     public function getLicenseFallback(GetLicenseRequest $request, $username, $password, $baseUrl)

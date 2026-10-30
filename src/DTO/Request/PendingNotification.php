@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -52,6 +53,7 @@ class PendingNotification
 
     /**
      * @param array $merchantEmails
+     *
      * @return PendingNotification
      */
     public function setMerchantEmails($merchantEmails)
@@ -68,6 +70,7 @@ class PendingNotification
 
     /**
      * @param string $notifyUrl
+     *
      * @return PendingNotification
      */
     public function setNotifyUrl($notifyUrl)

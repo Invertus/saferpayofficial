@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -53,7 +54,6 @@ function upgrade_module_1_0_13(SaferPayOfficial $module)
             return false;
         }
     }
-
 
     return true;
 }

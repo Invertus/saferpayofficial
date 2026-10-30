@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,7 +25,6 @@
 namespace Invertus\SaferPay\Install;
 
 use Language;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 abstract class AbstractInstaller
 {
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     protected $module;
 
@@ -42,7 +42,7 @@ abstract class AbstractInstaller
      */
     private $dictionaries;
 
-    public function __construct(SaferPayOfficial $module)
+    public function __construct(\SaferPayOfficial $module)
     {
         $this->module = $module;
     }
@@ -52,34 +52,34 @@ abstract class AbstractInstaller
         return [
             [
                 'name' => $this->module->displayName,
-                'class_name' => SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
+                'class_name' => \SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
                 'parent_class_name' => 'AdminParentPayment',
                 'visible' => false,
             ],
             [
                 'name' => $this->tabName('Settings'),
-                'class_name' => SaferPayOfficial::ADMIN_SETTINGS_CONTROLLER,
-                'parent_class_name' => SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
+                'class_name' => \SaferPayOfficial::ADMIN_SETTINGS_CONTROLLER,
+                'parent_class_name' => \SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
                 'module_tab' => true,
             ],
             [
                 'name' => $this->tabName('Payments'),
-                'class_name' => SaferPayOfficial::ADMIN_PAYMENTS_CONTROLLER,
-                'parent_class_name' => SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
+                'class_name' => \SaferPayOfficial::ADMIN_PAYMENTS_CONTROLLER,
+                'parent_class_name' => \SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
                 'module_tab' => true,
                 'visible' => false,
             ],
             [
                 'name' => $this->tabName('Order'),
-                'class_name' => SaferPayOfficial::ADMIN_ORDER_CONTROLLER,
-                'parent_class_name' => SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
+                'class_name' => \SaferPayOfficial::ADMIN_ORDER_CONTROLLER,
+                'parent_class_name' => \SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
                 'module_tab' => true,
                 'visible' => false,
             ],
             [
                 'name' => $this->tabName('Logs'),
-                'class_name' => SaferPayOfficial::ADMIN_LOGS_CONTROLLER,
-                'parent_class_name' => SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
+                'class_name' => \SaferPayOfficial::ADMIN_LOGS_CONTROLLER,
+                'parent_class_name' => \SaferPayOfficial::ADMIN_SAFERPAY_MODULE_CONTROLLER,
                 'module_tab' => true,
             ],
         ];
@@ -130,7 +130,7 @@ abstract class AbstractInstaller
         $this->dictionaries = [];
         $current = isset($GLOBALS['_MODULE']) ? $GLOBALS['_MODULE'] : [];
 
-        foreach (Language::getLanguages(false) as $language) {
+        foreach (\Language::getLanguages(false) as $language) {
             $file = _PS_MODULE_DIR_ . $this->module->name . '/translations/' . $language['iso_code'] . '.php';
 
             if (!is_readable($file)) {

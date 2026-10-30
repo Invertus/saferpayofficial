@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -36,7 +37,7 @@ class SaferPayGetTerminals
     /**
      * Terminal types that must never be offered for selection (not usable by this module).
      */
-    const EXCLUDED_TERMINAL_TYPES = ['MPO', 'SPG'];
+    public const EXCLUDED_TERMINAL_TYPES = ['MPO', 'SPG'];
 
     /** @var GetTerminalsService */
     private $getTerminalsService;
@@ -51,6 +52,7 @@ class SaferPayGetTerminals
      * @param string $password
      * @param string $customerId
      * @param bool $isTestMode
+     *
      * @return array
      */
     public function fetchTerminalsWithCredentials($username, $password, $customerId, $isTestMode)
@@ -94,6 +96,7 @@ class SaferPayGetTerminals
      * either as "Type" or "TerminalType". Returns an uppercased value (empty when absent).
      *
      * @param \stdClass $terminal
+     *
      * @return string
      */
     private function getTerminalType($terminal)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,8 +24,6 @@
 
 namespace Invertus\SaferPay\Adapter;
 
-use Context;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -32,11 +31,11 @@ if (!defined('_PS_VERSION_')) {
 class LegacyContext
 {
     /**
-     * @return Context
+     * @return \Context
      */
-    public function getContext(): Context
+    public function getContext(): \Context
     {
-        return Context::getContext();
+        return \Context::getContext();
     }
 
     /**
@@ -135,12 +134,13 @@ class LegacyContext
     /**
      * @param string $controllerName
      * @param array $params
+     *
      * @return string
      */
     public function getAdminLink(string $controllerName, array $params = []): string
     {
         /* @noinspection PhpMethodParametersCountMismatchInspection - its valid for PS1.7 */
-        return (string) Context::getContext()->link->getAdminLink($controllerName, true, [], $params);
+        return (string) \Context::getContext()->link->getAdminLink($controllerName, true, [], $params);
     }
 
     /**
@@ -245,7 +245,9 @@ class LegacyContext
 
     /**
      * @param \Cart $cart
+     *
      * @return void
+     *
      * @throws \Throwable
      */
     public function setCurrentCart(\Cart $cart): void
@@ -259,6 +261,7 @@ class LegacyContext
 
     /**
      * @param \Country $country
+     *
      * @return void
      */
     public function setCountry(\Country $country): void
@@ -268,6 +271,7 @@ class LegacyContext
 
     /**
      * @param \Currency $currency
+     *
      * @return void
      */
     public function setCurrency(\Currency $currency): void
@@ -278,6 +282,7 @@ class LegacyContext
     /**
      * @param int|null $shopId
      * @param bool|null $ssl
+     *
      * @return string
      */
     public function getBaseLink(?int $shopId = null, ?bool $ssl = null): string
@@ -317,6 +322,7 @@ class LegacyContext
 
     /**
      * @param \Customer $customer
+     *
      * @return void
      */
     public function updateCustomer(\Customer $customer): void

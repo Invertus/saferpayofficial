@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,7 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 class FraudFree
 {
-
     /**
      * @var string|null
      */
@@ -52,6 +52,7 @@ class FraudFree
 
     /**
      * FraudFree constructor.
+     *
      * @param string $id
      * @param string $liabilityShift
      * @param string $score

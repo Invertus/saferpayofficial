@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,23 +24,21 @@
 
 namespace Invertus\SaferPay\Exception\Api;
 
-use RuntimeException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SaferPayApiException extends RuntimeException
+class SaferPayApiException extends \RuntimeException
 {
-    const INITIALIZE = 0;
+    public const INITIALIZE = 0;
 
-    const AUTHORIZE = 1;
+    public const AUTHORIZE = 1;
 
-    const CAPTURE = 2;
+    public const CAPTURE = 2;
 
-    const CANCEL = 3;
+    public const CANCEL = 3;
 
-    const REFUND = 4;
+    public const REFUND = 4;
 
-    const ASSERT = 5;
+    public const ASSERT = 5;
 }

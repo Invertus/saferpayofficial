@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -22,9 +23,6 @@
  */
 
 namespace Invertus\SaferPay\Repository;
-
-use Db;
-use DbQuery;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -53,55 +51,55 @@ class SaferPayCardAliasRepository
             return '"' . pSQL($paymentMethod) . '"';
         }, $paymentMethods);
 
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`id_saferpay_card_alias`, `card_number`, `payment_method`');
         $query->from('saferpay_card_alias');
         $query->where('id_customer = ' . (int) $userId);
         $query->where('payment_method IN (' . implode(', ', $escapedMethods) . ')');
         $query->where('valid_till > "' . pSQL($currentDate) . '"');
 
-        return Db::getInstance()->executeS($query);
+        return \Db::getInstance()->executeS($query);
     }
 
     public function getSavedCardAliasFromId($id)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`alias_id`');
         $query->from('saferpay_card_alias');
         $query->where('id_saferpay_card_alias = ' . (int) $id);
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function getSavedCardIdByCustomerIdAndAliasId($customerId, $aliasId)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`id_saferpay_card_alias`');
         $query->from('saferpay_card_alias');
         $query->where('id_customer = ' . (int) $customerId);
         $query->where('alias_id = "' . pSQL($aliasId) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function getSavedCardsByCustomerId($customerId)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('*');
         $query->from('saferpay_card_alias');
         $query->where('id_customer = ' . (int) $customerId);
 
-        return Db::getInstance()->executeS($query);
+        return \Db::getInstance()->executeS($query);
     }
 
     public function getCustomerIdByReferenceId($cardAliasId, $idCustomer)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`id_customer`');
         $query->from('saferpay_card_alias');
         $query->where('id_saferpay_card_alias = "' . pSQL($cardAliasId) . '"');
         $query->where('id_customer = "' . (int) $idCustomer . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 }

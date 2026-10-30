@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,14 +24,12 @@
 
 namespace Invertus\SaferPay\Service\TransactionFlow;
 
-use Cart;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\AuthorizationService;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AuthorizationRequestObjectCreator;
 use Invertus\SaferPay\Service\SaferPayOrderStatusService;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -88,10 +87,10 @@ class SaferPayTransactionAuthorization
      */
     public function authorize($cartId, $saveCard, $selectedCard)
     {
-        $cart = new Cart($cartId);
+        $cart = new \Cart($cartId);
 
         $saferPayOrderId = $this->orderRepository->getIdByCartId($cartId);
-        $saferPayOrder =  new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder = new \SaferPayOrder($saferPayOrderId);
 
         $authRequest = $this->authRequestCreator->create($saferPayOrder->token, $saveCard);
         $authResponse = $this->authorizationService->authorize($authRequest);

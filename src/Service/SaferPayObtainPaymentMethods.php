@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Exception;
 use Invertus\SaferPay\Api\Request\ObtainPaymentMethodsService;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
@@ -35,17 +35,17 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayObtainPaymentMethods
 {
-    const FILE_NAME = 'SaferPayObtainPaymentMethods';
-    
+    public const FILE_NAME = 'SaferPayObtainPaymentMethods';
+
     /** @var ObtainPaymentMethodsService */
     private $obtainPaymentMethodsService;
-    
+
     /** @var ObtainPaymentMethodsObjectCreator */
     private $obtainPaymentMethodsObjectCreator;
-    
+
     /** @var SaferPayPaymentNotation */
     private $saferPayPaymentNotation;
-    
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -70,7 +70,7 @@ class SaferPayObtainPaymentMethods
             $paymentMethodsObject = $this->obtainPaymentMethodsService->getPaymentMethods(
                 $this->obtainPaymentMethodsObjectCreator->create()
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->debug(sprintf('%s - failed to get payment methods list', self::FILE_NAME), [
                 'context' => [],
                 'exception' => $e,

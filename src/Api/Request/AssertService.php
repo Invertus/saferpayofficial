@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
@@ -38,9 +38,9 @@ if (!defined('_PS_VERSION_')) {
 
 class AssertService
 {
-    const ASSERT_API_PAYMENT = 'Payment/v1/PaymentPage/Assert';
+    public const ASSERT_API_PAYMENT = 'Payment/v1/PaymentPage/Assert';
 
-    const ASSERT_API_TRANSACTION = 'Payment/v1/Transaction/Authorize';
+    public const ASSERT_API_TRANSACTION = 'Payment/v1/Transaction/Authorize';
 
     /**
      * @var ApiRequest
@@ -76,6 +76,7 @@ class AssertService
      * @param bool $isBusiness
      *
      * @return object|null
+     *
      * @throws \Exception
      */
     public function assert(AssertRequest $assertRequest, $isBusiness)
@@ -91,7 +92,7 @@ class AssertService
                 $assertApi,
                 $assertRequest->getAsArray()
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new SaferPayApiException('Assert API failed', SaferPayApiException::ASSERT);
         }
     }
@@ -103,7 +104,8 @@ class AssertService
      * @param bool $saveCard whether an alias was requested from Saferpay for this transaction
      *
      * @return AssertBody
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId, $customerId, $saveCard)
     {

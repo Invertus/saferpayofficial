@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -21,12 +22,15 @@
  *@license   SIX Payment Services
  */
 
+use Invertus\SaferPay\Adapter\Configuration as SaferPayConfiguration;
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Exception\Restriction\RestrictionException;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayLogoRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
 use Invertus\SaferPay\Repository\SaferPayRestrictionRepository;
 use Invertus\SaferPay\Repository\SaferPaySavedCreditCardRepository;
-use Invertus\SaferPay\Adapter\Configuration as SaferPayConfiguration;
 use Invertus\SaferPay\Service\SaferPayGenerateFieldAccessToken;
 use Invertus\SaferPay\Service\SaferPayGetLicense;
 use Invertus\SaferPay\Service\SaferPayGetPaymentPageConfigurations;
@@ -37,9 +41,6 @@ use Invertus\SaferPay\Service\SaferPayPaymentCreator;
 use Invertus\SaferPay\Service\SaferPayPaymentNotation;
 use Invertus\SaferPay\Service\SaferPayRefreshPaymentsService;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
-use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Invertus\SaferPay\Exception\Restriction\RestrictionException;
-use Invertus\SaferPay\Logger\LoggerInterface;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -49,10 +50,10 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 {
-    const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
-    const PASSWORD_PLACEHOLDER = '********';
+    public const FILE_NAME = 'AdminSaferPayOfficialSettingsController';
+    public const PASSWORD_PLACEHOLDER = '********';
 
-    const ALLOWED_AJAX_ACTIONS = [
+    public const ALLOWED_AJAX_ACTIONS = [
         'saveCredentials',
         'savePaymentProcessing',
         'saveEmailSettings',
@@ -67,7 +68,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     /**
      * AJAX actions that change state and therefore require 'edit' permission.
      */
-    const STATE_CHANGING_AJAX_ACTIONS = [
+    public const STATE_CHANGING_AJAX_ACTIONS = [
         'saveCredentials',
         'savePaymentProcessing',
         'saveEmailSettings',
@@ -76,7 +77,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         'generateFieldAccessToken',
     ];
 
-    /** @var \SaferPayOfficial */
+    /** @var SaferPayOfficial */
     public $module;
 
     /**
@@ -179,6 +180,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $data = $this->getJsonInput();
         if (!$data) {
             $this->ajaxResponse(false, $this->module->l('Invalid request data', self::FILE_NAME));
+
             return;
         }
 
@@ -200,6 +202,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         if (!empty($activeUsername) && !empty($activePassword)) {
             if (empty($activeCustomerId)) {
                 $this->ajaxResponse(false, $this->module->l('Invalid API username. Please check your credentials and try again.', self::FILE_NAME));
+
                 return;
             }
 
@@ -207,8 +210,9 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 /** @var SaferPayGetTerminals $getTerminals */
                 $getTerminals = $this->module->getService(SaferPayGetTerminals::class);
                 $getTerminals->fetchTerminalsWithCredentials($activeUsername, $activePassword, $activeCustomerId, $isTestMode);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->ajaxResponse(false, $this->parseApiErrorMessage($e->getMessage()));
+
                 return;
             }
         }
@@ -221,6 +225,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 $this->module->l('Invalid merchant email address: %s', self::FILE_NAME),
                 $invalidEmail
             ));
+
             return;
         }
 
@@ -271,7 +276,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
                 $hasBusinessLicense = $licenseInfo['hasBusinessLicense'];
                 $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, $hasBusinessLicense ? 1 : 0);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $configuration->set(SaferPayConfig::BUSINESS_LICENSE . $suffix, 0);
                 $licenseFetchFailed = true;
 
@@ -308,6 +313,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $data = $this->getJsonInput();
         if (!$data) {
             $this->ajaxResponse(false, $this->module->l('Invalid request data', self::FILE_NAME));
+
             return;
         }
 
@@ -341,6 +347,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $data = $this->getJsonInput();
         if (!$data) {
             $this->ajaxResponse(false, $this->module->l('Invalid request data', self::FILE_NAME));
+
             return;
         }
 
@@ -362,6 +369,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $data = $this->getJsonInput();
         if (!$data) {
             $this->ajaxResponse(false, $this->module->l('Invalid request data', self::FILE_NAME));
+
             return;
         }
 
@@ -374,6 +382,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $configurationName = $this->getStringValue($data, 'configurationName');
         if ($configurationName !== '' && (strlen($configurationName) > 20 || !preg_match('/^[A-Za-z0-9.:\-_]+$/', $configurationName))) {
             $this->ajaxResponse(false, $this->module->l('Only letters, numbers, dots, colons, hyphens, and underscores are allowed. Max 20 characters.', self::FILE_NAME));
+
             return;
         }
         $configuration->set(SaferPayConfig::CONFIGURATION_NAME, $configurationName);
@@ -391,6 +400,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
         $data = $this->getJsonInput();
         if (!$data || !isset($data['paymentMethods'])) {
             $this->ajaxResponse(false, $this->module->l('Invalid request data', self::FILE_NAME));
+
             return;
         }
 
@@ -401,6 +411,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             $refreshPaymentsService->refreshPayments();
         } catch (SaferPayApiException $exception) {
             $this->ajaxResponse(false, $exception->getMessage());
+
             return;
         }
 
@@ -446,12 +457,14 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 ) && $success;
             } catch (RestrictionException $e) {
                 $this->ajaxResponse(false, $this->module->l('Wrong restriction type', self::FILE_NAME));
+
                 return;
             }
         }
 
         if (!$success) {
             $this->ajaxResponse(false, $this->module->l('Failed to update payment methods', self::FILE_NAME));
+
             return;
         }
 
@@ -479,6 +492,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         if (empty($username) || empty($password) || empty($customerId)) {
             $this->ajaxResponse(false, $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME));
+
             return;
         }
 
@@ -491,7 +505,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'success' => true,
                 'terminals' => $terminals,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->ajaxResponse(false, $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME));
         }
     }
@@ -517,6 +531,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         if (empty($username) || empty($password) || empty($customerId)) {
             $this->ajaxResponse(false, $this->module->l('Invalid credentials. Please check your username and password.', self::FILE_NAME));
+
             return;
         }
 
@@ -529,7 +544,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'success' => true,
                 'configurations' => $configurations,
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->ajaxResponse(false, $this->module->l('Could not load payment page configurations. Please check your credentials and try again.', self::FILE_NAME));
         }
     }
@@ -556,6 +571,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
 
         if (empty($username) || empty($password) || empty($customerId) || empty($terminalId)) {
             $this->ajaxResponse(false, $this->module->l('Please enter valid credentials and select a terminal first.', self::FILE_NAME));
+
             return;
         }
 
@@ -574,8 +590,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'message' => $this->module->l('Access token generated successfully.', self::FILE_NAME),
                 'token' => $token,
             ]);
-        } catch (\Exception $e) {
-            \PrestaShopLogger::addLog(
+        } catch (Exception $e) {
+            PrestaShopLogger::addLog(
                 'SaferPay: Failed to generate field access token - ' . $e->getMessage(),
                 3,
                 null,
@@ -624,7 +640,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'testUsername' => (string) $configuration->get(SaferPayConfig::USERNAME . SaferPayConfig::TEST_SUFFIX),
             'testPassword' => $configuration->get(SaferPayConfig::PASSWORD . SaferPayConfig::TEST_SUFFIX) ? self::PASSWORD_PLACEHOLDER : '',
             'testTerminalId' => (string) $configuration->get(SaferPayConfig::TERMINAL_ID . SaferPayConfig::TEST_SUFFIX),
-            'testMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX) ?: (string) \Configuration::get('PS_SHOP_EMAIL'),
+            'testMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::TEST_SUFFIX) ?: (string) Configuration::get('PS_SHOP_EMAIL'),
             'testFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN . SaferPayConfig::TEST_SUFFIX),
             'testFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY . SaferPayConfig::TEST_SUFFIX),
 
@@ -632,7 +648,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             'liveUsername' => (string) $configuration->get(SaferPayConfig::USERNAME),
             'livePassword' => $configuration->get(SaferPayConfig::PASSWORD) ? self::PASSWORD_PLACEHOLDER : '',
             'liveTerminalId' => (string) $configuration->get(SaferPayConfig::TERMINAL_ID),
-            'liveMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS) ?: (string) \Configuration::get('PS_SHOP_EMAIL'),
+            'liveMerchantEmails' => (string) $configuration->get(SaferPayConfig::MERCHANT_EMAILS) ?: (string) Configuration::get('PS_SHOP_EMAIL'),
             'liveFieldAccessToken' => (string) $configuration->get(SaferPayConfig::FIELDS_ACCESS_TOKEN),
             'liveFieldJsUrl' => (string) $configuration->get(SaferPayConfig::FIELDS_LIBRARY),
 
@@ -686,8 +702,8 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
      */
     private function getSettingsTranslations()
     {
-        /** @var \Invertus\SaferPay\Service\SettingsTranslationService $translationService */
-        $translationService = $this->module->getService(\Invertus\SaferPay\Service\SettingsTranslationService::class);
+        /** @var Invertus\SaferPay\Service\SettingsTranslationService $translationService */
+        $translationService = $this->module->getService(Invertus\SaferPay\Service\SettingsTranslationService::class);
 
         return $translationService->getAll();
     }
@@ -705,6 +721,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'name' => $state['name'],
             ];
         }
+
         return $result;
     }
 
@@ -722,6 +739,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'name' => $country['name'],
             ];
         }
+
         return $result;
     }
 
@@ -739,6 +757,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
                 'iso_code' => $currency['iso_code'],
             ];
         }
+
         return $result;
     }
 
@@ -854,6 +873,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         $raw = file_get_contents('php://input');
         $data = json_decode($raw, true);
+
         return is_array($data) ? $data : null;
     }
 
@@ -875,7 +895,7 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
     {
         header('Content-Type: application/json');
         ob_end_clean();
-        die(json_encode($data));
+        exit(json_encode($data));
     }
 
     /**
@@ -944,10 +964,11 @@ class AdminSaferPayOfficialSettingsController extends ModuleAdminController
             if ($email === '') {
                 continue;
             }
-            if (!\Validate::isEmail($email)) {
+            if (!Validate::isEmail($email)) {
                 return $email;
             }
         }
+
         return null;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,15 +30,15 @@ if (!defined('_PS_VERSION_')) {
 
 class RequestHeader
 {
-    const SPEC_VERSION = 'SAFERPAY_SPEC_VERSION';
+    public const SPEC_VERSION = 'SAFERPAY_SPEC_VERSION';
 
-    const SPEC_REFUND_VERSION = 'SAFERPAY_SPEC_REFUND_VERSION';
+    public const SPEC_REFUND_VERSION = 'SAFERPAY_SPEC_REFUND_VERSION';
 
-    const CUSTOMER_ID = 'SAFERPAY_CUSTOMER_ID';
+    public const CUSTOMER_ID = 'SAFERPAY_CUSTOMER_ID';
 
-    const REQUEST_ID = 'SAFERPAY_REQUEST_ID';
+    public const REQUEST_ID = 'SAFERPAY_REQUEST_ID';
 
-    const RETRY_INDICATOR = 'SAFERPAY_RETRY_INDICATOR';
+    public const RETRY_INDICATOR = 'SAFERPAY_RETRY_INDICATOR';
 
     private $specVersions;
     private $CustomerId;

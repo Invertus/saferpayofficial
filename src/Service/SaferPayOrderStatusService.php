@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,8 +24,6 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Cart;
-use Exception;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Api\Request\CancelService;
@@ -39,10 +38,6 @@ use Invertus\SaferPay\Service\Request\CancelRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\CaptureRequestObjectCreator;
 use Invertus\SaferPay\Service\Request\RefundRequestObjectCreator;
 use Invertus\SaferPay\Utility\ExceptionUtility;
-use Order;
-use SaferPayAssert;
-use SaferPayOfficial;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -50,7 +45,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOrderStatusService
 {
-    const FILE_NAME = 'SaferPayOrderStatusService';
+    public const FILE_NAME = 'SaferPayOrderStatusService';
     /**
      * @var CaptureService
      */
@@ -86,7 +81,7 @@ class SaferPayOrderStatusService
     private $context;
 
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     private $module;
     /**
@@ -118,7 +113,7 @@ class SaferPayOrderStatusService
         $this->logger = $logger;
     }
 
-    public function setPending(Order $order): void
+    public function setPending(\Order $order): void
     {
         $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
         $saferPayOrder->pending = 1;
@@ -127,14 +122,14 @@ class SaferPayOrderStatusService
         $order->setCurrentState(_SAFERPAY_PAYMENT_PENDING_);
     }
 
-    public function setComplete(Order $order): void
+    public function setComplete(\Order $order): void
     {
         $saferPayOrder = $this->orderRepository->getByOrderId($order->id);
         $saferPayOrder->captured = 1;
 
         $saferPayOrder->update();
 
-        //NOTE: Older PS versions does not handle same state change, so we need to check if state is already set
+        // NOTE: Older PS versions does not handle same state change, so we need to check if state is already set
         if ($order->getCurrentState() == _SAFERPAY_PAYMENT_COMPLETED_) {
             return;
         }
@@ -146,16 +141,17 @@ class SaferPayOrderStatusService
 
     /**
      * @NOTE: Consider extracting capture API logic to a dedicated service for improved readability.
+     *
      * @see SaferPayTransactionAssertion for similar service pattern
      */
-    public function capture(Order $order, int $refundedAmount = 0, bool $isRefund = false): void
+    public function capture(\Order $order, int $refundedAmount = 0, bool $isRefund = false): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
-        $cart = new Cart($order->id_cart);
+        $saferPayOrder = new \SaferPayOrder($saferPayOrderId);
+        $cart = new \Cart($order->id_cart);
         $transactionId = $saferPayOrder->transaction_id;
         $totalPrice = $order->total_paid_tax_incl * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
-        $totalPrice = (int) (round($totalPrice));
+        $totalPrice = (int) round($totalPrice);
         if ($isRefund) {
             $transactionId = $saferPayOrder->refund_id;
             $totalPrice = $refundedAmount;
@@ -165,7 +161,7 @@ class SaferPayOrderStatusService
 
         try {
             $captureResponse = $this->captureService->capture($captureRequest);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                 'context' => [],
                 'exceptions' => ExceptionUtility::getExceptions($e),
@@ -175,7 +171,7 @@ class SaferPayOrderStatusService
         }
 
         $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
-        $saferPayAssert = new SaferPayAssert($assertId);
+        $saferPayAssert = new \SaferPayAssert($assertId);
         if ($isRefund) {
             $saferPayAssert->refunded_amount += $refundedAmount;
             $saferPayAssert->update();
@@ -220,14 +216,14 @@ class SaferPayOrderStatusService
         $saferPayAssert->update();
     }
 
-    public function cancel(Order $order): void
+    public function cancel(\Order $order): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder = new \SaferPayOrder($saferPayOrderId);
         $cancelRequest = $this->cancelRequestObjectCreator->create($saferPayOrder->transaction_id);
         try {
             $this->cancelService->cancel($cancelRequest);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                 'context' => [
                     'orderId' => $order->id,
@@ -243,28 +239,28 @@ class SaferPayOrderStatusService
         $saferPayOrder->update();
 
         $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
-        $saferPayAssert = new SaferPayAssert($assertId);
+        $saferPayAssert = new \SaferPayAssert($assertId);
         $saferPayAssert->status = TransactionStatus::CANCELED;
         $saferPayAssert->update();
     }
 
-    public function refund(Order $order, float $refundedAmount): void
+    public function refund(\Order $order, float $refundedAmount): void
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($order->id);
-        $saferPayOrder = new SaferPayOrder($saferPayOrderId);
+        $saferPayOrder = new \SaferPayOrder($saferPayOrderId);
 
         $assertId = $this->orderRepository->getAssertIdBySaferPayOrderId($saferPayOrder->id);
-        $saferPayAssert = new SaferPayAssert($assertId);
+        $saferPayAssert = new \SaferPayAssert($assertId);
 
         $refundAmount = $refundedAmount * SaferPayConfig::AMOUNT_MULTIPLIER_FOR_API;
-        $refundAmount = (int) (round($refundAmount));
+        $refundAmount = (int) round($refundAmount);
 
         $isRefundValid = ($saferPayAssert->amount >= $saferPayAssert->refunded_amount + $refundAmount);
         if (!$isRefundValid) {
             throw new SaferPayApiException(SaferPayApiException::REFUND);
         }
 
-        $cart = new Cart($order->id_cart);
+        $cart = new \Cart($order->id_cart);
         $pendingNotification = null;
         $refundRequest = $this->refundRequestObjectCreator->create(
             $cart,
@@ -275,7 +271,7 @@ class SaferPayOrderStatusService
 
         try {
             $refundResponse = $this->refundService->refund($refundRequest);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [
                 'exceptions' => ExceptionUtility::getExceptions($e),
             ]);

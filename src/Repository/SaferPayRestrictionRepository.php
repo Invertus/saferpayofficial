@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,8 +24,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use Db;
-use DbQuery;
 use Invertus\SaferPay\Service\SaferPayRestrictionCreator;
 
 if (!defined('_PS_VERSION_')) {
@@ -37,13 +36,13 @@ class SaferPayRestrictionRepository
     {
         switch ($restrictionType) {
             case SaferPayRestrictionCreator::RESTRICTION_COUNTRY:
-                $query = new DbQuery();
+                $query = new \DbQuery();
                 $query->select('`id_saferpay_country` as id');
                 $query->from('saferpay_country');
                 $query->where('payment_name = "' . pSQL($paymentName) . '"');
                 break;
             case SaferPayRestrictionCreator::RESTRICTION_CURRENCY:
-                $query = new DbQuery();
+                $query = new \DbQuery();
                 $query->select('`id_saferpay_currency` as id');
                 $query->from('saferpay_currency');
                 $query->where('payment_name = "' . pSQL($paymentName) . '"');
@@ -52,18 +51,18 @@ class SaferPayRestrictionRepository
                 return false;
         }
 
-        return Db::getInstance()->executeS($query);
+        return \Db::getInstance()->executeS($query);
     }
 
     public function getSelectedIdsByName($paymentName, $restrictionType)
     {
         switch ($restrictionType) {
             case SaferPayRestrictionCreator::RESTRICTION_COUNTRY:
-                $query = new DbQuery();
+                $query = new \DbQuery();
                 $query->select('`id_country`');
                 $query->from('saferpay_country');
                 $query->where('payment_name = "' . pSQL($paymentName) . '"');
-                $db = Db::getInstance();
+                $db = \Db::getInstance();
                 $resource = $db->query($query);
                 $result = [];
                 while ($row = $db->nextRow($resource)) {
@@ -71,11 +70,11 @@ class SaferPayRestrictionRepository
                 }
                 break;
             case SaferPayRestrictionCreator::RESTRICTION_CURRENCY:
-                $query = new DbQuery();
+                $query = new \DbQuery();
                 $query->select('`id_currency`');
                 $query->from('saferpay_currency');
                 $query->where('payment_name = "' . pSQL($paymentName) . '"');
-                $db = Db::getInstance();
+                $db = \Db::getInstance();
                 $resource = $db->query($query);
                 $result = [];
                 while ($row = $db->nextRow($resource)) {

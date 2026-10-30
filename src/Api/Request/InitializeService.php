@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -23,7 +24,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 
@@ -33,9 +33,9 @@ if (!defined('_PS_VERSION_')) {
 
 class InitializeService
 {
-    const INITIALIZE_API_PAYMENT = 'Payment/v1/PaymentPage/Initialize';
+    public const INITIALIZE_API_PAYMENT = 'Payment/v1/PaymentPage/Initialize';
 
-    const INITIALIZE_API_TRANSACTION = 'Payment/v1/Transaction/Initialize';
+    public const INITIALIZE_API_TRANSACTION = 'Payment/v1/Transaction/Initialize';
 
     /**
      * @var ApiRequest
@@ -50,8 +50,10 @@ class InitializeService
     /**
      * @param InitializeRequest $initializeRequest
      * @param bool $isBusinessLicence
+     *
      * @return \stdClass|null
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function initialize(InitializeRequest $initializeRequest, bool $isBusinessLicence): ?\stdClass
     {
@@ -59,6 +61,7 @@ class InitializeService
         if ($isBusinessLicence) {
             $initializeApi = self::INITIALIZE_API_TRANSACTION;
         }
+
         return $this->apiRequest->post(
             $initializeApi,
             $initializeRequest->getAsArray()

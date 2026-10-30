@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -24,6 +25,7 @@
 namespace Invertus\SaferPay\ServiceProvider;
 
 use Invertus\SaferPay\Context\GlobalShopContext;
+use Invertus\SaferPay\Context\GlobalShopContextInterface;
 use Invertus\SaferPay\EntityManager\EntityManagerInterface;
 use Invertus\SaferPay\EntityManager\ObjectModelEntityManager;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
@@ -38,7 +40,6 @@ use Invertus\SaferPay\Repository\PrestashopLoggerRepository;
 use Invertus\SaferPay\Repository\PrestashopLoggerRepositoryInterface;
 use Invertus\SaferPay\Repository\SaferPayLogRepository;
 use Invertus\SaferPay\Repository\SaferPayLogRepositoryInterface;
-use Invertus\SaferPay\Context\GlobalShopContextInterface;
 use Invertus\SaferPay\Service\SaferPayEmailTemplateControlService;
 use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
 use League\Container\Container;
@@ -77,7 +78,7 @@ final class BaseServiceProvider
         return $container->add($className, $this->getService($className, $service));
     }
 
-    //NOTE need to call this as extended services should be initialized everywhere.
+    // NOTE need to call this as extended services should be initialized everywhere.
     public function getService($className, $service)
     {
         if (isset($this->extendedServices[$className])) {

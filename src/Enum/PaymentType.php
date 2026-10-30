@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -29,6 +30,6 @@ if (!defined('_PS_VERSION_')) {
 
 class PaymentType
 {
-    const BASIC = 'basic';
-    const HOSTED_IFRAME = 'hosted_iframe';
+    public const BASIC = 'basic';
+    public const HOSTED_IFRAME = 'hosted_iframe';
 }

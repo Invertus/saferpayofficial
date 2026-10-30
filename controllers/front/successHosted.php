@@ -1,4 +1,5 @@
 <?php
+
 /**
  *NOTICE OF LICENSE
  *
@@ -32,7 +33,7 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPayController
 {
-    const FILE_NAME = 'successHosted';
+    public const FILE_NAME = 'successHosted';
 
     protected $display_header = false;
     protected $display_footer = false;
@@ -84,7 +85,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                         'cartId' => $cartId,
                         'secureKey' => $secureKey,
                         'orderId' => $orderId,
-                        \Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
+                        Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
                     ],
                     true
                 )
