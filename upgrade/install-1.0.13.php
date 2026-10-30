@@ -54,6 +54,5 @@ function upgrade_module_1_0_13(SaferPayOfficial $module)
         }
     }
 
-
     return true;
 }

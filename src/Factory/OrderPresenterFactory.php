@@ -37,7 +37,7 @@ class OrderPresenterFactory
     public static function getOrderPresenter()
     {
         if (class_exists('PrestaShop\\PrestaShop\\Adapter\\Presenter\\Order\\OrderPresenter')) {
-            return new \PrestaShop\PrestaShop\Adapter\Presenter\Order\OrderPresenter();
+            return new OrderPresenter();
         }
 
         return new \PrestaShop\PrestaShop\Adapter\Order\OrderPresenter();

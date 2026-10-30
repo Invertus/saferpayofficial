@@ -45,6 +45,7 @@ class GetTerminalsService
      * @param string $username
      * @param string $password
      * @param string $baseUrl
+     *
      * @return mixed
      */
     public function getTerminals(GetTerminalsRequest $request, $username, $password, $baseUrl)

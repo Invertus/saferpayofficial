@@ -21,7 +21,7 @@
  *@license   SIX Payment Services
  */
 
-/**
+/*
  * SL-387 translation dictionary tool.
  *
  * Extracts every translatable wording of the module together with the exact
@@ -115,7 +115,7 @@ if ($command === 'extract') {
 if ($command === 'build') {
     $iso = $argv[2] ?? '';
     if (!in_array($iso, LANGS, true)) {
-        fwrite(STDERR, "Usage: build <iso> where iso is one of: " . implode(', ', LANGS) . "\n");
+        fwrite(STDERR, 'Usage: build <iso> where iso is one of: ' . implode(', ', LANGS) . "\n");
         exit(1);
     }
     $out = $options['out'] ?? $moduleDir . '/translations/' . $iso . '.php';

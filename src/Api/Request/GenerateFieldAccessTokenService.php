@@ -46,6 +46,7 @@ class GenerateFieldAccessTokenService
      * @param string $password
      * @param string $baseUrl
      * @param array|null $params
+     *
      * @return mixed
      */
     public function generateToken(GenerateFieldAccessTokenRequest $request, $username, $password, $baseUrl, $params = null)

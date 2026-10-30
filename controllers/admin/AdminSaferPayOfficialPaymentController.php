@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialPaymentController extends ModuleAdminController
 {
-    /** @var \SaferPayOfficial */
+    /** @var SaferPayOfficial */
     public $module;
 
     public function init()

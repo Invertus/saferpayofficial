@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
-use Exception;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
 use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
@@ -36,8 +35,8 @@ if (!defined('_PS_VERSION_')) {
 
 class SaferPayRefreshPaymentsService
 {
-    const ALL_COUNTRIES_ENABLED = "1";
-    const ALL_CURRENCIES_ENABLED = "1";
+    const ALL_COUNTRIES_ENABLED = '1';
+    const ALL_CURRENCIES_ENABLED = '1';
 
     private $paymentRepository;
     private $obtainPayments;
@@ -64,7 +63,7 @@ class SaferPayRefreshPaymentsService
         // Get payments from API.
         try {
             $paymentsFromAPI = $this->obtainPayments->obtainPaymentMethods();
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw new SaferPayApiException('Initialize API failed', SaferPayApiException::INITIALIZE);
         }
 

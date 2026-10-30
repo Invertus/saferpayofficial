@@ -23,20 +23,17 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Context;
-use Exception;
 use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
 use Invertus\SaferPay\Api\Request\InitializeService;
 use Invertus\SaferPay\DTO\Request\Initialize\InitializeRequest;
 use Invertus\SaferPay\Enum\ControllerName;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
+use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
-use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Service\Request\InitializeRequestObjectCreator;
 use Invertus\SaferPay\Utility\ExceptionUtility;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -46,12 +43,12 @@ class SaferPayInitialize
 {
     const FILE_NAME = 'SaferPayInitialize';
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     private $module;
 
     /**
-     * @var Context
+     * @var \Context
      */
     private $context;
 
@@ -91,7 +88,7 @@ class SaferPayInitialize
     {
         try {
             $initialize = $this->initializeService->initialize($initializeRequest, $isBusinessLicence);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             /** @var LoggerInterface $logger */
             $logger = $this->module->getService(LoggerInterface::class);
             $logger->error($e->getMessage(), [

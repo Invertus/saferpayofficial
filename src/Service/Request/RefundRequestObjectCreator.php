@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
-use Cart;
 use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
 if (!defined('_PS_VERSION_')) {
@@ -42,7 +41,7 @@ class RefundRequestObjectCreator
         $this->requestObjectCreator = $requestObjectCreator;
     }
 
-    public function create(Cart $cart, $transactionId, $totalRefund, $pendingNotification = null)
+    public function create(\Cart $cart, $transactionId, $totalRefund, $pendingNotification = null)
     {
         $requestHeader = $this->requestObjectCreator->createRequestHeader();
         $payment = $this->requestObjectCreator->createPayment($cart, $totalRefund);

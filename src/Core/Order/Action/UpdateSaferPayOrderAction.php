@@ -23,8 +23,6 @@
 
 namespace Invertus\SaferPay\Core\Order\Action;
 
-use SaferPayOrder;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,11 +32,12 @@ class UpdateSaferPayOrderAction
     const ACTION_AUTHORIZE = 'AUTHORIZE';
 
     /**
-     * @param SaferPayOrder $saferPayOrder
+     * @param \SaferPayOrder $saferPayOrder
      * @param string $action
+     *
      * @return void
      */
-    public function run(SaferPayOrder $saferPayOrder, $action)
+    public function run(\SaferPayOrder $saferPayOrder, $action)
     {
         switch ($action) {
             case self::ACTION_AUTHORIZE:
@@ -50,7 +49,8 @@ class UpdateSaferPayOrderAction
     }
 
     /**
-     * @param SaferPayOrder $saferPayOrder
+     * @param \SaferPayOrder $saferPayOrder
+     *
      * @return void
      */
     private function authorizeSaferPayOrder($saferPayOrder)

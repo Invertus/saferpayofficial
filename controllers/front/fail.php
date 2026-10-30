@@ -24,9 +24,9 @@
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
 use Invertus\SaferPay\Factory\OrderPresenterFactory;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\CartDuplicationService;
-use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;

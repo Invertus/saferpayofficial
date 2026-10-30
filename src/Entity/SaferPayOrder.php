@@ -20,7 +20,6 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -31,17 +30,17 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayOrder extends ObjectModel
 {
     /**
-     * @var Int|null
+     * @var int|null
      */
     public $id_order;
 
     /**
-     * @var Int|null
+     * @var int|null
      */
     public $id_cart;
 
     /**
-     * @var Int
+     * @var int
      */
     public $id_customer;
 

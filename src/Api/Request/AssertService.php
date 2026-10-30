@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Assert\AssertRequest;
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
@@ -76,6 +75,7 @@ class AssertService
      * @param bool $isBusiness
      *
      * @return object|null
+     *
      * @throws \Exception
      */
     public function assert(AssertRequest $assertRequest, $isBusiness)
@@ -91,7 +91,7 @@ class AssertService
                 $assertApi,
                 $assertRequest->getAsArray()
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new SaferPayApiException('Assert API failed', SaferPayApiException::ASSERT);
         }
     }
@@ -103,7 +103,8 @@ class AssertService
      * @param bool $saveCard whether an alias was requested from Saferpay for this transaction
      *
      * @return AssertBody
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function createObjectsFromAssertResponse($responseBody, $saferPayOrderId, $customerId, $saveCard)
     {

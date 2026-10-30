@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Core\Order\Action;
 
 use Invertus\SaferPay\Exception\CouldNotChangeOrderStatus;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -44,8 +43,8 @@ class UpdateOrderStatusAction
     public function run($orderId, $orderStatusId)
     {
         try {
-            /** @var Order $order */
-            $order = new Order($orderId);
+            /** @var \Order $order */
+            $order = new \Order($orderId);
         } catch (\Exception $exception) {
             throw CouldNotChangeOrderStatus::unknownError();
         }

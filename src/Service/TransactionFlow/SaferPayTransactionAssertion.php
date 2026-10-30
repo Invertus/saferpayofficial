@@ -28,7 +28,6 @@ use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRequestObjectCreator;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -72,13 +71,14 @@ class SaferPayTransactionAssertion
      * @param string $cartId
      *
      * @return AssertBody
+     *
      * @throws \Exception
      */
     public function assert($cartId, $saveCard = null, $selectedCard = null, $isBusiness = 0, $update = true)
     {
         $cart = new \Cart($cartId);
 
-        $saferPayOrder = new SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
+        $saferPayOrder = new \SaferPayOrder($this->orderRepository->getIdByCartId($cartId));
 
         $this->logger->debug(sprintf('%s - assert service called', self::FILE_NAME), [
             'context' => [

@@ -40,6 +40,7 @@ class SaferPayPaymentNotation
 
     /**
      * @param string $payment
+     *
      * @return string
      */
     public function getForDisplay($payment): string
@@ -56,6 +57,7 @@ class SaferPayPaymentNotation
 
     /**
      * @param string $payment
+     *
      * @return string
      */
     public function getShortName($payment): string

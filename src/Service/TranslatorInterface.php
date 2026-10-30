@@ -29,7 +29,6 @@ if (!defined('_PS_VERSION_')) {
 
 /**
  * TranslatorInterface.
- *
  */
 interface TranslatorInterface
 {

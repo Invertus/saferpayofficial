@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Exception;
 use Invertus\SaferPay\Api\Request\GetLicenseService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\GetLicense\GetLicenseRequest;
@@ -52,7 +51,7 @@ class SaferPayGetLicense
      *
      * @return array{hasBusinessLicense: bool, packageName: string, features: array}
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function fetchLicenseWithCredentials($username, $password, $customerId, $isTestMode)
     {
@@ -93,13 +92,13 @@ class SaferPayGetLicense
      *
      * @return mixed
      *
-     * @throws Exception
+     * @throws \Exception
      */
     private function fetchWithFallback(GetLicenseRequest $request, $username, $password, $baseUrl)
     {
         try {
             return $this->getLicenseService->getLicense($request, $username, $password, $baseUrl);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->getLicenseService->getLicenseFallback($request, $username, $password, $baseUrl);
         }
     }

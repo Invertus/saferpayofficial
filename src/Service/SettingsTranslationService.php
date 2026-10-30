@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Factory\ModuleFactory;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -34,7 +33,7 @@ class SettingsTranslationService
 {
     const FILE_NAME = 'SettingsTranslationService';
 
-    /** @var SaferPayOfficial */
+    /** @var \SaferPayOfficial */
     private $module;
 
     public function __construct(ModuleFactory $moduleFactory)

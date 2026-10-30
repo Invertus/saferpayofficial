@@ -20,7 +20,6 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }

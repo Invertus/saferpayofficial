@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\AssertRefund\AssertRefundRequest;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
@@ -49,8 +48,9 @@ class AssertRefundService
     /**
      * @param AssertRefundRequest $assertRefundRequest
      *
-     * @return array |null
-     * @throws Exception
+     * @return array|null
+     *
+     * @throws \Exception
      */
     public function assertRefund(AssertRefundRequest $assertRefundRequest)
     {
@@ -61,7 +61,7 @@ class AssertRefundService
                 $assertApi,
                 $assertRefundRequest->getAsArray()
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw new SaferPayApiException('Assert Refund API failed', SaferPayApiException::ASSERT);
         }
     }

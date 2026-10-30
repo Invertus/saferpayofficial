@@ -84,7 +84,7 @@ class SaferPayOfficialSuccessHostedModuleFrontController extends AbstractSaferPa
                         'cartId' => $cartId,
                         'secureKey' => $secureKey,
                         'orderId' => $orderId,
-                        \Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
+                        Invertus\SaferPay\Config\SaferPayConfig::IS_BUSINESS_LICENCE => true,
                     ],
                     true
                 )

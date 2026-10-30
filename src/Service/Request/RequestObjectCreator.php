@@ -23,13 +23,7 @@
 
 namespace Invertus\SaferPay\Service\Request;
 
-use Carrier;
-use Cart;
-use CartRule;
-use Configuration;
-use Country;
 use Customer;
-use Gender;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\Address;
 use Invertus\SaferPay\DTO\Request\DeliveryAddressForm;
@@ -46,8 +40,6 @@ use Invertus\SaferPay\Factory\ModuleFactory;
 use Invertus\SaferPay\Provider\IdempotencyProviderInterface;
 use Invertus\SaferPay\Repository\OrderRepositoryInterface;
 use Invertus\SaferPay\Utility\PriceUtility;
-use SaferPayOfficial;
-use Tax;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -56,7 +48,7 @@ if (!defined('_PS_VERSION_')) {
 class RequestObjectCreator
 {
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     protected $module;
 
@@ -72,6 +64,7 @@ class RequestObjectCreator
 
     /**
      * @NOTE: Consider splitting this class into focused services (AddressBuilder, PaymentBuilder, etc.)
+     *
      * @var IdempotencyProviderInterface
      */
     private $idempotencyProvider;
@@ -91,23 +84,25 @@ class RequestObjectCreator
     public function createRequestHeader(): RequestHeader
     {
         $specVersion = SaferPayConfig::API_VERSION;
-        $customerId = Configuration::get(RequestHeader::CUSTOMER_ID . SaferPayConfig::getConfigSuffix());
+        $customerId = \Configuration::get(RequestHeader::CUSTOMER_ID . SaferPayConfig::getConfigSuffix());
         $requestId = $this->idempotencyProvider->getIdempotencyKey();
-        $retryIndicator = Configuration::get(RequestHeader::RETRY_INDICATOR);
+        $retryIndicator = \Configuration::get(RequestHeader::RETRY_INDICATOR);
         $clientInfo = [
             'ShopInfo' => 'PrestaShop_' . _PS_VERSION_ . ':Invertus_' . $this->module->version,
         ];
+
         return new RequestHeader($specVersion, $customerId, $requestId, $retryIndicator, $clientInfo);
     }
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      * @param string $totalPrice
      *
      * @return Payment|null
+     *
      * @throws \PrestaShopException
      */
-    public function createPayment(Cart $cart, string $totalPrice): ?Payment
+    public function createPayment(\Cart $cart, string $totalPrice): ?Payment
     {
         $currency = \Currency::getCurrency($cart->id_currency);
         /** @var \Order|null $order */
@@ -121,8 +116,8 @@ class RequestObjectCreator
         $payment->setValue($totalPrice);
         $payment->setCurrencyCode($currency['iso_code']);
 
-        $description = (string) Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION);
-        $orderIdOption = (int) Configuration::get(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION);
+        $description = (string) \Configuration::get(SaferPayConfig::SAFERPAY_PAYMENT_DESCRIPTION);
+        $orderIdOption = (int) \Configuration::get(SaferPayConfig::SAFERPAY_ORDER_ID_OPTION);
 
         if ($orderIdOption === 0 && !empty($order)) {
             $payment->setDescription($order->reference);
@@ -145,7 +140,8 @@ class RequestObjectCreator
     public function createNotification(string $customerEmail, string $notifyUrl): SaferPayNotification
     {
         $payerEmail = $customerEmail;
-        $merchantEmail = Configuration::get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::getConfigSuffix());
+        $merchantEmail = \Configuration::get(SaferPayConfig::MERCHANT_EMAILS . SaferPayConfig::getConfigSuffix());
+
         return new SaferPayNotification($payerEmail, $merchantEmail, $notifyUrl);
     }
 
@@ -159,24 +155,24 @@ class RequestObjectCreator
         return new Amount($value, $currencyCode);
     }
 
-    public function createAddressObject(\Address $address, Customer $customer): Address
+    public function createAddressObject(\Address $address, \Customer $customer): Address
     {
         $saferpayAddress = new Address();
         $saferpayAddress->setFirstName($address->firstname);
         $saferpayAddress->setLastName($address->lastname);
         $saferpayAddress->setCompany($address->company);
 
-        $gender = new Gender($customer->id_gender);
+        $gender = new \Gender($customer->id_gender);
 
         $genderArray = GenderEnum::SAFERPAY_GENDERS;
         $saferpayAddress->setGender(
-            isset($genderArray[$gender->type]) ? $genderArray[$gender->type]: $genderArray[GenderEnum::GENDER_NEUTRAL]
+            isset($genderArray[$gender->type]) ? $genderArray[$gender->type] : $genderArray[GenderEnum::GENDER_NEUTRAL]
         );
         $saferpayAddress->setStreet($address->address1);
         $saferpayAddress->setStreet2($address->address2);
         $saferpayAddress->setZip($address->postcode);
         $saferpayAddress->setCity($address->city);
-        $saferpayAddress->setCountryCode(Country::getIsoById($address->id_country));
+        $saferpayAddress->setCountryCode(\Country::getIsoById($address->id_country));
         $saferpayAddress->setEmail($customer->email);
         $saferpayAddress->setDateOfBirth($customer->birthday);
         $saferpayAddress->setPhone($address->phone);
@@ -206,10 +202,10 @@ class RequestObjectCreator
         return $orderItem;
     }
 
-    public function buildOrderItemShippingFee(Cart $cart): OrderItem
+    public function buildOrderItemShippingFee(\Cart $cart): OrderItem
     {
-        $carrier = new Carrier($cart->id_carrier);
-        $cartRules = $cart->getCartRules(CartRule::FILTER_ACTION_SHIPPING, false);
+        $carrier = new \Carrier($cart->id_carrier);
+        $cartRules = $cart->getCartRules(\CartRule::FILTER_ACTION_SHIPPING, false);
         $isFreeShipping = false;
 
         if (!empty($cartRules)) {
@@ -235,18 +231,18 @@ class RequestObjectCreator
         }
 
         $orderItem->setTaxRate($this->priceUtility->convertToCents(
-            Tax::getCarrierTaxRate($cart->id_carrier, $cart->id_address_delivery)
+            \Tax::getCarrierTaxRate($cart->id_carrier, $cart->id_address_delivery)
         ));
 
         return $orderItem;
     }
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      *
      * @return Order
      */
-    public function buildOrder(Cart $cart): Order
+    public function buildOrder(\Cart $cart): Order
     {
         $order = new Order();
         $products = $cart->getProducts();
@@ -263,11 +259,11 @@ class RequestObjectCreator
      * PasswordLastChangedDate is taken from customer updated field
      * (It updates if personal information or email was updated aswell)
      *
-     * @param Customer $customer
+     * @param \Customer $customer
      *
      * @return PayerProfile
      */
-    public function createPayerProfile(Customer $customer): PayerProfile
+    public function createPayerProfile(\Customer $customer): PayerProfile
     {
         $payerProfile = new PayerProfile();
         $payerProfile->setCreationDate((new \DateTime($customer->date_add))->format(\DateTime::ISO8601));

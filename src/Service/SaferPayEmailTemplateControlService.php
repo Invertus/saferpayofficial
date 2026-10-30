@@ -25,9 +25,7 @@ declare(strict_types=1);
 
 namespace Invertus\SaferPay\Service;
 
-use Configuration;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Order;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -59,7 +57,7 @@ class SaferPayEmailTemplateControlService implements SaferPayEmailTemplateContro
             return false;
         }
 
-        $order = Order::getByCartId($params['cart']->id);
+        $order = \Order::getByCartId($params['cart']->id);
 
         return $order && $order->module === 'saferpayofficial';
     }
@@ -73,6 +71,6 @@ class SaferPayEmailTemplateControlService implements SaferPayEmailTemplateContro
     {
         $configKey = self::CONTROLLED_TEMPLATES[$template];
 
-        return (bool) Configuration::get($configKey);
+        return (bool) \Configuration::get($configKey);
     }
 }

@@ -23,10 +23,10 @@
 
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Controller\AbstractSaferPayController;
+use Invertus\SaferPay\Controller\Front\CheckoutController;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Service\SaferPayExceptionService;
-use Invertus\SaferPay\Controller\Front\CheckoutController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -104,7 +104,7 @@ class SaferPayOfficialValidationModuleFrontController extends AbstractSaferPayCo
             $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
             Tools::redirect($redirectLink);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             /** @var SaferPayExceptionService $exceptionService */
             $exceptionService = $this->module->getService(SaferPayExceptionService::class);
             $this->errors[] = $exceptionService->getErrorMessageForException($exception, $exceptionService->getErrorMessages());

@@ -22,29 +22,29 @@
  */
 
 use Invertus\SaferPay\Config\SaferPayConfig;
+use Invertus\SaferPay\Install\Installer;
+use Invertus\SaferPay\Install\Uninstaller;
+use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Presentation\Loader\PaymentFormAssetLoader;
 use Invertus\SaferPay\Presenter\AdminOrderPagePresenter;
 use Invertus\SaferPay\Presenter\AssertPresenter;
+use Invertus\SaferPay\Provider\CurrencyProvider;
 use Invertus\SaferPay\Provider\EnabledCardBrandsProvider;
 use Invertus\SaferPay\Provider\PaymentRedirectionProvider;
+use Invertus\SaferPay\Provider\PaymentTypeProvider;
 use Invertus\SaferPay\Repository\SaferPayCardAliasRepository;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
+use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
+use Invertus\SaferPay\Service\CardPaymentGroupingService;
 use Invertus\SaferPay\Service\LegacyTranslator;
+use Invertus\SaferPay\Service\PaymentRestrictionValidation;
+use Invertus\SaferPay\Service\SaferPayCartService;
+use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
+use Invertus\SaferPay\Service\SaferPayStoredPaymentMethods;
 use Invertus\SaferPay\ServiceProvider\LeagueServiceContainerProvider;
 use Invertus\SaferPay\Utility\VersionUtility;
 use Invertus\SaferPay\Validation\ValidateIsAssetsRequired;
 use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-use Invertus\SaferPay\Service\CardPaymentGroupingService;
-use Invertus\SaferPay\Install\Installer;
-use Invertus\SaferPay\Install\Uninstaller;
-use Invertus\SaferPay\Service\SaferPayCartService;
-use Invertus\SaferPay\Provider\PaymentTypeProvider;
-use Invertus\SaferPay\Service\SaferPayStoredPaymentMethods;
-use Invertus\SaferPay\Repository\SaferPayPaymentRepository;
-use Invertus\SaferPay\Service\PaymentRestrictionValidation;
-use Invertus\SaferPay\Provider\CurrencyProvider;
-use Invertus\SaferPay\Service\SaferPayEmailTemplateControlServiceInterface;
-use Invertus\SaferPay\Logger\LoggerInterface;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -103,8 +103,10 @@ class SaferPayOfficial extends PaymentModule
         $uninstaller = new Uninstaller($this);
         if (!$uninstaller->uninstall()) {
             $this->_errors += $uninstaller->getErrors();
+
             return false;
         }
+
         return parent::uninstall();
     }
 
@@ -132,6 +134,7 @@ class SaferPayOfficial extends PaymentModule
      * Get a service from the container.
      *
      * @param string $service
+     *
      * @return mixed
      */
     public function getService($service)
@@ -154,7 +157,6 @@ class SaferPayOfficial extends PaymentModule
 
         /** @var SaferPayOrderRepository $repository */
         $repository = $this->getService(SaferPayOrderRepository::class);
-
 
         $sfOrder = $repository->getByOrderId((int) $psOrder->id);
         if (!$sfOrder->pending) {
@@ -273,13 +275,13 @@ Thank you for your patience!');
         foreach ($paymentMethods as $paymentMethod) {
             $paymentMethod['paymentMethod'] = str_replace(' ', '', $paymentMethod['paymentMethod']);
 
-            if (in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)) {
+            if (in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)) {
                 $paymentMethod['currencies'] = $currencyProvider->getAllCurrenciesInArray();
             }
 
             if (
                 !in_array($this->context->currency->iso_code, $paymentMethod['currencies'])
-                && !in_array($paymentMethod['paymentMethod'], \Invertus\SaferPay\Config\SaferPayConfig::WALLET_PAYMENT_METHODS)
+                && !in_array($paymentMethod['paymentMethod'], SaferPayConfig::WALLET_PAYMENT_METHODS)
             ) {
                 continue;
             }
@@ -345,7 +347,7 @@ Thank you for your patience!');
                 );
 
                 if ($savedCards) {
-                    /** Select first card if any are saved **/
+                    // Select first card if any are saved
 
                     $inputs['selectedCreditCard'] = [
                         'name' => "selectedCreditCard_{$paymentMethod['paymentMethod']}",
@@ -385,7 +387,6 @@ Thank you for your patience!');
 
         return $this->displayInAdminOrderPage($params);
     }
-
 
     public function hookDisplayAdminOrder(array $params)
     {
@@ -429,7 +430,7 @@ Thank you for your patience!');
             $emailTemplateControlService = $this->getService(SaferPayEmailTemplateControlServiceInterface::class);
 
             return $emailTemplateControlService->shouldSendEmail($params);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             /** @var LoggerInterface $logger */
             $logger = $this->getService(LoggerInterface::class);
 
@@ -498,7 +499,7 @@ Thank you for your patience!');
     private function displayInAdminOrderPage(array $params)
     {
         $orderId = $params['id_order'];
-        $order = new \Order($orderId);
+        $order = new Order($orderId);
 
         /** @var SaferPayOrderRepository $orderRepo */
         $orderRepo = $this->getService(SaferPayOrderRepository::class);
@@ -537,7 +538,7 @@ Thank you for your patience!');
         // If payment method does not supports 3DS , when we change 'liability_shift'
         // to true , to hide 'failed security check ' message.
         if (
-            $assertData['liability_shift'] === "0"
+            $assertData['liability_shift'] === '0'
             && !in_array($assertData['paymentMethod'], $supported3DsPaymentMethods)
         ) {
             $assertData['liability_shift'] = true;

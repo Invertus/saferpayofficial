@@ -41,7 +41,6 @@ if (!defined('_PS_VERSION_')) {
 
 class InitializeRequest implements SaferPayRequestInterface
 {
-
     /**
      * @var RequestHeader
      */
@@ -123,22 +122,22 @@ class InitializeRequest implements SaferPayRequestInterface
     private $paymentMethods;
 
     public function __construct(
-        RequestHeader        $requestHeader,
+        RequestHeader $requestHeader,
         $terminalId,
         $paymentMethod,
-        Payment              $payment,
-        Payer                $payer,
-        ReturnUrl            $returnUrl,
+        Payment $payment,
+        Payer $payer,
+        ReturnUrl $returnUrl,
         $notification,
-        DeliveryAddressForm  $deliveryAddressForm,
+        DeliveryAddressForm $deliveryAddressForm,
         $configSet,
-        Address              $deliveryAddress,
-        Address              $billingAddress,
+        Address $deliveryAddress,
+        Address $billingAddress,
         $alias,
-        Order                $order,
-        PayerProfile         $payerProfile,
+        Order $order,
+        PayerProfile $payerProfile,
         $fieldToken,
-        array                $paymentMethods = []
+        array $paymentMethods = []
     ) {
         $this->requestHeader = $requestHeader;
         $this->terminalId = $terminalId;
@@ -249,7 +248,7 @@ class InitializeRequest implements SaferPayRequestInterface
             unset($return['PaymentMethods']);
         }
 
-        //Wallet related, payment method must be empty, instead used "Wallets" argument in request.
+        // Wallet related, payment method must be empty, instead used "Wallets" argument in request.
         if (in_array(\Tools::strtoupper($this->paymentMethod), SaferPayConfig::WALLET_PAYMENT_METHODS)) {
             unset($return['PaymentMethods']);
             $return['Wallets'] = [

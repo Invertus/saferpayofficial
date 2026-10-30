@@ -58,8 +58,8 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                 'paymentName' => SaferPayConfig::PAYMENT_PAYPAL,
                 'paymentResults' => true,
                 'restrictionResults' => [
-                    [0], //ALL COUNTRIES
-                    [0], //ALL CURRENCIES
+                    [0], // ALL COUNTRIES
+                    [0], // ALL CURRENCIES
                 ],
                 'expectedResult' => true,
             ],
@@ -67,8 +67,8 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                 'paymentName' => SaferPayConfig::PAYMENT_PAYPAL,
                 'paymentResults' => true,
                 'restrictionResults' => [
-                    [1,2,3], //ENGLISH, LITHUANIAN, GERMAN
-                    [0], //ALL CURRENCIES
+                    [1, 2, 3], // ENGLISH, LITHUANIAN, GERMAN
+                    [0], // ALL CURRENCIES
                 ],
                 'expectedResult' => true,
             ],
@@ -76,17 +76,17 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                 'paymentName' => SaferPayConfig::PAYMENT_PAYPAL,
                 'paymentResults' => true,
                 'restrictionResults' => [
-                    [0], //ALL COUNTRIES
-                    [1], //EUR
+                    [0], // ALL COUNTRIES
+                    [1], // EUR
                 ],
                 'expectedResult' => true,
             ],
             [
                 'paymentName' => SaferPayConfig::PAYMENT_PAYPAL,
-                'paymentResults' => false, //FALSE
+                'paymentResults' => false, // FALSE
                 'restrictionResults' => [
-                    [0], //ALL COUNTRIES
-                    [0], //ALL CURRENCIES
+                    [0], // ALL COUNTRIES
+                    [0], // ALL CURRENCIES
                 ],
                 'expectedResult' => false,
             ],
@@ -94,8 +94,8 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                 'paymentName' => SaferPayConfig::PAYMENT_PAYPAL,
                 'paymentResults' => true,
                 'restrictionResults' => [
-                    [], //NO COUNTRIES
-                    [0], //ALL CURRENCIES
+                    [], // NO COUNTRIES
+                    [0], // ALL CURRENCIES
                 ],
                 'expectedResult' => false,
             ],
@@ -103,8 +103,8 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                 'paymentName' => SaferPayConfig::PAYMENT_PAYPAL,
                 'paymentResults' => true,
                 'restrictionResults' => [
-                    [0], //ALL COUNTRIES
-                    [], //NO CURRENCIES
+                    [0], // ALL COUNTRIES
+                    [], // NO CURRENCIES
                 ],
                 'expectedResult' => false,
             ],
@@ -112,8 +112,8 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                 'paymentName' => SaferPayConfig::PAYMENT_PAYPAL,
                 'paymentResults' => true,
                 'restrictionResults' => [
-                    [], //NO COUNTRIES
-                    [], //NO CURRENCIES
+                    [], // NO COUNTRIES
+                    [], // NO CURRENCIES
                 ],
                 'expectedResult' => false,
             ],
@@ -146,22 +146,22 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
         return [
             [
                 'enabledBrands' => [SaferPayConfig::PAYMENT_VISA],
-                'enabledCountries' => [0], //ALL COUNTRIES
+                'enabledCountries' => [0], // ALL COUNTRIES
                 'expectedResult' => true,
             ],
             [
                 'enabledBrands' => SaferPayConfig::CARD_BRANDS,
-                'enabledCountries' => [0], //ALL COUNTRIES
+                'enabledCountries' => [0], // ALL COUNTRIES
                 'expectedResult' => true,
             ],
             [
-                'enabledBrands' => [], //EVERY BRAND DISABLED
-                'enabledCountries' => [0], //ALL COUNTRIES
+                'enabledBrands' => [], // EVERY BRAND DISABLED
+                'enabledCountries' => [0], // ALL COUNTRIES
                 'expectedResult' => false,
             ],
             [
                 'enabledBrands' => SaferPayConfig::CARD_BRANDS,
-                'enabledCountries' => [], //NO COUNTRIES
+                'enabledCountries' => [], // NO COUNTRIES
                 'expectedResult' => false,
             ],
         ];
@@ -196,7 +196,7 @@ class BasePaymentRestrictionValidationTest extends UnitTestCase
                     return $enabledCountries;
                 }
 
-                return [0]; //ALL CURRENCIES
+                return [0]; // ALL CURRENCIES
             })
         ;
 

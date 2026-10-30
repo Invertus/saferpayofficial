@@ -23,12 +23,6 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Cart;
-use CartRule;
-use Context;
-use Db;
-use Order;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -37,34 +31,34 @@ class CartDuplicationService
 {
     public function restoreCart($cartId)
     {
-        $context = Context::getContext();
-        $cart = new Cart($cartId);
+        $context = \Context::getContext();
+        $cart = new \Cart($cartId);
         $duplication = $cart->duplicate();
         if ($duplication['success']) {
-            /** @var Cart $duplicatedCart */
+            /** @var \Cart $duplicatedCart */
             $duplicatedCart = $duplication['cart'];
             foreach ($cart->getOrderedCartRulesIds() as $cartRuleId) {
                 $duplicatedCart->addCartRule($cartRuleId['id_cart_rule']);
                 $this->restoreCartRuleQuantity($cartId, $cartRuleId['id_cart_rule']);
             }
-            
+
             $context->cart = $duplicatedCart;
-            CartRule::autoAddToCart($context);
+            \CartRule::autoAddToCart($context);
             $context->cookie->write();
         }
     }
 
     private function restoreCartRuleQuantity($cartId, $cartRuleId)
     {
-        $cartRule = new CartRule($cartRuleId);
-        $cartRule->quantity++;
+        $cartRule = new \CartRule($cartRuleId);
+        ++$cartRule->quantity;
         $cartRule->update();
 
-        $orderId = Order::getIdByCartId($cartId);
+        $orderId = \Order::getIdByCartId($cartId);
 
         $sql = 'DELETE FROM `' . _DB_PREFIX_ . 'order_cart_rule`
                     WHERE id_order = ' . (int) $orderId . '
                         AND id_cart_rule = ' . (int) $cartRuleId;
-        DB::getInstance()->execute($sql);
+        \Db::getInstance()->execute($sql);
     }
 }

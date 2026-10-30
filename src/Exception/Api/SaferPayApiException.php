@@ -23,13 +23,11 @@
 
 namespace Invertus\SaferPay\Exception\Api;
 
-use RuntimeException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class SaferPayApiException extends RuntimeException
+class SaferPayApiException extends \RuntimeException
 {
     const INITIALIZE = 0;
 

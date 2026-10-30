@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Validation;
 
 use Invertus\SaferPay\Provider\OpcModulesProvider;
-use FrontController;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -42,7 +41,7 @@ class ValidateIsAssetsRequired
     /**
      * It returns true if it's an OPC controller or an OrderController with products in the cart. Otherwise, it returns false.
      */
-    public function run(FrontController $controller)
+    public function run(\FrontController $controller)
     {
         $isOrderController = $controller instanceof \OrderControllerCore
             || $controller instanceof \ModuleFrontController && isset($controller->php_self) && $controller->php_self === 'order';

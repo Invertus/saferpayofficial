@@ -21,10 +21,7 @@
  *@license   SIX Payment Services
  */
 
-
 namespace Invertus\SaferPay\Factory;
-
-use Module;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,10 +30,10 @@ if (!defined('_PS_VERSION_')) {
 class ModuleFactory
 {
     /**
-     * @return \SaferPayOfficial|Module|null
+     * @return \SaferPayOfficial|\Module|null
      */
     public function getModule()
     {
-        return Module::getInstanceByName('saferpayofficial');
+        return \Module::getInstanceByName('saferpayofficial');
     }
 }

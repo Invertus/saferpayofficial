@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Refund\RefundRequest;
 
@@ -47,8 +46,10 @@ class RefundService
 
     /**
      * @param RefundRequest $refundRequest
+     *
      * @return \stdClass|null
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function refund(RefundRequest $refundRequest): ?\stdClass
     {

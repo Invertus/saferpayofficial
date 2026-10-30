@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Config;
 
-use Configuration;
 use Invertus\SaferPay\DTO\Request\RequestHeader;
 
 if (!defined('_PS_VERSION_')) {
@@ -191,19 +190,19 @@ class SaferPayConfig
     ];
 
     const KLARNA_SUPPORTED_COUNTRY_CODES = [
-        'AT', //Austria
-        'BE', //Belgium
-        'DK', //Denmark
-        'FI', //Finland
-        'FR', //France
-        'DE', //Germany
-        'IT', //Italy
-        'NL', //Netherlands
-        'NO', //Norway
-        'ES', //Spain
-        'SE', //Sweden
-        'CH', //Switzerland
-        'GB', //United Kingdom
+        'AT', // Austria
+        'BE', // Belgium
+        'DK', // Denmark
+        'FI', // Finland
+        'FR', // France
+        'DE', // Germany
+        'IT', // Italy
+        'NL', // Netherlands
+        'NO', // Norway
+        'ES', // Spain
+        'SE', // Sweden
+        'CH', // Switzerland
+        'GB', // United Kingdom
     ];
 
     const TRANSACTION_METHODS = [
@@ -333,7 +332,7 @@ class SaferPayConfig
 
     public static function supportsOrderCapture($paymentMethod)
     {
-        //payments that DOES NOT SUPPORT capture
+        // payments that DOES NOT SUPPORT capture
         $unsupportedCapturePayments = [
             self::PAYMENT_WECHATPAY,
             self::PAYMENT_ACCOUNTTOACCOUNT,
@@ -345,7 +344,7 @@ class SaferPayConfig
 
     public static function supportsOrderCancel($paymentMethod)
     {
-        //payments that DOES NOT SUPPORT order cancel
+        // payments that DOES NOT SUPPORT order cancel
         $unsupportedCancelPayments = [
             self::PAYMENT_WECHATPAY,
             self::PAYMENT_ACCOUNTTOACCOUNT,
@@ -376,10 +375,9 @@ class SaferPayConfig
         return in_array($paymentMethod, $paymentsAlwaysRedirect);
     }
 
-
     public static function getConfigSuffix()
     {
-        if (Configuration::get(self::TEST_MODE)) {
+        if (\Configuration::get(self::TEST_MODE)) {
             return self::TEST_SUFFIX;
         }
 
@@ -393,12 +391,11 @@ class SaferPayConfig
      */
     public static function getFieldAccessToken()
     {
-        return Configuration::get(
-            \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_ACCESS_TOKEN .
-                \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix()
+        return \Configuration::get(
+            SaferPayConfig::FIELDS_ACCESS_TOKEN .
+                SaferPayConfig::getConfigSuffix()
         );
     }
-
 
     /**
      * Gets Field url For Testing Or Live Environments.
@@ -409,10 +406,10 @@ class SaferPayConfig
     {
         return sprintf(
             '%s/Fields/%s',
-            \Invertus\SaferPay\Config\SaferPayConfig::getBaseUrl(),
-            Configuration::get(
-                \Invertus\SaferPay\Config\SaferPayConfig::CUSTOMER_ID .
-                    \Invertus\SaferPay\Config\SaferPayConfig::getConfigSuffix()
+            SaferPayConfig::getBaseUrl(),
+            \Configuration::get(
+                SaferPayConfig::CUSTOMER_ID .
+                    SaferPayConfig::getConfigSuffix()
             )
         );
     }
@@ -424,7 +421,7 @@ class SaferPayConfig
      */
     public static function getBaseApiUrl()
     {
-        if (Configuration::get(self::TEST_MODE)) {
+        if (\Configuration::get(self::TEST_MODE)) {
             return self::TEST_API;
         }
 
@@ -438,7 +435,7 @@ class SaferPayConfig
      */
     public static function getBaseUrl()
     {
-        if (Configuration::get(self::TEST_MODE)) {
+        if (\Configuration::get(self::TEST_MODE)) {
             return self::TEST_URL;
         }
 
@@ -456,7 +453,7 @@ class SaferPayConfig
             self::SAFERPAY_ORDER_CREATION_AFTER_AUTHORIZATION => 0,
             self::SAFERPAY_ORDER_ID_OPTION => 0,
             self::TEST_MODE => 1,
-            self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => (int) Configuration::get(
+            self::SAFERPAY_ORDER_STATE_CHOICE_AWAITING_PAYMENT => (int) \Configuration::get(
                 self::SAFERPAY_PAYMENT_AWAITING
             ),
             self::SAFERPAY_SEND_ORDER_CONF_MAIL => 0,
@@ -502,12 +499,12 @@ class SaferPayConfig
 
     public static function isTestMode()
     {
-        return (bool) Configuration::get(self::TEST_MODE);
+        return (bool) \Configuration::get(self::TEST_MODE);
     }
 
     public static function isDebugMode()
     {
-        return (bool) Configuration::get(self::SAFERPAY_DEBUG_MODE);
+        return (bool) \Configuration::get(self::SAFERPAY_DEBUG_MODE);
     }
 
     public static function isVersionAbove177()

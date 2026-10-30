@@ -69,8 +69,10 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param string $paymentName
+     *
      * @return bool
      */
     public function isValid(string $paymentName): bool
@@ -95,8 +97,10 @@ class BasePaymentRestrictionValidation implements PaymentRestrictionValidationIn
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
      * @param string $paymentName
+     *
      * @return bool
      */
     public function supports(string $paymentName): bool

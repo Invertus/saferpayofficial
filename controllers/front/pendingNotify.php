@@ -54,7 +54,7 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
         $cart = new Cart($cartId);
 
         if ($cart->secure_key !== $secureKey) {
-            die($this->module->l('Error. Insecure cart', self::FILE_NAME));
+            exit($this->module->l('Error. Insecure cart', self::FILE_NAME));
         }
 
         /** @var SaferPayOrderRepository $saferPayOrderRepository */
@@ -75,13 +75,14 @@ class SaferPayOfficialPendingNotifyModuleFrontController extends AbstractSaferPa
 
         $logger->debug(sprintf('%s - Controller action ended', self::FILE_NAME));
 
-        die($this->module->l('Success', self::FILE_NAME));
+        exit($this->module->l('Success', self::FILE_NAME));
     }
 
     /**
      * @param string $transactionId
      *
      * @return AssertRefundBody
+     *
      * @throws Exception
      */
     private function assertRefundTransaction($transactionId)

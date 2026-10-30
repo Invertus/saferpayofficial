@@ -28,7 +28,6 @@ use Invertus\SaferPay\DTO\Response\AssertRefund\AssertRefundBody;
 use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\Request\AssertRefundRequestObjectCreator;
 use Invertus\SaferPay\Service\Response\AssertRefundResponseObjectCreator;
-use SaferPayOrder;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -72,6 +71,7 @@ class SaferPayTransactionRefundAssertion
      * @param string $transactionId
      *
      * @return AssertRefundBody
+     *
      * @throws \Exception
      */
     public function assertRefund($transactionId)
@@ -87,13 +87,14 @@ class SaferPayTransactionRefundAssertion
     /**
      * @param $orderId
      *
-     * @return false|SaferPayOrder
+     * @return false|\SaferPayOrder
+     *
      * @throws \Exception
      */
     private function getSaferPayOrder($orderId)
     {
         $saferPayOrderId = $this->orderRepository->getIdByOrderId($orderId);
 
-        return new SaferPayOrder($saferPayOrderId);
+        return new \SaferPayOrder($saferPayOrderId);
     }
 }

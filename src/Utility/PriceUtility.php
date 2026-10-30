@@ -31,6 +31,7 @@ class PriceUtility
 {
     /**
      * @param float $price
+     *
      * @return int
      */
     public function convertToCents($price): int

@@ -41,6 +41,7 @@ class Transaction
 
     /**
      * Transaction constructor.
+     *
      * @param string $type
      * @param string $status
      * @param string $id
@@ -56,7 +57,7 @@ class Transaction
         $status = null,
         $id = null,
         $date = null,
-        Amount $amount = null,
+        ?Amount $amount = null,
         $orderId = null,
         $acquirerName = null,
         $acquirerReference = null,

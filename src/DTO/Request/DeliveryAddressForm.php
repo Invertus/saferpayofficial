@@ -62,7 +62,6 @@ class DeliveryAddressForm
         return $this->addressSource;
     }
 
-
     /**
      * @param string $addressSource
      */

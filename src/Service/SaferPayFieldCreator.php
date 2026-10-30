@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Service;
 
 use Invertus\SaferPay\Repository\SaferPayFieldRepository;
-use SaferPayField;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -45,7 +44,7 @@ class SaferPayFieldCreator
 
     public function updateField($paymentMethod, $isActive)
     {
-        $saferPayField = new SaferPayField();
+        $saferPayField = new \SaferPayField();
         $paymentId = $this->fieldRepository->getIdByName($paymentMethod);
         if ($paymentId) {
             $saferPayField->id = $paymentId;

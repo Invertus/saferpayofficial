@@ -54,7 +54,7 @@ class AssertRefundBody
     private $date;
 
     public function __construct(
-        ResponseHeader $responseHeader = null,
+        ?ResponseHeader $responseHeader = null,
         $transactionId = null,
         $status = null,
         $date = null,
@@ -74,6 +74,7 @@ class AssertRefundBody
 
     /**
      * @param ResponseHeader $responseHeader
+     *
      * @return AssertRefundBody
      */
     public function setResponseHeader($responseHeader)
@@ -90,6 +91,7 @@ class AssertRefundBody
 
     /**
      * @param string $transactionId
+     *
      * @return AssertRefundBody
      */
     public function setTransactionId($transactionId)
@@ -106,6 +108,7 @@ class AssertRefundBody
 
     /**
      * @param string $status
+     *
      * @return AssertRefundBody
      */
     public function setStatus($status)
@@ -122,6 +125,7 @@ class AssertRefundBody
 
     /**
      * @param string $orderId
+     *
      * @return AssertRefundBody
      */
     public function setOrderId($orderId)
@@ -138,6 +142,7 @@ class AssertRefundBody
 
     /**
      * @param mixed|null $date
+     *
      * @return AssertRefundBody
      */
     public function setDate($date)

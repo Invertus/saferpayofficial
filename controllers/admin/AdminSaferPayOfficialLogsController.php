@@ -23,16 +23,16 @@
 
 use Invertus\SaferPay\Adapter\Configuration;
 use Invertus\SaferPay\Adapter\LegacyContext;
+use Invertus\SaferPay\Adapter\Tools;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Context\GlobalShopContext;
 use Invertus\SaferPay\Controller\AbstractAdminSaferPayController;
 use Invertus\SaferPay\Logger\Formatter\LogFormatter;
+use Invertus\SaferPay\Logger\Logger;
 use Invertus\SaferPay\Logger\LoggerInterface;
 use Invertus\SaferPay\Repository\SaferPayLogRepository;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 use Invertus\SaferPay\Utility\VersionUtility;
-use Invertus\SaferPay\Logger\Logger;
-use Invertus\SaferPay\Adapter\Tools;
 
 require_once dirname(__FILE__) . '/../../vendor/autoload.php';
 
@@ -50,7 +50,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
 
     const LOG_INFORMATION_TYPE_CONTEXT = 'context';
 
-    /** @var \SaferPayOfficial */
+    /** @var SaferPayOfficial */
     public $module;
 
     public function __construct()
@@ -265,7 +265,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         $log = null;
 
         try {
-            /** @var \SaferPayLog|null $log */
+            /** @var SaferPayLog|null $log */
             $log = $logRepository->findOneBy([
                 'id_log' => $logId,
                 'id_shop' => $globalShopContext->getShopId(),
@@ -334,7 +334,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             'PrestaShop Version' => _PS_VERSION_,
             'PHP Version' => phpversion(),
             'Module Version' => $this->module->version,
-            'MySQL Version' => \Db::getInstance()->getVersion(),
+            'MySQL Version' => Db::getInstance()->getVersion(),
             'Shop URL' => $context->getShopDomain(),
             'Shop Name' => $context->getShopName(),
         ];
@@ -370,7 +370,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         fputcsv($fd, [$moduleConfigurationsInfo], ';', $textDelimiter);
         fputcsv($fd, [$psSettingsInfo], ';', $textDelimiter);
 
-        $query = new \DbQuery();
+        $query = new DbQuery();
 
         $query
             ->select('spl.id_log, l.severity, l.message, spl.request, spl.response, spl.context, spl.date_add')
@@ -379,7 +379,7 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
             ->orderBy('spl.id_log DESC')
             ->limit(1000);
 
-        $result = \Db::getInstance()->executeS($query);
+        $result = Db::getInstance()->executeS($query);
 
         $firstRow = $result[0];
         $headers = [];
@@ -404,6 +404,6 @@ class AdminSaferPayOfficialLogsController extends AbstractAdminSaferPayControlle
         }
 
         @fclose($fd);
-        die;
+        exit;
     }
 }

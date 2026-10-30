@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\EntityBuilder;
 
 use Invertus\SaferPay\DTO\Response\Assert\AssertBody;
-use SaferPayAssert;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,17 +35,18 @@ class SaferPayAssertBuilder
      * @param AssertBody $assertBody
      * @param int $saferPayOrderId
      *
-     * @return SaferPayAssert
+     * @return \SaferPayAssert
+     *
      * @throws \Exception
      */
-    public function createAssert(AssertBody $assertBody, int $saferPayOrderId): SaferPayAssert
+    public function createAssert(AssertBody $assertBody, int $saferPayOrderId): \SaferPayAssert
     {
-        $assert = new SaferPayAssert();
+        $assert = new \SaferPayAssert();
 
         $assert->id_saferpay_order = $saferPayOrderId;
         $assert->amount = (int) $assertBody->getTransaction()->getAmount()->getValue();
         $assert->status = $assertBody->getTransaction()->getStatus();
-        $assert->authorized = 1; //If creating assert, it must be authorized.
+        $assert->authorized = 1; // If creating assert, it must be authorized.
 
         $assert->currency_code = $assertBody->getTransaction()->getAmount()->getCurrencyCode();
         $assert->uncertain = 0;

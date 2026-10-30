@@ -46,6 +46,7 @@ class SaferPayGetPaymentPageConfigurations
      * @param string $password
      * @param string $customerId
      * @param bool $isTestMode
+     *
      * @return string[] configuration names as stored in the Saferpay account
      */
     public function fetchConfigurationsWithCredentials($username, $password, $customerId, $isTestMode)

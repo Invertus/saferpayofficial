@@ -23,8 +23,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use Order;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -33,7 +31,7 @@ final class OrderRepository extends AbstractRepository implements OrderRepositor
 {
     public function __construct()
     {
-        parent::__construct(Order::class);
+        parent::__construct(\Order::class);
     }
 
     /**

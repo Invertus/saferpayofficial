@@ -67,13 +67,13 @@ class InitializeBody
     private $liability;
 
     public function __construct(
-        ResponseHeader $responseHeader = null,
-        Transaction $transaction = null,
-        PaymentMeans $paymentMeans = null,
-        Payer $payer = null,
-        Liability $liability = null,
-        ThreeDs $threeDs = null,
-        Dcc $dcc = null
+        ?ResponseHeader $responseHeader = null,
+        ?Transaction $transaction = null,
+        ?PaymentMeans $paymentMeans = null,
+        ?Payer $payer = null,
+        ?Liability $liability = null,
+        ?ThreeDs $threeDs = null,
+        ?Dcc $dcc = null
     ) {
         $this->responseHeader = $responseHeader;
         $this->transaction = $transaction;

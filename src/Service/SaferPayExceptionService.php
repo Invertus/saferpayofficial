@@ -23,10 +23,8 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Exception;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Factory\ModuleFactory;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -37,7 +35,7 @@ class SaferPayExceptionService
     const SHORT_CLASS_NAME = 'SaferPayExceptionService';
 
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     private $module;
 
@@ -51,32 +49,26 @@ class SaferPayExceptionService
      */
     public function getErrorMessages(): array
     {
-        //todo: test translations
+        // todo: test translations
         return [
-            SaferPayApiException::class =>
-                [
-                    SaferPayApiException::CAPTURE =>
-                        $this->module->l('Failed to capture', self::SHORT_CLASS_NAME),
-                    SaferPayApiException::CANCEL =>
-                        $this->module->l('Failed to Cancel', self::SHORT_CLASS_NAME),
-                    SaferPayApiException::REFUND =>
-                        $this->module->l('Failed to Refund', self::SHORT_CLASS_NAME),
-                    SaferPayApiException::AUTHORIZE =>
-                        $this->module->l('Failed to Authorize', self::SHORT_CLASS_NAME),
-                    SaferPayApiException::INITIALIZE =>
-                        $this->module->l('Failed to Initialize', self::SHORT_CLASS_NAME),
-                    SaferPayApiException::ASSERT =>
-                        $this->module->l('Failed to Assert', self::SHORT_CLASS_NAME),
-                ],
+            SaferPayApiException::class => [
+                SaferPayApiException::CAPTURE => $this->module->l('Failed to capture', self::SHORT_CLASS_NAME),
+                SaferPayApiException::CANCEL => $this->module->l('Failed to Cancel', self::SHORT_CLASS_NAME),
+                SaferPayApiException::REFUND => $this->module->l('Failed to Refund', self::SHORT_CLASS_NAME),
+                SaferPayApiException::AUTHORIZE => $this->module->l('Failed to Authorize', self::SHORT_CLASS_NAME),
+                SaferPayApiException::INITIALIZE => $this->module->l('Failed to Initialize', self::SHORT_CLASS_NAME),
+                SaferPayApiException::ASSERT => $this->module->l('Failed to Assert', self::SHORT_CLASS_NAME),
+            ],
         ];
     }
 
     /**
-     * @param Exception $exception
+     * @param \Exception $exception
      * @param array $messages
+     *
      * @return string
      */
-    public function getErrorMessageForException(Exception $exception, array $messages): string
+    public function getErrorMessageForException(\Exception $exception, array $messages): string
     {
         $exceptionType = get_class($exception);
         $exceptionCode = $exception->getCode();

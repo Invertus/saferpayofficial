@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Api\Request;
 
-use Exception;
 use Invertus\SaferPay\Api\ApiRequest;
 use Invertus\SaferPay\DTO\Request\Cancel\CancelRequest;
 
@@ -47,8 +46,10 @@ class CancelService
 
     /**
      * @param CancelRequest $cancelRequest
+     *
      * @return \stdClass|null
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function cancel(CancelRequest $cancelRequest): ?\stdClass
     {

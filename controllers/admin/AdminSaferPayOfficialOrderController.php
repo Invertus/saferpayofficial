@@ -34,7 +34,7 @@ if (!defined('_PS_VERSION_')) {
 
 class AdminSaferPayOfficialOrderController extends ModuleAdminController
 {
-    /** @var \SaferPayOfficial */
+    /** @var SaferPayOfficial */
     public $module;
 
     public function __construct()

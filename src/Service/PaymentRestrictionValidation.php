@@ -65,6 +65,7 @@ class PaymentRestrictionValidation
                 }
             }
         }
+
         return $success;
     }
 }

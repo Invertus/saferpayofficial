@@ -40,8 +40,10 @@ class KlarnaPaymentRestrictionValidation implements PaymentRestrictionValidation
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @param string $paymentName
+     *
      * @return bool
      */
     public function isValid(string $paymentName): bool
@@ -59,6 +61,7 @@ class KlarnaPaymentRestrictionValidation implements PaymentRestrictionValidation
 
     /**
      * @param string $paymentName
+     *
      * @return bool
      */
     public function supports(string $paymentName): bool

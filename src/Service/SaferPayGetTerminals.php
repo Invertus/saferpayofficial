@@ -51,6 +51,7 @@ class SaferPayGetTerminals
      * @param string $password
      * @param string $customerId
      * @param bool $isTestMode
+     *
      * @return array
      */
     public function fetchTerminalsWithCredentials($username, $password, $customerId, $isTestMode)
@@ -94,6 +95,7 @@ class SaferPayGetTerminals
      * either as "Type" or "TerminalType". Returns an uppercased value (empty when absent).
      *
      * @param \stdClass $terminal
+     *
      * @return string
      */
     private function getTerminalType($terminal)

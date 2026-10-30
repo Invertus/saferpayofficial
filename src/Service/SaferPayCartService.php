@@ -23,10 +23,7 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Cart;
-use Currency;
 use Invertus\SaferPay\Factory\ModuleFactory;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -35,7 +32,7 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayCartService
 {
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     private $module;
 
@@ -45,12 +42,13 @@ class SaferPayCartService
     }
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
+     *
      * @return bool
      */
-    public function isCurrencyAvailable(Cart $cart): bool
+    public function isCurrencyAvailable(\Cart $cart): bool
     {
-        $currency_order = new Currency($cart->id_currency);
+        $currency_order = new \Currency($cart->id_currency);
         $currencies_module = $this->module->getCurrency($cart->id_currency);
 
         if (is_array($currencies_module)) {
@@ -60,6 +58,7 @@ class SaferPayCartService
                 }
             }
         }
+
         return false;
     }
 }

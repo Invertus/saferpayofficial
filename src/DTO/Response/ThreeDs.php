@@ -46,6 +46,7 @@ class ThreeDs
 
     /**
      * ThreeDs constructor.
+     *
      * @param string $authenticated
      * @param string $xid
      * @param string $verificationValue

@@ -50,11 +50,12 @@ class PaymentMeans
 
     /**
      * PaymentMeans constructor.
+     *
      * @param Brand|null $brand
      * @param string $displayText
      * @param Card|null $card
      */
-    public function __construct(Brand $brand = null, $displayText = null, Card $card = null, $wallet = null)
+    public function __construct(?Brand $brand = null, $displayText = null, ?Card $card = null, $wallet = null)
     {
         $this->brand = $brand;
         $this->displayText = $displayText;

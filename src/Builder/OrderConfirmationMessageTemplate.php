@@ -24,7 +24,6 @@
 namespace Invertus\SaferPay\Builder;
 
 use Invertus\SaferPay\Factory\ModuleFactory;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -33,21 +32,21 @@ if (!defined('_PS_VERSION_')) {
 class OrderConfirmationMessageTemplate
 {
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     private $module;
 
     /**
      * Order Message Template Class Variable Declaration.
      *
-     * @var string $orderMessageTemplateClass
+     * @var string
      */
     private $orderMessageTemplateClass;
 
     /**
      * Order Message text Variable Declaration.
      *
-     * @var string $orderMessageText
+     * @var string
      */
     private $orderMessageText;
 
@@ -72,6 +71,7 @@ class OrderConfirmationMessageTemplate
      * Sets Smarty From Given Param.
      *
      * @param \Smarty $smarty
+     *
      * @return void
      */
     public function setSmarty(\Smarty $smarty): void
@@ -83,6 +83,7 @@ class OrderConfirmationMessageTemplate
      * Sets Order Message Template Class.
      *
      * @param string $orderMessageTemplateClass
+     *
      * @return void
      */
     public function setOrderMessageTemplateClass(string $orderMessageTemplateClass): void
@@ -94,6 +95,7 @@ class OrderConfirmationMessageTemplate
      * Sets Order Message Text.
      *
      * @param string $orderMessageText
+     *
      * @return void
      */
     public function setOrderMessageText(string $orderMessageText): void
@@ -124,6 +126,7 @@ class OrderConfirmationMessageTemplate
     public function getHtml(): string
     {
         $this->smarty->assign($this->getSmartyParams());
+
         return $this->smarty->fetch(
             $this->module->getLocalPath() . 'views/templates/front/payment_return.tpl'
         );

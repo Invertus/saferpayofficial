@@ -23,17 +23,9 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Address;
-use Configuration;
-use Context;
 use Invertus\SaferPay\Config\SaferPayConfig;
-use Mail;
-use Module;
 use Order;
-use OrderState;
 use Product;
-use State;
-use Tools;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -43,34 +35,34 @@ class SaferPayMailService
 {
     const FILE_NAME = 'SaferPayMailService';
 
-    /** @var Context|null */
+    /** @var \Context|null */
     private $context;
-    /** @var \SaferPayOfficial  */
+    /** @var \SaferPayOfficial */
     private $module;
 
     public function __construct(\SaferPayOfficial $module)
     {
         $this->module = $module;
-        $this->context = Context::getContext();
+        $this->context = \Context::getContext();
     }
 
     /**
-     * @param Order $order
+     * @param \Order $order
      * @param int $orderStateId
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function sendOrderConfMail(Order $order, $orderStateId)
+    public function sendOrderConfMail(\Order $order, $orderStateId)
     {
         $data = $this->getOrderConfData($order, $orderStateId);
         $fileAttachment = $this->getFileAttachment($orderStateId, $order);
         $customer = $order->getCustomer();
 
-        Mail::Send(
+        \Mail::Send(
             (int) $order->id_lang,
             'order_conf',
-            Mail::l('Order confirmation', (int) $order->id_lang),
+            \Mail::l('Order confirmation', (int) $order->id_lang),
             $data,
             $customer->email,
             implode(' ', [$customer->firstname, $customer->lastname]),
@@ -85,22 +77,22 @@ class SaferPayMailService
     }
 
     /**
-     * @param Order $order
+     * @param \Order $order
      * @param int $orderStateId
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
      */
-    public function sendNewOrderMail(Order $order, $orderStateId)
+    public function sendNewOrderMail(\Order $order, $orderStateId)
     {
-        if (!Module::isEnabled(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME)) {
+        if (!\Module::isEnabled(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME)) {
             return;
         }
 
         $customer = $order->getCustomer();
 
         /** @var \Ps_EmailAlerts $emailAlertsModule */
-        $emailAlertsModule = Module::getInstanceByName(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME);
+        $emailAlertsModule = \Module::getInstanceByName(SaferPayConfig::EMAIL_ALERTS_MODULE_NAME);
 
         $emailAlertsModule->hookActionValidateOrder(
             [
@@ -108,12 +100,12 @@ class SaferPayMailService
                 'order' => $order,
                 'customer' => $customer,
                 'cart' => $this->context->cart,
-                'orderStatus' => new OrderState($orderStateId),
+                'orderStatus' => new \OrderState($orderStateId),
             ]
         );
     }
 
-    private function getOrderConfData(Order $order, $orderStateId)
+    private function getOrderConfData(\Order $order, $orderStateId)
     {
         $virtual_product = true;
         $carrier = new \Carrier($order->id_carrier);
@@ -123,44 +115,44 @@ class SaferPayMailService
         foreach ($order->getProducts() as $product) {
             $specific_price = null;
             /* @phpstan-ignore-next-line */
-            $price = Product::getPriceStatic((int) $product['id_product'], false, ($product['product_attribute_id'] ? (int) $product['product_attribute_id'] : null), 6, null, false, true, $product['product_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
+            $price = \Product::getPriceStatic((int) $product['id_product'], false, $product['product_attribute_id'] ? (int) $product['product_attribute_id'] : null, 6, null, false, true, $product['product_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{\Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
             /* @phpstan-ignore-next-line */
-            $price_wt = Product::getPriceStatic((int) $product['id_product'], true, ($product['product_attribute_id'] ? (int) $product['product_attribute_id'] : null), 2, null, false, true, $product['product_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
+            $price_wt = \Product::getPriceStatic((int) $product['id_product'], true, $product['product_attribute_id'] ? (int) $product['product_attribute_id'] : null, 2, null, false, true, $product['product_quantity'], false, (int) $order->id_customer, (int) $order->id_cart, (int) $order->{\Configuration::get('PS_TAX_ADDRESS_TYPE')}, $specific_price, true, true, null, true, $product['id_customization']);
 
-            $product_price = PS_TAX_EXC == Product::getTaxCalculationMethod() ? Tools::ps_round($price, 2) : $price_wt;
+            $product_price = PS_TAX_EXC == \Product::getTaxCalculationMethod() ? \Tools::ps_round($price, 2) : $price_wt;
 
             $attribute = $this->getProductAttribute((int) $product['product_attribute_id'], $this->context->language->id);
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
                 'reference' => $product['reference'],
                 'name' => $product['product_name'] . (\Validate::isLoadedObject($attribute) ? ' - ' . $attribute->name : ''),
-                'price' => Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
+                'price' => \Tools::displayPrice($product_price * $product['product_quantity'], $this->context->currency, false),
                 'quantity' => $product['product_quantity'],
                 'customization' => [],
             ];
 
             if (isset($product['price']) && $product['price']) {
-                $product_var_tpl['unit_price'] = Tools::displayPrice($product_price, $this->context->currency, false);
-                $product_var_tpl['unit_price_full'] = Tools::displayPrice($product_price, $this->context->currency, false)
+                $product_var_tpl['unit_price'] = \Tools::displayPrice($product_price, $this->context->currency, false);
+                $product_var_tpl['unit_price_full'] = \Tools::displayPrice($product_price, $this->context->currency, false)
                     . ' ' . $product['unity'];
             } else {
                 $product_var_tpl['unit_price'] = $product_var_tpl['unit_price_full'] = '';
             }
 
             /* @phpstan-ignore-next-line */
-            $customized_datas = Product::getAllCustomizedDatas((int) $order->id_cart, null, true, null, (int) $product['id_customization']);
+            $customized_datas = \Product::getAllCustomizedDatas((int) $order->id_cart, null, true, null, (int) $product['id_customization']);
             if (isset($customized_datas[$product['id_product']][$product['product_attribute_id']])) {
                 $product_var_tpl['customization'] = [];
                 foreach ($customized_datas[$product['id_product']][$product['product_attribute_id']][$order->id_address_delivery] as $customization) {
                     $customization_text = '';
-                    if (isset($customization['datas'][Product::CUSTOMIZE_TEXTFIELD])) {
-                        foreach ($customization['datas'][Product::CUSTOMIZE_TEXTFIELD] as $text) {
+                    if (isset($customization['datas'][\Product::CUSTOMIZE_TEXTFIELD])) {
+                        foreach ($customization['datas'][\Product::CUSTOMIZE_TEXTFIELD] as $text) {
                             $customization_text .= '<strong>' . $text['name'] . '</strong>: ' . $text['value'] . '<br />';
                         }
                     }
 
-                    if (isset($customization['datas'][Product::CUSTOMIZE_FILE])) {
-                        $customization_text .= Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
+                    if (isset($customization['datas'][\Product::CUSTOMIZE_FILE])) {
+                        $customization_text .= \Context::getContext()->getTranslator()->trans('%d image(s)', [count($customization['datas'][\Product::CUSTOMIZE_FILE])], 'Admin.Payment.Notification') . '<br />';
                     }
 
                     $customization_quantity = (int) $customization['quantity'];
@@ -168,7 +160,7 @@ class SaferPayMailService
                     $product_var_tpl['customization'][] = [
                         'customization_text' => $customization_text,
                         'customization_quantity' => $customization_quantity,
-                        'quantity' => Tools::displayPrice($customization_quantity * $product_price, $this->context->currency, false),
+                        'quantity' => \Tools::displayPrice($customization_quantity * $product_price, $this->context->currency, false),
                     ];
                 }
             }
@@ -180,24 +172,24 @@ class SaferPayMailService
             }
         }
 
-        $invoice = new Address((int) $order->id_address_invoice);
-        $delivery = new Address((int) $order->id_address_delivery);
-        $delivery_state = $delivery->id_state ? new State((int) $delivery->id_state) : false;
-        $invoice_state = $invoice->id_state ? new State((int) $invoice->id_state) : false;
+        $invoice = new \Address((int) $order->id_address_invoice);
+        $delivery = new \Address((int) $order->id_address_delivery);
+        $delivery_state = $delivery->id_state ? new \State((int) $delivery->id_state) : false;
+        $invoice_state = $invoice->id_state ? new \State((int) $invoice->id_state) : false;
 
         $product_list_txt = '';
         $product_list_html = '';
         if (count($product_var_tpl_list) > 0) {
-            $product_list_txt = $this->getEmailTemplateContent('order_conf_product_list.txt', Mail::TYPE_TEXT, $product_var_tpl_list);
-            $product_list_html = $this->getEmailTemplateContent('order_conf_product_list.tpl', Mail::TYPE_HTML, $product_var_tpl_list);
+            $product_list_txt = $this->getEmailTemplateContent('order_conf_product_list.txt', \Mail::TYPE_TEXT, $product_var_tpl_list);
+            $product_list_html = $this->getEmailTemplateContent('order_conf_product_list.tpl', \Mail::TYPE_HTML, $product_var_tpl_list);
         }
 
         $cart_rules_list = $this->getCartRuleList($order, $orderStateId);
         $cart_rules_list_txt = '';
         $cart_rules_list_html = '';
         if (count($cart_rules_list) > 0) {
-            $cart_rules_list_txt = $this->getEmailTemplateContent('order_conf_cart_rules.txt', Mail::TYPE_TEXT, $cart_rules_list);
-            $cart_rules_list_html = $this->getEmailTemplateContent('order_conf_cart_rules.tpl', Mail::TYPE_HTML, $cart_rules_list);
+            $cart_rules_list_txt = $this->getEmailTemplateContent('order_conf_cart_rules.txt', \Mail::TYPE_TEXT, $cart_rules_list);
+            $cart_rules_list_html = $this->getEmailTemplateContent('order_conf_cart_rules.tpl', \Mail::TYPE_HTML, $cart_rules_list);
         }
 
         return [
@@ -238,23 +230,23 @@ class SaferPayMailService
             '{invoice_phone}' => ($invoice->phone) ? $invoice->phone : $invoice->phone_mobile,
             '{invoice_other}' => $invoice->other,
             '{order_name}' => $order->getUniqReference(),
-            '{date}' => Tools::displayDate(date('Y-m-d H:i:s'), null, true),
+            '{date}' => \Tools::displayDate(date('Y-m-d H:i:s'), null, true),
             '{carrier}' => ($virtual_product || !isset($carrier->name)) ? $this->module->l('No carrier', self::FILE_NAME) : $carrier->name,
-            '{payment}' => Tools::substr($order->payment, 0, 255),
+            '{payment}' => \Tools::substr($order->payment, 0, 255),
             '{products}' => $product_list_html,
             '{products_txt}' => $product_list_txt,
             '{discounts}' => $cart_rules_list_html,
             '{discounts_txt}' => $cart_rules_list_txt,
-            '{total_paid}' => Tools::displayPrice($order->total_paid, $this->context->currency, false),
-            '{total_products}' => Tools::displayPrice(PS_TAX_EXC == Product::getTaxCalculationMethod() ? $order->total_products : $order->total_products_wt, $this->context->currency, false),
-            '{total_discounts}' => Tools::displayPrice($order->total_discounts, $this->context->currency, false),
-            '{total_shipping}' => Tools::displayPrice($order->total_shipping, $this->context->currency, false),
-            '{total_wrapping}' => Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
-            '{total_tax_paid}' => Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
+            '{total_paid}' => \Tools::displayPrice($order->total_paid, $this->context->currency, false),
+            '{total_products}' => \Tools::displayPrice(PS_TAX_EXC == \Product::getTaxCalculationMethod() ? $order->total_products : $order->total_products_wt, $this->context->currency, false),
+            '{total_discounts}' => \Tools::displayPrice($order->total_discounts, $this->context->currency, false),
+            '{total_shipping}' => \Tools::displayPrice($order->total_shipping, $this->context->currency, false),
+            '{total_wrapping}' => \Tools::displayPrice($order->total_wrapping, $this->context->currency, false),
+            '{total_tax_paid}' => \Tools::displayPrice(($order->total_products_wt - $order->total_products) + ($order->total_shipping_tax_incl - $order->total_shipping_tax_excl), $this->context->currency, false),
         ];
     }
 
-    private function getCartRuleList(Order $order, $orderStateId)
+    private function getCartRuleList(\Order $order, $orderStateId)
     {
         $customer = $order->getCustomer();
         $order_list = [];
@@ -296,7 +288,7 @@ class SaferPayMailService
                 // Set a new voucher code
                 $voucher->code = empty($voucher->code) ? substr(md5($order->id . '-' . $order->id_customer . '-' . $cart_rule['obj']->id), 0, 16) : $voucher->code . '-2';
                 if (preg_match('/\-([0-9]{1,2})\-([0-9]{1,2})$/', $voucher->code, $matches) && $matches[1] == $matches[2]) {
-                    $voucher->code = preg_replace('/' . $matches[0] . '$/', '-' . ((int) ($matches[1]) + 1), $voucher->code);
+                    $voucher->code = preg_replace('/' . $matches[0] . '$/', '-' . ((int) $matches[1] + 1), $voucher->code);
                 }
 
                 // Set the new voucher value
@@ -334,14 +326,14 @@ class SaferPayMailService
                     $orderLanguage = new \Language((int) $order->id_lang);
 
                     $params = [
-                        '{voucher_amount}' => Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
+                        '{voucher_amount}' => \Tools::displayPrice($voucher->reduction_amount, $this->context->currency, false),
                         '{voucher_num}' => $voucher->code,
                         '{firstname}' => $customer->firstname,
                         '{lastname}' => $customer->lastname,
                         '{id_order}' => $order->reference,
                         '{order_name}' => $order->getUniqReference(),
                     ];
-                    Mail::Send(
+                    \Mail::Send(
                         (int) $order->id_lang,
                         'voucher',
                         $this->module->l(
@@ -373,7 +365,7 @@ class SaferPayMailService
 
             $order->addCartRule($cart_rule['obj']->id, $cart_rule['obj']->name, $values, 0, $cart_rule['obj']->free_shipping);
 
-            if ($orderStateId != Configuration::get('PS_OS_ERROR') && $orderStateId != Configuration::get('PS_OS_CANCELED')
+            if ($orderStateId != \Configuration::get('PS_OS_ERROR') && $orderStateId != \Configuration::get('PS_OS_CANCELED')
                 && !in_array($cart_rule['obj']->id, $cart_rule_used)) {
                 $cart_rule_used[] = $cart_rule['obj']->id;
 
@@ -385,7 +377,7 @@ class SaferPayMailService
 
             $cart_rules_list[] = [
                 'voucher_name' => $cart_rule['obj']->name,
-                'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
+                'voucher_reduction' => (0.00 != $values['tax_incl'] ? '-' : '') . \Tools::displayPrice($values['tax_incl'], $this->context->currency, false),
             ];
         }
 
@@ -394,8 +386,8 @@ class SaferPayMailService
 
     private function getEmailTemplateContent($template_name, $mail_type, $var)
     {
-        $email_configuration = Configuration::get('PS_MAIL_TYPE');
-        if ($email_configuration != $mail_type && Mail::TYPE_BOTH != $email_configuration) {
+        $email_configuration = \Configuration::get('PS_MAIL_TYPE');
+        if ($email_configuration != $mail_type && \Mail::TYPE_BOTH != $email_configuration) {
             return '';
         }
 
@@ -408,7 +400,7 @@ class SaferPayMailService
         ];
 
         foreach ($pathToFindEmail as $path) {
-            if (Tools::file_exists_cache($path)) {
+            if (\Tools::file_exists_cache($path)) {
                 $this->context->smarty->assign('list', $var);
 
                 return $this->context->smarty->fetch($path);
@@ -418,18 +410,18 @@ class SaferPayMailService
         return '';
     }
 
-    private function getFileAttachment($orderStatusId, Order $order)
+    private function getFileAttachment($orderStatusId, \Order $order)
     {
-        $order_status = new OrderState((int) $orderStatusId, (int) $this->context->language->id);
+        $order_status = new \OrderState((int) $orderStatusId, (int) $this->context->language->id);
 
         // Join PDF invoice
-        if ((int) Configuration::get('PS_INVOICE') && $order_status->invoice && $order->invoice_number) {
+        if ((int) \Configuration::get('PS_INVOICE') && $order_status->invoice && $order->invoice_number) {
             $fileAttachment = [];
             $order_invoice_list = $order->getInvoicesCollection();
             \Hook::exec('actionPDFInvoiceRender', ['order_invoice_list' => $order_invoice_list]);
             $pdf = new \PDF($order_invoice_list, \PDF::TEMPLATE_INVOICE, $this->context->smarty);
             $fileAttachment['content'] = $pdf->render(false);
-            $fileAttachment['name'] = Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop) . sprintf('%06d', $order->invoice_number) . '.pdf';
+            $fileAttachment['name'] = \Configuration::get('PS_INVOICE_PREFIX', (int) $order->id_lang, null, $order->id_shop) . sprintf('%06d', $order->invoice_number) . '.pdf';
             $fileAttachment['mime'] = 'application/pdf';
         } else {
             $fileAttachment = null;
@@ -438,7 +430,7 @@ class SaferPayMailService
         return $fileAttachment;
     }
 
-    private function _getFormatedAddress(Address $the_address, $line_sep, $fields_style = [])
+    private function _getFormatedAddress(\Address $the_address, $line_sep, $fields_style = [])
     {
         return \AddressFormat::generateAddress($the_address, ['avoid' => []], $line_sep, ' ', $fields_style);
     }

@@ -43,6 +43,7 @@ class PaymentTypeProvider
 
     /**
      * @param string $paymentMethod
+     *
      * @return string
      */
     public function get(string $paymentMethod): string
@@ -83,6 +84,7 @@ class PaymentTypeProvider
      * back to the Payment Page, so the checkout never offers a card form it cannot render.
      *
      * @param string $paymentMethod
+     *
      * @return bool
      */
     private function isSaferPayFieldsPayment(string $paymentMethod): bool
@@ -112,6 +114,7 @@ class PaymentTypeProvider
 
     /**
      * @param string $paymentMethod
+     *
      * @return bool
      */
     private function isCardPaymentMethod(string $paymentMethod): bool

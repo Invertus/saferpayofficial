@@ -23,8 +23,6 @@
 
 namespace Invertus\SaferPay\Api;
 
-use Configuration;
-use Exception;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Exception\Api\SaferPayApiException;
 use Invertus\SaferPay\Logger\LoggerInterface;
@@ -53,8 +51,10 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
+     *
      * @return \stdClass|null
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function post(string $url, array $params = []): ?\stdClass
     {
@@ -77,7 +77,7 @@ class ApiRequest
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             throw $exception;
         }
     }
@@ -87,8 +87,10 @@ class ApiRequest
      *
      * @param string $url
      * @param array $params
+     *
      * @return \stdClass|null
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function get(string $url, array $params = []): ?\stdClass
     {
@@ -113,7 +115,7 @@ class ApiRequest
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             if ($response === null) {
                 $this->logger->error($exception->getMessage(), [
                     'context' => [
@@ -137,8 +139,10 @@ class ApiRequest
      * @param string $password
      * @param string $baseUrl
      * @param array $params
+     *
      * @return mixed
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function getWithCredentials($url, $username, $password, $baseUrl, $params = [])
     {
@@ -171,7 +175,7 @@ class ApiRequest
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             if ($response === null) {
                 $this->logger->error($exception->getMessage(), [
                     'context' => [],
@@ -193,8 +197,10 @@ class ApiRequest
      * @param string $password
      * @param string $baseUrl
      * @param array|null $params
+     *
      * @return mixed
-     * @throws Exception
+     *
+     * @throws \Exception
      */
     public function postWithCredentials($url, $username, $password, $baseUrl, $params = null)
     {
@@ -229,7 +235,7 @@ class ApiRequest
             $this->isValidResponse($response);
 
             return json_decode($response->raw_body);
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             if ($response === null) {
                 $this->logger->error($exception->getMessage(), [
                     'context' => [],
@@ -248,8 +254,8 @@ class ApiRequest
      */
     private function getHeaders(): array
     {
-        $username = Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
-        $password = Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
+        $username = \Configuration::get(SaferPayConfig::USERNAME . SaferPayConfig::getConfigSuffix());
+        $password = \Configuration::get(SaferPayConfig::PASSWORD . SaferPayConfig::getConfigSuffix());
 
         $credentials = base64_encode("$username:$password");
 
@@ -272,7 +278,9 @@ class ApiRequest
 
     /**
      * @param Response $response
+     *
      * @return void
+     *
      * @throws SaferPayApiException
      */
     private function isValidResponse(Response $response): void

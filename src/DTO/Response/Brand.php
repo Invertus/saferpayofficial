@@ -41,6 +41,7 @@ class Brand
 
     /**
      * Brand constructor.
+     *
      * @param string $paymentMethod
      * @param string $name
      */

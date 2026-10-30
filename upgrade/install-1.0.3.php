@@ -20,7 +20,6 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -29,17 +28,17 @@ function upgrade_module_1_0_3($module)
     $result = true;
 
     Configuration::updateValue(
-        \Invertus\SaferPay\DTO\Request\RequestHeader::SPEC_VERSION,
+        Invertus\SaferPay\DTO\Request\RequestHeader::SPEC_VERSION,
         '1.20'
     );
     Configuration::updateValue(
-        \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY,
-        \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE
+        Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY,
+        Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE
     );
     Configuration::updateValue(
-        \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY .
-        \Invertus\SaferPay\Config\SaferPayConfig::TEST_SUFFIX,
-        \Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE
+        Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY .
+        Invertus\SaferPay\Config\SaferPayConfig::TEST_SUFFIX,
+        Invertus\SaferPay\Config\SaferPayConfig::FIELDS_LIBRARY_DEFAULT_VALUE
     );
     $result &= Db::getInstance()->execute(
         'ALTER TABLE ' . _DB_PREFIX_ . 'saferpay_log 

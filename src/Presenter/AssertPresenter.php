@@ -24,8 +24,6 @@
 namespace Invertus\SaferPay\Presenter;
 
 use Invertus\SaferPay\Config\SaferPayConfig;
-use SaferPayAssert;
-use SaferPayOfficial;
 
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -36,20 +34,21 @@ class AssertPresenter
     const FILE_NAME = 'AssertPresenter';
 
     /**
-     * @var SaferPayOfficial
+     * @var \SaferPayOfficial
      */
     private $saferPay;
 
-    public function __construct(SaferPayOfficial $saferPay)
+    public function __construct(\SaferPayOfficial $saferPay)
     {
         $this->saferPay = $saferPay;
     }
 
     /**
-     * @param SaferPayAssert $assert
+     * @param \SaferPayAssert $assert
+     *
      * @return array
      */
-    public function present(SaferPayAssert $assert): array
+    public function present(\SaferPayAssert $assert): array
     {
         $paymentMethod = $assert->payment_method;
 
@@ -58,8 +57,7 @@ class AssertPresenter
             'transactionAuth' => $assert->authorized ?
                 $this->saferPay->l('Yes', self::FILE_NAME) :
                 $this->saferPay->l('No', self::FILE_NAME),
-            'cardExpiryDate' =>
-                $assert->exp_year
+            'cardExpiryDate' => $assert->exp_year
                 . '/'
                 . $assert->exp_month,
             'currency' => $assert->currency_code,

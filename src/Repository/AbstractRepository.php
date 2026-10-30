@@ -23,10 +23,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use ObjectModel;
-use PrestaShopCollection;
-use PrestaShopException;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -48,19 +44,19 @@ class AbstractRepository implements ReadOnlyRepositoryInterface
 
     public function findAll()
     {
-        return new PrestaShopCollection($this->fullyClassifiedClassName);
+        return new \PrestaShopCollection($this->fullyClassifiedClassName);
     }
 
     /**
      * @param array $keyValueCriteria
      *
-     * @return ObjectModel|null
+     * @return \ObjectModel|null
      *
-     * @throws PrestaShopException
+     * @throws \PrestaShopException
      */
     public function findOneBy(array $keyValueCriteria)
     {
-        $psCollection = new PrestaShopCollection($this->fullyClassifiedClassName);
+        $psCollection = new \PrestaShopCollection($this->fullyClassifiedClassName);
 
         foreach ($keyValueCriteria as $field => $value) {
             $psCollection = $psCollection->where($field, '=', $value);

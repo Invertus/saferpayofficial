@@ -31,6 +31,7 @@ class CouldNotProcessCheckout extends SaferPayException
 {
     /**
      * @param int $cartId
+     *
      * @return static
      */
     public static function failedToFindCart($cartId)

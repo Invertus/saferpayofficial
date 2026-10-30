@@ -27,7 +27,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-use Cart;
 use Invertus\SaferPay\Api\Enum\TransactionStatus;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\Core\Payment\DTO\CheckoutData;
@@ -40,8 +39,6 @@ use Invertus\SaferPay\Repository\SaferPayOrderRepository;
 use Invertus\SaferPay\Service\SaferPayInitialize;
 use Invertus\SaferPay\Utility\ExceptionUtility;
 use Order;
-use PrestaShopException;
-use SaferPayOrder;
 
 class CheckoutProcessor
 {
@@ -73,7 +70,7 @@ class CheckoutProcessor
 
     public function run(CheckoutData $data)
     {
-        $cart = new Cart($data->getCartId());
+        $cart = new \Cart($data->getCartId());
 
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
@@ -99,6 +96,7 @@ class CheckoutProcessor
 
         if (in_array($data->getOrderStatus(), $authorizedStates)) {
             $this->processAuthorizedOrder($data, $cart);
+
             return '';
         }
 
@@ -137,12 +135,14 @@ class CheckoutProcessor
     }
 
     /**
-     * @param Cart $cart
+     * @param \Cart $cart
      * @param $paymentMethod
+     *
      * @return void
-     * @throws PrestaShopException
+     *
+     * @throws \PrestaShopException
      */
-    private function processCreateOrder(Cart $cart, $paymentMethod)
+    private function processCreateOrder(\Cart $cart, $paymentMethod)
     {
         /** @var \Invertus\SaferPay\Adapter\Cart $cartAdapter */
         $cartAdapter = $this->module->getService(\Invertus\SaferPay\Adapter\Cart::class);
@@ -188,6 +188,7 @@ class CheckoutProcessor
      * @param $selectedCard
      * @param $fieldToken
      * @param $successController
+     *
      * @return ?object
      */
     private function processInitializePayment(
@@ -215,6 +216,7 @@ class CheckoutProcessor
      * @param $cartId
      * @param $customerId
      * @param $isTransaction
+     *
      * @return void
      */
     private function processCreateSaferPayOrder($initializeBody, $cartId, $customerId, $isTransaction)
@@ -227,7 +229,7 @@ class CheckoutProcessor
         );
     }
 
-    private function processAuthorizedOrder(CheckoutData $data, Cart $cart)
+    private function processAuthorizedOrder(CheckoutData $data, \Cart $cart)
     {
         /** @var LoggerInterface $logger */
         $logger = $this->module->getService(LoggerInterface::class);
@@ -241,8 +243,8 @@ class CheckoutProcessor
         try {
             $this->processCreateOrder($cart, $data->getPaymentMethod());
 
-            $order = new Order(Order::getIdByCartId($cart->id));
-            $saferPayOrder = new SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
+            $order = new \Order(\Order::getIdByCartId($cart->id));
+            $saferPayOrder = new \SaferPayOrder($this->saferPayOrderRepository->getIdByCartId($cart->id));
 
             if (
                 $order->getCurrentState() == _SAFERPAY_PAYMENT_AUTHORIZED_

@@ -23,8 +23,6 @@
 
 namespace Invertus\SaferPay\Provider;
 
-use Currency;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -36,8 +34,8 @@ class CurrencyProvider
     public function getAllCurrenciesInArray(): array
     {
         $currencies = [];
-        
-        foreach (Currency::getCurrencies() as $currency) {
+
+        foreach (\Currency::getCurrencies() as $currency) {
             $currencies[$currency['id_currency']] = $currency['iso_code'];
         }
 

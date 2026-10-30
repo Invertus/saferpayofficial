@@ -32,7 +32,6 @@ if (!defined('_PS_VERSION_')) {
 
 class AssertRequest implements SaferPayRequestInterface
 {
-
     /**
      * @var RequestHeader
      */
@@ -68,7 +67,7 @@ class AssertRequest implements SaferPayRequestInterface
         ];
 
         if ($this->saveCard) {
-            $return['RegisterAlias'] = [ 'IdGenerator' => 'RANDOM_UNIQUE'];
+            $return['RegisterAlias'] = ['IdGenerator' => 'RANDOM_UNIQUE'];
         }
 
         return $return;

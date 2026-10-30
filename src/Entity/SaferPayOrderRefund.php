@@ -20,7 +20,6 @@
  *@copyright SIX Payment Services
  *@license   SIX Payment Services
  */
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -31,12 +30,12 @@ if (!defined('_PS_VERSION_')) {
 class SaferPayOrderRefund extends ObjectModel
 {
     /**
-     * @var Int
+     * @var int
      */
     public $id_saferpay_order;
 
     /**
-     * @var Int
+     * @var int
      */
     public $id_order;
 

@@ -23,7 +23,6 @@
 
 namespace Invertus\SaferPay\Service;
 
-use Exception;
 use Invertus\SaferPay\Api\Request\GenerateFieldAccessTokenService;
 use Invertus\SaferPay\Config\SaferPayConfig;
 use Invertus\SaferPay\DTO\Request\GenerateFieldAccessToken\GenerateFieldAccessTokenRequest;
@@ -52,7 +51,7 @@ class SaferPayGenerateFieldAccessToken
      *
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function generateWithCredentials($username, $password, $customerId, $terminalId, $isTestMode, $shopUrl)
     {
@@ -73,7 +72,7 @@ class SaferPayGenerateFieldAccessToken
         );
 
         if (!isset($response->AccessToken)) {
-            throw new Exception('Unexpected API response: no access token returned');
+            throw new \Exception('Unexpected API response: no access token returned');
         }
 
         return $response->AccessToken;

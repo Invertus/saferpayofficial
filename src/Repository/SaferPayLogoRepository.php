@@ -23,9 +23,6 @@
 
 namespace Invertus\SaferPay\Repository;
 
-use Db;
-use DbQuery;
-
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -34,21 +31,21 @@ class SaferPayLogoRepository
 {
     public function isActiveByName($logo)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`active`');
         $query->from('saferpay_logo');
         $query->where('name = "' . pSQL($logo) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 
     public function getIdByName($logo)
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('`id_saferpay_logo`');
         $query->from('saferpay_logo');
         $query->where('name = "' . pSQL($logo) . '"');
 
-        return Db::getInstance()->getValue($query);
+        return \Db::getInstance()->getValue($query);
     }
 }

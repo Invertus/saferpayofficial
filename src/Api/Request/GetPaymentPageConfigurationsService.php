@@ -45,6 +45,7 @@ class GetPaymentPageConfigurationsService
      * @param string $username
      * @param string $password
      * @param string $baseUrl
+     *
      * @return mixed
      */
     public function getPaymentPageConfigurations(
