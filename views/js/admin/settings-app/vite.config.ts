@@ -39,6 +39,8 @@ export default defineConfig({
     outDir: '../dist',
     emptyOutDir: true,
     rollupOptions: {
+      // A script entry instead of index.html, so Vite's dev page is not copied into dist/
+      input: path.resolve(__dirname, 'src/main.tsx'),
       output: {
         entryFileNames: 'saferpay-settings.js',
         assetFileNames: 'saferpay-settings.[ext]',

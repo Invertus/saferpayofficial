@@ -38,22 +38,9 @@ jobs:
           pnpm run build
 
       - name: build
-        # IF YOU EDIT THIS, DON'T FORGET TO EDIT deploy.yml
         run: |
-          composer install --no-dev --optimize-autoloader --classmap-authoritative
-          composer dump-autoload --no-dev --optimize --classmap-authoritative
-          cp .github/.htaccess vendor/.htaccess
-          rm -rf .git .github tests .php-cs-fixer.php Makefile cypress* docker-compose*.yml package.json package-lock.json .docker README.md .editorconfig .gitignore .php_cs.dist browserstack.json views/js/admin/settings-app
-          # The Addons validator requires an index.php in every shipped directory
-          find . -type d | while read -r dir; do [ -f "$dir/index.php" ] || cp index.php "$dir/index.php"; done
-          mkdir ${{ env.MODULE_NAME }}
-          rsync -Rr ./ ./${{ env.MODULE_NAME }}
-          chmod -R 777 ${{ env.MODULE_NAME }}/var/cache
-          shopt -s extglob
-          rm -r !(${{ env.MODULE_NAME }})
-          find . -maxdepth 1 -type f -exec rm "{}" \;
-          cd ${{ env.MODULE_NAME }} && rm -rf ${{ env.MODULE_NAME }}
-          cd ../ && zip -r ${{ env.MODULE_NAME }}.zip ${{ env.MODULE_NAME }}/
+          make prepare-zip
+          zip -r ${{ env.MODULE_NAME }}.zip ${{ env.MODULE_NAME }}/
       - name: Update release
         id: update_release
         uses: tubone24/update_release@v1.0
