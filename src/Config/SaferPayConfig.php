@@ -331,28 +331,30 @@ class SaferPayConfig
         self::PAYMENT_VISA => 'visa',
     ];
 
+    /**
+     * Saferpay takes the money at the moment of payment for these methods and returns the
+     * transaction as CAPTURED, so it rejects both Capture and Cancel on them.
+     */
+    public const PAYMENTS_WITHOUT_CAPTURE_AND_CANCEL = [
+        self::PAYMENT_WECHATPAY,
+        self::PAYMENT_ACCOUNTTOACCOUNT,
+        self::PAYMENT_GIFTCARD,
+        self::PAYMENT_IDEAL,
+        self::PAYMENT_BANCONTACT,
+        self::PAYMENT_BLIK,
+        self::PAYMENT_EPS,
+        self::PAYMENT_EPRZELEWY,
+        self::PAYMENT_ALIPAY,
+    ];
+
     public static function supportsOrderCapture($paymentMethod)
     {
-        //payments that DOES NOT SUPPORT capture
-        $unsupportedCapturePayments = [
-            self::PAYMENT_WECHATPAY,
-            self::PAYMENT_ACCOUNTTOACCOUNT,
-            self::PAYMENT_GIFTCARD,
-        ];
-
-        return !in_array($paymentMethod, $unsupportedCapturePayments);
+        return !in_array($paymentMethod, self::PAYMENTS_WITHOUT_CAPTURE_AND_CANCEL);
     }
 
     public static function supportsOrderCancel($paymentMethod)
     {
-        //payments that DOES NOT SUPPORT order cancel
-        $unsupportedCancelPayments = [
-            self::PAYMENT_WECHATPAY,
-            self::PAYMENT_ACCOUNTTOACCOUNT,
-            self::PAYMENT_GIFTCARD,
-        ];
-
-        return !in_array($paymentMethod, $unsupportedCancelPayments);
+        return !in_array($paymentMethod, self::PAYMENTS_WITHOUT_CAPTURE_AND_CANCEL);
     }
 
     public static function isRedirectPayment($paymentMethod)
